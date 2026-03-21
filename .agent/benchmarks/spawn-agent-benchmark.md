@@ -114,3 +114,29 @@
 | 2026-03-20 | prompt_474541768 | GEMINI | --approval-mode auto_edit | 19 chars | 5.3s | None (wait forever) | 1 | ❌ |
 | 2026-03-20 | prompt_2128900736 | GEMINI | --approval-mode auto_edit | 12 chars | 4.2s | 1s | 124 | ⏰ |
 | 2026-03-20 | prompt_1674528457 | GEMINI | --approval-mode auto_edit | 28 chars | 4.8s | None (wait forever) |  | ❌ |
+| 2026-03-21 | prompt_1611821324 | GEMINI | --approval-mode auto_edit | 11 chars | 4.9s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | prompt_1757759175 | GEMINI | --approval-mode auto_edit | 11 chars | 3.4s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | prompt_671630191 | GEMINI | --approval-mode auto_edit | 11 chars | 5.2s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | diag_prompt | GEMINI | --approval-mode auto_edit | 11 chars | 3s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | prompt | GEMINI | --approval-mode auto_edit | 11 chars | 5.4s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | prompt | GEMINI | --approval-mode auto_edit | 11 chars | 5.7s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | prompt_843763795 | GEMINI | --approval-mode auto_edit | 11 chars | 5.5s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | prompt_1751732108 | GEMINI | --approval-mode auto_edit | 11 chars | 7.6s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | prompt_1708876161 | GEMINI | --approval-mode auto_edit | 11 chars | 7s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | prompt_1276064203 | GEMINI | --approval-mode auto_edit | 11 chars | 6.7s | None (wait forever) | 0 | âœ… |
+| 2026-03-21 | prompt_468313468 | GEMINI | --approval-mode auto_edit | 19 chars | 6.8s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | prompt_1326794835 | GEMINI | --approval-mode auto_edit | 12 chars | 75.7s | 1s | 124 | â° |
+| 2026-03-21 | prompt_1658499193 | GEMINI | --approval-mode auto_edit | 11 chars | 6.1s | None (wait forever) | 0 | âœ… |
+| 2026-03-21 | prompt_1053540413 | GEMINI | --approval-mode auto_edit | 19 chars | 7.8s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | prompt_579988682 | GEMINI | --approval-mode auto_edit | 12 chars | 73.8s | 1s | 124 | â° |
+| 2026-03-21 | prompt_1887690057 | GEMINI | --approval-mode auto_edit | 28 chars | 7.5s | None (wait forever) | 0 | âœ… |
+| 2026-03-21 | prompt_748372274 | GEMINI | --approval-mode auto_edit | 11 chars | 6.2s | None (wait forever) | 0 | âœ… |
+| 2026-03-21 | prompt_2072866364 | GEMINI | --approval-mode auto_edit | 19 chars | 7.5s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | prompt_53782837 | GEMINI | --approval-mode auto_edit | 12 chars | 74.2s | 1s | 124 | â° |
+| 2026-03-21 | prompt_46990811 | GEMINI | --approval-mode auto_edit | 28 chars | 6.4s | None (wait forever) | 0 | âœ… |
+| 2026-03-21 | prompt_25815089 | GEMINI | --approval-mode auto_edit | 11 chars | 5.7s | None (wait forever) | 0 | âœ… |
+| 2026-03-21 | prompt_424241664 | GEMINI | --approval-mode auto_edit | 19 chars | 7.5s | None (wait forever) | 1 | âŒ |
+| 2026-03-21 | prompt_994049382 | GEMINI | --approval-mode auto_edit | 12 chars | 77.2s | 1s | 124 | â° |
+| 2026-03-21 | prompt_616759083 | GEMINI | --approval-mode auto_edit | 28 chars | 7.4s | None (wait forever) | 0 | âœ… |
+| 2026-03-21 | prompt_1077381476 | GEMINI | --approval-mode auto_edit | 11 chars | 6.1s | None (wait forever) | 0 | âœ… |
+| 2026-03-21 | prompt_1578504574 | GEMINI | --approval-mode auto_edit | 19 chars | 6.8s | None (wait forever) | 1 | âŒ |

@@ -42,7 +42,7 @@ if (Test-Path (Join-Path $PSScriptRoot "mock-error.txt")) {
 
 if (Test-Path (Join-Path $PSScriptRoot "mock-exitcode.txt")) {
     $code = Get-Content (Join-Path $PSScriptRoot "mock-exitcode.txt")
-    exit [int]$code
+    [Environment]::Exit([int]$code)
 }
 
-exit 0
+[Environment]::Exit(0)

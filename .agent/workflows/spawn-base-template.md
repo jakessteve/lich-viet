@@ -44,7 +44,7 @@ description: Shared 6-phase structure for all /spawn-* swarm workflows. Individu
 
 2. **Compose prompts** using appropriate template in `.agent/spawn_agent_tasks/templates/`.
 3. **Spawn workers** (or persona-switch) per the chosen strategy.
-   - CLI: Use `spawn-agent` skill. **You MUST pass the `-Async` flag** via `spawn-agent.ps1` if spawning $\geq3$ workers concurrently to prevent CLI I/O lockups. Pass `-Args "--max-tokens 8192"` (or relevant max token flag) to avoid silent output truncation. Do not run them sequentially.
+   - CLI: Use `spawn-agent` skill. **You MUST pass the `-Async` flag** via `spawn-agent.ps1` if spawning ≥ 3 workers concurrently to prevent CLI I/O lockups. Pass `-Args "--max-tokens 8192"` (or relevant max token flag) to avoid silent output truncation. Do not run them sequentially.
    - Persona-switch: Assume persona → investigate → output strictly in JSON → switch back.
 4. **Max parallel workers:** 4 (per `execution-protocol.md` §6).
 

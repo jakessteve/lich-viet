@@ -1,11 +1,24 @@
 $ErrorActionPreference = "Stop"
 
 $scriptDir = $PSScriptRoot
-$projectRoot = (Resolve-Path (Join-Path $scriptDir "..\..\..")).Path
+$projectRoot = (Resolve-Path (Join-Path $scriptDir "..\..\..\")).Path
 $spawnScript = Join-Path $projectRoot ".agent\scripts\spawn-agent.ps1"
 
+# Mirror pwsh detection from production spawn-agent.ps1
+# IMPORTANT: Resolve full path BEFORE sandboxing PATH
+$pwshCmd = Get-Command pwsh -ErrorAction SilentlyContinue
+if ($pwshCmd) {
+    $psExe = $pwshCmd.Source
+    $psExeDir = Split-Path $psExe -Parent
+} else {
+    $psExe = "powershell.exe"
+    $psExeDir = ""
+}
+
 # Completely sandbox PATH so NO global 'gemini' (cargo/npm/etc) can shadow our mock
-$env:PATH = "$scriptDir;C:\Windows\system32;C:\Windows;C:\Windows\System32\WindowsPowerShell\v1.0\"
+$sandboxPath = "$scriptDir;C:\Windows\system32;C:\Windows;C:\Windows\System32\WindowsPowerShell\v1.0\"
+if ($psExeDir) { $sandboxPath = "$psExeDir;$sandboxPath" }
+$env:PATH = $sandboxPath
 $env:MOCK_GEMINI_LOG = Join-Path $scriptDir "invoke_$(Get-Random).log"
 $spawnLog = Join-Path $scriptDir "spawn_$(Get-Random).log"
 
@@ -28,7 +41,8 @@ function Assert-Equal($expected, $actual, $message) {
         Write-Host "[FAIL] $message" -ForegroundColor Red
         Write-Host "  Expected: '$expected'" -ForegroundColor Red
         Write-Host "  Actual:   '$actual'" -ForegroundColor Red
-        if (Test-Path $spawnLog) { Write-Host "--- SPAWN LOG ---"; Get-Content $spawnLog }
+        if (Test-Path $spawnLog) { Write-Host "--- SPAWN STDOUT ---"; Get-Content $spawnLog }
+        if (Test-Path "$spawnLog.err") { Write-Host "--- SPAWN STDERR ---" -ForegroundColor Yellow; Get-Content "$spawnLog.err" }
         exit 1
     } else {
         Write-Host "[PASS] $message" -ForegroundColor Green
@@ -48,7 +62,7 @@ function Run-Agent([string]$prompt, [string[]]$extraArgs) {
         $baseArgs += $extraArgs
     }
     
-    $proc = Start-Process -FilePath "powershell.exe" -ArgumentList $baseArgs -RedirectStandardOutput "$spawnLog" -RedirectStandardError "$spawnLog.err" -PassThru -Wait
+    $proc = Start-Process -FilePath $psExe -ArgumentList $baseArgs -RedirectStandardOutput "$spawnLog" -RedirectStandardError "$spawnLog.err" -PassThru -Wait
     return $proc
 }
 

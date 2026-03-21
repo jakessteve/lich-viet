@@ -224,19 +224,20 @@ $header = "=== Spawn Agent: $AgentUpper ===`n"
 $header += "Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')`n"
 $header += "Mode: $modeDisplay`n"
 $header += "Timeout: $timeoutDisplay`n"
-$header += "Prompt preview: $($Prompt.Substring(0, [Math]::Min(200, $Prompt.Length)))...`n"
+$promptPreview = ($Prompt -replace '[\r\n]+', ' ')
+$header += "Prompt preview: $($promptPreview.Substring(0, [Math]::Min(200, $promptPreview.Length)))...`n"
 $header += "================================`n`n"
 $header | Tee-Object -FilePath $OutputFile
 
 $ExitCode = 1
 
 try {
-    $tempId = [guid]::NewGuid().ToString().Substring(0, 8)
-    $argsXml = "$TasksDir\temp_args_$tempId.xml"
-    $runnerPs1 = "$TasksDir\temp_runner_$tempId.ps1"
-    $promptFile = "$TasksDir\temp_prompt_$tempId.txt"
-    $tmpOut = "$TasksDir\temp_out_$tempId.log"
-    $tmpErr = "$TasksDir\temp_err_$tempId.log"
+    $runTempId = [guid]::NewGuid().ToString().Substring(0, 8)
+    $argsXml = "$TasksDir\temp_args_$runTempId.xml"
+    $runnerPs1 = "$TasksDir\temp_runner_$runTempId.ps1"
+    $promptFile = "$TasksDir\temp_prompt_$runTempId.txt"
+    $tmpOut = "$TasksDir\temp_out_$runTempId.log"
+    $tmpErr = "$TasksDir\temp_err_$runTempId.log"
     
     $cmdArgs | Export-Clixml -Path $argsXml
     $agentCmd = Get-Command $Agent
@@ -265,6 +266,11 @@ try {
         $runnerScript += "`nRemove-Item -LiteralPath '$promptFileEscaped' -Force -ErrorAction SilentlyContinue"
         $runnerScript += "`nRemove-Item -LiteralPath '$($runnerPs1 -replace "'", "''")' -Force -ErrorAction SilentlyContinue"
     }
+
+    # Note: $LASTEXITCODE is only set by native executables, not by PS scripts called
+    # via &. When the agent is a .ps1 script (e.g. in tests), $LASTEXITCODE may be
+    # $null or stale. Default to 0 (success) in that case.
+    $runnerScript += "`nexit (& { if (`$LASTEXITCODE) { `$LASTEXITCODE } else { 0 } })"
 
     Set-Content -LiteralPath $runnerPs1 -Value $runnerScript
 
@@ -313,11 +319,13 @@ try {
                 $ExitCode = 124
                 Write-Host "`n⏰ $AgentUpper agent timed out after ${Timeout}s"
             } else {
-                $ExitCode = $proc.ExitCode
+                $ExitCode = if ($null -ne $proc.ExitCode) { $proc.ExitCode } else { 1 }
             }
         } else {
-            $proc.WaitForExit()
-            $ExitCode = $proc.ExitCode
+            # Use Wait-Process instead of $proc.WaitForExit() to avoid PS 5.1 bug
+            # where WaitForExit() leaves ExitCode as $null for fast-exiting processes
+            $proc | Wait-Process
+            $ExitCode = if ($null -ne $proc.ExitCode) { $proc.ExitCode } else { 1 }
         }
 
         $agentOutput = if (Test-Path $tmpOut) { Get-Content -Raw $tmpOut } else { "" }
@@ -343,6 +351,11 @@ try {
         } elseif (($ExitCode -eq 0 -or $null -eq $ExitCode) -and ($agentOutput -match '(?m)^\[ERROR\]' -or $errOutput -match '(?m)^\[ERROR\]')) {
             Write-Host "`n[WARN] ExitCode 0 but log contains [ERROR]. Overriding ExitCode to 1." -ForegroundColor Yellow
             $ExitCode = 1
+        } elseif ($ExitCode -ne 0 -and [string]::IsNullOrWhiteSpace($agentOutput) -and $attempt -lt $maxAttempts) {
+            Write-Host "`n[WARN] Agent process failed with no output (exit code: $ExitCode). Retrying..." -ForegroundColor Yellow
+            Start-Sleep -Seconds (5 * $attempt)
+            $attempt++
+            continue
         }
 
         $success = $true
@@ -354,7 +367,7 @@ try {
 } finally {
     if (-not $Async) {
         if (Test-Path -LiteralPath $argsXml) { Remove-Item -LiteralPath $argsXml -Force -ErrorAction SilentlyContinue }
-        # if (Test-Path -LiteralPath $runnerPs1) { Remove-Item -LiteralPath $runnerPs1 -Force -ErrorAction SilentlyContinue }
+        if (Test-Path -LiteralPath $runnerPs1) { Remove-Item -LiteralPath $runnerPs1 -Force -ErrorAction SilentlyContinue }
         if (Test-Path -LiteralPath $promptFile) { Remove-Item -LiteralPath $promptFile -Force -ErrorAction SilentlyContinue }
         if (Test-Path -LiteralPath $tmpOut) { Remove-Item -LiteralPath $tmpOut -Force -ErrorAction SilentlyContinue }
         if (Test-Path -LiteralPath $tmpErr) { Remove-Item -LiteralPath $tmpErr -Force -ErrorAction SilentlyContinue }
@@ -373,7 +386,7 @@ if (Test-Path -LiteralPath $BenchmarkFile) {
         $StatusEmoji = switch ($ExitCode) { 0 { "✅" } 124 { "⏰" } default { "❌" } }
         $TaskName = if ($File) { [System.IO.Path]::GetFileNameWithoutExtension($File) } else { "inline" }
         $BenchLine = "| $(Get-Date -Format 'yyyy-MM-dd') | $TaskName | $AgentUpper | $modeDisplay | ${PromptLen} chars | ${Duration}s | $timeoutDisplay | $ExitCode | $StatusEmoji |"
-        Add-Content -Path $BenchmarkFile -Value $BenchLine
+        [System.IO.File]::AppendAllText($BenchmarkFile, "$BenchLine`n", [System.Text.UTF8Encoding]::new($false))
         Write-Host "[BENCH] Benchmark logged to $BenchmarkFile"
     } catch {
     }

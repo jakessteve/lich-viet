@@ -78,7 +78,7 @@ If failed, do NOT re-spawn with the same prompt. Fix the prompt or do the work v
 ---
 
 ## Constraints
-- Max 2 concurrent workers (even with Ultra tier, be conservative initially)
+- Max 2 concurrent workers for single-task delegation (for swarm workflows, see `spawn-base-template.md` which allows up to 4)
 - CLI workers count toward `execution-protocol.md §8` limits
 - Never chain spawns: Review output A → decide → then spawn B if needed
 - Add `.agent/spawn_agent_tasks/` to `.gitignore`
