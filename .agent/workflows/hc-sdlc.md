@@ -19,7 +19,9 @@ Execute sequentially, DO NOT skip steps:
 ## SPARC: Specification (SDLC: Planning + Analysis) — `GEMINI-H/Plan`
 
 1. **[RESEARCH]:** Assume **@ba persona** → read `.agent/roles/@ba.md` → investigate the domain using `search_web`, `context7`, `view_file` → write `docs/biz/PRODUCT_BRIEF.md`. Use research-analysis skill.
-2. **[REQUIREMENTS]:** Switch to **@pm persona** → read the brief → write `docs/biz/PRD.md`, define acceptance criteria, break scope into stories in `.hc/stories/`.
+2. **[SPECIFY]:** As **@ba** → use `.agent/templates/feature-spec-template.md` to write the feature spec. Focus on WHAT/WHY, not HOW. Mark ALL ambiguities with `[NEEDS CLARIFICATION: question]`.
+3. **[CLARIFY] (MANDATORY):** As **@ba** → invoke `requirement-interviewer` skill → walk through all `[NEEDS CLARIFICATION]` markers. Ask user max 5 questions at a time. Repeat until ZERO markers remain. Update spec with answers.
+4. **[REQUIREMENTS]:** Switch to **@pm persona** → read the spec → write `docs/biz/PRD.md`, define acceptance criteria, break scope into stories in `.hc/stories/`.
 
 ### ⇄ Model Handoff Gate: S → P (GEMINI → OPUS)
 > If the current session is on **Gemini** (ideal for Specification research), the **Pseudocode** phase benefits from **Opus-level reasoning**. Run `model-selector` Step 5. If a handoff is warranted, execute `/handoff` workflow and instruct the user to switch to Opus for the next phase. If already on Opus, skip this gate.
@@ -35,11 +37,12 @@ Execute sequentially, DO NOT skip steps:
 
 ## Security Gate (Waterfall Gate #1) — `SONNET/Fast`
 
-6. **[SECURITY REVIEW]:** Assume **@devops persona** → read `.agent/roles/@devops.md` → review architecture, API contracts, and pseudocode for security concerns. Run security-audit skill.
-7. **[APPROVAL]:** Switch to **@pm persona** → Pause. Ask User: "SOT is prepared (Brief → PRD → Pseudocode → Architecture → Wireframes → Security). Type 'Approve' to start coding."
+8. **[SECURITY REVIEW]:** Assume **@devops persona** → read `.agent/roles/@devops.md` → review architecture, API contracts, and pseudocode for security concerns. Run security-audit skill.
+9. **[CONSISTENCY CHECK]:** Switch to **@pm persona** → run `/consistency-check` workflow to validate spec ↔ plan ↔ tasks alignment. If verdict is NEEDS WORK, fix before proceeding.
+10. **[APPROVAL]:** As **@pm** → Pause. Ask User: "SOT is prepared (Spec → Brief → PRD → Pseudocode → Architecture → Wireframes → Security → Consistency Check). Type 'Approve' to start coding."
 
 ### ⇄ Model Handoff Gate: A → R (Planning → Coding)
-> After user approval, run `model-selector` Step 5 to evaluate whether the **Refinement** phase should run on a different model (e.g., switch from `OPUS/Plan` to `GEMINI-H/Plan` for large implementations). Consult `model-routing.md` Handoff Boundaries. If >5 files are involved and current model is Opus, consider handoff to Gemini for speed. Execute `/handoff` if warranted.
+> After user approval, run `model-selector` Step 5 to evaluate whether the **Refinement** phase should run on a different model (e.g., switch from `OPUS/Plan` to `GEMINI-H/Plan` for large implementations). Consult `routing.md` Handoff Boundaries. If >5 files are involved and current model is Opus, consider handoff to Gemini for speed. Execute `/handoff` if warranted.
 
 ## SPARC: Refinement — TDD Loop (SDLC: Implementation + Testing) — `SONNET/Fast`
 

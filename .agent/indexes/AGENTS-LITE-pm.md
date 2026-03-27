@@ -16,8 +16,8 @@
 
 ## Essential Rules
 - `execution-protocol`: SPARC, tiered verification gate
-- `anti-patterns-swarm`: Swarm clash prevention
-- `model-routing`: Task→model matrix
-- `decision-routing`: Task classification
+- `anti-patterns`: Swarm clash prevention
+- `routing`: Task→model matrix
+- `routing`: Task classification
 
 *(Use `view_file .agent/skills/{skill-name}/SKILL.md` to load skills).*

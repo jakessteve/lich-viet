@@ -11,7 +11,7 @@ description: Context audit and token-burn mitigation workflow. Use when approach
 ## Pipeline Steps
 
 ### 1. Check Usage Estimates
-1. Consult `.agent/rules/decision-routing.md` to identify the current task's complexity tier and its associated token limit.
+1. Consult `.agent/rules/routing.md` to identify the current task's complexity tier and its associated token limit.
 2. Estimate the current prompt length based on recently read files, extensive conversation history, or loaded large artifacts.
 
 ### 2. Context Trimming (First Resort)

@@ -24,6 +24,6 @@ Mandatory procedure to keep workspace pristine. Triggered after each phase/epic.
    - If any log is missing, halt and request the responsible agent to write it NOW.
 7. **[LESSONS HARVESTING]:** Extract key technical and process learnings from this phase into `.hc/knowledge/` or update existing standalone documentation in `docs/knowledge/` to ensure persistent Knowledge Items (KIs) are up to date.
 8. **[RETROSPECTIVE]:** Trigger Workflow `/retrospective` for post-phase reflection and self-improvement analysis.
-9. **[CONTEXT FLUSH]:** Force the system to run Rule `anti-patterns-core.md` (Clear Context).
+9. **[CONTEXT FLUSH]:** Force the system to run Rule `anti-patterns.md` (Clear Context).
 
 Report: "Phase closed. Workspace clean, SOT synced, security scanned, retrospective complete."

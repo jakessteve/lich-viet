@@ -109,7 +109,7 @@ This guide is the foundation. Specific skills add domain-specific rules:
 | `content-marketing` | Content pipeline, distribution checklists |
 | `seo-copywriting` | SEO structure, CRO microcopy, keyword integration |
 | `content-strategy` | Editorial calendar, content audit methodology |
-| `postmortem-writing` | Incident documentation, blameless language |
+| `devops-operations` | Incident documentation, blameless language |
 | `research-analysis` | Source citation, confidence scoring, serendipity logs |
 
 ---

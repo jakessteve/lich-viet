@@ -15,7 +15,7 @@ description: Structured Analysis Frameworks — MECE decomposition, Issue Trees,
 - **Weighted Matrix:** Choosing between 3+ competing options with multiple criteria.
 
 ## When to SKIP
-- Trivial or Small tasks (see `decision-routing.md`).
+- Trivial or Small tasks (see `routing.md`).
 - Only 1-2 obvious options → use `critical-thinking-models` quick gate instead.
 - Already classified as Cynefin **Clear** → just execute.
 

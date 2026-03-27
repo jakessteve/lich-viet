@@ -65,6 +65,11 @@ coverage/
 .agent/spawn_agent_tasks/temp_runner_*.ps1
 .agent/spawn_agent_tasks/huge_prompt.txt
 
+# Kickstart scripts (auto-generated from .agent/scripts/ by spawn-agent.ps1)
+pm.cmd
+pm.ps1
+pm.sh
+
 # HC runtime artifacts
 .hc/debug/
 .hc/perf-audit/

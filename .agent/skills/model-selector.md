@@ -1,5 +1,5 @@
 ---
-description: Model Selector — analyzes task characteristics to recommend the optimal AI model and mode per Rule model-routing.md
+description: Model Selector — analyzes task characteristics to recommend the optimal AI model and mode per Rule routing.md
 ---
 
 # SKILL: MODEL SELECTOR
@@ -63,7 +63,7 @@ Include in the task routing output:
 After outputting the recommendation, check if a **model handoff** is warranted:
 
 1. Compare the recommended model's **category** to the current session model.
-2. Consult Rule `model-routing.md` Handoff Boundaries matrix.
+2. Consult Rule `routing.md` Handoff Boundaries matrix.
 3. If a handoff IS warranted:
  - Output the actionable switch instruction (see format below)
  - Trigger `/handoff` workflow per `@pm.md` §3.10

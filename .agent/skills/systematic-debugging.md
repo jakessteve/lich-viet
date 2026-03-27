@@ -45,7 +45,7 @@ When @dev or @qc encounters a bug, failing test, or unexpected behavior. **NEVER
  - **H2 (Alternative):** Different approach to the same root cause. Confidence: [0-100]%
  - **H3 (Lateral):** Fix assuming the root cause in Phase 2 was wrong. Confidence: [0-100]%
 
-2. **Rank by confidence** (Rule `decision-routing.md`):
+2. **Rank by confidence** (Rule `routing.md`):
  - Use evidence from Phase 1-2 to assign honest confidence scores.
  - Do NOT inflate scores to avoid branching.
 

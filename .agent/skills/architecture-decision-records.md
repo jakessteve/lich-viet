@@ -13,7 +13,7 @@ description: Architecture Decision Records - structured ADR template with tracea
 - Deciding on a design pattern or architecture style.
 - Making trade-offs between competing approaches.
 - Changing or superseding an existing architectural decision.
-- When `decision-routing.md` score is < 85 on an architectural choice (document the reasoning).
+- When `routing.md` score is < 85 on an architectural choice (document the reasoning).
 
 ---
 
@@ -48,7 +48,7 @@ Use `research-analysis` skill to evaluate at least 2 alternatives with evidence.
 **Date:** YYYY-MM-DD
 **Status:** Proposed | Accepted | Deprecated | Superseded by ADR-XXX
 **Deciders:** [@sa, @dev, @pm]
-**Confidence:** [0-100] (Rule `decision-routing.md`)
+**Confidence:** [0-100] (Rule `routing.md`)
 
 ## Context
 [What is the situation? What problem are we solving? Why do we need to decide now?]

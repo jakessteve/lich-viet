@@ -106,7 +106,7 @@ Save to `.hc/logs/conflicts/[date]-[slug].md`.
 Two agents produced solutions for the same problem because their scopes overlapped.
 
 **Prevention (Pre-Wave):**
-- @pm uses the File Ownership Map (`anti-patterns-swarm.md` §7.1) to assign clear boundaries.
+- @pm uses the File Ownership Map (`anti-patterns.md` §7.1) to assign clear boundaries.
 - If two agents' skills overlap for a sub-task → @pm picks ONE owner, the other is "Reviewer" (read-only + feedback).
 
 **Resolution (Post-Collision):**

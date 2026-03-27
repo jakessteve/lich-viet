@@ -130,6 +130,6 @@ After parallel workers complete:
 
 ## 6. Integration
 - Spawn limits: `execution-protocol.md` Section 6 (max depth=2, max agents=5)
-- File ownership: `anti-patterns-swarm.md` Section 7.1
+- File ownership: `anti-patterns.md` Section 7.1
 - Safety: Commit your work (`git commit`) before spawn, review via `git diff` after
 - Validation: `spawn-governance.md` checks before spawning

@@ -161,7 +161,7 @@ jobs:
 4. [ ] Verify service restored (health checks, smoke tests)
 5. [ ] Notify @pm and @dev of rollback with incident details
 6. [ ] Create bug report in `.hc/bugs/`
-7. [ ] Schedule postmortem (skill `postmortem-writing`)
+7. [ ] Schedule postmortem (skill `devops-operations`)
 ```
 
 ## Pipeline Optimization

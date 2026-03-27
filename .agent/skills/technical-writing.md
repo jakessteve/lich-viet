@@ -97,7 +97,7 @@ People scan documents, they don't read them linearly:
 ```markdown
 # Research: [Topic]
 **Date:** YYYY-MM-DD | **Author:** @ba
-**Confidence:** [0-100] (Rule `decision-routing.md`)
+**Confidence:** [0-100] (Rule `routing.md`)
 
 ## Executive Summary
 [Key findings in 2-3 sentences]

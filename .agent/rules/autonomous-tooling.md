@@ -50,7 +50,7 @@ If you are unsure about ANYTHING:
 1. **Search first** — search_web, context7, or grep
 2. **Read the source** — actual files, not assumptions
 3. **Verify** — run the code to confirm your understanding
-4. **Never guess** — Rule `anti-patterns-core.md` applies
+4. **Never guess** — Rule `anti-patterns.md` applies
 
 ---
 

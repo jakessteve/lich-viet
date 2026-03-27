@@ -37,7 +37,7 @@ Evaluate which model(s) fit the product:
 ```markdown
 ## Pricing Analysis — [Product/Feature]
 **Date:** YYYY-MM-DD | **Author:** @biz
-**Confidence:** [0-100] (Rule `decision-routing.md`)
+**Confidence:** [0-100] (Rule `routing.md`)
 
 ### Competitor Pricing
 | Competitor | Model | Free Tier | Paid Price | Key Paid Features |
@@ -102,7 +102,7 @@ Never launch pricing blind. Test first:
 - **Price based on value, not cost.** Users pay for outcomes, not features.
 - **Test before committing.** Every pricing change should be A/B tested if possible.
 - **Monitor cannibalization.** If the free tier is too generous, paid conversion drops.
-- **Include confidence scores** (Rule `decision-routing.md`) on all pricing recommendations.
+- **Include confidence scores** (Rule `routing.md`) on all pricing recommendations.
 
 ## File Management
 - Pricing analyses → `.hc/business/financials/pricing/`

@@ -60,7 +60,7 @@ Before writing code:
 1. Check `docs/` reference files for domain rules.
 2. Check `src/data/` lookup tables for correctness.
 3. Cross-reference with existing engine implementations.
-4. If the hypothesis contradicts a trusted source, **the source wins** (Rule `anti-patterns-core.md`).
+4. If the hypothesis contradicts a trusted source, **the source wins** (Rule `anti-patterns.md`).
 
 ### Step 5: Implement Only After Verification
 - Write code ONLY after the thinking chain confirms a validated approach.
@@ -83,7 +83,7 @@ These types of computations REQUIRE sequential thinking before implementation:
 
 ## Integration with Confidence Routing
 After completing sequential thinking:
-- Include a **confidence score** (Rule `decision-routing.md`) in the final thought.
+- Include a **confidence score** (Rule `routing.md`) in the final thought.
 - If confidence < 60%, re-enter thinking or escalate to @pm.
 - Document the verified approach before proceeding to implementation.
 

@@ -15,7 +15,7 @@
 *(See full `AGENTS.md` for @biz, @ba, @devops, @designer, @user-tester, @whitehat-hacker if needed).*
 
 ## Essential Rules (`.agent/rules/`)
-- `anti-patterns-core`: No hallucination, context overflow, source trust
+- `anti-patterns`: No hallucination, context overflow, source trust
 - `execution-protocol`: SPARC, tiered verification gate
 - `code-standards`: DRY, no `any`, 80% coverage
 - `security-standards`: Zero hardcoded secrets

@@ -37,7 +37,7 @@ Execute sequentially:
  - Security concern → @devops updates `.hc/security/`
  - Skip this step if discussion was purely exploratory.
 
-8. **[EXIT]:** User types "exit"/"done", OR @pm detects natural conclusion. Apply Rule `anti-patterns-core.md` §3 (anti-context-overflow) to clear session context.
+8. **[EXIT]:** User types "exit"/"done", OR @pm detects natural conclusion. Apply Rule `anti-patterns.md` §3 (anti-context-overflow) to clear session context.
 
 ---
 

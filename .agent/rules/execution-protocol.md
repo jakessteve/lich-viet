@@ -39,7 +39,7 @@ Detect project type from config files (`package.json`, `tsconfig.json`, `CMakeLi
 
 ## 3. Verification Gate (Tiered)
 
-Match verification tier to task complexity. **Consult `decision-routing.md` Section 1 for the unified task complexity and verification table.**
+Match verification tier to task complexity. **Consult `routing.md` Section 1 for the unified task complexity and verification table.**
 
 ### Standard Steps (Medium+)
 1. Tests pass (`npm test`), lint passes (`npm run lint`), tsc clean (`npx tsc --noEmit`)
@@ -56,7 +56,7 @@ Match verification tier to task complexity. **Consult `decision-routing.md` Sect
 
 ## 4. Iteration Budget
 
-Every task has a max tool-call budget. **Consult `decision-routing.md` Section 1 for the unified tool budget table.**
+Every task has a max tool-call budget. **Consult `routing.md` Section 1 for the unified tool budget table.**
 
 **At checkpoint (75% of budget):** Summarize progress, assess remaining work vs budget. If >50% work remains with <25% budget → trigger Context Reset (`context-budget.md` Section 4).
 
@@ -78,10 +78,10 @@ Team-mode (party/swarm): Use `🎯 **@pm:**` emoji-prefixed format. Max 3 discus
 
 ## 6. Parallel Resource Limits
 
-- Max **4 parallel agent threads** (hard limit per wave).
-- **Sequential Wave Batching:** If a task requires >4 agents (e.g., `/spawn-research` with 6 tracks), SPLIT into 2-3 batches.
-  - Run Batch 1 -> Summarize Results -> Flush Context.
-  - Run Batch 2 with only the summary from Batch 1 as context.
+- Max **2 parallel agent threads** (hard limit per wave) for Gemini CLI agents. Other CLIs (Claude, Codex) may use up to 4 if their rate limits permit.
+- **Sequential Wave Batching:** If a task requires >2 tracks, SPLIT into waves of 2.
+  - Run Wave 1 (2 workers) -> Wait for completion -> **30s cool-down** -> Run Wave 2.
+  - Summarize Results after each wave -> Flush Context.
 - Queue additional work if capacity reached.
 
 ---
@@ -95,7 +95,7 @@ When an agent is stuck: **Detect** (3x expected time or anti-loop trigger) → *
 ## 8. Sub-Agent Spawn Limits
 
 - **Max spawn depth:** 2 levels (orchestrator → agent → sub-task).
-- **Max total active agents per task:** 5.
+- **Max total active agents per task:** 3 (1 orchestrator + 2 workers).
 - **Max sequential delegations without execution:** 3 → HALT.
 
 ### CLI Worker Rules (Gemini CLI via spawn-agent)
@@ -111,7 +111,7 @@ When an agent is stuck: **Detect** (3x expected time or anti-loop trigger) → *
 
 ## 9. Coordination Model
 
-**Consult `decision-routing.md` Section 1** to determine the appropriate Delegation Mode based on the task classification.
+**Consult `routing.md` Section 1** to determine the appropriate Delegation Mode based on the task classification.
 
 > **Analysis/review tasks** touching zero files but requiring 3+ perspectives are effectively Large+. Route through Mandatory Spawn Gate.
 

@@ -29,17 +29,17 @@ You are developing a web application as directed by the project owner.
 4. **No Hardcoded Values:** Colors from theme tokens, strings from constants, calculations from utility functions.
 5. **Security:** No hardcoded API keys. Validate all user inputs. Sanitize displayed data from external sources.
 6. **Linting:** Run linter before considering work complete.
-7. **Token Discipline:** No decorative emojis/icons in rules, skills, workflows, or agent output. Icons are ONLY for rendered UI components. See `anti-patterns-core.md` §11.
+7. **Token Discipline:** No decorative emojis/icons in rules, skills, workflows, or agent output. Icons are ONLY for rendered UI components. See `anti-patterns.md` §11.
 
 ## Agent Framework
 
 This project uses a multi-agent development framework. Read `AGENTS.md` for the full index of roles, rules, skills, guidelines, and workflows.
 
 - **Roles:** `.agent/roles/` — Agent personas (@pm, @dev, @qc, @biz, etc.)
-- **Rules:** `.agent/rules/` — Always-on constraints and policies
-- **Guidelines:** `.agent/guidelines/` — Context-triggered best practices (not enforced per-task)
-- **Skills:** `.agent/skills/` — Specialized capabilities (lazy-loaded via manifest)
-- **Workflows:** `.agent/workflows/` — Step-by-step pipelines (lazy-loaded via manifest)
+- **Rules:** `.agent/rules/` — Always-on constraints and policies (26 files). Key universals: `anti-patterns`, `execution-protocol`, `engineering-mindset`, `security-standards`, `code-standards`, `context-budget`. Role-scoped: `backend-standards` (@dev-be), `performance-budget` (@dev-fe), `spawn-governance` (swarm). Run `list_dir .agent/rules` for full list.
+- **Guidelines:** `.agent/guidelines/` — Context-triggered best practices (4 files: `investor-metrics`, `gtm-readiness`, `observability-standards`, `dependency-policy`)
+- **Skills:** `.agent/skills/` — Specialized capabilities (lazy-loaded). Run `list_dir .agent/skills` to discover.
+- **Workflows:** `.agent/workflows/` — Step-by-step pipelines (lazy-loaded). Run `list_dir .agent/workflows` to discover.
 
 ## Conversation Entry Protocol (MANDATORY)
 
@@ -50,7 +50,7 @@ This project uses a multi-agent development framework. Read `AGENTS.md` for the 
 
 1. **Start as @pm** — you are the orchestrator first, always.
 2. **Estimate file count** — how many files will this task likely touch? Use `grep_search` or `find_by_name` if uncertain.
-3. **Run the Mandatory Spawn Gate** (`@pm.md` §3.1.8) — classify by `decision-routing.md` and route accordingly:
+3. **Run the Mandatory Spawn Gate** (`@pm.md` §3.1.8) — classify by `routing.md` and route accordingly:
    - **≤3 files, single domain** → persona-switch to @dev-fe or @dev-be (fast-path allowed)
    - **4-6 files, pattern-following** → lightweight CLI delegation
    - **7-10 files** → CLI workers preferred (exemptions: complex deps, interactive mid-task)
@@ -71,7 +71,7 @@ This project uses a multi-agent development framework. Read `AGENTS.md` for the 
 
 ### Rules Loading
 1. Read `.agent/rules/MANIFEST.md` to find rules for your role.
-2. Always load universal rules (anti-patterns-core, engineering-mindset).
+2. Always load universal rules (anti-patterns, engineering-mindset).
 3. Load only your role's scoped rules — do NOT load all 26 rule files.
 4. Observe `.agent/rules/context-budget.md` limits at all times.
 

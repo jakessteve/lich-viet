@@ -92,7 +92,7 @@ Simple --------+---------- Feature-Rich
 
 ```markdown
 ## Competitive Analysis Summary — YYYY-MM-DD
-**Confidence:** [0-100] (Rule `decision-routing.md`)
+**Confidence:** [0-100] (Rule `routing.md`)
 
 ### Our Competitive Advantages
 1. **[Advantage 1]:** [Why this matters to users — quantify if possible]
@@ -120,5 +120,5 @@ Output a `.hc/research/competitive-landscape-YYYY-MM-DD.md` report following the
 - **Use public information only** — no reverse engineering, no ToS violations.
 - **Verify claims from at least 2 sources** — don't trust a single review.
 - **Update quarterly** or before major strategy shifts.
-- **Include confidence scores** (Rule `decision-routing.md`) on key assessments.
+- **Include confidence scores** (Rule `routing.md`) on key assessments.
 - **Be honest about weaknesses** — a competitive analysis that says "we're best at everything" is worthless.

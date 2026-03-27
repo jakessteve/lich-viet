@@ -16,6 +16,18 @@ Structured 3-step pipeline for implementing a new feature module end-to-end.
 
 ## Steps
 
+### Step 0 — Feature Scaffolding (NEW)
+1. **Detect next feature number:** Scan `.hc/specs/` for existing `NNN-*` directories. Next = highest + 1 (zero-padded to 3 digits).
+2. **Create feature branch:** `git checkout -b NNN-[feature-slug]` from the current branch.
+3. **Create spec directory:** `.hc/specs/NNN-[feature-slug]/`
+4. **Copy templates:**
+   - `.agent/templates/feature-spec-template.md` → `.hc/specs/NNN-[feature-slug]/spec.md`
+   - `.agent/templates/implementation-plan-template.md` → `.hc/specs/NNN-[feature-slug]/plan.md`
+   - `.agent/templates/task-breakdown-template.md` → `.hc/specs/NNN-[feature-slug]/tasks.md`
+5. Fill in `[FEATURE_NAME]`, `[DATE]`, and `[NNN]-[feature-slug]` placeholders in all copied files.
+
+> If the project does not use git branches for features, skip steps 2 and use `.hc/specs/` directly.
+
 ### Step 1 — Define Types & Models
 1. Read the user story and API contracts.
 2. Define TypeScript interfaces and types for:

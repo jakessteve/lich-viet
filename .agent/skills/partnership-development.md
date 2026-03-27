@@ -37,7 +37,7 @@ Score potential partners before pursuing:
 ```markdown
 ## Partner Evaluation — [Partner Name]
 **Date:** YYYY-MM-DD | **Evaluator:** @biz
-**Confidence:** [0-100] (Rule `decision-routing.md`)
+**Confidence:** [0-100] (Rule `routing.md`)
 
 | Criterion | Score (1-10) | Notes |
 |---|---|---|

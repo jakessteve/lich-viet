@@ -140,16 +140,16 @@ Add to the research report (Step 4):
 | 1 | [What was discovered] | [Which step/source] | High/Med/Low | Yes/No | [Brief outcome or "Not pursued — logged for future"] |
 ```
 
-### Confidence Integration (Rule `decision-routing.md`)
+### Confidence Integration (Rule `routing.md`)
 - If a tangent discovery **changes the primary recommendation**, flag the finding with a confidence score.
 - If the tangent **contradicts** the current best finding, the overall research confidence score drops until the contradiction is resolved.
 
 ---
 
 ## Rules
-- **Never fabricate sources.** Rule `anti-patterns-core.md` applies.
+- **Never fabricate sources.** Rule `anti-patterns.md` applies.
 - **Cite everything.** Every fact needs a source.
 - **Flag uncertainty.** "I don't know" > "I think..."
 - **Time-box research.** Max 5-7 search queries per topic (excluding serendipity tangents) to avoid rabbit holes.
 - **Deliver actionable output.** Research without recommendations is incomplete.
-- **Log tangents.** Even unused tangent discoveries go in the Serendipity Log (Rule `decision-routing.md`).
+- **Log tangents.** Even unused tangent discoveries go in the Serendipity Log (Rule `routing.md`).

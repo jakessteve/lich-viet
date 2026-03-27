@@ -8,7 +8,7 @@ Triggered when a complex task requires the full agent pipeline to execute in coo
 
 ## Prerequisites
 - Clear task description from User
-- Rule `anti-patterns-swarm.md` §3 (anti-context-overflow) activated
+- Rule `anti-patterns.md` §3 (anti-context-overflow) activated
 - Max 4 parallel threads enforced
 - **Max 5 total agents per wave** (hard cap per `execution-protocol.md` §6)
 
@@ -22,13 +22,13 @@ Triggered when a complex task requires the full agent pipeline to execute in coo
 4. Create the execution plan with waves.
 
 ### Step 1.5 — Pre-Wave Safety Checks
-Before executing any wave, @pm MUST complete these safety steps (Rule `anti-patterns-swarm.md` §7):
+Before executing any wave, @pm MUST complete these safety steps (Rule `anti-patterns.md` §7):
 
-1. **File Ownership Map:** Assign every file that will be touched to exactly one agent (`anti-patterns-swarm.md` §7.1). No two agents may write to the same file in parallel. **CRITICAL: Warn agents that `multi_replace_file_content` has strict whitespace/line-number sensitivity. Disable auto-formatters during parallel execution to prevent stale context failures.**
-2. **Dependency Graph:** Draw inter-agent dependencies. If cycles exist → break them with stubs/mocks (`anti-patterns-swarm.md` §7.3).
-3. **Priority Assignment:** Label each sub-task P0/P1/P2. Ensure P2 work cannot starve P0/P1 of parallel slots (`anti-patterns-swarm.md` §7.5).
+1. **File Ownership Map:** Assign every file that will be touched to exactly one agent (`anti-patterns.md` §7.1). No two agents may write to the same file in parallel. **CRITICAL: Warn agents that `multi_replace_file_content` has strict whitespace/line-number sensitivity. Disable auto-formatters during parallel execution to prevent stale context failures.**
+2. **Dependency Graph:** Draw inter-agent dependencies. If cycles exist → break them with stubs/mocks (`anti-patterns.md` §7.3).
+3. **Priority Assignment:** Label each sub-task P0/P1/P2. Ensure P2 work cannot starve P0/P1 of parallel slots (`anti-patterns.md` §7.5).
 4. **Scope Boundaries:** For each agent, list exactly which files they MAY write to and which they MAY read only.
-5. **Hallucination Firewall Activation:** Remind all agents that claims received from other agents MUST be verified before use (`anti-patterns-swarm.md` §7.4).
+5. **Hallucination Firewall Activation:** Remind all agents that claims received from other agents MUST be verified before use (`anti-patterns.md` §7.4).
 6. **Task Batching Rule (MANDATORY):** Group related mechanical tasks (e.g., lint fixes, console cleanup, a11y patches) into a single agent prompt instead of spawning one agent per trivial fix. Max **5 agents per wave** (hard cap). If decomposition produces >5 tasks, batch the smallest ones together. Violating this cap is a §8 Swarm Extravagance anti-pattern.
 7. **Context Injection:** All spawned workers MUST receive role-scoped `.agent/indexes/AGENTS-LITE-{role}.md` as their context rulebook (NOT the full `AGENTS.md`). Workers load skills on-demand from `.agent/skills/MANIFEST.md`. See `instructions.md` and `execution-protocol.md` §8.1.
 

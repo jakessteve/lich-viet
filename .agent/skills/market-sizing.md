@@ -73,7 +73,7 @@ Every market sizing MUST include a sanity check:
 ```markdown
 # Market Sizing — [Product/Feature]
 **Date:** YYYY-MM-DD | **Author:** @ba
-**Confidence:** [0-100] (Rule `decision-routing.md`)
+**Confidence:** [0-100] (Rule `routing.md`)
 
 ## TAM: $X (or N users)
 **Method:** [Top-down / Bottom-up / Value theory]
@@ -103,6 +103,6 @@ Every market sizing MUST include a sanity check:
 ## Rules
 - **Always document assumptions** — a number without an assumption is a guess.
 - **Use multiple methods** when possible (top-down + bottom-up should roughly converge).
-- **Include confidence scores** (Rule `decision-routing.md`).
+- **Include confidence scores** (Rule `routing.md`).
 - **Source everything** — "I estimated" is not a source.
 - **Model 3 scenarios** (optimistic, base, pessimistic) for SOM projections.

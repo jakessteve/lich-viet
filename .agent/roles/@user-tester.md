@@ -96,4 +96,4 @@ For every page/feature (using `user-experience-testing` skill):
 Follow Rule `user-feedback-format.md`. Save to `.hc/feedback/user-feedback-YYYY-MM-DD.md`.
 
 ## 10. Anti-Loop
-Follow Rule `anti-patterns-core.md` §2-3. If testing the same page reveals no new insights after **3 passes** → move on.
+Follow Rule `anti-patterns.md` §2-3. If testing the same page reveals no new insights after **3 passes** → move on.

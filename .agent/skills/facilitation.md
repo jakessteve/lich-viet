@@ -119,7 +119,7 @@ When agents cannot reach consensus:
 - **Time-box**: If no new arguments emerge after Round 2, skip to synthesis
 - **Confidence voting**: At synthesis, each agent provides a confidence-weighted vote (see §5.1)
 
-### 5.1 Confidence-Weighted Consensus (Rule `decision-routing.md`)
+### 5.1 Confidence-Weighted Consensus (Rule `routing.md`)
 
 When reaching synthesis, each agent provides their position with a **confidence score**:
 

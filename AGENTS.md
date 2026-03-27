@@ -24,48 +24,6 @@
 | `@user-tester` | User experience testing, UX feedback | `user-experience-testing`, `accessibility-empathy`, `browser-visual-testing` |
 | `@whitehat-hacker` | Offensive security, penetration testing, API security, social engineering | `penetration-testing`, `attack-simulation`, `security-audit`, `api-security-testing`, `social-engineering-testing` |
 
-## Rules (`.agent/rules/`) -- 26 files
+---
 
-| Rule | Scope | Key Constraints |
-|---|---|---|
-| `anti-patterns-core` | All (universal) | No hallucination, 3-strike loop break, context overflow, circuit breaker, plan-then-code bypass, source trust, icon/emoji token discipline |
-| `anti-patterns-swarm` | Swarm/parallel only | Swarm clash prevention, cognitive bias detection, inline execution bias, asset burn guard |
-| `execution-protocol` | All | SOT-driven, SPARC, **tiered verification gate**, iteration budgets, agent coordination, CLI worker governance, commit discipline |
-| `code-standards` | Code | DRY, no `any`, 80% coverage, tiered QC enforcement |
-| `security-standards` | All | Zero hardcoded secrets, shift-left, FOSS-first |
-| `engineering-mindset` | All | MVP-first, mobile-first, ruthless prioritization, **kaizen**, task-aware research time-boxing |
-| `model-routing` | All | Unified model inventory, task→model matrix, SPARC phase mapping, handoff boundaries |
-| `decision-routing` | All | Task classification (Trivial-Epic), confidence scoring (75+ auto-proceed), progress tracking, checkpoint rule |
-| `dialectical-development` | All | **Novelty-based** gate, adversarial scrutiny before/after implementation |
-| `no-code-boundary` | All | Single-LLM code boundary: plan as @pm, code as @dev-fe/@dev-be |
-| `a11y-standards` | UI | WCAG compliance |
-| `agile-user-stories` | PM/BA | User story format |
-| `autonomous-tooling` | All | Tool usage patterns, domain-specific search triggers |
-| `scalable-folder-structure` | SA | File organization |
-| `ui-design-system` | UI | Design token usage |
-| `user-feedback-format` | @user-tester | Standardized feedback report structure |
-| `git-hygiene` | @dev-fe, @dev-be, @devops | Conventional commits, atomic changes, branch naming |
-| `error-handling-standards` | @dev-fe, @dev-be | Structured error types, boundaries, user-facing messages |
-| `api-contract-first` | @sa, @dev-be | Contracts defined before implementation |
-| `performance-budget` | @dev-fe, @designer | Bundle size limits, Core Web Vitals thresholds |
-| `documentation-standards` | All | JSDoc, README, architecture diagram requirements |
-| `spawn-governance` | All | Pre-spawn validation + post-spawn timeout escalation |
-| `context-budget` | All | Per-session context caps, lazy-load accounting, bloat detection |
-| `backend-standards` | `@dev-be`, `@sa`, `@devops` | Sequential mandate, TDD-first gate, edge-case enumeration, security preflight, failure recovery scoping |
-
-## Guidelines (`.agent/guidelines/`) — 4 files (retired from rules)
-
-| Guideline | Scope | Note |
-|---|---|---|
-| `investor-metrics` | PM | KPI tracking — use when needed, not enforced per-task |
-| `gtm-readiness` | PM/BA | GTM checklist — use for launches, not routine changes |
-| `observability-standards` | @devops, @dev-fe/@dev-be | Structured logging — apply on infrastructure tasks |
-| `dependency-policy` | @devops, @dev-fe/@dev-be | Update cadence — apply during dependency upgrades |
-
-## Skills (`.agent/skills/`) -- 78 entries
-
-> Run `list_dir .agent/skills` to discover available skills. Use `view_file .agent/skills/{skill-name}/SKILL.md` to load a skill on-demand.
-
-## Workflows (`.agent/workflows/`) -- 35 active
-
-> Active workflows: Run `view_file .agent/workflows/MANIFEST.md` for the complete catalog.
+> For rules, guidelines, skills, and workflows see `instructions.md` §Context Optimization Protocol. Use `list_dir` and `view_file` on-demand — do NOT pre-load.

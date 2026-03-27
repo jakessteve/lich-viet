@@ -50,7 +50,7 @@ Always model three scenarios:
 ```markdown
 # Financial Projections — [Product/Feature]
 **Date:** YYYY-MM-DD | **Author:** @ba
-**Confidence:** [0-100] (Rule `decision-routing.md`)
+**Confidence:** [0-100] (Rule `routing.md`)
 
 ## Unit Economics
 | Metric | Current | Target |
@@ -101,4 +101,4 @@ Always model three scenarios:
 - **Use industry benchmarks** as sanity checks (SaaS, mobile app, freemium comparables).
 - **Model 3 scenarios** — optimistic alone is investor fiction; pessimistic alone is fear.
 - **Update quarterly** with actual data — projections without actuals drift into fantasy.
-- **Include confidence scores** (Rule `decision-routing.md`) on projections.
+- **Include confidence scores** (Rule `routing.md`) on projections.

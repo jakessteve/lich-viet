@@ -97,7 +97,7 @@ if ([string]::IsNullOrWhiteSpace($Prompt)) {
 
 if ($FreezePath) {
     Write-Host "[FREEZE] Injecting Directory Freezing constraint for: $FreezePath" -ForegroundColor Cyan
-    $freezeInstruction = "`n`n[CRITICAL CONTENTION AVOIDANCE: You are computationally FROZEN to the directory '$FreezePath'. You MUST NOT read, edit, or modify any source files outside this path unless explicitly authorized by @pm. This is a strict framework rule (anti-patterns-core.md Section 9).]"
+    $freezeInstruction = "`n`n[CRITICAL CONTENTION AVOIDANCE: You are computationally FROZEN to the directory '$FreezePath'. You MUST NOT read, edit, or modify any source files outside this path unless explicitly authorized by @pm. This is a strict framework rule (anti-patterns.md Section 9).]"
     $Prompt += $freezeInstruction
 }
 
@@ -286,7 +286,7 @@ try {
     $success = $false
 
     if ($Async) {
-        Start-Sleep -Milliseconds (Get-Random -Minimum 2000 -Maximum 10000)
+        Start-Sleep -Milliseconds (Get-Random -Minimum 10000 -Maximum 20000)
         Start-Process -FilePath $psExe -ArgumentList $procArgs -WindowStyle Hidden
         
         Write-Host ""
@@ -302,7 +302,7 @@ try {
             Write-Host "`n[WARN] Retry attempt $attempt/$maxAttempts triggered for $Agent..." -ForegroundColor Yellow
         }
 
-        Start-Sleep -Milliseconds (Get-Random -Minimum 2000 -Maximum 5000)
+        Start-Sleep -Milliseconds (Get-Random -Minimum 5000 -Maximum 15000)
         
         if (Test-Path $tmpOut) { Remove-Item $tmpOut -Force -ErrorAction SilentlyContinue }
         if (Test-Path $tmpErr) { Remove-Item $tmpErr -Force -ErrorAction SilentlyContinue }
@@ -344,7 +344,7 @@ try {
             Write-Host "`n[ERROR] Gemini API Capacity Exhausted detected! (Code 429)" -ForegroundColor Red
             $ExitCode = 1
             if ($attempt -lt $maxAttempts) {
-                $sleepSeconds = 15 * [math]::Pow(2, $attempt - 1)
+                $sleepSeconds = 30 * [math]::Pow(2, $attempt - 1)
                 Write-Host "Sleeping $sleepSeconds seconds before retry (Exponential Backoff)..." -ForegroundColor Yellow
                 Start-Sleep -Seconds $sleepSeconds
                 $attempt++
@@ -379,7 +379,7 @@ try {
 $footer = "`n================================`nExit code: $ExitCode`nCompleted: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')`n"
 $footer | Tee-Object -FilePath $OutputFile -Append
 
-$BenchmarkFile = Join-Path $projectRoot ".agent\benchmarks\spawn-agent-benchmark.md"
+$BenchmarkFile = Join-Path $projectRoot ".agent\benchmarks\_archive\spawn-agent-benchmark.md"
 if (Test-Path -LiteralPath $BenchmarkFile) {
     try {
         $StartTime = [datetime]::ParseExact($Timestamp, "yyyyMMdd-HHmmss", $null)

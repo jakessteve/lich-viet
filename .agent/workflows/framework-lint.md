@@ -34,7 +34,7 @@ $projectRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
 $liteFiles = Get-ChildItem (Join-Path $projectRoot ".agent\indexes\AGENTS-LITE*.md")
 foreach ($f in $liteFiles) {
     Select-String -Path $f.FullName -Pattern 'anti-patterns[^-]' | ForEach-Object {
-        "STALE LITE: $($f.Name):$($_.LineNumber) - should be anti-patterns-core"
+        "STALE LITE: $($f.Name):$($_.LineNumber) - should be anti-patterns"
     }
 }
 ```
@@ -58,7 +58,7 @@ Write-Host "=== Role files ==="
 Get-ChildItem (Join-Path $projectRoot ".agent\roles\*.md") | ForEach-Object { "$([math]::Round($_.Length/1024,1)) KB  $($_.Name)" } | Sort-Object -Descending
 Write-Host ""
 Write-Host "=== Universal rules ==="
-@("anti-patterns-core.md","engineering-mindset.md","execution-protocol.md") | ForEach-Object {
+@("anti-patterns.md","engineering-mindset.md","execution-protocol.md") | ForEach-Object {
     $p = Join-Path ".agent/rules" $_
     if (Test-Path $p) { "$([math]::Round((Get-Item $p).Length/1024,1)) KB  $_" }
 }
