@@ -104,3 +104,38 @@ At the end of each swarm wave, @pm should estimate:
 - Total wave cost
 
 Compare against the previous wave recorded in `.hc/logs/` and flag if cost increased >20%.
+
+---
+
+## 7. Proactive Context Monitoring
+
+Prevents context rot — the gradual quality degradation as the context window fills.
+
+### 7.1 Mandatory Checkpoints
+
+Every **20 tool calls**, the agent MUST perform a context self-assessment:
+
+1. **Estimate context consumption %** based on: files read, conversation length, rules/skills loaded, artifacts created.
+2. **Log assessment:** `[CONTEXT] ~{X}% consumed after {N} tool calls.`
+3. **If >60%:** Strongly prefer delegating remaining work via `spawn-agent`. Do NOT continue inline for Medium+ tasks.
+4. **If >80%:** Execute Context Reset Protocol (Section 5) immediately. No exceptions.
+
+### 7.2 Degradation Detection Signals
+
+In addition to Section 5 signals, watch for:
+
+- Summarizing information already summarized in this session (redundant compression).
+- Generating code that contradicts earlier output from the same session.
+- Forgetting file paths, function names, or decisions made earlier in the conversation.
+- Asking the user a question that was already answered.
+
+**Any single signal = immediate context audit.** Two or more = mandatory `/token-check`.
+
+### 7.3 Spawn-Agent Offload Protocol
+
+When context hits the 60% threshold during an active task:
+
+1. Save current progress to `.hc/checkpoints/` or `task.md`.
+2. Compose a spawn-agent prompt with the remaining work scope.
+3. Delegate to a fresh worker agent with clean context.
+4. Review the worker output and synthesize results.

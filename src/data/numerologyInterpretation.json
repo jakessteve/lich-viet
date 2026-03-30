@@ -1,0 +1,144 @@
+{
+  "pinnacleInterpretation": {
+    "1": {
+      "theme": "Khởi đầu & Độc lập",
+      "meaning": "Giai đoạn phát triển sự tự lập, tài lãnh đạo. Cần dũng cảm, quyết đoán và tin vào bản thân. Cơ hội để khởi nghiệp hoặc dẫn dắt.",
+      "advice": "Hãy tin vào khả năng của mình, đừng quá phụ thuộc vào người khác."
+    },
+    "2": {
+      "theme": "Hợp tác & Ngoại giao",
+      "meaning": "Thời kỳ cần kiên nhẫn, hợp tác và quan hệ đối tác. Thành công đến qua sự nhẹ nhàng, ngoại giao, không phải sức mạnh.",
+      "advice": "Học cách lắng nghe và nhượng bộ. Đừng cố gắng kiểm soát mọi thứ."
+    },
+    "3": {
+      "theme": "Sáng tạo & Biểu đạt",
+      "meaning": "Giai đoạn tự do biểu đạt bản thân qua nghệ thuật, giao tiếp. Niềm vui và sự lạc quan là nguồn năng lượng chính.",
+      "advice": "Tập trung phát triển kỹ năng sáng tạo. Tránh phung phí năng lượng vào quá nhiều dự án."
+    },
+    "4": {
+      "theme": "Xây dựng & Kỷ luật",
+      "meaning": "Thời kỳ cần lao động chăm chỉ, xây dựng nền tảng vững chắc. Kết quả đến chậm nhưng bền vững.",
+      "advice": "Kiên nhẫn và có hệ thống. Đây không phải lúc để mạo hiểm."
+    },
+    "5": {
+      "theme": "Thay đổi & Tự do",
+      "meaning": "Giai đoạn biến đổi lớn, nhiều trải nghiệm mới. Du lịch, thay đổi công việc, hoặc lối sống mới. Cần linh hoạt thích nghi.",
+      "advice": "Đón nhận thay đổi thay vì chống lại. Nhưng cần kỷ luật bản thân."
+    },
+    "6": {
+      "theme": "Gia đình & Trách nhiệm",
+      "meaning": "Thời kỳ tập trung vào gia đình, cộng đồng, và trách nhiệm. Hôn nhân, con cái, hoặc chăm sóc người thân chiếm ưu tiên.",
+      "advice": "Chấp nhận trách nhiệm với tình yêu thương. Đừng trốn tránh nghĩa vụ."
+    },
+    "7": {
+      "theme": "Tâm linh & Chiêm nghiệm",
+      "meaning": "Giai đoạn hướng nội, tìm hiểu bản thân, và phát triển trí tuệ. Nghiên cứu, thiền định, học hỏi kiến thức sâu.",
+      "advice": "Dành thời gian một mình để suy ngẫm. Đừng cố ép bản thân phải xã giao."
+    },
+    "8": {
+      "theme": "Quyền lực & Thành tựu",
+      "meaning": "Thời kỳ đạt được thành tựu vật chất, quyền lực, địa vị. Kinh doanh thuận lợi. Nhận được phần thưởng xứng đáng.",
+      "advice": "Sử dụng quyền lực và tiền bạc một cách trách nhiệm. Đừng quên đạo đức."
+    },
+    "9": {
+      "theme": "Hoàn thiện & Phụng sự",
+      "meaning": "Giai đoạn phục vụ cộng đồng, hoàn thiện bản thân. Có tầm ảnh hưởng rộng. Buông bỏ cái tôi để đạt sự viên mãn.",
+      "advice": "Cho đi nhiều hơn nhận lại. Lòng bao dung sẽ mang đến phúc lành."
+    },
+    "11": {
+      "theme": "Giác ngộ & Truyền cảm hứng",
+      "meaning": "Giai đoạn đặc biệt — trực giác cực mạnh, khả năng truyền cảm hứng cho người khác. Sứ mệnh liên quan đến tâm linh và giáo dục.",
+      "advice": "Tin vào trực giác. Bạn có khả năng đặc biệt để dẫn dắt và soi đường."
+    },
+    "22": {
+      "theme": "Siêu xây dựng & Di sản",
+      "meaning": "Giai đoạn để lại di sản vĩ đại. Tầm nhìn xa, khả năng hiện thực hóa ước mơ lớn. Xây dựng điều gì đó có ý nghĩa cho nhiều người.",
+      "advice": "Đừng sợ ước mơ lớn. Bạn có năng lực biến tầm nhìn thành hiện thực."
+    }
+  },
+  "challengeInterpretation": {
+    "0": {
+      "theme": "Thử thách tổng hợp",
+      "meaning": "Bạn phải đối mặt với tất cả các bài học. Không có thử thách cụ thể nào chiếm ưu thế — mỗi tình huống đều là bài kiểm tra.",
+      "advice": "Linh hoạt và cởi mở với mọi bài học cuộc sống."
+    },
+    "1": {
+      "theme": "Thiếu tự tin",
+      "meaning": "Bài học về sự tự lập và quyết đoán. Dễ bị phụ thuộc người khác hoặc sợ đưa ra quyết định.",
+      "advice": "Rèn luyện sự tự tin từ những việc nhỏ. Dám nói ' không' khi cần."
+    },
+    "2": {
+      "theme": "Quá nhạy cảm",
+      "meaning": "Bài học về cảm xúc và sự cân bằng. Dễ bị tổn thương, phụ thuộc tình cảm. Cần phân biệt trực giác và lo lắng.",
+      "advice": "Phát triển sự mạnh mẽ nội tâm mà không đánh mất sự nhạy cảm."
+    },
+    "3": {
+      "theme": "Tự phê phán",
+      "meaning": "Bài học về sự biểu đạt. Có thể quá tự phê phán hoặc sợ thể hiện bản thân. Nghệ thuật và giao tiếp là chìa khóa.",
+      "advice": "Đừng kìm nén cảm xúc. Tìm cách biểu đạt lành mạnh."
+    },
+    "4": {
+      "theme": "Thiếu kỷ luật",
+      "meaning": "Bài học về tổ chức và kỷ luật bản thân. Dễ bỏ cuộc khi gặp khó khăn. Cần xây dựng thói quen tốt.",
+      "advice": "Bắt đầu từ những mục tiêu nhỏ, có hệ thống. Kiên trì là đức tính cần rèn."
+    },
+    "5": {
+      "theme": "Sợ thay đổi",
+      "meaning": "Bài học về sự thích nghi. Xu hướng bám víu vào sự an toàn, sợ mạo hiểm. Cuộc sống đòi hỏi sự linh hoạt.",
+      "advice": "Xem thay đổi như cơ hội, không phải mối đe dọa."
+    },
+    "6": {
+      "theme": "Trách nhiệm quá tải",
+      "meaning": "Bài học về ranh giới. Dễ gánh vác quá nhiều cho người khác mà quên bản thân. Cần cân bằng cho-nhận.",
+      "advice": "Yêu thương bản thân trước khi chăm sóc người khác."
+    },
+    "7": {
+      "theme": "Cô lập bản thân",
+      "meaning": "Bài học về sự kết nối. Xu hướng thu mình, nghi ngờ người khác. Cần mở lòng và tin tưởng.",
+      "advice": "Kiến thức là sức mạnh, nhưng đừng dùng nó để xa cách mọi người."
+    },
+    "8": {
+      "theme": "Lạm dụng quyền lực",
+      "meaning": "Bài học về tiền bạc và quyền lực. Có thể quá tham vọng hoặc sợ thất bại tài chính. Cần sử dụng tiền một cách có đạo đức.",
+      "advice": "Quyền lực thực sự đến từ sự chính trực, không phải tiền bạc."
+    }
+  },
+  "numberInteractions": {
+    "1-2": { "nature": "complementary", "description": "Lãnh đạo (1) được cân bằng bởi ngoại giao (2). Tổ hợp hiệu quả cho quản lý và hợp tác." },
+    "1-3": { "nature": "synergy", "description": "Tự lập (1) kết hợp sáng tạo (3) tạo năng lượng khởi nghiệp mạnh mẽ. Dễ thành công trong nghệ thuật độc lập." },
+    "1-4": { "nature": "tension", "description": "Tham vọng (1) mâu thuẫn với kỷ luật cứng nhắc (4). Cần học cách cân bằng giữa đổi mới và ổn định." },
+    "1-5": { "nature": "synergy", "description": "Cả hai đều yêu tự do và mạo hiểm. Năng lượng mạnh nhưng dễ thiếu kiên nhẫn." },
+    "1-6": { "nature": "tension", "description": "Tự lập (1) xung đột với trách nhiệm gia đình (6). Cần cân bằng giữa sự nghiệp cá nhân và gia đình." },
+    "1-7": { "nature": "complementary", "description": "Hành động (1) kết hợp với chiêm nghiệm (7). Tốt cho nghiên cứu chuyên sâu và lãnh đạo tri thức." },
+    "1-8": { "nature": "synergy", "description": "Lãnh đạo (1) và quyền lực (8) tạo sức mạnh vật chất lớn. Kinh doanh và đầu tư rất thuận lợi." },
+    "1-9": { "nature": "complementary", "description": "Cá nhân (1) mở rộng thành phụng sự (9). Tiềm năng lãnh đạo nhân đạo, có ảnh hưởng xã hội lớn." },
+    "2-3": { "nature": "synergy", "description": "Nhạy cảm (2) hỗ trợ biểu đạt (3). Tài năng nghệ thuật và giao tiếp nổi bật." },
+    "2-4": { "nature": "tension", "description": "Cảm xúc (2) gặp thực tế cứng nhắc (4). Cần tìm cách biểu đạt cảm xúc trong khuôn khổ có hệ thống." },
+    "2-5": { "nature": "tension", "description": "Ổn định (2) xung đột với thay đổi (5). Giai đoạn đầy thử thách về sự thích nghi." },
+    "2-6": { "nature": "synergy", "description": "Hòa hợp (2) và yêu thương (6) tạo nền tảng gia đình mạnh mẽ. Quan hệ xuất sắc." },
+    "2-7": { "nature": "complementary", "description": "Trực giác (2) bổ sung phân tích (7). Khả năng thấu hiểu con người và tình huống rất sâu." },
+    "2-8": { "nature": "tension", "description": "Tinh tế (2) mâu thuẫn với tham vọng (8). Cần cân bằng giữa cảm xúc và lý trí trong kinh doanh." },
+    "2-9": { "nature": "synergy", "description": "Nhạy cảm (2) phụng sự (9) tạo lòng nhân ái. Thích hợp cho công tác xã hội và tư vấn." },
+    "3-4": { "nature": "tension", "description": "Sáng tạo phóng khoáng (3) xung đột với kỷ luật (4). Thử thách lớn nhưng nếu cân bằng được sẽ rất hiệu quả." },
+    "3-5": { "nature": "synergy", "description": "Sáng tạo (3) và tự do (5) cùng nhau bùng nổ. Cuộc sống đầy phiêu lưu và trải nghiệm." },
+    "3-6": { "nature": "complementary", "description": "Biểu đạt (3) trong bối cảnh gia đình (6). Tài năng nghệ thuật phát triển trong môi trường ấm áp." },
+    "3-7": { "nature": "complementary", "description": "Sáng tạo bề nổi (3) kết hợp chiều sâu (7). Tác phẩm có cả vẻ đẹp lẫn ý nghĩa." },
+    "3-8": { "nature": "synergy", "description": "Sáng tạo (3) và quyền lực (8) tạo doanh nhân thành đạt trong ngành giải trí, thời trang." },
+    "3-9": { "nature": "synergy", "description": "Biểu đạt (3) và tầm nhìn (9). Nghệ sĩ có ảnh hưởng xã hội lớn, truyền thông xuất sắc." },
+    "4-5": { "nature": "tension", "description": "Ổn định (4) vs thay đổi (5). Xung đột nội tâm giữa an toàn và mạo hiểm. Cần tìm bước đi thận trọng." },
+    "4-6": { "nature": "synergy", "description": "Kỷ luật (4) xây dựng gia đình (6) vững chắc. Nền tảng cuộc sống bền vững." },
+    "4-7": { "nature": "complementary", "description": "Thực tế (4) và trí tuệ (7). Nhà khoa học, kỹ sư, hoặc người làm nghiên cứu ứng dụng." },
+    "4-8": { "nature": "synergy", "description": "Chăm chỉ (4) và tham vọng (8) tạo kết quả vật chất vượt trội. Kinh doanh bền vững." },
+    "4-9": { "nature": "complementary", "description": "Nền tảng thực tế (4) phụng sự lý tưởng lớn (9). Xây dựng tổ chức nhân đạo bền vững." },
+    "5-6": { "nature": "tension", "description": "Tự do (5) xung đột trách nhiệm (6). Khó cân bằng giữa phiêu lưu và gia đình." },
+    "5-7": { "nature": "complementary", "description": "Trải nghiệm (5) kết hợp chiêm nghiệm (7). Du lịch tâm linh, khám phá tri thức từ trải nghiệm thực tế." },
+    "5-8": { "nature": "synergy", "description": "Linh hoạt (5) và quyền lực (8). Doanh nhân giỏi nắm bắt cơ hội. Kinh doanh năng động." },
+    "5-9": { "nature": "synergy", "description": "Phiêu lưu (5) và phụng sự (9). Nhà hoạt động xã hội, nhà ngoại giao quốc tế." },
+    "6-7": { "nature": "tension", "description": "Gia đình (6) vs cô đơn (7). Cần cân bằng giữa trách nhiệm xã hội và nhu cầu cá nhân." },
+    "6-8": { "nature": "synergy", "description": "Trách nhiệm (6) và thành tựu (8). Doanh nhân gia đình, người xây dựng di sản cho thế hệ sau." },
+    "6-9": { "nature": "synergy", "description": "Yêu thương (6) và nhân đạo (9). Đỉnh cao của lòng vị tha. Phụng sự cộng đồng xuất sắc." },
+    "7-8": { "nature": "tension", "description": "Tâm linh (7) xung đột vật chất (8). Thử thách cân bằng giữa tinh thần và tiền bạc." },
+    "7-9": { "nature": "synergy", "description": "Trí tuệ (7) và tầm nhìn (9). Nhà triết học, giáo sư, người dẫn đường tâm linh." },
+    "8-9": { "nature": "complementary", "description": "Quyền lực (8) phụng sự (9). Nhà từ thiện, doanh nhân xã hội có ảnh hưởng lớn." }
+  }
+}

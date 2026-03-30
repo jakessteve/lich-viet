@@ -106,6 +106,31 @@ Write the handoff to `.hc/handoffs/YYYY-MM-DD-[task-slug].md` using this templat
 [How to confirm the work is correct — commands to run, things to check]
 ```
 
+### Step 5.5 — Generate Machine-Readable Companion (JSON)
+
+Alongside the markdown, emit `.hc/handoffs/YYYY-MM-DD-[task-slug].json`:
+
+```json
+{
+  "version": 1,
+  "sourceAgent": "@pm",
+  "targetAgent": "@dev",
+  "recommendedModel": "gemini-h",
+  "gitHash": "abc1234",
+  "riskLevel": "LOW",
+  "currentPhase": "Refinement",
+  "completedTasks": ["spec", "architecture", "security-review"],
+  "nextAction": "Implement auth endpoints per API_CONTRACTS.md",
+  "blockers": [],
+  "filesToRead": ["docs/tech/API_CONTRACTS.md", "src/auth/"],
+  "filesToModify": ["src/auth/login.ts", "src/auth/register.ts"],
+  "filesToNotTouch": ["src/core/"],
+  "timestamp": "2026-03-27T22:00:00+07:00"
+}
+```
+
+This JSON is consumed by `/receive-handoff` for automated context loading — no manual parsing of the markdown needed.
+
 ### Step 6 — Instruct User
 Present the handoff artifact and tell the user:
 
@@ -122,4 +147,5 @@ Select **[Recommended Model]** → Type:
 ## Output Files
 | File | Location |
 |------|----------|
-| Handoff artifact | `.hc/handoffs/YYYY-MM-DD-[task-slug].md` |
+| Handoff artifact (markdown) | `.hc/handoffs/YYYY-MM-DD-[task-slug].md` |
+| Handoff artifact (JSON) | `.hc/handoffs/YYYY-MM-DD-[task-slug].json` |

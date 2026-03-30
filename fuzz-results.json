@@ -1,0 +1,11 @@
+{
+  "totalChecked": 2400,
+  "passChecked": 1195,
+  "mismatches": [
+    "[1968-02-12 female] Tỵ stars diff | Missing in Native: (Tam Thai) | Extra in Native: ()",
+    "[1968-02-12 female] Ngọ stars diff | Missing in Native: () | Extra in Native: (Tam Thai)",
+    "[1968-02-12 female] Mùi stars diff | Missing in Native: (Thiên Quý,Ân Quang) | Extra in Native: ()",
+    "[1968-02-12 female] Thân stars diff | Missing in Native: () | Extra in Native: (Bát Tọa,Thiên Quý,Ân Quang)",
+    "[1968-02-12 female] Dậu stars diff | Missing in Native: (Bát Tọa) | Extra in Native: ()"
+  ]
+}

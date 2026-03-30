@@ -1,0 +1,118 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { compression } from 'vite-plugin-compression2';
+import { VitePWA } from 'vite-plugin-pwa';
+import path from 'path';
+
+export default defineConfig({
+  optimizeDeps: {
+    include: ['circular-natal-horoscope-js', 'iztro']
+  },
+  plugins: [
+    react(),
+    compression({
+      include: /\.(js|css|html|svg|json)$/,
+      threshold: 1024, // Only compress files > 1KB
+      deleteOriginalAssets: false,
+    }),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'icons/*.png', 'fonts/**/*'],
+      manifest: {
+        name: 'Lịch Việt — Âm Lịch & Phong Thủy',
+        short_name: 'Lịch Việt',
+        description: 'Tra cứu ngày âm lịch, giờ tốt xấu, hướng xuất hành, và phân tích phong thủy hàng ngày.',
+        theme_color: '#1a1a2e',
+        background_color: '#0f0f1a',
+        display: 'standalone',
+        start_url: '/',
+        scope: '/',
+        lang: 'vi',
+        categories: ['lifestyle', 'utilities'],
+        icons: [
+          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts',
+              expiration: { maxEntries: 10, maxAgeSeconds: 365 * 24 * 60 * 60 },
+            },
+          },
+        ],
+        navigateFallback: '/index.html',
+      },
+    }),
+  ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@lich-viet/core/calendar': path.resolve(__dirname, './packages/core/src/calendar/index.ts'),
+      '@lich-viet/core/dungsu': path.resolve(__dirname, './packages/core/src/dungsu/index.ts'),
+      '@lich-viet/core/maihoa': path.resolve(__dirname, './packages/core/src/maihoa/index.ts'),
+      '@lich-viet/core/chiemtinh': path.resolve(__dirname, './packages/core/src/chiemtinh/index.ts'),
+      '@lich-viet/core/bazi': path.resolve(__dirname, './packages/core/src/bazi/index.ts'),
+      '@lich-viet/core/numerology': path.resolve(__dirname, './packages/core/src/numerology/index.ts'),
+      '@lich-viet/core/fengshui': path.resolve(__dirname, './packages/core/src/fengshui/index.ts'),
+      '@lich-viet/core/qmdj': path.resolve(__dirname, './packages/core/src/qmdj/index.ts'),
+      '@lich-viet/core/thaiAt': path.resolve(__dirname, './packages/core/src/thaiAt/index.ts'),
+      '@lich-viet/core/lucNham': path.resolve(__dirname, './packages/core/src/lucNham/index.ts'),
+      '@lich-viet/core/tamThuc': path.resolve(__dirname, './packages/core/src/tamThuc/index.ts'),
+      '@lich-viet/core': path.resolve(__dirname, './packages/core/src/index.ts'),
+      '@lich-viet/types': path.resolve(__dirname, './packages/types/src/index.ts'),
+      'circular-natal-horoscope-js': path.resolve(__dirname, 'src/packages/circular-natal-horoscope/index.cjs'),
+      'iztro': path.resolve(__dirname, 'src/packages/iztro/index.cjs'),
+    },
+  },
+  build: {
+    commonjsOptions: {
+      include: [/src\/packages\/circular-natal-horoscope/, /src\/packages\/iztro/, /node_modules/],
+    },
+    sourcemap: 'hidden', // Generate source maps for error reporting but don't expose to browser
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // Core React runtime
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router')) {
+            return 'vendor-react';
+          }
+          // Validation
+          if (id.includes('node_modules/zod')) {
+            return 'vendor-zod';
+          }
+          // Third-party heavyweight engines
+          if (id.includes('iztro')) {
+            return 'vendor-iztro';
+          }
+          if (id.includes('circular-natal-horoscope-js')) {
+            return 'vendor-horoscope';
+          }
+          if (id.includes('leaflet')) {
+            return 'vendor-leaflet';
+          }
+          
+          // Data & Interpretation Domain Splitting
+          if (id.includes('/src/data/interpretation/numerology/')) return 'data-numerology-advanced';
+          if (id.includes('/src/data/baziInterpretation') || id.includes('/services/bazi/')) return 'data-bazi';
+          if (id.includes('/src/data/qmdj/') || id.includes('/services/qmdj/')) return 'data-qmdj';
+          if (id.includes('/src/data/lucNham/') || id.includes('/services/lucNham/')) return 'data-lucnham';
+          if (id.includes('/src/data/westernAstro/') || id.includes('/services/chiemtinh/')) return 'data-western-astro';
+          if (id.includes('/services/tuvi/interpretation/') || id.includes('palaceInterpretation.ts')) return 'data-tuvi-palace';
+          
+          // Generic interpretation/synthesis services
+          if (id.includes('/services/interpretation/')) return 'service-synthesis';
+          
+          // PDF Export Services
+          if (id.includes('/services/pdf/')) return 'service-pdf';
+        },
+      },
+    },
+  },
+});

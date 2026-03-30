@@ -123,3 +123,36 @@ When an agent is stuck: **Detect** (3x expected time or anti-loop trigger) → *
 - **Conventional format:** `type(scope): description`.
 - **Types:** `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `style`, `perf`.
 - **Never commit:** Broken tests, lint errors, `console.log` debugging, secrets.
+
+---
+
+## 11. Verify + Done Pattern (Mandatory for All Task Prompts)
+
+Every phase file, spawn-agent task, or inline execution plan MUST include these two sections:
+
+### `## Verify`
+
+Exact command(s) or checks that confirm the task succeeded. Must be runnable, not aspirational.
+
+**Good:** `curl -X POST localhost:3000/api/auth/login -d '{"email":"test@test.com"}' returns 200 + Set-Cookie header`
+**Bad:** "Verify that login works correctly"
+
+### `## Done When`
+
+Unambiguous boolean checklist. Every item must be independently verifiable as true/false.
+
+**Good:**
+- [ ] `npm test` passes with 0 failures
+- [ ] New endpoint returns 401 for invalid credentials
+- [ ] Migration creates `users` table with `email` unique constraint
+
+**Bad:**
+- [ ] Everything works
+- [ ] Code is clean
+
+### Enforcement
+
+- **Phase files** (`.hc/phases/`): MUST have both sections before execution begins.
+- **Spawn-agent prompts** (`.agent/spawn_agent_tasks/`): MUST have at minimum a `## Done When` section.
+- **Quick inline tasks:** At minimum, one-line verify statement in the prompt.
+- **If missing:** @pm adds them before routing to execution. DO NOT execute without exit conditions.

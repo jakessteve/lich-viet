@@ -1,0 +1,158 @@
+{
+  "description": "Flying Star (Huyền Không Phi Tinh) interpretation data — star meanings, combination matrix, and remedies.",
+  "starMeanings": {
+    "1": {
+      "name": "Nhất Bạch — Tham Lang",
+      "nature": "cat",
+      "element": "Thủy",
+      "shortDesc": "Tài lộc, trí tuệ, sự nghiệp thăng tiến",
+      "detailedMeaning": "Nếu vùng này trong nhà bạn đang sáng sủa và thông thoáng — xin chúc mừng. Sao Nhất Bạch (thuộc Thủy) mang năng lượng tài lộc, trí tuệ, và thăng tiến sự nghiệp. Trong Vận 9 hiện tại, sao 1 được Hỏa của Vận 9 hỗ trợ, nên cát khí cực mạnh. Đặc biệt tốt nếu bạn làm trong ngành giáo dục, nghiên cứu, công nghệ, hoặc tài chính — vùng sao 1 như ngọn hải đăng soi sáng con đường sự nghiệp.",
+      "roomAdvice": {
+        "bedroom": "Phòng ngủ ở vùng sao 1 giúp bạn sáng suốt và minh mẫn hơn — lý tưởng cho phòng đọc sách hoặc phòng ngủ của con đang đi học. Giấc ngủ ở đây nuôi dưỡng trí tuệ.",
+        "livingRoom": "Phòng khách ở vùng sao 1 thu hút khách quý — những người đến nhà bạn thường mang theo ý tưởng tốt hoặc cơ hội hợp tác.",
+        "kitchen": "Bếp ở vùng sao 1 tốt — năng lượng Thủy sạch và trong, bữa cơm gia đình thêm hài hòa.",
+        "office": "Nếu bạn có thể đặt bàn làm việc ở vùng sao 1, hãy làm ngay — đây là vị trí vàng cho tập trung, sáng tạo, và đưa ra quyết định đúng đắn."
+      }
+    },
+    "2": {
+      "name": "Nhị Hắc — Cự Môn",
+      "nature": "hung",
+      "element": "Thổ",
+      "shortDesc": "Bệnh tật, phiền não, tai họa âm ỉ",
+      "detailedMeaning": "Nếu gần đây bạn hay ốm vặt, mệt mỏi không lý do, hoặc tinh thần uể oải — hãy kiểm tra xem mình có đang sinh hoạt nhiều ở vùng sao 2 không. Nhị Hắc là sao bệnh tật, mang năng lượng âm u, ẩm thấp. Nó gây ra bệnh mãn tính, đặc biệt ảnh hưởng phụ nữ, hệ tiêu hóa, và sức sống tổng quát. Trong Vận 9, sao 2 thất vận nên sức phá hoại rất mạnh — bạn CẦN hóa giải nếu nó nằm ở vùng trọng yếu.",
+      "roomAdvice": {
+        "bedroom": "Nếu phòng ngủ của bạn nằm ở vùng sao 2, đây có thể là nguyên nhân bạn mệt mỏi và giấc ngủ không ngon. Đặt hồ lô đồng hoặc chuông gió 6 ống kim loại ở đầu giường để hóa giải.",
+        "livingRoom": "Không nên đặt ghế sofa chính ở vùng sao 2 — ngồi lâu ở đây dễ uể oải và hay cáu gắt vô cớ.",
+        "kitchen": "Bếp ở vùng sao 2 có thể ảnh hưởng tiêu hóa cả gia đình — nếu không di chuyển được, hãy đặt vật phẩm Kim loại để hóa giải.",
+        "office": "Tránh đặt bàn làm việc ở vùng sao 2 — năng suất giảm sút, hay ốm vặt, và cảm giác kiệt sức không rõ nguyên nhân."
+      },
+      "remedy": "Hóa giải bắt buộc: hồ lô đồng, chuông gió 6 ống kim loại, hoặc bất kỳ vật phẩm bằng đồng/kim loại nào. TUYỆT ĐỐI KHÔNG kích hoạt vùng này bằng nước hoặc cây xanh — làm vậy chỉ khiến bệnh khí mạnh hơn."
+    },
+    "3": {
+      "name": "Tam Bích — Lộc Tồn",
+      "nature": "hung",
+      "element": "Mộc",
+      "shortDesc": "Tranh chấp, kiện tụng, thị phi, cãi vã",
+      "detailedMeaning": "Nếu gia đình bạn gần đây hay cãi nhau vô cớ, hoặc bạn liên tục dính vào tranh chấp chỗ làm — hãy kiểm tra vùng sao 3. Tam Bích là sao thị phi, chuyên gây ra tranh cãi, kiện tụng, và xung đột. Nó mang hành Mộc nhưng là loại Mộc cứng đầu, chống đối — từ 'thị phi' trong tiếng Việt có lẽ được sinh ra để mô tả sao này. Trong Vận 9, sao 3 thất vận, nghĩa là năng lượng gây rối của nó đang mạnh nhất.",
+      "roomAdvice": {
+        "bedroom": "Vợ chồng ngủ ở vùng sao 3 rất dễ cáu gắt, cãi nhau vì chuyện nhỏ nhặt. Đặt đèn ngủ màu ấm hoặc vật phẩm màu đỏ ở hai bên giường để chuyển hóa năng lượng.",
+        "livingRoom": "Phòng khách ở vùng sao 3 biến mọi cuộc họp gia đình thành cuộc tranh luận. Cần đèn sáng và yếu tố Hỏa (nến, đèn ấm, tông đỏ/cam) để hóa giải.",
+        "kitchen": "Bếp (Hỏa) ở vùng sao 3 (Mộc) lại tốt — Mộc sinh Hỏa, năng lượng xấu tự nhiên bị chuyển hóa. Đây là một trong số ít trường hợp 'hung' trở thành lợi thế.",
+        "office": "Tránh phòng họp ở vùng sao 3 — cuộc họp dễ biến thành cuộc cãi vã, đặc biệt khi có ý kiến khác nhau."
+      },
+      "remedy": "Chuyển hóa bằng Hỏa: đèn sáng (để bật), nến thơm, vật phẩm màu đỏ/cam. Nguyên lý: Mộc sinh Hỏa — năng lượng gây rối được dẫn đi và chuyển thành ánh sáng."
+    },
+    "4": {
+      "name": "Tứ Lục — Văn Khúc",
+      "nature": "trung",
+      "element": "Mộc",
+      "shortDesc": "Học vấn, tình duyên, sáng tạo, văn chương",
+      "detailedMeaning": "Vùng sao 4 là vùng của cảm hứng — nơi bút sa gà chết, nơi ý tưởng chảy như suối. Tứ Lục là sao văn xương, chủ về học vấn, sáng tạo, và tình duyên. Trong Vận 9, sao 4 mang năng lượng trung tính — rất tốt cho học hành và nghệ thuật, nhưng cẩn thận: năng lượng đào hoa mạnh có thể khiến bạn rơi vào tình cảm phức tạp ngoài ý muốn.",
+      "roomAdvice": {
+        "bedroom": "Phòng ngủ ở vùng sao 4 tăng cường tình duyên — tốt nếu bạn đang tìm kiếm bạn đời, nhưng cẩn thận đào hoa ngoài ý muốn nếu đã có gia đình. Rất tốt cho phòng đọc sách.",
+        "livingRoom": "Đặt kệ sách, đàn piano, hoặc góc nghệ thuật ở vùng sao 4 — cả gia đình sẽ hưởng lợi từ năng lượng trí tuệ và sáng tạo.",
+        "kitchen": "Trung tính — không đặc biệt tốt hay xấu. Bếp ở đây không ảnh hưởng nhiều.",
+        "office": "Vị trí tuyệt vời cho nhà văn, designer, họa sĩ, giáo viên, hoặc bất kỳ ai cần sáng tạo hàng ngày. Đặt bàn làm việc ở đây và cảm nhận sự khác biệt."
+      }
+    },
+    "5": {
+      "name": "Ngũ Hoàng — Liêm Trinh",
+      "nature": "hung",
+      "element": "Thổ",
+      "shortDesc": "Đại hung — tai họa, bệnh tật nặng, xung đột nghiêm trọng",
+      "detailedMeaning": "Đây là vùng nguy hiểm nhất trong ngôi nhà của bạn — Ngũ Hoàng Đại Sát không phải sao bình thường. Nó mang năng lượng phá hoại cực mạnh, có thể gây tai nạn nghiêm trọng, bệnh tật nặng, phá sản, và mọi loại thảm họa. Quy tắc vàng: TUYỆT ĐỐI không khuấy động vùng sao 5 — không đào đất, không đóng đinh, không sửa chữa, không di chuyển đồ nặng. Giữ vùng này yên tĩnh và sạch sẽ là cách bảo vệ gia đình tốt nhất.",
+      "roomAdvice": {
+        "bedroom": "Nếu phòng ngủ của bạn nằm ở vùng sao 5, đây rất có thể là nguồn gốc của vấn đề sức khỏe kéo dài. Hóa giải ngay bằng chuông gió 6 ống đồng + hồ lô đồng + chén nước muối. Nếu có thể, hãy đổi phòng ngủ.",
+        "livingRoom": "Hạn chế sinh hoạt ở vùng sao 5 — giữ yên tĩnh, sạch sẽ, và đặc biệt KHÔNG tổ chức tiệc tùng ồn ào ở đây.",
+        "kitchen": "Bếp ở vùng sao 5 là tổ hợp cực kỳ nguy hiểm — Hỏa kích hoạt Thổ hung. Nếu không thể di chuyển, phải hóa giải mạnh bằng Kim loại.",
+        "office": "TUYỆT ĐỐI không đặt bàn làm việc ở vùng sao 5 — mọi quyết định đưa ra ở đây đều dễ sai lầm, và sức khỏe suy giảm nhanh."
+      },
+      "remedy": "Hóa giải BẮT BUỘC: chuông gió 6 ống đồng, hồ lô đồng, Ngũ Đế Tiền, chén muối thô. Quan trọng nhất: KHÔNG dùng nước, cây xanh, hoặc đồ đỏ — những thứ này KÍCH HOẠT hung khí thay vì triệt tiêu."
+    },
+    "6": {
+      "name": "Lục Bạch — Vũ Khúc",
+      "nature": "cat",
+      "element": "Kim",
+      "shortDesc": "Quyền uy, quý nhân, tài lộc bất ngờ",
+      "detailedMeaning": "Vùng sao 6 trong nhà bạn giống như phòng VIP — nơi quyền lực và uy tín tập trung. Lục Bạch mang năng lượng lãnh đạo, thẩm quyền, và tài lộc đến từ vị trí cao. Nó tượng trưng cho cha, cấp trên, và quý nhân có quyền lực. Trong Vận 9, sao 6 vẫn giữ năng lượng tích cực mạnh mẽ — ai muốn thăng tiến trong sự nghiệp nên tận dụng vùng này tối đa.",
+      "roomAdvice": {
+        "bedroom": "Ngủ ở vùng sao 6 giúp bạn tự tin hơn trong công việc, đặc biệt phù hợp cho người làm quản lý, lãnh đạo, hoặc đang nhắm vị trí cao hơn.",
+        "livingRoom": "Phòng khách ở vùng sao 6 có sức hút đặc biệt — những vị khách đến nhà bạn thường là người có uy tín, có thể trở thành quý nhân trong sự nghiệp.",
+        "kitchen": "Trung tính — Hỏa của bếp khắc Kim nhẹ. Không gây hại lớn nhưng cũng không phát huy tối đa năng lượng sao 6.",
+        "office": "Vị trí lý tưởng cho phòng giám đốc, phòng họp cấp cao, hoặc nơi đưa ra quyết định quan trọng. Năng lượng quyền uy ở đây giúp lời nói có trọng lượng hơn."
+      }
+    },
+    "7": {
+      "name": "Thất Xích — Phá Quân",
+      "nature": "hung",
+      "element": "Kim",
+      "shortDesc": "Trộm cắp, lừa đảo, khẩu thiệt, tổn tài",
+      "detailedMeaning": "Nếu bạn gần đây bị mất đồ, bị lừa online, hoặc dính vào drama khẩu thiệt — vùng sao 7 có thể là thủ phạm. Thất Xích từng là sao tốt trong Vận 7 (1984-2003), nhưng trong Vận 9 hiện tại đã hoàn toàn thất vận, trở thành sao hung chuyên gây tổn thất tài chính, danh tiếng, và sự tin tưởng. Hãy đặc biệt cảnh giác với vùng này.",
+      "roomAdvice": {
+        "bedroom": "Phòng ngủ ở vùng sao 7 khiến bạn hay mất ngủ vì lo âu, dễ bị lừa qua điện thoại hoặc mạng xã hội khi đang buồn ngủ — thời điểm phòng vệ yếu nhất.",
+        "livingRoom": "Kiểm tra khóa cửa sổ và cửa ra vào ở vùng sao 7 — đặc biệt nếu phòng khách hướng ra đường. Phòng trộm là thực tế, không phải mê tín.",
+        "kitchen": "Cẩn thận tai nạn với dao kéo, vật sắc nhọn ở bếp vùng sao 7. Giữ dao trong ngăn kéo, không để trên mặt bàn.",
+        "office": "Đặc biệt cảnh giác với đối tác, hợp đồng, và giao dịch tài chính nếu văn phòng ở vùng sao 7. Đọc kỹ mọi điều khoản trước khi ký."
+      },
+      "remedy": "Hóa giải bằng Thủy: bể cá nhỏ, bình nước tĩnh, vật phẩm màu xanh dương đậm. Nguyên lý: Kim sinh Thủy — năng lượng hung được dẫn đi ra biển thay vì đâm vào bạn."
+    },
+    "8": {
+      "name": "Bát Bạch — Tả Phù",
+      "nature": "cat",
+      "element": "Thổ",
+      "shortDesc": "Vượng tài, phú quý, thịnh vượng bền vững",
+      "detailedMeaning": "Vùng sao 8 là 'két sắt' năng lượng trong nhà bạn — nơi tài lộc tích lũy và phú quý bền vững. Bát Bạch từng là sao mạnh nhất trong Vận 8 vừa qua (2004-2023). Trong Vận 9, nó vẫn giữ năng lượng cát mạnh nhờ 'dư khí' — như sức nóng còn lại sau khi tắt lò. Đặc biệt tốt cho bất động sản, tài sản cố định, và mọi hình thức đầu tư dài hạn.",
+      "roomAdvice": {
+        "bedroom": "Phòng ngủ ở vùng sao 8 mang lại giấc ngủ an lành và tài vận ổn định — bạn làm giàu trong khi ngủ, theo nghĩa năng lượng đang hỗ trợ bạn 24/7.",
+        "livingRoom": "Phòng khách ở vùng sao 8 — rất tốt! Kích hoạt thêm bằng cây xanh hoặc đèn sáng để 'đánh thức' nguồn tài lộc đang ngủ quên.",
+        "kitchen": "Bếp (Hỏa) sinh Thổ (sao 8) — tổ hợp tuyệt vời. Mỗi bữa cơm nấu ở đây đều 'nuôi' năng lượng tài lộc cho cả gia đình.",
+        "office": "Phù hợp cho phòng kế toán, tài chính, hoặc nơi bạn đếm tiền. Năng lượng Bát Bạch giúp dòng tiền ổn định và quyết định đầu tư sáng suốt."
+      }
+    },
+    "9": {
+      "name": "Cửu Tử — Hữu Bật",
+      "nature": "cat",
+      "element": "Hỏa",
+      "shortDesc": "Đương vận Vận 9 — danh tiếng, sáng tạo, phồn vinh",
+      "detailedMeaning": "ĐÂY LÀ VÙNG NĂNG LƯỢNG MẠNH NHẤT TRONG NHÀ BẠN! Cửu Tử Hỏa Tinh đang ĐƯƠNG VẬN trong Vận 9 (2024-2043), nghĩa là nó đang ở đỉnh cao quyền lực. Sao 9 chủ về danh tiếng, sáng tạo, công nghệ, truyền thông, và mọi thứ liên quan đến ánh sáng. Nếu bạn muốn nổi tiếng, thăng tiến, hoặc tạo ảnh hưởng — hãy kích hoạt vùng sao 9 ngay lập tức. Đây là 'tâm chấn' của may mắn trong 20 năm tới.",
+      "roomAdvice": {
+        "bedroom": "Phòng ngủ ở vùng sao 9 mang lại danh tiếng và sự nghiệp rạng rỡ — đặc biệt cho người làm nghệ thuật, truyền thông, marketing, hoặc bất kỳ nghề nào cần sự nổi tiếng.",
+        "livingRoom": "Phòng khách ở vùng sao 9 — TUYỆT VỜI! Kích hoạt tối đa bằng đèn sáng, cây xanh, và nước chảy. Đây sẽ trở thành 'trung tâm phát sóng may mắn' cho cả ngôi nhà.",
+        "kitchen": "Bếp (Hỏa) gặp sao 9 (Hỏa) — Hỏa quá vượng, có thể gây nóng nảy. Cân bằng bằng yếu tố Thổ (chậu đất nung, đồ gốm) để dẫn bớt Hỏa khí.",
+        "office": "Vị trí cực tốt cho MỌI loại văn phòng — nhưng đặc biệt mạnh cho sáng tạo, marketing, và social media. Nếu bạn là content creator, đây là 'studio' phong thủy lý tưởng."
+      }
+    }
+  },
+  "keyCombinations": {
+    "double_timely": {
+      "pattern": "Song Tinh đương vận",
+      "nature": "cat",
+      "meaning": "Xin chúc mừng — cung này có cả Sơn Tinh và Thủy Tinh đều đương vận, nghĩa là cả sức khỏe lẫn tài lộc đều được hỗ trợ tối đa. Đây là 'điểm vàng' phong thủy hiếm có trong ngôi nhà của bạn.",
+      "advice": "Kích hoạt tối đa: đặt nước chảy (thác nước nhỏ, bể cá) + cây xanh + đèn sáng. Sinh hoạt nhiều ở cung này — đây là nơi bạn nên dành thời gian nhiều nhất trong nhà."
+    },
+    "mountain_water_reversed": {
+      "pattern": "Thượng Sơn Hạ Thủy",
+      "nature": "hung",
+      "meaning": "Cung này đang 'đảo ngược' — Sơn tinh chạy ra nước, Thủy tinh leo lên núi. Hậu quả: tổn tài (mất tiền) và hại đinh (sức khỏe suy). Nếu cửa chính hoặc phòng ngủ nằm ở cung này, bạn cần đặc biệt chú ý.",
+      "advice": "Hóa giải bằng cách đặt núi đá nhân tạo ở phía Sơn (hậu nhà) và nước chảy ở phía Thủy (mặt tiền). Ý tưởng: 'trả sơn về núi, trả thủy về sông'."
+    },
+    "star_2_5": {
+      "pattern": "Nhị Ngũ Giao Gia",
+      "nature": "hung",
+      "meaning": "Đây là tổ hợp nguy hiểm nhất trong phong thủy Phi Tinh — sao bệnh (2) gặp sao đại hung (5). Năng lượng tiêu cực nhân lên theo cấp số nhân, có thể gây bệnh nặng, tai nạn, hoặc thảm họa cho bất kỳ ai sinh hoạt nhiều ở cung này.",
+      "advice": "Hóa giải BẮT BUỘC và NGAY LẬP TỨC: chuông gió 6 ống đồng + hồ lô đồng + chén nước muối. KHÔNG khuấy động vùng này dưới bất kỳ hình thức nào — kể cả quét dọn ồn ào."
+    },
+    "star_6_8": {
+      "pattern": "Lục Bát giao nhau",
+      "nature": "cat",
+      "meaning": "Quý nhân (sao 6) gặp tài lộc (sao 8) — sự kết hợp giữa quyền lực và tiền bạc. Đây là vùng 'phú quý song toàn' trong nhà bạn — nơi sự nghiệp thăng tiến kéo theo tài chính tăng trưởng.",
+      "advice": "Kích hoạt bằng vật phẩm kim loại quý (đồng, bạc, vàng) — năng lượng Kim của cả hai sao được cộng hưởng. Đặt két sắt hoặc tủ đựng tài sản quý ở cung này."
+    },
+    "star_1_9": {
+      "pattern": "Nhất Cửu hợp thập",
+      "nature": "cat",
+      "meaning": "Thủy (sao 1) gặp Hỏa (sao 9) — hai cực đối lập hòa hợp hoàn hảo. Như Âm và Dương ôm lấy nhau, tạo ra sự cân bằng tuyệt đỉnh. Đây là tổ hợp 'hợp thập' — Thủy Hỏa ký tế, nơi mâu thuẫn trở thành sức mạnh.",
+      "advice": "Tổ hợp hoàn hảo — kích hoạt bằng cây xanh (Mộc) làm cầu nối giữa Thủy và Hỏa. Mọi hoạt động ở cung này đều được năng lượng cân bằng Âm Dương hỗ trợ."
+    }
+  }
+}

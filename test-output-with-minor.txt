@@ -1,0 +1,54 @@
+-------- PALACES WITH ALL STARS ----------
+
+Tý (Phu Thê)
+  MAJOR: Thiên Đồng(V), Thái Âm(V)
+  MINOR: Lộc Tồn()
+  ADJ:   Hàm Trì, Thiên Không, Triệt Lộ
+
+Sửu (Huynh Đệ)
+  MAJOR: Vũ Khúc(M), Tham Lang(M)
+  MINOR: Kình Dương(h), Tả Phù(), Hữu Bật(), Văn Xương(H), Văn Khúc(V)
+  ADJ:   Thiên Tài, Phi Liêm, Không Vong, Tuần Không
+
+Dần (Mệnh)
+  MAJOR: Thái Dương(V), Cự Môn(V)
+  MINOR: Địa Không(Đ)
+  ADJ:   Cô Thần
+
+Mão (Phụ Mẫu)
+  MAJOR: Thiên Tướng(H)
+  MINOR: Thiên Khôi()
+  ADJ:   Đài Phụ, Long Trì
+
+Thìn (Phúc Đức)
+  MAJOR: Thiên Cơ(M), Thiên Lương(M)
+  ADJ:   Hồng Loan, Nguyệt Đức, Giải Thần
+
+Tỵ (Điền Trạch)
+  MAJOR: Tử Vi(M), Thất Sát(V)
+  MINOR: Thiên Mã(), Thiên Việt()
+  ADJ:   Bát Tọa, Thiên Hư, Thiên Phúc
+
+Ngọ (Quan Lộc)
+  MINOR: Hỏa Tinh(h)
+  ADJ:   Thiên Quan, Thiên Hình, Thiên Nguyệt
+
+Mùi (Nô Bộc)
+  MINOR: Linh Tinh(Đ)
+  ADJ:   Hoa Cái, Thiên Thọ, Thiên Khốc, Thiên Thương
+
+Thân (Thiên Di)
+  MINOR: Địa Kiếp(Đ)
+  ADJ:   Ân Quang, Thiên Quý, Thiên Đức, Âm Sát, Thiên Vu
+
+Dậu (Tật Ách)
+  MAJOR: Liêm Trinh(H), Phá Quân(V)
+  ADJ:   Tam Thai, Phá Toái, Thiên Sứ
+
+Tuất (Tài Bạch)
+  ADJ:   Thiên Hỷ, Quả Tú, Thiên Diêu
+
+Hợi (Tử Tức)
+  MAJOR: Thiên Phủ(Đ)
+  MINOR: Đà La(M)
+  ADJ:   Phong Cáo, Thiên Trù, Phượng Các, Giải Thần

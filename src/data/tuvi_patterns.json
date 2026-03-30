@@ -1,0 +1,280 @@
+{
+    "patterns": [
+        {
+            "id": "SAT_PHA_LANG",
+            "category": "major",
+            "name": "Sát Phá Lang",
+            "description": "Cách cục vô cùng mạnh mẽ, đại diện cho sự khai sáng, tiên phong và những biến động lớn trong cuộc đời. Người có cách này thường quyết đoán, dám nghĩ dám làm, thích hợp với môi trường quân đội, kinh doanh rủi ro cao hoặc những lĩnh vực đòi hỏi sự đột phá. Tuổi trẻ thường nhiều vất vả, bôn ba."
+        },
+        {
+            "id": "CO_NGUYET_DONG_LUONG",
+            "category": "major",
+            "name": "Cơ Nguyệt Đồng Lương",
+            "description": "Cách cục của sự ổn định, trí tuệ và mưu lược. Trái ngược với Sát Phá Lang, người có cách này thích sự an toàn, làm việc có kế hoạch, nề nếp. Rất phù hợp với công chức, nhà giáo, y bác sĩ hoặc quản lý hành chính. Cuộc đời thường bình hòa, ít sóng gió lớn."
+        },
+        {
+            "id": "CU_NHAT_DONG_CUNG",
+            "category": "major",
+            "name": "Cự Nhật Đồng Cung",
+            "description": "Thái Dương (mặt trời) xua tan đi sự ám muội của Cự Môn. Người có cách này thường có tài ăn nói xuất chúng, khả năng thuyết phục cao và có uy quyền. Rất thích hợp với nghề luật sư, giáo viên, ngoại giao. Đẹp nhất khi ở cung Dần (mặt trời mọc)."
+        },
+        {
+            "id": "TU_PHU_DONG_CUNG",
+            "category": "wealth",
+            "name": "Tử Phủ Đồng Cung",
+            "description": "Hai đế tinh Tử Vi và Thiên Phủ cùng tọa thủ. Tượng trưng cho quyền lực tột đỉnh, khả năng lãnh đạo bẩm sinh và phú quý song toàn. Tuy nhiên, đôi khi ở vị trí quá cao dễ sinh ra cảm giác cô độc."
+        },
+        {
+            "id": "TU_PHU_TRIEU_VIEN",
+            "category": "wealth",
+            "name": "Tử Phủ Triều Viên",
+            "description": "Tử Vi và Thiên Phủ nằm ở tam phương tứ chính hội chiếu về Mệnh. Tượng trưng cho địa vị cao quý và tài lộc vững chắc, thường là người có trọng trách lớn, được quý nhân phù trợ."
+        },
+        {
+            "id": "QUAN_THAN_KHANH_HOI",
+            "category": "wealth",
+            "name": "Quân Thần Khánh Hội",
+            "description": "Tử Vi cư Mệnh được quần thần (Tả Phụ, Hữu Bật, Văn Xương, Văn Khúc) xúm xít phò tá. Tượng trưng cho bậc quân vương hiền minh, có tài lãnh đạo xuất chúng và được nhiều người đi theo ủng hộ."
+        },
+        {
+            "id": "PHU_TUONG_TRIEU_VIEN",
+            "category": "wealth",
+            "name": "Phủ Tướng Triều Viên",
+            "description": "Thiên Phủ và Thiên Tướng hợp chiếu. Khả năng quản lý, điều hành tuyệt vời. Thường là những người làm rường cột cho quốc gia hoặc tập đoàn, tài trí vẹn toàn, phú quý bền vững."
+        },
+        {
+            "id": "THACH_TRUNG_AN_NGOC",
+            "category": "academic",
+            "name": "Thạch Trung Ẩn Ngọc",
+            "description": "Cự Môn cư Tý hoặc Ngọ. Tượng trưng cho 'ngọc ẩn trong đá'. Tuổi trẻ thường vất vả, truân chuyên để mài giũa, nhưng đến trung vận sẽ phát quang rực rỡ, đạt được địa vị và tài lộc thâm sâu."
+        },
+        {
+            "id": "LOC_MA_GIAO_TRI",
+            "category": "wealth",
+            "name": "Lộc Mã Giao Trì",
+            "description": "Lộc Tồn (hoặc Hóa Lộc) gặp Thiên Mã. Đại diện cho sự phát tài nhờ bôn ba, di chuyển, giao thương buôn bán. Càng đi xa, càng năng động thì lộc càng nhiều."
+        },
+        {
+            "id": "THAM_VU_DONG_HANH",
+            "category": "dynamic",
+            "name": "Tham Vũ Đồng Hành",
+            "description": "Tham Lang và Vũ Khúc đồng cung ở Tứ Mộ (Thìn, Tuất, Sửu, Mùi). Là cách cục phát muộn (thường sau 30 tuổi). Trước 30 tuổi càng vất vả thì sau 30 tuổi càng bạo phát về tài lộc, sự nghiệp (đặc biệt trong kinh doanh hoặc quân đội)."
+        },
+        {
+            "id": "CUC_HUONG_LY_MINH",
+            "category": "wealth",
+            "name": "Cực Hướng Ly Minh",
+            "description": "Tử Vi cư cung Ngọ (phương Nam/Hỏa). 'Hoàng đế đứng ở đỉnh cao nhất.' Là cách cục quý nhất của Tử Vi, tượng trưng cho vận mệnh cực kỳ tôn quý, quyền uy tuyệt đối."
+        },
+        {
+            "id": "SONG_LOC_TRIEU_VIEN",
+            "category": "wealth",
+            "name": "Song Lộc Triều Viên",
+            "description": "Lộc Tồn và Hóa Lộc cùng tụ hội ở Mệnh hoặc Tam Phương Tứ Chính. Tài lộc dồi dào suốt đời, tiền tài vào ra đều thuận lợi, đại diện cho sự giàu có bền vững."
+        },
+        {
+            "id": "QUYEN_LOC_TUAN_PHUNG",
+            "category": "wealth",
+            "name": "Quyền Lộc Tuần Phùng",
+            "description": "Mệnh cùng gặp Hóa Quyền và Hóa Lộc. Quyền lực và tài lộc song hành, vừa có thực quyền vừa có thực tài. Rất thuận lợi cho sự nghiệp kinh doanh hoặc lãnh đạo."
+        },
+        {
+            "id": "TAM_KY_GIA_HOI",
+            "category": "wealth",
+            "name": "Tam Kỳ Gia Hội",
+            "description": "Hóa Khoa, Hóa Quyền, Hóa Lộc cùng hội tụ ở Tam Phương Tứ Chính. Cách cục cực quý — danh, quyền, lộc hội đủ. Người có cách này thường được số phận ưu ái, thành đạt trên nhiều phương diện."
+        },
+        {
+            "id": "NHAT_CHIEU_LOI_MON",
+            "category": "academic",
+            "name": "Nhật Chiếu Lôi Môn",
+            "description": "Thái Dương cư cung Mão. 'Mặt trời mọc từ phương Đông.' Tượng trưng cho tuổi trẻ rực rỡ, thành công sớm, có sức sống dồi dào và phong thái quý phái, danh tiếng vang xa."
+        },
+        {
+            "id": "NGUYET_LANG_THIEN_MON",
+            "category": "academic",
+            "name": "Nguyệt Lãng Thiên Môn",
+            "description": "Thái Âm cư cung Hợi. 'Trăng sáng ở cửa trời.' Cách cục tuyệt đẹp, thông minh thanh tú, tài lộc hùng hậu. Đặc biệt quý cho người sinh ban đêm."
+        },
+        {
+            "id": "MINH_CHAU_XUAT_HAI",
+            "category": "academic",
+            "name": "Minh Châu Xuất Hải",
+            "description": "Mệnh cư Sửu hoặc Mùi (vô chính diệu), Thái Dương và Thái Âm đều ở vị trí Miếu Vượng chiếu về. Ở Mùi: Thái Dương tại Mão, Thái Âm tại Hợi. Ở Sửu: Thái Dương tại Tỵ, Thái Âm tại Dậu. 'Minh châu vượt biển.' Tượng trưng cho tài năng văn chương xuất chúng, danh tiếng lẫy lừng, thăng tiến nhanh chóng."
+        },
+        {
+            "id": "DUONG_LUONG_XUONG_LOC",
+            "category": "academic",
+            "name": "Dương Lương Xương Lộc",
+            "description": "Thái Dương, Thiên Lương, Văn Xương, Lộc Tồn cùng hội. Cách cục tốt nhất cho thi cử, khoa bảng, tuyển dụng. Trạng nguyên, tiến sĩ đời xưa thường có cách cục này."
+        },
+        {
+            "id": "VAN_QUE_VAN_HOA",
+            "category": "academic",
+            "name": "Văn Quế Văn Hoa",
+            "description": "Văn Xương và Văn Khúc cùng cư ở Sửu/Mùi. Tài hoa nghệ thuật xuất chúng, văn chương lỗi lạc, sáng tạo phong phú. Rất thích hợp với ngành sáng tạo, nghệ thuật, giáo dục."
+        },
+        {
+            "id": "THAM_HOA_TUONG_PHUNG",
+            "category": "dynamic",
+            "name": "Tham Hỏa Tương Phùng",
+            "description": "Tham Lang gặp Hỏa Tinh hoặc Linh Tinh. 'Bạo phát bất ngờ.' Tượng trưng cho sự giàu có đột ngột, anh hùng chiến trận hoặc kinh doanh thần tốc. Tuy nhiên cũng mang tính bạo tàn nếu không có cát tinh hỗ trợ."
+        },
+        {
+            "id": "THAT_SAT_TRIEU_DAU",
+            "category": "dynamic",
+            "name": "Thất Sát Triều Đẩu",
+            "description": "Thất Sát cư Tý/Ngọ/Dần/Thân. 'Đối diện Bắc Đẩu.' Quyền uy tuyệt đối, tài năng quân sự hoặc kinh doanh xuất chúng. Tính cách cô độc nhưng năng lực phi thường."
+        },
+        {
+            "id": "MA_DAU_DOI_TIEN",
+            "category": "dynamic",
+            "name": "Mã Đầu Đới Tiễn",
+            "description": "Kình Dương cư Ngọ (với Tham Lang hoặc Thiên Đồng/Thái Âm). 'Mũi tên trên đầu ngựa.' Nguy hiểm biến thành chiến thắng vĩ đại, chỉ huy biên cương, phát tài lớn từ môi trường rủi ro cao."
+        },
+        {
+            "id": "QUYEN_SAT_HOA_LOC",
+            "category": "dynamic",
+            "name": "Quyền Sát Hóa Lộc",
+            "description": "Các sát tinh (Kình, Đà, Hỏa, Linh) gặp Thất Sát cùng Hóa Lộc, Hóa Quyền. 'Thoát khỏi nanh vuốt tử thần để đạt vinh quang tột đỉnh.' Cực kỳ nguy hiểm nhưng nếu vượt qua sẽ đạt quyền lực vô song."
+        },
+        {
+            "id": "LUC_SAT_XAM_CUNG",
+            "category": "inauspicious",
+            "name": "Lục Sát Xâm Cung",
+            "description": "Cung Mệnh bị 3 cặp sát tinh trở lên (Kình-Đà, Hỏa-Linh, Không-Kiếp) xâm phạm. Đời sống nhiều trắc trở, tai nạn, thất bại. Cần đặc biệt cẩn thận trong giai đoạn đại hạn xấu."
+        },
+        {
+            "id": "HINH_KY_GIAP_MENH",
+            "category": "inauspicious",
+            "name": "Hình Kỵ Giáp Mệnh",
+            "description": "Thiên Hình và Hóa Kỵ kẹp hai bên Mệnh cung. Tượng trưng cho sự bị ép buộc, kiện tụng, hình phạt. Dễ gặp rắc rối pháp lý, bị vu oan, hoặc gánh chịu tai họa bất ngờ."
+        },
+        {
+            "id": "LOC_PHUNG_XUNG_PHA",
+            "category": "inauspicious",
+            "name": "Lộc Phùng Xung Phá",
+            "description": "Lộc Tồn hoặc Hóa Lộc bị sát tinh xung chiếu từ đối cung. Tài lộc bị phá hoại, kiếm được bao nhiêu mất bấy nhiêu. Tiền tài không giữ được, thường bị cướp đoạt hoặc phung phí."
+        },
+        {
+            "id": "MENH_VO_CHINH_DIEU_HAM",
+            "category": "inauspicious",
+            "name": "Mệnh Vô Chính Diệu Hãm",
+            "description": "Mệnh cung không có chính tinh tọa thủ mà chỉ có sát tinh. Cuộc đời bị ảnh hưởng nặng nề bởi hoàn cảnh bên ngoài, thiếu chủ kiến, dễ bị lôi cuốn vào những con đường sai lầm."
+        },
+        {
+            "id": "NHAT_NGUYET_PHAN_BOI",
+            "category": "inauspicious",
+            "name": "Nhật Nguyệt Phản Bối",
+            "description": "Thái Dương ở cung Hãm (Tuất, Hợi, Tý) hoặc Thái Âm ở cung Hãm (Mão, Thìn, Tỵ). 'Mặt trời và mặt trăng lẩn khuất.' Danh hư, thực tế không xứng, dễ gặp thị phi, cha mẹ hoặc vợ chồng bất lợi."
+        },
+        {
+            "id": "TU_THAM_DONG_CUNG",
+            "category": "dynamic",
+            "name": "Tử Tham Đồng Cung",
+            "description": "Tử Vi và Tham Lang cùng tọa thủ ở Mão hoặc Dậu. Được gọi là 'Đào hoa phạm chủ' hoặc 'Thoát tục chi tăng'. Cách cục đại diện cho sự giằng xé giữa sắc dục, tham vọng vật chất và xu hướng tu hành, thoát tục."
+        },
+        {
+            "id": "CO_CU_DONG_LAM",
+            "category": "academic",
+            "name": "Cơ Cự Đồng Lâm",
+            "description": "Thiên Cơ và Cự Môn tọa thủ ở Mão hoặc Dậu. Người có trí tuệ sắc bén, phân tích xuất sắc, đa mưu túc trí. Thường vất vả tuổi trẻ nhưng càng về sau càng thành đạt rực rỡ, thích hợp với lập trình, nghiên cứu, mưu sĩ."
+        },
+        {
+            "id": "LINH_XUONG_DA_VU",
+            "category": "inauspicious",
+            "name": "Linh Xương Đà Vũ",
+            "description": "Bốn sao Linh Tinh, Văn Xương, Đà La, Vũ Khúc hội tụ cùng một cung hoặc tam phương tứ chính. Đây là một đại hung cách (hạn ác sát), mang ý nghĩa bế tắc cùng cực, tài sản tiêu tán, dễ nảy sinh suy nghĩ tiêu cực."
+        },
+        {
+            "id": "NHAT_NGUYET_TINH_MINH",
+            "category": "wealth",
+            "name": "Nhật Nguyệt Tịnh Minh",
+            "description": "Thái Dương ở Tị hoặc Thìn, Thái Âm ở Dậu hoặc Tuất, cùng chiếu về Mệnh ở Sửu hoặc Mùi. 'Mặt trời mặt trăng cùng sáng tỏ'. Cách cục vinh hoa phú quý, địa vị xã hội cao, danh tiếng vang xa."
+        },
+        {
+            "id": "TOA_QUY_HUONG_QUY",
+            "category": "wealth",
+            "name": "Tọa Quý Hướng Quý",
+            "description": "Thiên Khôi và Thiên Việt kẹp hai bên Mệnh cung. 'Ngồi trên quý nhân, hướng về quý nhân.' Cách cục đại diện cho sự được quý nhân phò trợ từ mọi phía, thăng tiến nhanh, ít gặp rủi ro."
+        },
+        {
+            "id": "TA_HUU_GIAP_MENH",
+            "category": "wealth",
+            "name": "Tả Hữu Giáp Mệnh",
+            "description": "Tả Phụ và Hữu Bật kẹp hai bên Mệnh cung. 'Quân thần phò tá hai bên.' Biểu thị sự được trọng dụng, có nhiều người hỗ trợ, đắc lực trong sự nghiệp. Rất tốt cho người lãnh đạo, quản lý."
+        },
+        {
+            "id": "HUNG_TU_TRIEU_VIEN",
+            "category": "dynamic",
+            "name": "Hùng Tú Triều Viên",
+            "description": "Liêm Trinh và Tham Lang đồng cung ở Tỵ hoặc Hợi. 'Hùng tú cùng hội tụ.' Cách cục mang tính cá tính mạnh, tài hoa nhưng đào hoa, biến động nhiều. Thành công nhờ sự quyết liệt và sáng tạo."
+        },
+        {
+            "id": "NHAT_NGUYET_DONG_CUNG",
+            "category": "academic",
+            "name": "Nhật Nguyệt Đồng Cung",
+            "description": "Thái Dương và Thái Âm đồng cung ở Sửu hoặc Mùi. 'Mặt trời mặt trăng cùng tọa.' Ở Sửu thì Nhật Hãm Nguyệt Vượng (nữ mệnh quý), ở Mùi thì Nhật Vượng Nguyệt Hãm (nam mệnh quý)."
+        },
+        {
+            "id": "KINH_DUONG_NHAP_MIEU",
+            "category": "dynamic",
+            "name": "Kình Dương Nhập Miếu",
+            "description": "Kình Dương ở vị trí Miếu hoặc Vượng (Thìn/Tuất/Sửu/Mùi). 'Sát tinh đắc dụng.' Khi ở Miếu Vượng, Kình Dương không còn hung mà trở thành dũng mãnh, quả quyết, có thể lập đại công."
+        },
+        {
+            "id": "PHIEM_THUY_DAO_HOA",
+            "category": "inauspicious",
+            "name": "Phiếm Thủy Đào Hoa",
+            "description": "Tham Lang cư Tý gặp Văn Khúc. 'Hoa đào trôi trên sóng nước.' Đào hoa quá nhiều dẫn đến trác táng, mê sắc dục, bị tình cảm chi phối cuộc đời. Cần đặc biệt cẩn thận về sức khỏe và danh dự."
+        },
+        {
+            "id": "CU_PHUNG_TU_SAT",
+            "category": "inauspicious",
+            "name": "Cự Phùng Tứ Sát",
+            "description": "Cự Môn ở cung Mệnh gặp 2+ sát tinh (Kình Dương, Đà La, Hỏa Tinh, Linh Tinh) trong tam phương tứ chính. 'Miệng lưỡi gặp họa.' Thường gặp thị phi, kiện tụng, dễ bị phản bội."
+        },
+        {
+            "id": "DUONG_DA_GIAP_KY",
+            "category": "inauspicious",
+            "name": "Dương Đà Giáp Kỵ",
+            "description": "Kình Dương và Đà La kẹp hai bên cung có Hóa Kỵ. 'Hung tinh kẹp bế tắc.' Tượng trưng cho sự bị vây hãm, khó thoát, tài lộc bị khóa chặt. Nặng nề nhất khi rơi vào Mệnh hoặc Tài Bạch."
+        },
+        {
+            "id": "PHONG_LUU_THAI_TRUONG",
+            "category": "inauspicious",
+            "name": "Phong Lưu Thái Trượng",
+            "description": "Tham Lang đồng cung với Đào Hoa hoặc Hồng Loan. 'Phong lưu đa tình.' Đào hoa quá vượng, tình duyên phức tạp, dễ rơi vào quan hệ ngoài luồng. Cần kiểm soát dục vọng."
+        },
+        {
+            "id": "THIEN_LA_DIA_VONG",
+            "category": "inauspicious",
+            "name": "Thiên La Địa Võng",
+            "description": "Mệnh cung ở Thìn (Thiên La) hoặc Tuất (Địa Võng) gặp sát tinh. 'Lưới trời lưới đất.' Tượng trưng cho sự bị vây hãm, khó thoát, bế tắc ở cả phương diện tinh thần lẫn vật chất. Người có cách này thường gặp nhiều trắc trở, phải tự tìm cách phá vây. Nặng nề nhất khi gặp thêm Hỏa/Linh hoặc Không/Kiếp."
+        },
+        {
+            "id": "TU_SAT_TU_HOI",
+            "category": "inauspicious",
+            "name": "Tứ Sát Tụ Hội",
+            "description": "Bốn sát tinh chính (Kình Dương, Đà La, Hỏa Tinh, Linh Tinh) đều tề tựu trong Tam Phương Tứ Chính của Mệnh. 'Bốn hung tinh tụ hội.' Đại hung cách, đời sống nhiều tai ương, bệnh tật, kiện tụng. Tuy nhiên, nếu có chính tinh Miếu Vượng đắc dụng, có thể biến hung thành cát ('dĩ độc trị độc')."
+        },
+        {
+            "id": "MENH_LY_PHUNG_KHONG",
+            "category": "inauspicious",
+            "name": "Mệnh Lý Phùng Không",
+            "description": "Mệnh cung trực tiếp chứa Địa Không hoặc Địa Kiếp tọa thủ. 'Mệnh gặp sự trống không.' Tượng trưng cho cuộc đời hay gặp mất mát bất ngờ, sự nghiệp thăng trầm, tài sản khó tích lũy. Tuy nhiên, cũng mang lại tư duy đột phá, xu hướng tôn giáo, triết học, phù hợp với số tu hành hoặc nghệ thuật sáng tạo."
+        },
+        {
+            "id": "HOA_LINH_GIAP_MENH",
+            "category": "inauspicious",
+            "name": "Hỏa Linh Giáp Mệnh",
+            "description": "Hỏa Tinh và Linh Tinh kẹp hai bên Mệnh cung. 'Lửa cháy từ hai phía.' Tượng trưng cho sự bồn chồn, nóng nảy, dễ bị tai nạn bất ngờ hoặc hỏa hoạn. Tính khí hay bùng nổ, khó kiểm soát cảm xúc. Nặng nề hơn khi Mệnh thiếu chính tinh Miếu Vượng."
+        },
+        {
+            "id": "LOC_SUY_MA_KHON",
+            "category": "inauspicious",
+            "name": "Lộc Suy Mã Khốn",
+            "description": "Lộc Tồn và Thiên Mã đều ở vị trí Hãm Địa trong Tam Phương Tứ Chính. 'Tài lộc suy kiệt, ngựa bị giam.' Tượng trưng cho sự bế tắc toàn diện: tài chính bết bát, di chuyển gặp trở ngại, mọi nỗ lực đều bị kìm hãm. Ngược lại hoàn toàn với Lộc Mã Giao Trì."
+        }
+    ]
+}

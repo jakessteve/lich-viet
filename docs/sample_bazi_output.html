@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bản Phân Tích Bát Tự — Thanh kiếm sắc bén cắt đứt mọi chướng ngại</title>
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Page Setup: tight margins for maximum text density ── */
+@page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+}
+@page :first {
+    margin: 0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Serif', 'Times New Roman', Georgia, serif;
+    font-size: 10.5pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* ── Cover Page ── */
+.pdf-cover {
+    width: 210mm;
+    height: 297mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #1a1a2e;
+    color: white;
+    text-align: center;
+    page-break-after: always;
+    position: relative;
+}
+.pdf-cover-emoji {
+    font-size: 48pt;
+    margin-bottom: 16pt;
+}
+.pdf-cover-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 24pt;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4pt;
+}
+.pdf-cover-subtitle {
+    font-size: 12pt;
+    font-weight: 400;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 22pt;
+}
+.pdf-cover-archetype {
+    font-family: 'Noto Serif', serif;
+    font-size: 15pt;
+    font-weight: 600;
+    font-style: italic;
+    color: #c4b5fd;
+    margin-bottom: 4pt;
+}
+.pdf-cover-element {
+    font-size: 10pt;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 32pt;
+}
+.pdf-cover-meta {
+    font-size: 9pt;
+    color: rgba(255,255,255,0.35);
+}
+.pdf-cover-brand {
+    position: absolute;
+    bottom: 22mm;
+    font-size: 9pt;
+    color: rgba(255,255,255,0.25);
+}
+
+/* ── Table of Contents ── */
+.pdf-toc {
+    page-break-after: always;
+    padding-top: 4mm;
+}
+.pdf-toc-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 16pt;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 12pt;
+    text-align: center;
+}
+.pdf-toc-list {
+    list-style: none;
+    padding: 0;
+}
+.pdf-toc-item {
+    display: flex;
+    align-items: baseline;
+    gap: 6pt;
+    padding: 4pt 0;
+    border-bottom: 1px solid #e8e8e8;
+    font-size: 10.5pt;
+}
+.pdf-toc-item-number {
+    font-weight: 600;
+    color: #444;
+    min-width: 20pt;
+}
+.pdf-toc-item-title {
+    flex: 1;
+    color: #1a1a1a;
+}
+.pdf-toc-item-dots {
+    flex: 1;
+    border-bottom: 1px dotted #bbb;
+    margin: 0 4pt;
+    min-width: 16pt;
+}
+
+/* ── Chapter Headings: only first chapter avoids break ── */
+.pdf-chapter {
+    page-break-before: always;
+}
+.pdf-chapter:first-of-type {
+    page-break-before: auto;
+}
+.pdf-chapter-header {
+    text-align: left;
+    margin-bottom: 10pt;
+    padding-bottom: 6pt;
+    border-bottom: 1.5px solid #333;
+}
+.pdf-chapter-emoji {
+    font-size: 16pt;
+    display: inline;
+    margin-right: 4pt;
+    vertical-align: middle;
+}
+.pdf-chapter-number {
+    font-family: 'Inter', sans-serif;
+    font-size: 8pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5pt;
+    color: #666;
+    display: block;
+    margin-bottom: 2pt;
+}
+.pdf-chapter-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 16pt;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+.pdf-chapter-subtitle {
+    font-size: 9.5pt;
+    color: #666;
+    font-style: italic;
+    margin-top: 2pt;
+}
+
+/* ── Section & Content Blocks: minimal spacing ── */
+.pdf-section {
+    margin-bottom: 6pt;
+}
+.pdf-section-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 12pt;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4pt;
+    margin-top: 10pt;
+    padding-bottom: 2pt;
+    border-bottom: 1px solid #ddd;
+}
+
+/* ── Prose Paragraphs: dense justified text ── */
+.pdf-paragraph {
+    font-size: 10.5pt;
+    line-height: 1.6;
+    color: #222;
+    margin-bottom: 4pt;
+    text-align: justify;
+    hyphens: auto;
+    text-indent: 1.5em;
+}
+.pdf-paragraph:first-child {
+    text-indent: 0;
+}
+.pdf-paragraph--no-indent {
+    text-indent: 0;
+}
+
+/* ── ETC Narrative Block: flowing prose, tight ── */
+.pdf-etc {
+    margin-bottom: 6pt;
+    page-break-inside: avoid;
+}
+.pdf-etc-hook {
+    font-size: 10.5pt;
+    font-weight: 600;
+    font-style: italic;
+    color: #1a1a1a;
+    margin-bottom: 3pt;
+    line-height: 1.55;
+    text-indent: 0;
+}
+.pdf-etc-effect {
+    font-size: 10.5pt;
+    line-height: 1.6;
+    color: #222;
+    margin-bottom: 3pt;
+    text-align: justify;
+    text-indent: 1.5em;
+}
+.pdf-etc-nuance {
+    font-size: 10pt;
+    line-height: 1.55;
+    color: #333;
+    margin: 4pt 0;
+    text-align: justify;
+    text-indent: 1.5em;
+    font-style: italic;
+}
+.pdf-etc-nuance::before {
+    content: 'Lưu ý: ';
+    font-weight: 600;
+    font-style: normal;
+}
+.pdf-etc-cause {
+    font-size: 10pt;
+    line-height: 1.55;
+    color: #444;
+    margin: 4pt 0;
+    text-align: justify;
+    text-indent: 1.5em;
+}
+.pdf-etc-cause::before {
+    content: 'Nguyên nhân: ';
+    font-weight: 600;
+}
+.pdf-etc-tip {
+    font-size: 10pt;
+    line-height: 1.55;
+    color: #222;
+    margin: 4pt 0;
+    text-align: justify;
+    text-indent: 1.5em;
+}
+.pdf-etc-tip::before {
+    content: 'Lời khuyên: ';
+    font-weight: 600;
+}
+
+/* ── Block Quotes: compact ── */
+.pdf-pullquote {
+    font-family: 'Noto Serif', serif;
+    font-size: 10.5pt;
+    font-style: italic;
+    color: #444;
+    padding: 4pt 0 4pt 12pt;
+    margin: 6pt 0;
+    border-left: 2px solid #888;
+    page-break-inside: avoid;
+}
+
+/* ── Strengths/Challenges: inline prose, no cards ── */
+.pdf-traits-grid {
+    margin: 6pt 0;
+}
+.pdf-traits-column {
+    margin-bottom: 6pt;
+}
+.pdf-traits-column--positive {}
+.pdf-traits-column--challenge {}
+.pdf-traits-column-title {
+    font-size: 11pt;
+    font-weight: 700;
+    margin-bottom: 4pt;
+    color: #1a1a1a;
+}
+.pdf-traits-column--positive .pdf-traits-column-title { color: #1a6b3a; }
+.pdf-traits-column--challenge .pdf-traits-column-title { color: #a3420c; }
+.pdf-trait-item {
+    margin-bottom: 4pt;
+    font-size: 10.5pt;
+    line-height: 1.55;
+}
+.pdf-trait-item:last-child { margin-bottom: 0; }
+.pdf-trait-label {
+    font-weight: 600;
+    color: #1a1a1a;
+    display: inline;
+}
+.pdf-trait-desc {
+    color: #333;
+    font-size: 10.5pt;
+    display: inline;
+    margin-left: 3pt;
+}
+
+/* ── Key Influences: inline ── */
+.pdf-influences {
+    font-size: 10.5pt;
+    line-height: 1.55;
+    color: #333;
+    margin: 4pt 0;
+}
+.pdf-influence-tag {
+    font-weight: 500;
+    color: #1a1a1a;
+}
+.pdf-influence-tag::after {
+    content: ' \00B7  ';
+    color: #999;
+    font-weight: 400;
+}
+.pdf-influence-tag:last-child::after {
+    content: '';
+}
+
+/* ── Yearly Outlook ── */
+.pdf-outlook {
+    page-break-before: always;
+}
+.pdf-outlook-themes {
+    font-size: 10.5pt;
+    line-height: 1.55;
+    margin: 4pt 0;
+}
+.pdf-outlook-theme {
+    font-weight: 500;
+    color: #1a1a1a;
+}
+.pdf-outlook-theme::after {
+    content: ' \00B7  ';
+    color: #999;
+    font-weight: 400;
+}
+.pdf-outlook-theme:last-child::after {
+    content: '';
+}
+
+/* ── Closing Meditation: compact ── */
+.pdf-meditation {
+    page-break-before: always;
+}
+.pdf-meditation-body p {
+    font-family: 'Noto Serif', serif;
+    font-size: 10.5pt;
+    font-style: italic;
+    line-height: 1.65;
+    color: #333;
+    margin-bottom: 6pt;
+    text-align: justify;
+}
+.pdf-meditation-body p:last-child {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+/* ── Appendix ── */
+.pdf-appendix {
+    page-break-before: always;
+}
+.pdf-appendix-term {
+    margin-bottom: 4pt;
+}
+.pdf-appendix-term dt {
+    font-weight: 700;
+    font-size: 10.5pt;
+    color: #1a1a1a;
+    display: inline;
+}
+.pdf-appendix-term dt::after {
+    content: ': ';
+}
+.pdf-appendix-term dd {
+    font-size: 10.5pt;
+    color: #333;
+    margin-left: 0;
+    line-height: 1.55;
+    display: inline;
+}
+
+/* ── Divider: minimal ── */
+.pdf-divider {
+    text-align: center;
+    margin: 6pt 0;
+    color: #ccc;
+    font-size: 8pt;
+    letter-spacing: 3pt;
+}
+
+/* ── Sub-heading within chapter ── */
+.pdf-subheading {
+    font-family: 'Noto Serif', serif;
+    font-size: 11pt;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-top: 8pt;
+    margin-bottom: 3pt;
+}
+
+/* ── Footer / Page Number ── */
+@media print {
+    @page {
+        @bottom-center {
+            content: counter(page);
+            font-size: 8pt;
+            color: #999;
+        }
+    }
+}
+/* ── Life Area Accent Colors ── */
+:root {
+    --pdf-accent-personality: #6366f1;
+    --pdf-accent-love: #ec4899;
+    --pdf-accent-career: #0ea5e9;
+    --pdf-accent-health: #22c55e;
+    --pdf-accent-growth: #f59e0b;
+    --pdf-accent-default: #6366f1;
+}
+
+/* ── Per-area accent overrides ── */
+.pdf-area-personality { --pdf-accent-default: var(--pdf-accent-personality); }
+.pdf-area-love { --pdf-accent-default: var(--pdf-accent-love); }
+.pdf-area-career { --pdf-accent-default: var(--pdf-accent-career); }
+.pdf-area-health { --pdf-accent-default: var(--pdf-accent-health); }
+.pdf-area-growth { --pdf-accent-default: var(--pdf-accent-growth); }
+
+/* ── Key Insight Box ── */
+.pdf-insight-box {
+    border-left: 4pt solid var(--pdf-accent-default);
+    background: rgba(99, 102, 241, 0.04);
+    padding: 10pt 14pt;
+    margin: 12pt 0;
+    page-break-inside: avoid;
+    border-radius: 0 4pt 4pt 0;
+}
+.pdf-insight-box .pdf-insight-icon {
+    display: inline-block;
+    font-size: 14pt;
+    margin-right: 6pt;
+    vertical-align: middle;
+}
+.pdf-insight-box .pdf-insight-text {
+    font-size: 9.5pt;
+    line-height: 1.5;
+    color: #2d2d3f;
+    font-style: italic;
+}
+
+/* ── Medium Cover (simpler, monochrome) ── */
+.pdf-cover--medium {
+    background: #2d2d3f !important;
+}
+.pdf-cover--medium .pdf-cover-title {
+    color: rgba(255,255,255,0.9);
+}
+.pdf-cover--medium .pdf-cover-label {
+    position: absolute;
+    bottom: 32pt;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 8pt;
+    letter-spacing: 3pt;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+}
+
+/* ── Full Cover (rich, prestigious) ── */
+.pdf-cover--full {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+}
+.pdf-cover--full .pdf-cover-ornament-top,
+.pdf-cover--full .pdf-cover-ornament-bottom {
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    height: 1pt;
+    background: linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent);
+}
+.pdf-cover--full .pdf-cover-ornament-top { top: 24pt; }
+.pdf-cover--full .pdf-cover-ornament-bottom { bottom: 24pt; }
+.pdf-cover--full .pdf-cover-title {
+    text-shadow: 0 0 20pt rgba(212,175,55,0.3);
+}
+
+/* ── Chapter Header Tiers ── */
+.pdf-chapter-header--full {
+    border-left: 5pt solid var(--pdf-accent-default);
+    padding-left: 12pt;
+    background: rgba(99, 102, 241, 0.02);
+}
+.pdf-chapter-header--medium {
+    border-left: 2pt solid #999;
+    padding-left: 8pt;
+}
+
+/* ── CTA Upsell Page (medium PDF only) ── */
+.pdf-cta-page {
+    page-break-before: always;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 40pt 30pt;
+}
+.pdf-cta-headline {
+    font-family: 'Noto Serif', serif;
+    font-size: 20pt;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 8pt;
+}
+.pdf-cta-subtitle {
+    font-size: 11pt;
+    color: #555;
+    margin-bottom: 24pt;
+    max-width: 400pt;
+    line-height: 1.6;
+}
+.pdf-cta-benefits {
+    list-style: none;
+    text-align: left;
+    margin: 0 auto 20pt;
+    max-width: 380pt;
+}
+.pdf-cta-benefits li {
+    font-size: 9.5pt;
+    line-height: 1.6;
+    margin-bottom: 6pt;
+    padding-left: 4pt;
+}
+.pdf-cta-comparison {
+    width: 100%;
+    max-width: 420pt;
+    border-collapse: collapse;
+    margin: 16pt auto;
+    font-size: 9pt;
+}
+.pdf-cta-comparison th {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    padding: 6pt 8pt;
+    border-bottom: 2pt solid #1a1a2e;
+    text-align: left;
+}
+.pdf-cta-comparison td {
+    padding: 5pt 8pt;
+    border-bottom: 0.5pt solid #e5e7eb;
+}
+.pdf-cta-comparison .cta-check { color: #22c55e; font-weight: 600; }
+.pdf-cta-comparison .cta-dash { color: #ccc; }
+.pdf-cta-button {
+    display: inline-block;
+    padding: 12pt 28pt;
+    border-radius: 8pt;
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 12pt;
+    text-decoration: none;
+    margin-top: 20pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+.pdf-cta-social-proof {
+    font-size: 8.5pt;
+    color: #888;
+    margin-top: 12pt;
+    font-style: italic;
+}
+
+/* ── Executive Summary Card ── */
+.pdf-summary-card {
+    page-break-before: always;
+    padding: 20pt;
+}
+.pdf-summary-card-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 18pt;
+    font-weight: 700;
+    text-align: center;
+    color: #1a1a2e;
+    margin-bottom: 6pt;
+}
+.pdf-summary-card-subtitle {
+    font-size: 10pt;
+    text-align: center;
+    color: #666;
+    margin-bottom: 20pt;
+}
+.pdf-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16pt;
+    margin-top: 16pt;
+}
+.pdf-summary-section {
+    border: 1pt solid #e5e7eb;
+    border-radius: 6pt;
+    padding: 14pt;
+    page-break-inside: avoid;
+}
+.pdf-summary-section-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 11pt;
+    margin-bottom: 8pt;
+    color: #1a1a2e;
+}
+.pdf-summary-section-content {
+    font-size: 9.5pt;
+    line-height: 1.5;
+    color: #333;
+}
+.pdf-summary-section-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.pdf-summary-section-list li {
+    font-size: 9.5pt;
+    line-height: 1.5;
+    padding: 2pt 0;
+}
+
+/* ── Luck Cycle Timeline ── */
+.pdf-timeline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin: 16pt 0;
+    padding: 8pt 0;
+    position: relative;
+}
+.pdf-timeline::before {
+    content: '';
+    position: absolute;
+    top: 6pt;
+    left: 0;
+    right: 0;
+    height: 2pt;
+    background: #e5e7eb;
+    z-index: 0;
+}
+.pdf-timeline-node {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    flex: 1;
+}
+.pdf-timeline-dot {
+    width: 12pt;
+    height: 12pt;
+    border-radius: 50%;
+    background: #6366f1;
+    margin: 0 auto 4pt;
+    border: 2pt solid white;
+    box-shadow: 0 0 0 1pt #6366f1;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+.pdf-timeline-dot--active {
+    background: #f59e0b;
+    box-shadow: 0 0 0 2pt #f59e0b;
+    width: 16pt;
+    height: 16pt;
+}
+.pdf-timeline-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 7pt;
+    color: #666;
+    margin-top: 2pt;
+}
+.pdf-timeline-label--active {
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+/* ── Sharing Card ── */
+.pdf-share-card {
+    page-break-before: always;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    text-align: center;
+    padding: 40pt;
+}
+.pdf-share-headline {
+    font-family: 'Noto Serif', serif;
+    font-size: 16pt;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 6pt;
+}
+.pdf-share-subtitle {
+    font-size: 10pt;
+    color: #555;
+    margin-bottom: 16pt;
+}
+.pdf-share-tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 8pt;
+    color: #999;
+    letter-spacing: 1pt;
+}
+
+.bazi-pillar-table { width: 100%; border-collapse: collapse; margin: 16pt 0; }
+.bazi-pillar-table th, .bazi-pillar-table td { border: 1px solid #e5e5ea; padding: 8pt 12pt; text-align: center; font-size: 10pt; }
+.bazi-pillar-table th { background: #f8f7ff; font-weight: 600; color: #1a1a2e; font-size: 9pt; text-transform: uppercase; letter-spacing: 1pt; }
+.bazi-pillar-table .bazi-dm { background: #f5f3ff; border: 2px solid #8b5cf6; }
+.bazi-el-bar { display: inline-block; height: 12pt; border-radius: 3pt; margin-right: 6pt; vertical-align: middle; }
+.bazi-el-row { display: flex; align-items: center; gap: 6pt; margin: 6pt 0; font-size: 10pt; }
+.bazi-star-card { padding: 10pt 14pt; border-radius: 6pt; margin-bottom: 8pt; page-break-inside: avoid; border-left: 3px solid; }
+.bazi-star-card--cat { background: #f0fdf4; border-color: #22c55e; }
+.bazi-star-card--hung { background: #fef2f2; border-color: #ef4444; }
+.bazi-star-card--trung { background: #fffbeb; border-color: #f59e0b; }
+.bazi-cycle-card { padding: 12pt 14pt; border-radius: 6pt; margin-bottom: 10pt; page-break-inside: avoid; border: 1px solid #e5e5ea; }
+.bazi-cycle-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6pt; }
+.bazi-cycle-badge { font-size: 8pt; font-weight: 700; padding: 2pt 8pt; border-radius: 10pt; text-transform: uppercase; }
+.bazi-cycle-badge--cat { background: #dcfce7; color: #16a34a; }
+.bazi-cycle-badge--hung { background: #fef2f2; color: #dc2626; }
+.bazi-cycle-badge--trung { background: #fef9c3; color: #a16207; }
+.bazi-advice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12pt; margin: 14pt 0; }
+.bazi-advice-box { padding: 10pt; border-radius: 6pt; border: 1px solid #e5e5ea; page-break-inside: avoid; }
+.bazi-advice-box h4 { font-size: 10pt; font-weight: 600; color: #1a1a2e; margin-bottom: 6pt; }
+.bazi-advice-box p, .bazi-advice-box li { font-size: 9pt; color: #555; line-height: 1.7; }
+.bazi-advice-box ul { padding-left: 14pt; margin: 0; }
+.bazi-ts-phase { display: inline-block; padding: 4pt 10pt; border-radius: 4pt; margin: 3pt; font-size: 9pt; border: 1px solid #e5e5ea; }
+</style>
+</head>
+<body>
+    
+<div class="pdf-cover">
+    <div class="pdf-cover-emoji">⚔️</div>
+    <div class="pdf-cover-title">Bản Phân Tích Bát Tự</div>
+    <div class="pdf-cover-subtitle">Tứ Trụ · Tử Bình · Cách Cục · Điều Hậu</div>
+    <div class="pdf-cover-archetype">"Thanh kiếm sắc bén cắt đứt mọi chướng ngại"</div>
+    <div class="pdf-cover-element">Nhật Chủ Canh · Kim Dương · Nhật Chủ Trung Bình</div>
+    <div class="pdf-cover-meta">
+        Phân tích cho: Khách hàng mẫu · Sinh ngày 15 tháng 5, 1990<br>
+        Thời gian đọc: ~30 phút · Tạo ngày 15 tháng 3, 2026
+    </div>
+    <div class="pdf-cover-brand">Được tạo bởi Lịch Việt — lichviet.app</div>
+</div>
+    
+<div class="pdf-toc">
+    <div class="pdf-toc-title">Mục Lục</div>
+    <ul class="pdf-toc-list">
+<li class="pdf-toc-item">
+    <span class="pdf-toc-item-number">I</span>
+    <span class="pdf-toc-item-title">Giới Thiệu Bát Tự</span>
+    <span class="pdf-toc-item-dots"></span>
+</li>
+<li class="pdf-toc-item">
+    <span class="pdf-toc-item-number">II</span>
+    <span class="pdf-toc-item-title">Tứ Trụ &amp; Nhật Chủ</span>
+    <span class="pdf-toc-item-dots"></span>
+</li>
+<li class="pdf-toc-item">
+    <span class="pdf-toc-item-number">III</span>
+    <span class="pdf-toc-item-title">Ngũ Hành &amp; Cách Cục</span>
+    <span class="pdf-toc-item-dots"></span>
+</li>
+<li class="pdf-toc-item">
+    <span class="pdf-toc-item-number">IV</span>
+    <span class="pdf-toc-item-title">Thập Thần — Mười Vị Thần</span>
+    <span class="pdf-toc-item-dots"></span>
+</li>
+<li class="pdf-toc-item">
+    <span class="pdf-toc-item-number">V</span>
+    <span class="pdf-toc-item-title">Tàng Can &amp; Tương Tác Địa Chi</span>
+    <span class="pdf-toc-item-dots"></span>
+</li>
+<li class="pdf-toc-item">
+    <span class="pdf-toc-item-number">VI</span>
+    <span class="pdf-toc-item-title">Thần Sát — Sao Chiếu Mệnh</span>
+    <span class="pdf-toc-item-dots"></span>
+</li>
+<li class="pdf-toc-item">
+    <span class="pdf-toc-item-number">VII</span>
+    <span class="pdf-toc-item-title">Tính Cách &amp; Mối Quan Hệ</span>
+    <span class="pdf-toc-item-dots"></span>
+</li>
+<li class="pdf-toc-item">
+    <span class="pdf-toc-item-number">VIII</span>
+    <span class="pdf-toc-item-title">Sự Nghiệp &amp; Tài Lộc &amp; Sức Khỏe</span>
+    <span class="pdf-toc-item-dots"></span>
+</li>
+<li class="pdf-toc-item">
+    <span class="pdf-toc-item-number">IX</span>
+    <span class="pdf-toc-item-title">Đại Vận — Dòng Chảy Vận Mệnh</span>
+    <span class="pdf-toc-item-dots"></span>
+</li>
+<li class="pdf-toc-item">
+    <span class="pdf-toc-item-number">X</span>
+    <span class="pdf-toc-item-title">Lời Khuyên Thực Hành</span>
+    <span class="pdf-toc-item-dots"></span>
+</li>
+<li class="pdf-toc-item">
+    <span class="pdf-toc-item-number">XI</span>
+    <span class="pdf-toc-item-title">Trường Sinh — 12 Giai Đoạn Sinh Mệnh</span>
+    <span class="pdf-toc-item-dots"></span>
+</li>
+<li class="pdf-toc-item">
+    <span class="pdf-toc-item-number">XII</span>
+    <span class="pdf-toc-item-title">Phụ Lục — Thuật Ngữ</span>
+    <span class="pdf-toc-item-dots"></span>
+</li></ul>
+</div>
+    
+<div class="pdf-chapter">
+    <div class="pdf-chapter-header">
+        <span class="pdf-chapter-number">Chương I</span>
+        <h2 class="pdf-chapter-title">Giới Thiệu Bát Tự</h2>
+        <p class="pdf-chapter-subtitle">Bốn Trụ Định Mệnh — khoa học cổ đại về thời gian và năng lượng</p>
+    </div>
+
+    <p class="pdf-paragraph">Bát Tự (八字), hay còn gọi là Tứ Trụ, là một trong những hệ thống phân tích vận mệnh lâu đời nhất của phương Đông, có lịch sử phát triển trải dài hơn một nghìn năm. Tên gọi "Bát Tự" nghĩa đen là "tám chữ" — tám ký tự Can Chi đại diện cho bốn trụ thời gian: Năm, Tháng, Ngày, Giờ sinh. Mỗi trụ gồm một Thiên Can (trời) và một Địa Chi (đất), tạo thành bản đồ năng lượng vũ trụ tại khoảnh khắc bạn chào đời. Hệ thống này được cho là bắt nguồn từ thời nhà Đường (618-907), với sự đóng góp quan trọng của Lý Hư Trung, và sau đó được hoàn thiện bởi Từ Tử Bình vào thời nhà Tống (960-1279) — trường phái Tử Bình mà ngày nay là phương pháp phân tích chủ đạo.</p>
+
+    <p class="pdf-paragraph">Khác với chiêm tinh phương Tây dựa trên vị trí hành tinh, Bát Tự dựa trên nguyên lý Ngũ Hành (Kim, Mộc, Thủy, Hỏa, Thổ) và sự tương sinh tương khắc giữa chúng. Ngũ Hành không phải là năm nguyên tố vật chất — mà là năm dạng năng lượng cơ bản, năm mô hình vận động của vũ trụ. Kim đại diện cho sự thu gọn, kết tinh; Mộc cho sự mở rộng, phát triển; Thủy cho sự linh hoạt, thích nghi; Hỏa cho sự biến đổi, tỏa sáng; và Thổ cho sự ổn định, nuôi dưỡng. Mọi hiện tượng trong cuộc sống đều có thể được phân loại và phân tích thông qua hệ thống Ngũ Hành này.</p>
+
+    <p class="pdf-paragraph">Trường phái Tử Bình — phương pháp hiện đại nhất — phân tích bát tự thông qua ba trụ cột chính: Nhật Chủ — đại diện cho bản thân, là trung tâm để đánh giá mọi yếu tố khác; Thập Thần (Mười Vị Thần) — mười mối quan hệ năng lượng giữa các Can, cho thấy tài lộc, quyền lực, tri thức, sáng tạo và các mối quan hệ; và Đại Vận (Chu kỳ vận mệnh 10 năm) — dòng chảy năng lượng thay đổi theo thời gian, cho thấy khi nào thuận lợi, khi nào thách thức. Sự kết hợp của ba trụ cột này tạo nên bức tranh toàn cảnh về tính cách, tài năng, sự nghiệp, và dòng chảy cuộc đời.</p>
+
+    <p class="pdf-paragraph">Ngoài ra, bản phân tích này còn tích hợp hệ thống Cách Cục — phân loại tổng thể cấu trúc lá số thành các "khuôn mẫu" vận mệnh, và Điều Hậu — phân tích sự cân bằng năng lượng dựa trên mùa sinh. Sự kết hợp đa trường phái này cho phép nhìn nhận lá số từ nhiều góc độ khác nhau, tạo nên bản phân tích toàn diện và chính xác hơn so với việc chỉ sử dụng một phương pháp duy nhất.</p>
+
+    <div class="pdf-pullquote">"Biết mệnh không phải để cam chịu, mà để chủ động dẫn dắt cuộc đời đi đúng quỹ đạo năng lượng của mình."</div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Cách Đọc Báo Cáo Này</h3>
+        <p class="pdf-paragraph">Báo cáo này được tạo tự động dựa trên thuật toán đa trường phái: Tử Bình (Nhật Chủ, Thập Thần), Cách Cục (phân loại mệnh cách), và Điều Hậu (cân bằng mùa sinh). Mỗi chương phân tích một khía cạnh khác nhau của lá số, từ tổng quan đến chi tiết, từ tính cách bẩm sinh đến dòng chảy vận mệnh qua các thập niên. Bạn có thể đọc tuần tự để có cái nhìn toàn diện, hoặc nhảy trực tiếp đến chương quan tâm. Tuy nhiên, chúng tôi khuyến khích đọc Chương II (Tứ Trụ & Nhật Chủ) trước, vì đây là nền tảng để hiểu tất cả các phần phân tích sau.</p>
+        <p class="pdf-paragraph">Các biểu tượng hướng dẫn: ✅ Cát (thuận lợi) — chỉ ra những khía cạnh năng lượng tích cực, hỗ trợ; ⚠️ Hung (thử thách) — chỉ ra những vùng năng lượng cần được quản lý khéo léo; ☯️ Trung (trung tính) — năng lượng ổn định, có thể nghiêng về cát hoặc hung tùy hoàn cảnh. Hãy nhớ rằng "hung" không có nghĩa là xấu một cách tuyệt đối — nó chỉ ra những vùng năng lượng cần được nhận thức và quản lý. Nhiều người thành công lớn nhất lại là những người có nhiều yếu tố "hung" trong lá số — vì chính thách thức mới tạo ra động lực phát triển mạnh mẽ nhất.</p>
+    </div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Triết Lý Phân Tích</h3>
+        <p class="pdf-paragraph">Bản phân tích này được xây dựng trên triết lý rằng bản chất con người là phức tạp, đa chiều, và luôn trong quá trình phát triển. Lá số Bát Tự không phải là bản án — mà là bản đồ. Nó cho thấy "địa hình năng lượng" mà bạn đang sở hữu: những đỉnh cao (điểm mạnh), những thung lũng (thách thức), những dòng sông (dòng chảy vận mệnh), và những con đường (hướng phát triển phù hợp). Giống như một bản đồ địa lý không quyết định bạn đi đâu — nhưng giúp bạn đi đúng hướng và tránh được những nguy hiểm không cần thiết — lá số Bát Tự cung cấp thông tin để bạn đưa ra lựa chọn sáng suốt hơn.</p>
+        <p class="pdf-paragraph">Một nguyên tắc quan trọng trong triết học Bát Tự: "Nhất mệnh, nhì vận, tam phong thủy, tứ âm đức, ngũ độc thư" — mệnh và vận chỉ là hai trong năm yếu tố ảnh hưởng đến cuộc đời, bên cạnh phong thủy (môi trường), âm đức (phúc đức gia đình), và độc thư (sự học hỏi). Điều này nhắc nhở rằng dù lá số cho thấy gì, bạn vẫn có khả năng tác động và thay đổi thông qua nỗ lực cá nhân, sự tu dưỡng, và sự học hỏi không ngừng.</p>
+    </div>
+</div>
+    
+<div class="pdf-chapter">
+    <div class="pdf-chapter-header">
+        <span class="pdf-chapter-emoji">⚔️</span>
+        <span class="pdf-chapter-number">Chương II</span>
+        <h2 class="pdf-chapter-title">Tứ Trụ & Nhật Chủ</h2>
+        <p class="pdf-chapter-subtitle">Bốn cột trụ định hình bản đồ năng lượng cuộc đời bạn</p>
+    </div>
+
+    <table class="bazi-pillar-table">
+        <thead><tr><th>Trụ</th><th>Thiên Can</th><th>Hành</th><th>Địa Chi</th><th>Hành</th><th>Nạp Âm</th></tr></thead>
+        <tbody>
+<tr>
+    <td class="" style="font-weight:600">Trụ Năm</td>
+    <td class="" style="color:#d4a017;font-size:14pt;font-weight:700">Canh</td>
+    <td class="">🪙 Kim</td>
+    <td class="" style="color:#dc2626;font-size:14pt;font-weight:700">Ngọ</td>
+    <td class="">🔥 Hỏa</td>
+    <td class="" style="font-size:9pt;color:#666">Lộ Bàng Thổ</td>
+</tr>
+<tr>
+    <td class="" style="font-weight:600">Trụ Tháng</td>
+    <td class="" style="color:#d4a017;font-size:14pt;font-weight:700">Tân</td>
+    <td class="">🪙 Kim</td>
+    <td class="" style="color:#dc2626;font-size:14pt;font-weight:700">Tỵ</td>
+    <td class="">🔥 Hỏa</td>
+    <td class="" style="font-size:9pt;color:#666">Bạch Lạp Kim</td>
+</tr>
+<tr>
+    <td class="bazi-dm" style="font-weight:600">Trụ Ngày</td>
+    <td class="bazi-dm" style="color:#d4a017;font-size:14pt;font-weight:700">Canh</td>
+    <td class="bazi-dm">🪙 Kim</td>
+    <td class="bazi-dm" style="color:#d97706;font-size:14pt;font-weight:700">Thìn</td>
+    <td class="bazi-dm">🏔️ Thổ</td>
+    <td class="bazi-dm" style="font-size:9pt;color:#666">Bạch Lạp Kim</td>
+</tr>
+<tr>
+    <td class="" style="font-weight:600">Trụ Giờ</td>
+    <td class="" style="color:#d4a017;font-size:14pt;font-weight:700">Canh</td>
+    <td class="">🪙 Kim</td>
+    <td class="" style="color:#d97706;font-size:14pt;font-weight:700">Thìn</td>
+    <td class="">🏔️ Thổ</td>
+    <td class="" style="font-size:9pt;color:#666">Bạch Lạp Kim</td>
+</tr></tbody>
+    </table>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Nhật Chủ — Canh (🪙 Kim)</h3>
+        <p class="pdf-paragraph"><strong>Nhật Chủ Trung Bình</strong> — Canh (Kim) ở trạng thái cân bằng. Mùa Hạ không quá thiên lệch, hành hỗ trợ và khắc chế tương đối đều.</p>
+        <p class="pdf-paragraph">Nhật Chủ là "linh hồn" của lá số — đại diện cho bản thân bạn. Tất cả các yếu tố khác (Thập Thần, Thần Sát, Đại Vận) đều được phân tích dựa trên mối quan hệ với Nhật Chủ. Hành hỷ dụng (thuận lợi): <strong>🪙 Kim, 💧 Thủy</strong>. Hành kỵ: <strong>🌿 Mộc</strong>.</p>
+    </div>
+
+    
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Nạp Âm Trụ Ngày — 🕯️🪙 Bạch Lạp Kim</h3>
+        <p class="pdf-paragraph">Vàng trong nến trắng — vẻ ngoài giản dị nhưng bên trong quý giá. Tài năng cần được khám phá và mài giũa.</p>
+    </div>
+    
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Nạp Âm Trụ Năm — 🛤️🌿 Lộ Bàng Thổ</h3>
+        <p class="pdf-paragraph">Đất ven đường — kết nối mọi người, mở rộng giao lưu. Cuộc đời nhiều di chuyển, thay đổi nhưng giàu trải nghiệm.</p>
+    </div>
+
+    <div class="pdf-pullquote">"Thanh kiếm sắc bén cắt đứt mọi chướng ngại — bạn mang trong mình năng lượng Kim Dương, cân bằng và hài hòa tự nhiên."</div>
+</div>
+    
+<div class="pdf-chapter">
+    <div class="pdf-chapter-header">
+        <span class="pdf-chapter-emoji">⚖️</span>
+        <span class="pdf-chapter-number">Chương III</span>
+        <h2 class="pdf-chapter-title">Ngũ Hành & Cách Cục</h2>
+        <p class="pdf-chapter-subtitle">Cán cân năng lượng và mô hình vận mệnh</p>
+    </div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Phân Bổ Ngũ Hành</h3>
+        <p class="pdf-paragraph">Ngũ Hành trong lá số cho thấy "bản đồ năng lượng" bẩm sinh. Hành nào nhiều thì năng lượng đó mạnh — không nhất thiết là tốt hay xấu, mà quan trọng là sự cân bằng tổng thể.</p>
+        
+<div class="bazi-el-row">
+    <span style="min-width:36pt">🪙 Kim</span>
+    <span class="bazi-el-bar" style="width:200pt;background:#d4a017"></span>
+    <span style="font-weight:600">4</span>
+</div>
+<div class="bazi-el-row">
+    <span style="min-width:36pt">🌿 Mộc</span>
+    <span class="bazi-el-bar" style="width:8pt;background:#16a34a"></span>
+    <span style="font-weight:600">0</span>
+</div>
+<div class="bazi-el-row">
+    <span style="min-width:36pt">💧 Thủy</span>
+    <span class="bazi-el-bar" style="width:8pt;background:#2563eb"></span>
+    <span style="font-weight:600">0</span>
+</div>
+<div class="bazi-el-row">
+    <span style="min-width:36pt">🔥 Hỏa</span>
+    <span class="bazi-el-bar" style="width:100pt;background:#dc2626"></span>
+    <span style="font-weight:600">2</span>
+</div>
+<div class="bazi-el-row">
+    <span style="min-width:36pt">🏔️ Thổ</span>
+    <span class="bazi-el-bar" style="width:100pt;background:#d97706"></span>
+    <span style="font-weight:600">2</span>
+</div>
+    </div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Cách Cục — Chính Quan Cục</h3>
+        <p class="pdf-paragraph">Quan Tinh (Hỏa) chế hóa Nhật Chủ Kim vừa đủ. Cách cục quý hiển, thuận lợi sự nghiệp.</p>
+        <p class="pdf-paragraph">Cách Cục là "khuôn mẫu" tổng hợp của lá số — cho thấy xu hướng vận mệnh và con đường phát triển phù hợp nhất. Hiểu rõ cách cục giúp bạn đi đúng quỹ đạo thay vì chống lại bản tính.</p>
+    </div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Điều Hậu — Cân Bằng Mùa Sinh</h3>
+        <p class="pdf-paragraph"><strong>Mùa Hạ</strong> — Nóng, cần mát. Nhật Chủ tự mang hơi mát, thuận lợi mùa Hè.</p>
+        <p class="pdf-paragraph">Hành cần bổ sung: <strong>💧 Thủy</strong>. Điều Hậu xem xét mùa sinh để đánh giá "nhiệt độ" của lá số. Ví dụ, người sinh mùa đông (Thủy vượng) thường cần thêm Hỏa để sưởi ấm, giúp năng lượng lưu thông.</p>
+    </div>
+</div>
+    
+<div class="pdf-chapter">
+    <div class="pdf-chapter-header">
+        <span class="pdf-chapter-emoji">⭐</span>
+        <span class="pdf-chapter-number">Chương IV</span>
+        <h2 class="pdf-chapter-title">Thập Thần — Mười Vị Thần</h2>
+        <p class="pdf-chapter-subtitle">Mạng lưới quan hệ năng lượng xung quanh Nhật Chủ</p>
+    </div>
+
+    <p class="pdf-paragraph">Theo kinh điển "Uyên Hải Tử Bình" (淵海子平) của Từ Tử Bình thời Tống — ông tổ khai sáng trường phái Tử Bình mà ngày nay toàn bộ giới mệnh lý học đều kế thừa — Thập Thần (十神) là hệ thống phân loại mười mối quan hệ năng lượng giữa các Thiên Can trong lá số với Nhật Chủ, dựa trên nguyên lý Ngũ Hành sinh khắc và biến hóa Âm Dương. Mỗi vị thần không chỉ là một ký hiệu kỹ thuật — mà là một "nhân vật" sống động trong vở kịch cuộc đời bạn, đại diện cho tài lộc, quyền lực, sáng tạo, tri thức, hay tình bạn. Hiểu Thập Thần chính là hiểu "đội quân" năng lượng đang khiến bạn hành xử, quyết định, yêu thương, và phấn đấu theo cách riêng biệt không ai giống ai.</p>
+
+    <p class="pdf-paragraph">Nguyên lý cốt lõi: Can cùng hành với Nhật Chủ là Tỉ Kiên/Kiếp Tài (anh em, bạn bè, đối thủ cạnh tranh ngang hàng); Can được Nhật Chủ sinh là Thực Thần/Thương Quan (con cái, tác phẩm sáng tạo, tiếng nói cá nhân); Can bị Nhật Chủ khắc là Chính Tài/Thiên Tài (nguồn tài lộc, vợ/chồng đối với nam giới); Can khắc Nhật Chủ là Chính Quan/Thất Sát (áp lực xã hội, cấp trên, chồng đối với nữ giới); Can sinh Nhật Chủ là Chính Ấn/Thiên Ấn (mẹ, thầy cô, kiến thức, sự bảo bọc). "Cùng Thông Bảo Giám" nhấn mạnh: "Thập Thần chi dụng, tại hồ phối hợp" — công dụng của Thập Thần nằm ở sự phối hợp, không phải ở từng vị đơn lẻ.</p>
+
+    
+<div class="bazi-star-card bazi-star-card--trung">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:11pt;color:#1a1a2e">Tỉ Kiên (比肩) (xuất hiện 3 lần)</strong>
+        <span style="font-size:8pt">☯️ Trung Tính · Trụ Năm · Thiên Can</span>
+    </div>
+    <p style="font-size:9pt;color:#555;margin:0"><strong>Bạn bè · Đồng nghiệp</strong> — Cùng hành, cùng tính (Dương gặp Dương, Âm gặp Âm) với Nhật Chủ. Tượng trưng cho anh em, bạn bè, đồng nghiệp cùng chí hướng.</p>
+    <p style="font-size:8.5pt;color:#888;margin:4pt 0 0 0;font-style:italic">Can: Canh (🪙 Kim)</p>
+</div>
+
+<p class="pdf-paragraph">Theo sách "Tam Mệnh Thông Hội" (三命通會) của Vạn Dân Anh thời Minh và "Trích Thiên Tủy" (滴天髓) — hai bộ kinh điển nền tảng của thuật Tử Bình — thì Tỉ Kiên (比肩) trong mệnh lý học là mối quan hệ giữa Canh (Kim) với Nhật Chủ Canh (Kim), thuộc dạng "Bạn bè · Đồng nghiệp". Cùng hành, cùng tính (Dương gặp Dương, Âm gặp Âm) với Nhật Chủ. Tượng trưng cho anh em, bạn bè, đồng nghiệp cùng chí hướng.. Khi vị thần này hiện diện trong lá số, nó không đơn thuần là một ký hiệu trên giấy — mà là một dòng năng lượng sống đang vận hành trong từng quyết định, từng mối quan hệ, và từng bước ngoặt cuộc đời bạn. Người xưa nói "mệnh do thiên định, vận do nhân tạo" — việc nhận biết Tỉ Kiên trong lá số chính là bước đầu tiên để bạn hiểu "thiên mệnh" đang gửi gắm điều gì, từ đó chủ động "tạo vận" theo hướng có lợi nhất.</p>
+
+<p class="pdf-paragraph">Biểu hiện tích cực: Tự lập, có chủ kiến, giao thiệp rộng, được bạn bè hỗ trợ. Thích hợp kinh doanh hợp tác, làm việc nhóm.. Bạn có thể đã nhận thấy những phẩm chất này trong bản thân. Tuy nhiên, mỗi ánh sáng đều kèm bóng tối — mặt tiêu cực cần cảnh giác: Cố chấp, hay tranh giành, khó nhượng bộ. Dễ bị bạn bè cạnh tranh hoặc lợi dụng tài chính.. Người biết nhận diện cả hai mặt này sớm thường tránh được nhiều sai lầm không đáng có.</p>
+
+<p class="pdf-paragraph">Về khía cạnh cuộc sống, Tỉ Kiên chi phối trực tiếp: Quan hệ xã hội, tình bạn, đối tác kinh doanh. Trong lá số của bạn, Tỉ Kiên tọa tại <strong>Trụ Năm</strong> — tức cung Tổ Đức — nơi lưu giữ phúc đức ông bà, nền tảng gia tộc, và ảnh hưởng xã hội rộng lớn mà bạn thừa hưởng từ thế hệ trước — ở vị trí <strong>Thiên Can</strong>. Khi một Thập Thần lộ ra ở Thiên Can, sách "Uyên Hải Tử Bình" (淵海子平) ghi rõ: đó là năng lượng "hiển lộ" — người ngoài nhìn vào bạn sẽ cảm nhận được ảnh hưởng của nó trong tính cách, cách giao tiếp, và phong thái bên ngoài. Bạn có thể đã từng được người khác nhận xét về những đặc điểm tương ứng mà không hiểu tại sao — câu trả lời nằm ngay đây. Đặc biệt, Tỉ Kiên xuất hiện <strong>3 lần</strong> — điều mà các bậc thầy cổ đại gọi là "thần khí trùng phùng". Khi năng lượng một vị thần được nhân lên, nó trở thành chủ đề chính trong cuộc đời: mọi thành công và thách thức đều xoay quanh bản chất của vị thần này. Bạn không thể phớt lờ nó — bạn chỉ có thể học cách thuần phục và tận dụng nó.</p>
+
+<div class="pdf-divider">✦</div>
+
+<div class="bazi-star-card bazi-star-card--cat">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:11pt;color:#1a1a2e">Chính Quan (正官)</strong>
+        <span style="font-size:8pt">✅ Cát Thần · Trụ Năm · Tàng Can</span>
+    </div>
+    <p style="font-size:9pt;color:#555;margin:0"><strong>Danh tiếng · Kỷ luật</strong> — Hành khắc Nhật Chủ, cùng tính. Tượng trưng cho danh tiếng, địa vị, kỷ luật, trật tự.</p>
+    <p style="font-size:8.5pt;color:#888;margin:4pt 0 0 0;font-style:italic">Can: Đinh (🔥 Hỏa)</p>
+</div>
+
+<p class="pdf-paragraph">Theo sách "Tam Mệnh Thông Hội" (三命通會) của Vạn Dân Anh thời Minh và "Trích Thiên Tủy" (滴天髓) — hai bộ kinh điển nền tảng của thuật Tử Bình — thì Chính Quan (正官) trong mệnh lý học là mối quan hệ giữa Đinh (Hỏa) với Nhật Chủ Canh (Kim), thuộc dạng "Danh tiếng · Kỷ luật". Hành khắc Nhật Chủ, cùng tính. Tượng trưng cho danh tiếng, địa vị, kỷ luật, trật tự.. Khi vị thần này hiện diện trong lá số, nó không đơn thuần là một ký hiệu trên giấy — mà là một dòng năng lượng sống đang vận hành trong từng quyết định, từng mối quan hệ, và từng bước ngoặt cuộc đời bạn. Người xưa nói "mệnh do thiên định, vận do nhân tạo" — việc nhận biết Chính Quan trong lá số chính là bước đầu tiên để bạn hiểu "thiên mệnh" đang gửi gắm điều gì, từ đó chủ động "tạo vận" theo hướng có lợi nhất.</p>
+
+<p class="pdf-paragraph">Biểu hiện tích cực: Có danh vọng, được tôn trọng, thăng tiến trong công việc. Tự giác, kỷ luật, tuân thủ quy tắc.. Bạn có thể đã nhận thấy những phẩm chất này trong bản thân. Tuy nhiên, mỗi ánh sáng đều kèm bóng tối — mặt tiêu cực cần cảnh giác: Quá tuân thủ quy tắc, thiếu sáng tạo. Áp lực từ trách nhiệm xã hội, kỳ vọng từ người khác.. Người biết nhận diện cả hai mặt này sớm thường tránh được nhiều sai lầm không đáng có.</p>
+
+<p class="pdf-paragraph">Về khía cạnh cuộc sống, Chính Quan chi phối trực tiếp: Danh tiếng, sự nghiệp công, chồng (nữ mệnh). Trong lá số của bạn, Chính Quan tọa tại <strong>Trụ Năm</strong> — tức cung Tổ Đức — nơi lưu giữ phúc đức ông bà, nền tảng gia tộc, và ảnh hưởng xã hội rộng lớn mà bạn thừa hưởng từ thế hệ trước — ở vị trí <strong>Tàng Can</strong>. Khi một Thập Thần ẩn trong Tàng Can (tức nằm sâu bên trong Địa Chi), theo "Tử Bình Chân Thuyên" (子平真詮) của Thẩm Hiểu Chiêm, đây là năng lượng "tiềm tàng" — nó không lộ ra bề mặt nhưng âm thầm chi phối những quyết định quan trọng nhất. Bạn có thể không nhận ra tại sao mình bị hút về một hướng nào đó trong cuộc sống — nhưng chính Tàng Can này đang dẫn dắt bạn.</p>
+
+<div class="pdf-divider">✦</div>
+
+<div class="bazi-star-card bazi-star-card--cat">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:11pt;color:#1a1a2e">Chính Ấn (正印)</strong>
+        <span style="font-size:8pt">✅ Cát Thần · Trụ Năm · Tàng Can</span>
+    </div>
+    <p style="font-size:9pt;color:#555;margin:0"><strong>Học vấn · Che chở</strong> — Hành sinh Nhật Chủ, cùng tính. Tượng trưng cho mẹ, thầy, học vấn, sự bảo trợ.</p>
+    <p style="font-size:8.5pt;color:#888;margin:4pt 0 0 0;font-style:italic">Can: Kỷ (🏔️ Thổ)</p>
+</div>
+
+<p class="pdf-paragraph">Theo sách "Tam Mệnh Thông Hội" (三命通會) của Vạn Dân Anh thời Minh và "Trích Thiên Tủy" (滴天髓) — hai bộ kinh điển nền tảng của thuật Tử Bình — thì Chính Ấn (正印) trong mệnh lý học là mối quan hệ giữa Kỷ (Thổ) với Nhật Chủ Canh (Kim), thuộc dạng "Học vấn · Che chở". Hành sinh Nhật Chủ, cùng tính. Tượng trưng cho mẹ, thầy, học vấn, sự bảo trợ.. Khi vị thần này hiện diện trong lá số, nó không đơn thuần là một ký hiệu trên giấy — mà là một dòng năng lượng sống đang vận hành trong từng quyết định, từng mối quan hệ, và từng bước ngoặt cuộc đời bạn. Người xưa nói "mệnh do thiên định, vận do nhân tạo" — việc nhận biết Chính Ấn trong lá số chính là bước đầu tiên để bạn hiểu "thiên mệnh" đang gửi gắm điều gì, từ đó chủ động "tạo vận" theo hướng có lợi nhất.</p>
+
+<p class="pdf-paragraph">Biểu hiện tích cực: Học giỏi, có quý nhân phù trợ, được che chở. Hiền lành, nhân từ, có phúc đức.. Bạn có thể đã nhận thấy những phẩm chất này trong bản thân. Tuy nhiên, mỗi ánh sáng đều kèm bóng tối — mặt tiêu cực cần cảnh giác: Phụ thuộc, thiếu tự lập, hay dựa dẫm. Đôi khi thụ động, thiếu động lực phấn đấu.. Người biết nhận diện cả hai mặt này sớm thường tránh được nhiều sai lầm không đáng có.</p>
+
+<p class="pdf-paragraph">Về khía cạnh cuộc sống, Chính Ấn chi phối trực tiếp: Học vấn, mẹ, quý nhân, bảo trợ. Trong lá số của bạn, Chính Ấn tọa tại <strong>Trụ Năm</strong> — tức cung Tổ Đức — nơi lưu giữ phúc đức ông bà, nền tảng gia tộc, và ảnh hưởng xã hội rộng lớn mà bạn thừa hưởng từ thế hệ trước — ở vị trí <strong>Tàng Can</strong>. Khi một Thập Thần ẩn trong Tàng Can (tức nằm sâu bên trong Địa Chi), theo "Tử Bình Chân Thuyên" (子平真詮) của Thẩm Hiểu Chiêm, đây là năng lượng "tiềm tàng" — nó không lộ ra bề mặt nhưng âm thầm chi phối những quyết định quan trọng nhất. Bạn có thể không nhận ra tại sao mình bị hút về một hướng nào đó trong cuộc sống — nhưng chính Tàng Can này đang dẫn dắt bạn.</p>
+
+<div class="pdf-divider">✦</div>
+
+<div class="bazi-star-card bazi-star-card--hung">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:11pt;color:#1a1a2e">Kiếp Tài (劫財)</strong>
+        <span style="font-size:8pt">⚠️ Hung Thần · Trụ Tháng · Thiên Can</span>
+    </div>
+    <p style="font-size:9pt;color:#555;margin:0"><strong>Cạnh tranh · Tranh đoạt</strong> — Cùng hành nhưng khác tính (Dương gặp Âm) với Nhật Chủ. Tượng trưng cho kẻ cạnh tranh, người tranh giành quyền lợi.</p>
+    <p style="font-size:8.5pt;color:#888;margin:4pt 0 0 0;font-style:italic">Can: Tân (🪙 Kim)</p>
+</div>
+
+<p class="pdf-paragraph">Theo sách "Tam Mệnh Thông Hội" (三命通會) của Vạn Dân Anh thời Minh và "Trích Thiên Tủy" (滴天髓) — hai bộ kinh điển nền tảng của thuật Tử Bình — thì Kiếp Tài (劫財) trong mệnh lý học là mối quan hệ giữa Tân (Kim) với Nhật Chủ Canh (Kim), thuộc dạng "Cạnh tranh · Tranh đoạt". Cùng hành nhưng khác tính (Dương gặp Âm) với Nhật Chủ. Tượng trưng cho kẻ cạnh tranh, người tranh giành quyền lợi.. Khi vị thần này hiện diện trong lá số, nó không đơn thuần là một ký hiệu trên giấy — mà là một dòng năng lượng sống đang vận hành trong từng quyết định, từng mối quan hệ, và từng bước ngoặt cuộc đời bạn. Người xưa nói "mệnh do thiên định, vận do nhân tạo" — việc nhận biết Kiếp Tài trong lá số chính là bước đầu tiên để bạn hiểu "thiên mệnh" đang gửi gắm điều gì, từ đó chủ động "tạo vận" theo hướng có lợi nhất.</p>
+
+<p class="pdf-paragraph">Biểu hiện tích cực: Năng động, dám mạo hiểm, quyết đoán trong hành động. Có sức hút, dám đầu tư lớn.. Bạn có thể đã nhận thấy những phẩm chất này trong bản thân. Tuy nhiên, mỗi ánh sáng đều kèm bóng tối — mặt tiêu cực cần cảnh giác: Phung phí, bốc đồng, hay gặp tổn thất tiền bạc. Dễ bị tranh giành tài sản hoặc tình cảm.. Người biết nhận diện cả hai mặt này sớm thường tránh được nhiều sai lầm không đáng có.</p>
+
+<p class="pdf-paragraph">Về khía cạnh cuộc sống, Kiếp Tài chi phối trực tiếp: Tài chính, cạnh tranh, mạo hiểm. Trong lá số của bạn, Kiếp Tài tọa tại <strong>Trụ Tháng</strong> — tức cung Phụ Mẫu kiêm cung Sự Nghiệp — trụ then chốt nhất trong việc luận đoán đường công danh, mối quan hệ với cấp trên, và vị thế nghề nghiệp — ở vị trí <strong>Thiên Can</strong>. Khi một Thập Thần lộ ra ở Thiên Can, sách "Uyên Hải Tử Bình" (淵海子平) ghi rõ: đó là năng lượng "hiển lộ" — người ngoài nhìn vào bạn sẽ cảm nhận được ảnh hưởng của nó trong tính cách, cách giao tiếp, và phong thái bên ngoài. Bạn có thể đã từng được người khác nhận xét về những đặc điểm tương ứng mà không hiểu tại sao — câu trả lời nằm ngay đây.</p>
+
+<div class="pdf-divider">✦</div>
+
+<div class="bazi-star-card bazi-star-card--hung">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:11pt;color:#1a1a2e">Thất Sát (七殺)</strong>
+        <span style="font-size:8pt">⚠️ Hung Thần · Trụ Tháng · Tàng Can</span>
+    </div>
+    <p style="font-size:9pt;color:#555;margin:0"><strong>Áp lực · Quyền lực</strong> — Hành khắc Nhật Chủ, khác tính. Tượng trưng cho áp lực, quyền uy, thử thách nghiêm khắc.</p>
+    <p style="font-size:8.5pt;color:#888;margin:4pt 0 0 0;font-style:italic">Can: Bính (🔥 Hỏa)</p>
+</div>
+
+<p class="pdf-paragraph">Theo sách "Tam Mệnh Thông Hội" (三命通會) của Vạn Dân Anh thời Minh và "Trích Thiên Tủy" (滴天髓) — hai bộ kinh điển nền tảng của thuật Tử Bình — thì Thất Sát (七殺) trong mệnh lý học là mối quan hệ giữa Bính (Hỏa) với Nhật Chủ Canh (Kim), thuộc dạng "Áp lực · Quyền lực". Hành khắc Nhật Chủ, khác tính. Tượng trưng cho áp lực, quyền uy, thử thách nghiêm khắc.. Khi vị thần này hiện diện trong lá số, nó không đơn thuần là một ký hiệu trên giấy — mà là một dòng năng lượng sống đang vận hành trong từng quyết định, từng mối quan hệ, và từng bước ngoặt cuộc đời bạn. Người xưa nói "mệnh do thiên định, vận do nhân tạo" — việc nhận biết Thất Sát trong lá số chính là bước đầu tiên để bạn hiểu "thiên mệnh" đang gửi gắm điều gì, từ đó chủ động "tạo vận" theo hướng có lợi nhất.</p>
+
+<p class="pdf-paragraph">Biểu hiện tích cực: Có quyền lực, uy tín, dám đối đầu thử thách. Thích hợp lãnh đạo, quân sự, cạnh tranh khốc liệt.. Bạn có thể đã nhận thấy những phẩm chất này trong bản thân. Tuy nhiên, mỗi ánh sáng đều kèm bóng tối — mặt tiêu cực cần cảnh giác: Áp lực lớn, dễ gặp tai họa, bị kẻ tiểu nhân hãm hại. Đối mặt nhiều trở ngại và nguy hiểm.. Người biết nhận diện cả hai mặt này sớm thường tránh được nhiều sai lầm không đáng có.</p>
+
+<p class="pdf-paragraph">Về khía cạnh cuộc sống, Thất Sát chi phối trực tiếp: Sự nghiệp, quyền lực, con cái (nữ mệnh). Trong lá số của bạn, Thất Sát tọa tại <strong>Trụ Tháng</strong> — tức cung Phụ Mẫu kiêm cung Sự Nghiệp — trụ then chốt nhất trong việc luận đoán đường công danh, mối quan hệ với cấp trên, và vị thế nghề nghiệp — ở vị trí <strong>Tàng Can</strong>. Khi một Thập Thần ẩn trong Tàng Can (tức nằm sâu bên trong Địa Chi), theo "Tử Bình Chân Thuyên" (子平真詮) của Thẩm Hiểu Chiêm, đây là năng lượng "tiềm tàng" — nó không lộ ra bề mặt nhưng âm thầm chi phối những quyết định quan trọng nhất. Bạn có thể không nhận ra tại sao mình bị hút về một hướng nào đó trong cuộc sống — nhưng chính Tàng Can này đang dẫn dắt bạn.</p>
+
+<div class="pdf-divider">✦</div>
+
+<div class="bazi-star-card bazi-star-card--trung">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:11pt;color:#1a1a2e">Thiên Ấn (偏印) (xuất hiện 3 lần)</strong>
+        <span style="font-size:8pt">☯️ Trung Tính · Trụ Tháng · Tàng Can</span>
+    </div>
+    <p style="font-size:9pt;color:#555;margin:0"><strong>Tâm linh · Nghiên cứu</strong> — Hành sinh Nhật Chủ, khác tính. Tượng trưng cho trí tuệ phi truyền thống, tâm linh, bí ẩn.</p>
+    <p style="font-size:8.5pt;color:#888;margin:4pt 0 0 0;font-style:italic">Can: Mậu (🏔️ Thổ)</p>
+</div>
+
+<p class="pdf-paragraph">Theo sách "Tam Mệnh Thông Hội" (三命通會) của Vạn Dân Anh thời Minh và "Trích Thiên Tủy" (滴天髓) — hai bộ kinh điển nền tảng của thuật Tử Bình — thì Thiên Ấn (偏印) trong mệnh lý học là mối quan hệ giữa Mậu (Thổ) với Nhật Chủ Canh (Kim), thuộc dạng "Tâm linh · Nghiên cứu". Hành sinh Nhật Chủ, khác tính. Tượng trưng cho trí tuệ phi truyền thống, tâm linh, bí ẩn.. Khi vị thần này hiện diện trong lá số, nó không đơn thuần là một ký hiệu trên giấy — mà là một dòng năng lượng sống đang vận hành trong từng quyết định, từng mối quan hệ, và từng bước ngoặt cuộc đời bạn. Người xưa nói "mệnh do thiên định, vận do nhân tạo" — việc nhận biết Thiên Ấn trong lá số chính là bước đầu tiên để bạn hiểu "thiên mệnh" đang gửi gắm điều gì, từ đó chủ động "tạo vận" theo hướng có lợi nhất.</p>
+
+<p class="pdf-paragraph">Biểu hiện tích cực: Trí tuệ sâu, nghiên cứu giỏi, có năng khiếu tâm linh. Tư duy độc lập, không theo lối mòn.. Bạn có thể đã nhận thấy những phẩm chất này trong bản thân. Tuy nhiên, mỗi ánh sáng đều kèm bóng tối — mặt tiêu cực cần cảnh giác: Cô đơn, cô độc, suy nghĩ quá phức tạp. Khó hòa nhập, dễ bị hiểu lầm.. Người biết nhận diện cả hai mặt này sớm thường tránh được nhiều sai lầm không đáng có.</p>
+
+<p class="pdf-paragraph">Về khía cạnh cuộc sống, Thiên Ấn chi phối trực tiếp: Học vấn phi chính thống, tâm linh, mẹ kế. Trong lá số của bạn, Thiên Ấn tọa tại <strong>Trụ Tháng</strong> — tức cung Phụ Mẫu kiêm cung Sự Nghiệp — trụ then chốt nhất trong việc luận đoán đường công danh, mối quan hệ với cấp trên, và vị thế nghề nghiệp — ở vị trí <strong>Tàng Can</strong>. Khi một Thập Thần ẩn trong Tàng Can (tức nằm sâu bên trong Địa Chi), theo "Tử Bình Chân Thuyên" (子平真詮) của Thẩm Hiểu Chiêm, đây là năng lượng "tiềm tàng" — nó không lộ ra bề mặt nhưng âm thầm chi phối những quyết định quan trọng nhất. Bạn có thể không nhận ra tại sao mình bị hút về một hướng nào đó trong cuộc sống — nhưng chính Tàng Can này đang dẫn dắt bạn. Đặc biệt, Thiên Ấn xuất hiện <strong>3 lần</strong> — điều mà các bậc thầy cổ đại gọi là "thần khí trùng phùng". Khi năng lượng một vị thần được nhân lên, nó trở thành chủ đề chính trong cuộc đời: mọi thành công và thách thức đều xoay quanh bản chất của vị thần này. Bạn không thể phớt lờ nó — bạn chỉ có thể học cách thuần phục và tận dụng nó.</p>
+
+<div class="pdf-divider">✦</div>
+
+<div class="bazi-star-card bazi-star-card--cat">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:11pt;color:#1a1a2e">Chính Tài (正財) (xuất hiện 2 lần)</strong>
+        <span style="font-size:8pt">✅ Cát Thần · Trụ Ngày · Tàng Can</span>
+    </div>
+    <p style="font-size:9pt;color:#555;margin:0"><strong>Lương bổng · Ổn định</strong> — Hành bị Nhật Chủ khắc, cùng tính. Tượng trưng cho thu nhập ổn định, lương bổng, tài sản tích lũy.</p>
+    <p style="font-size:8.5pt;color:#888;margin:4pt 0 0 0;font-style:italic">Can: Ất (🌿 Mộc)</p>
+</div>
+
+<p class="pdf-paragraph">Theo sách "Tam Mệnh Thông Hội" (三命通會) của Vạn Dân Anh thời Minh và "Trích Thiên Tủy" (滴天髓) — hai bộ kinh điển nền tảng của thuật Tử Bình — thì Chính Tài (正財) trong mệnh lý học là mối quan hệ giữa Ất (Mộc) với Nhật Chủ Canh (Kim), thuộc dạng "Lương bổng · Ổn định". Hành bị Nhật Chủ khắc, cùng tính. Tượng trưng cho thu nhập ổn định, lương bổng, tài sản tích lũy.. Khi vị thần này hiện diện trong lá số, nó không đơn thuần là một ký hiệu trên giấy — mà là một dòng năng lượng sống đang vận hành trong từng quyết định, từng mối quan hệ, và từng bước ngoặt cuộc đời bạn. Người xưa nói "mệnh do thiên định, vận do nhân tạo" — việc nhận biết Chính Tài trong lá số chính là bước đầu tiên để bạn hiểu "thiên mệnh" đang gửi gắm điều gì, từ đó chủ động "tạo vận" theo hướng có lợi nhất.</p>
+
+<p class="pdf-paragraph">Biểu hiện tích cực: Cần cù, tiết kiệm, thu nhập ổn định. Giỏi quản lý tài chính, tích lũy lâu dài.. Bạn có thể đã nhận thấy những phẩm chất này trong bản thân. Tuy nhiên, mỗi ánh sáng đều kèm bóng tối — mặt tiêu cực cần cảnh giác: Keo kiệt, quá tính toán, thiếu mạo hiểm. Đôi khi quá thận trọng bỏ lỡ cơ hội.. Người biết nhận diện cả hai mặt này sớm thường tránh được nhiều sai lầm không đáng có.</p>
+
+<p class="pdf-paragraph">Về khía cạnh cuộc sống, Chính Tài chi phối trực tiếp: Thu nhập ổn định, tiết kiệm, vợ (nam mệnh). Trong lá số của bạn, Chính Tài tọa tại <strong>Trụ Ngày</strong> — tức cung Bản Mệnh kiêm cung Phu Thê — Thiên Can trụ ngày chính là Nhật Chủ (bạn), còn Địa Chi trụ ngày là cung hôn nhân, đại diện cho người bạn đời và chất lượng đời sống vợ chồng — ở vị trí <strong>Tàng Can</strong>. Khi một Thập Thần ẩn trong Tàng Can (tức nằm sâu bên trong Địa Chi), theo "Tử Bình Chân Thuyên" (子平真詮) của Thẩm Hiểu Chiêm, đây là năng lượng "tiềm tàng" — nó không lộ ra bề mặt nhưng âm thầm chi phối những quyết định quan trọng nhất. Bạn có thể không nhận ra tại sao mình bị hút về một hướng nào đó trong cuộc sống — nhưng chính Tàng Can này đang dẫn dắt bạn. Đặc biệt, Chính Tài xuất hiện <strong>2 lần</strong> — điều mà các bậc thầy cổ đại gọi là "thần khí trùng phùng". Khi năng lượng một vị thần được nhân lên, nó trở thành chủ đề chính trong cuộc đời: mọi thành công và thách thức đều xoay quanh bản chất của vị thần này. Bạn không thể phớt lờ nó — bạn chỉ có thể học cách thuần phục và tận dụng nó.</p>
+
+<div class="pdf-divider">✦</div>
+
+<div class="bazi-star-card bazi-star-card--hung">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:11pt;color:#1a1a2e">Thương Quan (傷官) (xuất hiện 2 lần)</strong>
+        <span style="font-size:8pt">⚠️ Hung Thần · Trụ Ngày · Tàng Can</span>
+    </div>
+    <p style="font-size:9pt;color:#555;margin:0"><strong>Phản kháng · Sáng tạo</strong> — Hành do Nhật Chủ sinh ra, khác tính. Tượng trưng cho sự phản kháng, thông minh vượt trội, tài năng phi thường.</p>
+    <p style="font-size:8.5pt;color:#888;margin:4pt 0 0 0;font-style:italic">Can: Quý (💧 Thủy)</p>
+</div>
+
+<p class="pdf-paragraph">Theo sách "Tam Mệnh Thông Hội" (三命通會) của Vạn Dân Anh thời Minh và "Trích Thiên Tủy" (滴天髓) — hai bộ kinh điển nền tảng của thuật Tử Bình — thì Thương Quan (傷官) trong mệnh lý học là mối quan hệ giữa Quý (Thủy) với Nhật Chủ Canh (Kim), thuộc dạng "Phản kháng · Sáng tạo". Hành do Nhật Chủ sinh ra, khác tính. Tượng trưng cho sự phản kháng, thông minh vượt trội, tài năng phi thường.. Khi vị thần này hiện diện trong lá số, nó không đơn thuần là một ký hiệu trên giấy — mà là một dòng năng lượng sống đang vận hành trong từng quyết định, từng mối quan hệ, và từng bước ngoặt cuộc đời bạn. Người xưa nói "mệnh do thiên định, vận do nhân tạo" — việc nhận biết Thương Quan trong lá số chính là bước đầu tiên để bạn hiểu "thiên mệnh" đang gửi gắm điều gì, từ đó chủ động "tạo vận" theo hướng có lợi nhất.</p>
+
+<p class="pdf-paragraph">Biểu hiện tích cực: Cực kỳ thông minh, sáng tạo đột phá, tư duy khác biệt. Có tài hùng biện, biểu đạt xuất sắc.. Bạn có thể đã nhận thấy những phẩm chất này trong bản thân. Tuy nhiên, mỗi ánh sáng đều kèm bóng tối — mặt tiêu cực cần cảnh giác: Ngạo mạn, hay phê phán, khó hòa hợp với cấp trên. Dễ phạm lỗi đắc tội người trên, gây mâu thuẫn.. Người biết nhận diện cả hai mặt này sớm thường tránh được nhiều sai lầm không đáng có.</p>
+
+<p class="pdf-paragraph">Về khía cạnh cuộc sống, Thương Quan chi phối trực tiếp: Sự nghiệp, tài năng, mối quan hệ với cấp trên. Trong lá số của bạn, Thương Quan tọa tại <strong>Trụ Ngày</strong> — tức cung Bản Mệnh kiêm cung Phu Thê — Thiên Can trụ ngày chính là Nhật Chủ (bạn), còn Địa Chi trụ ngày là cung hôn nhân, đại diện cho người bạn đời và chất lượng đời sống vợ chồng — ở vị trí <strong>Tàng Can</strong>. Khi một Thập Thần ẩn trong Tàng Can (tức nằm sâu bên trong Địa Chi), theo "Tử Bình Chân Thuyên" (子平真詮) của Thẩm Hiểu Chiêm, đây là năng lượng "tiềm tàng" — nó không lộ ra bề mặt nhưng âm thầm chi phối những quyết định quan trọng nhất. Bạn có thể không nhận ra tại sao mình bị hút về một hướng nào đó trong cuộc sống — nhưng chính Tàng Can này đang dẫn dắt bạn. Đặc biệt, Thương Quan xuất hiện <strong>2 lần</strong> — điều mà các bậc thầy cổ đại gọi là "thần khí trùng phùng". Khi năng lượng một vị thần được nhân lên, nó trở thành chủ đề chính trong cuộc đời: mọi thành công và thách thức đều xoay quanh bản chất của vị thần này. Bạn không thể phớt lờ nó — bạn chỉ có thể học cách thuần phục và tận dụng nó.</p>
+
+
+    
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Tổng Luận Thập Thần — Bức Tranh Vận Mệnh</h3>
+        <p class="pdf-paragraph">Theo phương pháp "Tổng Luận Bát Tự" trong sách "Mệnh Lý Ước Ngôn" (命理約言), khi nhìn tổng thể lá số, bạn có <strong>14 vị trí Thập Thần</strong> gồm <strong>4 cát thần</strong>, <strong>4 hung thần</strong>, và <strong>6 trung tính</strong>. Cát hung cân bằng — đây là dạng lá số mà cổ nhân gọi là "trung hòa chi mệnh", cuộc đời không quá sóng gió nhưng cũng không quá bằng phẳng, tạo điều kiện cho sự phát triển bền vững.</p>
+        <p class="pdf-paragraph">Điều then chốt mà "Trích Thiên Tủy" nhấn mạnh: Thập Thần không hoạt động riêng lẻ — chúng tương tác, kiềm chế, bổ trợ lẫn nhau như một hệ sinh thái. Thực Thần (sáng tạo) cần Chính Tài (thu nhập ổn) để biến tài năng thành giá trị; Chính Quan (kỷ luật) cần Chính Ấn (học vấn) để kỷ luật không trở thành cứng nhắc; Thất Sát (áp lực) cần Thực Thần (sáng tạo) để chế ngự — tạo nên cách cục "Thực Thần Chế Sát" nổi tiếng. Khi bạn hiểu được mạng lưới tương tác này trong lá số của mình, bạn sẽ thấy rõ TẠI SAO cuộc đời bạn diễn biến theo cách mà nó đã và đang diễn ra — và quan trọng hơn, bạn sẽ biết cách CHỌN phản ứng nào có lợi nhất trong từng hoàn cảnh.</p>
+    </div>
+</div>
+    
+<div class="pdf-chapter">
+    <div class="pdf-chapter-header">
+        <span class="pdf-chapter-emoji">🔮</span>
+        <span class="pdf-chapter-number">Chương V</span>
+        <h2 class="pdf-chapter-title">Tàng Can & Tương Tác Địa Chi</h2>
+        <p class="pdf-chapter-subtitle">Năng lượng ẩn và mối liên kết giữa các trụ</p>
+    </div>
+
+    <p class="pdf-paragraph">Theo sách "Tử Bình Chân Thuyên" (子平真詮) của Thẩm Hiểu Chiêm — một trong những tác phẩm được giới mệnh lý học tôn sùng nhất — nếu Thiên Can là "bề nổi" của lá số, là những gì thế giới nhìn thấy ở bạn, thì Tàng Can (藏干) chính là "bề chìm" — là con người thật ẩn sâu bên trong, nơi giấu kín những tài năng, khao khát, và cả những nỗi sợ mà bạn hiếm khi thừa nhận. Mỗi Địa Chi chứa từ 1 đến 3 Thiên Can ẩn bên trong, như một hòm kho báu với nhiều ngăn bí mật. Hệ thống phân cấp gồm ba tầng: Chính Khí (năng lượng chủ đạo, chiếm ~60% ảnh hưởng), Trung Khí (~30%), và Dư Khí (~10%) — tương tự như ý thức, tiềm thức, và vô thức trong tâm lý học phương Tây của Carl Jung.</p>
+
+    <p class="pdf-paragraph">Trong suốt 50 năm hành nghề, tôi nhận thấy một quy luật: người ta thường NGHĨ mình là Thiên Can (vẻ ngoài, hình ảnh công chúng), nhưng thực sự SỐNG như Tàng Can (động lực sâu xa, quyết định quan trọng). Một doanh nhân có Thiên Can Mộc (hiền lành, mềm mỏng) nhưng Tàng Can toàn Kim (cứng rắn, sắc bén) — bề ngoài dễ chịu nhưng trong phòng họp thì quyết đoán đến mức người khác ngạc nhiên. Việc phân tích Tàng Can sẽ cho bạn câu trả lời cho một trong những câu hỏi khó nhất: "Tại sao đôi khi tôi hành xử khác hoàn toàn với hình ảnh mà tôi tự xây dựng?"</p>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Tàng Can — Giải Mã Từng Trụ</h3>
+        
+<div style="margin-bottom:10pt;page-break-inside:avoid">
+    <strong style="font-size:10pt">Ngọ (Trụ Năm)</strong>: <span style="display:inline-block;padding:3pt 8pt;margin:2pt;border-radius:4pt;font-size:9pt;background:#dc262615;color:#dc2626;border:1px solid #dc262630">🔥 Đinh (Chính Khí)</span> <span style="display:inline-block;padding:3pt 8pt;margin:2pt;border-radius:4pt;font-size:9pt;background:#d9770615;color:#d97706;border:1px solid #d9770630">🏔️ Kỷ (Trung Khí)</span>
+
+    <p class="pdf-paragraph">Theo sách "Uyên Hải Tử Bình" và "Tam Mệnh Thông Hội", Địa Chi <strong>Ngọ</strong> tại Trụ Năm thuộc phạm vi cung Tổ Đức — phản ánh phúc đức ông bà, nguồn gốc gia tộc, và nền tảng tinh thần bạn thừa hưởng từ dòng họ. Những tài năng ẩn giấu ở đây thường là "gen trội" được truyền qua nhiều thế hệ. Chi này chứa 2 tầng Tàng Can — như một căn phòng bí mật có 2 tầng, mỗi tầng giấu một nguồn năng lượng khác nhau. Tầng chủ đạo là <strong>Chính Khí Đinh</strong> (🔥 Hỏa), chiếm khoảng 60% sức ảnh hưởng — đây là "chủ nhân thực sự" của chi này, quyết định hương vị năng lượng chính. Bên dưới còn ẩn Kỷ (Trung Khí — ~30% ảnh hưởng, như phụ tá đắc lực). Sự kết hợp các tầng năng lượng này tạo nên một bức chân dung phức tạp — và chính sự phức tạp đó mới phản ánh đúng con người thật của bạn, với nhiều góc khuất mà ngay cả bạn cũng chưa hoàn toàn khám phá.</p>
+</div>
+<div style="margin-bottom:10pt;page-break-inside:avoid">
+    <strong style="font-size:10pt">Tỵ (Trụ Tháng)</strong>: <span style="display:inline-block;padding:3pt 8pt;margin:2pt;border-radius:4pt;font-size:9pt;background:#dc262615;color:#dc2626;border:1px solid #dc262630">🔥 Bính (Chính Khí)</span> <span style="display:inline-block;padding:3pt 8pt;margin:2pt;border-radius:4pt;font-size:9pt;background:#d9770615;color:#d97706;border:1px solid #d9770630">🏔️ Mậu (Trung Khí)</span> <span style="display:inline-block;padding:3pt 8pt;margin:2pt;border-radius:4pt;font-size:9pt;background:#d4a01715;color:#d4a017;border:1px solid #d4a01730">🪙 Canh (Dư Khí)</span>
+
+    <p class="pdf-paragraph">Theo sách "Uyên Hải Tử Bình" và "Tam Mệnh Thông Hội", Địa Chi <strong>Tỵ</strong> tại Trụ Tháng thuộc phạm vi cung Phụ Mẫu kiêm Sự Nghiệp — đây là trụ quan trọng nhất khi luận đoán đường công danh. Tàng Can ở đây tiết lộ những kỹ năng ngầm có thể đưa bạn lên đỉnh cao nếu được khai phá đúng thời điểm. Chi này chứa 3 tầng Tàng Can — như một căn phòng bí mật có 3 tầng, mỗi tầng giấu một nguồn năng lượng khác nhau. Tầng chủ đạo là <strong>Chính Khí Bính</strong> (🔥 Hỏa), chiếm khoảng 60% sức ảnh hưởng — đây là "chủ nhân thực sự" của chi này, quyết định hương vị năng lượng chính. Bên dưới còn ẩn Mậu (Trung Khí — ~30% ảnh hưởng, như phụ tá đắc lực) và Canh (Dư Khí — ~10% ảnh hưởng, như gia vị tinh tế). Sự kết hợp các tầng năng lượng này tạo nên một bức chân dung phức tạp — và chính sự phức tạp đó mới phản ánh đúng con người thật của bạn, với nhiều góc khuất mà ngay cả bạn cũng chưa hoàn toàn khám phá.</p>
+</div>
+<div style="margin-bottom:10pt;page-break-inside:avoid">
+    <strong style="font-size:10pt">Thìn (Trụ Ngày)</strong>: <span style="display:inline-block;padding:3pt 8pt;margin:2pt;border-radius:4pt;font-size:9pt;background:#d9770615;color:#d97706;border:1px solid #d9770630">🏔️ Mậu (Chính Khí)</span> <span style="display:inline-block;padding:3pt 8pt;margin:2pt;border-radius:4pt;font-size:9pt;background:#16a34a15;color:#16a34a;border:1px solid #16a34a30">🌿 Ất (Trung Khí)</span> <span style="display:inline-block;padding:3pt 8pt;margin:2pt;border-radius:4pt;font-size:9pt;background:#2563eb15;color:#2563eb;border:1px solid #2563eb30">💧 Quý (Dư Khí)</span>
+
+    <p class="pdf-paragraph">Theo sách "Uyên Hải Tử Bình" và "Tam Mệnh Thông Hội", Địa Chi <strong>Thìn</strong> tại Trụ Ngày thuộc phạm vi cung Phu Thê — Địa Chi trụ ngày chính là "ngôi nhà" của hôn nhân. Tàng Can bên trong cho thấy những gì bạn thực sự tìm kiếm ở một người bạn đời — đôi khi khác hoàn toàn với những gì bạn nghĩ mình muốn. Chi này chứa 3 tầng Tàng Can — như một căn phòng bí mật có 3 tầng, mỗi tầng giấu một nguồn năng lượng khác nhau. Tầng chủ đạo là <strong>Chính Khí Mậu</strong> (🏔️ Thổ), chiếm khoảng 60% sức ảnh hưởng — đây là "chủ nhân thực sự" của chi này, quyết định hương vị năng lượng chính. Bên dưới còn ẩn Ất (Trung Khí — ~30% ảnh hưởng, như phụ tá đắc lực) và Quý (Dư Khí — ~10% ảnh hưởng, như gia vị tinh tế). Sự kết hợp các tầng năng lượng này tạo nên một bức chân dung phức tạp — và chính sự phức tạp đó mới phản ánh đúng con người thật của bạn, với nhiều góc khuất mà ngay cả bạn cũng chưa hoàn toàn khám phá.</p>
+</div>
+<div style="margin-bottom:10pt;page-break-inside:avoid">
+    <strong style="font-size:10pt">Thìn (Trụ Giờ)</strong>: <span style="display:inline-block;padding:3pt 8pt;margin:2pt;border-radius:4pt;font-size:9pt;background:#d9770615;color:#d97706;border:1px solid #d9770630">🏔️ Mậu (Chính Khí)</span> <span style="display:inline-block;padding:3pt 8pt;margin:2pt;border-radius:4pt;font-size:9pt;background:#16a34a15;color:#16a34a;border:1px solid #16a34a30">🌿 Ất (Trung Khí)</span> <span style="display:inline-block;padding:3pt 8pt;margin:2pt;border-radius:4pt;font-size:9pt;background:#2563eb15;color:#2563eb;border:1px solid #2563eb30">💧 Quý (Dư Khí)</span>
+
+    <p class="pdf-paragraph">Theo sách "Uyên Hải Tử Bình" và "Tam Mệnh Thông Hội", Địa Chi <strong>Thìn</strong> tại Trụ Giờ thuộc phạm vi cung Tử Tức — phản ánh con cái và hậu vận. Tàng Can ở đây cho thấy mối quan hệ sâu xa với thế hệ sau và chất lượng cuộc sống nửa cuối đời. Chi này chứa 3 tầng Tàng Can — như một căn phòng bí mật có 3 tầng, mỗi tầng giấu một nguồn năng lượng khác nhau. Tầng chủ đạo là <strong>Chính Khí Mậu</strong> (🏔️ Thổ), chiếm khoảng 60% sức ảnh hưởng — đây là "chủ nhân thực sự" của chi này, quyết định hương vị năng lượng chính. Bên dưới còn ẩn Ất (Trung Khí — ~30% ảnh hưởng, như phụ tá đắc lực) và Quý (Dư Khí — ~10% ảnh hưởng, như gia vị tinh tế). Sự kết hợp các tầng năng lượng này tạo nên một bức chân dung phức tạp — và chính sự phức tạp đó mới phản ánh đúng con người thật của bạn, với nhiều góc khuất mà ngay cả bạn cũng chưa hoàn toàn khám phá.</p>
+</div>
+    </div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Tương Tác Địa Chi — Hợp, Xung, Hình, Hại</h3>
+        <p class="pdf-paragraph">Theo chương "Địa Chi Hội Hợp" trong "Tam Mệnh Thông Hội", các Địa Chi trong lá số không bao giờ tồn tại cô lập — chúng liên tục tương tác qua bốn dạng: Hợp (kết hôi, hòa nhập, hóa hành mới), Xung (đối đầu trực diện), Hình (tổn thương âm ỉ từ bên trong), và Hại (cản trở ngấm ngầm khó nhận ra). Tương tác Địa Chi là "yếu tố động" quan trọng nhất — nó quyết định lá số của bạn "sống" hay "chết", "động" hay "tĩnh." Một lá số có nhiều Hợp thường an lành nhưng ít đột phá; nhiều Xung thường biến động nhưng đầy cơ hội thay đổi; nhiều Hình thường có nội tâm phức tạp; nhiều Hại thường gặp "tiểu nhân" cản trở. Đặc biệt, vị trí tương tác (giữa hai trụ nào) cho biết khía cạnh cuộc sống nào bị ảnh hưởng trực tiếp nhất.</p>
+        
+<div class="bazi-star-card bazi-star-card--cat">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:10pt">Tam Hợp</strong>
+        <span style="font-size:8pt">✅ Cát · Trụ Ngày ↔ Trụ Giờ</span>
+    </div>
+    <p style="font-size:9.5pt;color:#555;line-height:1.7;margin:0">Thìn — Thìn — Thìn-Thìn tam hợp Thủy cục — sức mạnh cộng hưởng, phát huy tốt hành Thủy.</p>
+</div>
+<p class="pdf-paragraph">Theo sách "Duyên Bình Lý Số" và phép luận "Địa Chi Tương Tác" trong "Tam Mệnh Thông Hội", tương tác <strong>Tam Hợp</strong> giữa <strong>Thìn</strong> và <strong>Thìn</strong> (xuất hiện tại Trụ Ngày và Trụ Giờ) là một hiện tượng có ý nghĩa sâu sắc trong lá số. Đây là mối tương tác cát — hai chi hòa hợp, bổ trợ, và tăng cường sức mạnh cho nhau như đôi cánh của con chim. Trong cuộc sống thực, điều này biểu hiện qua những mối quan hệ thuận lợi, cơ hội đến một cách tự nhiên, và cảm giác "mọi thứ đang vào đúng chỗ." Khi một vị thầy có kinh nghiệm nhìn thấy tương hợp này trong lá số, điều đầu tiên họ nói là: "Bạn có phúc." Nhưng phúc chỉ trọn vẹn khi bạn biết trân trọng và hành động xứng đáng — đừng để dòng nước thuận lợi chảy qua mà không tận dụng. Hãy tìm đúng thời điểm Đại Vận thuận lợi tiếp theo và chuẩn bị sẵn kế hoạch, vì khi "hợp" gặp vận tốt, đó là lúc đại cát đại lợi.</p>
+    </div>
+
+    
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Không Vong (空亡) — Vùng Năng Lượng Huyền Vi</h3>
+        <p class="pdf-paragraph">Theo "Mệnh Lý Tầm Nguyên" và "Tam Mệnh Thông Hội", hai chi Không Vong trong lá số của bạn là <strong>Thân</strong> và <strong>Dậu</strong>. Tuần CanhThìn: Không Vong tại Thân và Dậu. Các cung/trụ chứa 2 chi này bị giảm lực.. Không Vong (空亡) — nghĩa đen là "trống rỗng, mất hút" — là khái niệm huyền vi nhất trong Bát Tự. Mỗi Tuần (10 ngày trong lục thập Giáp Tý) dùng hết 10 Can nhưng chỉ dùng 10 trong 12 Chi, để lại 2 Chi "thừa ra" — đó chính là Không Vong. Khi chi Không Vong rơi vào trụ nào, khía cạnh cuộc sống tương ứng có thể "trống" — không phải mất hẳn, mà là cần nỗ lực gấp đôi để lấp đầy, như gieo hạt trên đất cằn hơn.</p>
+        <p class="pdf-paragraph">Tuy nhiên, trong kinh nghiệm thực tế, Không Vong đôi khi lại là phúc lớn ẩn giấu. Sách "Lý Hư Trung Mệnh Thư" ghi: "Không Vong phùng hung, phản thành cát" — Không Vong gặp hung thần, ngược lại thành tốt. Nghĩa là nếu một sao hung chiếu vào chi Không Vong, sức mạnh sao hung bị "nuốt chửng" bởi khoảng trống, giống như ném đá xuống giếng không đáy. Đây là cơ chế "hóa giải" tự nhiên mà tạo hóa ban cho lá số — một sự cân bằng tinh tế mà chỉ khi phân tích sâu mới nhận ra.</p>
+    </div>
+</div>
+    
+<div class="pdf-chapter">
+    <div class="pdf-chapter-header">
+        <span class="pdf-chapter-emoji">🌟</span>
+        <span class="pdf-chapter-number">Chương VI</span>
+        <h2 class="pdf-chapter-title">Thần Sát — Sao Chiếu Mệnh</h2>
+        <p class="pdf-chapter-subtitle">Những ngôi sao đặc biệt trong lá số của bạn</p>
+    </div>
+
+    <p class="pdf-paragraph">Theo sách "Tam Mệnh Thông Hội" (三命通會) của Vạn Dân Anh thời Minh — bộ bách khoa toàn thư lớn nhất về mệnh lý học Trung Hoa — Thần Sát (神煞) là hệ thống "sao chiếu mệnh" được tính từ các công thức cổ xưa, phản ánh những "lực lượng vũ trụ" đang tác động lên một cá nhân. Khác với Thập Thần (dựa trên logic Ngũ Hành sinh khắc), Thần Sát bắt nguồn từ quan sát thiên văn và kinh nghiệm thực tế tích lũy qua hàng nghìn năm. Mỗi Thần Sát mang một "câu chuyện" riêng — có sao bảo hộ như lá chắn vô hình, có sao thách thức như ngọn lửa thử vàng, và có sao trung tính như gương phản chiếu. Trong lá số của bạn có <strong>2</strong> Thần Sát — mỗi ngôi sao là một chương trong cuốn tiểu thuyết vận mệnh của bạn.</p>
+
+    <p class="pdf-paragraph">Lưu ý quan trọng mà tôi luôn nhấn mạnh với mọi khách hàng: Thần Sát có phần "cổ điển" và cần được diễn giải linh hoạt trong bối cảnh hiện đại. Sách "Trích Thiên Tủy" — tác phẩm được Lưu Bá Ôn thời Minh tôn vinh — dạy: "Cát hung thần sát, hà dĩ luận? Tùy kỳ mệnh cục nhi quyền hành" — Cát hung Thần Sát, lấy gì mà luận? Phải tùy theo mệnh cục mà linh hoạt. Nghĩa là đừng thấy hung tinh mà hoảng, đừng thấy cát tinh mà ỷ lại — hãy đọc từng phân tích dưới đây và tự soi chiếu vào cuộc sống thực tế của bạn để tìm ra sự cộng hưởng.</p>
+
+    
+<div class="bazi-star-card bazi-star-card--cat">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:11pt;color:#1a1a2e">Tướng Tinh</strong>
+        <span style="font-size:8pt">✅ Cát Tinh · Năm</span>
+    </div>
+    <p style="font-size:9.5pt;color:#555;line-height:1.7;margin:0">Có quý nhân phù trợ, phúc lộc bền lâu (nhóm Dần).</p>
+</div>
+<p class="pdf-paragraph">Theo các sách mệnh lý cổ điển, Tướng Tinh trong lá số Bát Tự là ngôi sao cát — mang đến sự bảo hộ, may mắn, và hỗ trợ tinh thần. Bạn có thể đã từng trải nghiệm ảnh hưởng tích cực của nó mà không nhận ra — những lúc "may mắn đến bất ngờ" hoặc "gặp đúng người đúng thời điểm." Hãy trân trọng phúc lành này và biến nó thành động lực để giúp đỡ người khác, vì theo triết lý nhân quả phương Đông, phúc đức chia sẻ là phúc đức nhân đôi.
+<div class="pdf-divider">✦</div>
+
+<div class="bazi-star-card bazi-star-card--trung">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:11pt;color:#1a1a2e">Hoa Cái</strong>
+        <span style="font-size:8pt">☯️ Trung Tính · Ngày</span>
+    </div>
+    <p style="font-size:9.5pt;color:#555;line-height:1.7;margin:0">Thông minh, tài hoa nhưng có xu hướng cô đơn, độc lập. Thu hút người khác bằng trí tuệ hơn là tình cảm.</p>
+</div>
+<p class="pdf-paragraph">Theo các sách mệnh lý cổ điển, Hoa Cái trong lá số Bát Tự là ngôi sao trung tính — ảnh hưởng phụ thuộc vào bối cảnh tổng thể lá số và giai đoạn Đại Vận hiện tại. Cần xem xét mối liên hệ với các sao khác để đánh giá chính xác.
+</div>
+    
+<div class="pdf-chapter">
+    <div class="pdf-chapter-header">
+        <span class="pdf-chapter-emoji">✨</span>
+        <span class="pdf-chapter-number">Chương VII</span>
+        <h2 class="pdf-chapter-title">Tóm Lược Tinh Hoa Bản Mệnh</h2>
+        <p class="pdf-chapter-subtitle">Bức tranh toàn cảnh về năng lượng gốc</p>
+    </div>
+
+    <div class="pdf-section" style="background:#fdfcf0; border-left:4px solid #b69255; padding:15pt; margin-bottom:20pt; border-radius:4pt;">
+        <h3 style="color:#1a1a2e; margin-top:0; margin-bottom:10pt; font-size:12pt;">
+            BẢN MỆNH CỐT LÕI: <span style="color:#b69255">Thanh kiếm sắc bén cắt đứt mọi chướng ngại</span>
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:0"><strong>Định Hướng Sự Nghiệp:</strong> Tài chính, ngân hàng, Cơ khí, luyện kim; Thương mại, xuất nhập khẩu, Du lịch, vận tải</p>
+    </div>
+
+    <p class="pdf-paragraph" style="font-size:11.5pt; line-height:1.8; color:#333;">
+        Bức tranh tổng thể cho thấy bạn mang nguyên mẫu Thanh kiếm sắc bén cắt đứt mọi chướng ngại với ngũ hành chủ đạo là Kim Dương. Sức mạnh cốt lõi của bạn nằm ở sự cân bằng, linh hoạt thích ứng với mọi hoàn cảnh. Đây là nền tảng để bạn xây dựng cuộc đời, thay vì cố gắng thay đổi bản chất để vừa vặn với kỳ vọng của người khác.
+    </p>
+
+    <div class="pdf-pullquote">
+        "LỜI KHUYÊN CỐT LÕI: Hãy ưu tiên sử dụng năng lượng thuộc hành Kim và Thủy làm la bàn định hướng cho mọi quyết định lớn."
+    </div>
+</div>
+    
+<div class="pdf-chapter">
+    <div class="pdf-chapter-header">
+        <span class="pdf-chapter-emoji">🌐</span>
+        <span class="pdf-chapter-number">Chương VIII</span>
+        <h2 class="pdf-chapter-title">Phân Tích 12 Lĩnh Vực Cuộc Sống</h2>
+        <p class="pdf-chapter-subtitle">Giải mã chi tiết dòng chảy vận mệnh</p>
+    </div>
+    
+    <p class="pdf-paragraph">Mỗi khía cạnh trong cuộc sống của bạn đều chịu sự chi phối của một trường năng lượng nhất định từ Tứ Trụ. Dưới đây là bức tranh toàn cảnh về 12 lĩnh vực trọng thiết nhất, giúp bạn chủ động kiến tạo vận mệnh của mình.</p>
+
+    
+    <div class="pdf-section" style="page-break-inside:avoid; margin-bottom:25pt;">
+        <h3 class="pdf-section-title" style="border-bottom:1px solid #eee; padding-bottom:5pt;">
+            👤 BẢN MỆNH &amp; TÍNH CÁCH
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:6pt;"><strong style="color:#1a1a2e;">Bạn mang trong mình năng lượng của Kiếm Sắt — Thanh kiếm sắc bén cắt đứt mọi chướng ngại.</strong> Canh Kim như thanh kiếm — cứng rắn, quyết đoán, công bằng. Bạn có ý chí mạnh mẽ, dám nghĩ dám làm, không sợ đối đầu thử thách. Tính cách thẳng thắn đến mức gay gắt, coi trọng nghĩa khí và sự công bằng. Dũng cảm bảo vệ lẽ phải. Nhật Chủ cân bằng mang lại cho bạn khả năng thích ứng tuyệt vời, biết nhu biết cương đúng lúc.</p><div style="background:#f7f7f9; padding:8pt 12pt; border-left:3px solid #666; font-size:9.5pt; color:#555; margin-bottom:8pt;"><p style="margin:0 0 4pt 0;"><em>Mặt trái/Lưu ý:</em> Tuy nhiên, điểm mạnh quyết đoán, dám hành động nhanh đôi khi lại dẫn tới quá cứng rắn, thiếu mềm mỏng nếu không biết tiết chế.</p><p style="margin:0;"><em>Nền tảng lá số:</em> Thiên Can ngày sinh Canh thiết lập tần số rung động cốt lõi của bạn.</p></div><p class="pdf-paragraph" style="font-weight:600; color:#b69255; font-size:10pt;">💡 Lài khuyên: Hãy phát huy sở trường trung thực, nghĩa khí, coi trọng công bằng và khắc phục điểm yếu hay phán xét, chỉ trích người khác.</p>
+    </div>
+    <div class="pdf-section" style="page-break-inside:avoid; margin-bottom:25pt;">
+        <h3 class="pdf-section-title" style="border-bottom:1px solid #eee; padding-bottom:5pt;">
+            🌳 PHỤ MẪU &amp; GIA ĐẠO
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:6pt;"><strong style="color:#1a1a2e;">Mối quan hệ với cha mẹ và nền tảng gia đình của bạn mang nhiều sắc thái độc lập.</strong> Lá số cho thấy bạn sớm phải tự lập hoặc có những khoảng cách nhất định với gia đình. Sự tự lập sớm giúp bạn trưởng thành, nhưng cũng đòi hỏi nhiều nỗ lực hơn để tìm kiếm cảm giác thuộc về. Trụ Tháng hiện diện Tân Tỵ ảnh hưởng trực tiếp tới cung phụ mẫu.</p><div style="background:#f7f7f9; padding:8pt 12pt; border-left:3px solid #666; font-size:9.5pt; color:#555; margin-bottom:8pt;"><p style="margin:0 0 4pt 0;"><em>Mặt trái/Lưu ý:</em> Sự bao bọc đôi khi làm giảm đi ý chí chiến đấu, hoặc ngược lại, sự độc lập quá sớm có thể che giấu nỗi cô đơn.</p><p style="margin:0;"><em>Nền tảng lá số:</em> Trụ Tháng và sự hiện diện (hay vắng mặt) của Ấn Tinh định hình cách bạn tiếp nhận tình thương từ gia đình.</p></div><p class="pdf-paragraph" style="font-weight:600; color:#b69255; font-size:10pt;">💡 Lài khuyên: Dù xuất phát điểm thế nào, lòng biết ơn cội nguồn chính là chìa khóa mở ra cánh cửa bình an trong tâm hồn.</p>
+    </div>
+    <div class="pdf-section" style="page-break-inside:avoid; margin-bottom:25pt;">
+        <h3 class="pdf-section-title" style="border-bottom:1px solid #eee; padding-bottom:5pt;">
+            ☸️ PHÚC ĐỨC &amp; CỘI NGUỒN
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:6pt;"><strong style="color:#1a1a2e;">Phúc đức và di sản tinh thần cấu thành nên nền móng sâu xa nhất của cuộc đời bạn.</strong> Trụ Năm Canh Ngọ với Nạp Âm Lộ Bàng Thổ cho thấy sự kết nối mãnh liệt với gốc gác và tổ tiên. Phúc đức bạn hưởng thụ không chỉ từ sự cố gắng ở hiện tại mà còn từ hồng ân lớp người đi trước. Lá số của bạn hội tụ các tinh tú may mắn, là bằng chứng cho thấy bạn mang một sứ mệnh thiện lành và luôn có quý nhân âm thầm phù trợ.</p><div style="background:#f7f7f9; padding:8pt 12pt; border-left:3px solid #666; font-size:9.5pt; color:#555; margin-bottom:8pt;"><p style="margin:0 0 4pt 0;"><em>Mặt trái/Lưu ý:</em> Phúc lớn dễ khiến con người sinh ra chủ quan, lơ là tu dưỡng.</p><p style="margin:0;"><em>Nền tảng lá số:</em> Toàn cục Tứ Trụ, đặc biệt là Trụ Năm (cung Tổ Đức) quyết định nền tảng phúc lộc tiên thiên.</p></div><p class="pdf-paragraph" style="font-weight:600; color:#b69255; font-size:10pt;">💡 Lài khuyên: Gieo nhân thiện gặt quả lành. Phúc đức hôm nay là điểm tựa vững chắc cho ngày mai bão dông.</p>
+    </div>
+    <div class="pdf-section" style="page-break-inside:avoid; margin-bottom:25pt;">
+        <h3 class="pdf-section-title" style="border-bottom:1px solid #eee; padding-bottom:5pt;">
+            🏠 ĐIỀN TRẠCH &amp; TÀI SẢN
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:6pt;"><strong style="color:#1a1a2e;">Điền trạch và tài sản cố định trong lá số của bạn phản ánh nhu cầu về sự an toàn và ổn định.</strong> Với sự hiện diện mạnh mẽ của hành Thổ trong tàng can, bạn có duyên lớn với đất đai, nhà cửa. Mua bán bất động sản hoặc tích lũy tài sản cố định sẽ là kênh giữ tiền an toàn và sinh lời tốt nhất cho bạn.</p><div style="background:#f7f7f9; padding:8pt 12pt; border-left:3px solid #666; font-size:9.5pt; color:#555; margin-bottom:8pt;"><p style="margin:0 0 4pt 0;"><em>Mặt trái/Lưu ý:</em> Tích lũy tài sản là tốt, nhưng đừng để việc theo đuổi vật chất làm mất đi sự tự do của thể xác và tinh thần.</p><p style="margin:0;"><em>Nền tảng lá số:</em> Thổ là kho tàng của ngũ hành. Sự phân bổ của hành Thổ và các Tài Tinh quyết định lộc điền trạch.</p></div><p class="pdf-paragraph" style="font-weight:600; color:#b69255; font-size:10pt;">💡 Lài khuyên: Không gian sống hài hòa không chỉ mang lại tài lộc mà còn nuôi dưỡng sự bình yên cho tâm trí.</p>
+    </div>
+    <div class="pdf-section" style="page-break-inside:avoid; margin-bottom:25pt;">
+        <h3 class="pdf-section-title" style="border-bottom:1px solid #eee; padding-bottom:5pt;">
+            💼 QUAN LỘC &amp; SỰ NGHIỆP
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:6pt;"><strong style="color:#1a1a2e;">Sự nghiệp của bạn không đi theo lối mòn truyền thống mà phụ thuộc nhiều vào đam mê và kỹ năng cá nhân.</strong> Sự vắng bóng của Quan Sát cho thấy bạn yêu thích sự tự do, không muốn bị gò bó trong các quy củ hành chính. Freelance hoặc tự kinh doanh là lựa chọn tuyệt vời. Hành hỷ dụng gợi ý bạn nên gắn bó với môi trường thuộc hành Kim, Thủy.</p><div style="background:#f7f7f9; padding:8pt 12pt; border-left:3px solid #666; font-size:9.5pt; color:#555; margin-bottom:8pt;"><p style="margin:0 0 4pt 0;"><em>Mặt trái/Lưu ý:</em> Chính Quan quá vượng dễ sinh ra bảo thủ; Thất Sát quá vượng dễ sinh ra độc đoán.</p><p style="margin:0;"><em>Nền tảng lá số:</em> Quan Sát đại diện cho sự nghiệp, danh vọng và khả năng tuân thủ hệ thống.</p></div><p class="pdf-paragraph" style="font-weight:600; color:#b69255; font-size:10pt;">💡 Lài khuyên: Sự nghiệp là cuộc đua đường dài, hiểu rõ sở trường và chắp cánh cho đam mê chính là lộ trình tối ưu.</p>
+    </div>
+    <div class="pdf-section" style="page-break-inside:avoid; margin-bottom:25pt;">
+        <h3 class="pdf-section-title" style="border-bottom:1px solid #eee; padding-bottom:5pt;">
+            👥 NÔ BỘC &amp; ĐỒNG NGHIỆP
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:6pt;"><strong style="color:#1a1a2e;">Những người dưới quyền và đồng nghiệp xung quanh đóng vai trò quan trọng trong sự thành bại của bạn.</strong> Do có Kiếp Tài, bạn cần cực kỳ cẩn trọng trong việc hợp tác làm ăn và quản lý nhân sự. Nguy cơ bị phản bội, lợi dụng hoặc tranh chấp lợi ích là luôn hiện hữu.</p><div style="background:#f7f7f9; padding:8pt 12pt; border-left:3px solid #666; font-size:9.5pt; color:#555; margin-bottom:8pt;"><p style="margin:0 0 4pt 0;"><em>Mặt trái/Lưu ý:</em> Trọng dụng người tài đòi hỏi sự tin tưởng, nhưng tin tưởng mù quáng mà không có cơ chế kiểm soát sẽ dẫn đến hậu quả khôn lường.</p><p style="margin:0;"><em>Nền tảng lá số:</em> Tỉ Kiên và Kiếp Tài đại diện cho đồng trang lứa, đồng nghiệp và thuộc cấp.</p></div><p class="pdf-paragraph" style="font-weight:600; color:#b69255; font-size:10pt;">💡 Lài khuyên: Một mạng lưới hỗ trợ tốt giá trị hơn trăm vạn tài sản, hãy quản trị nhân sự bằng cả ân và uy.</p>
+    </div>
+    <div class="pdf-section" style="page-break-inside:avoid; margin-bottom:25pt;">
+        <h3 class="pdf-section-title" style="border-bottom:1px solid #eee; padding-bottom:5pt;">
+            ✈️ THIÊN DI &amp; XÃ HỘI
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:6pt;"><strong style="color:#1a1a2e;">Bạn có xu hướng tìm kiếm sự phất lên ở môi trường quen thuộc và gắn bó sâu sắc với quê hương bản quán.</strong> Sự ổn định giúp bạn rễ sâu lá tốt. Những chuyến đi xa mang tính chất trải nghiệm và thư giãn nhiều hơn là tìm kiếm lẽ sống.</p><div style="background:#f7f7f9; padding:8pt 12pt; border-left:3px solid #666; font-size:9.5pt; color:#555; margin-bottom:8pt;"><p style="margin:0 0 4pt 0;"><em>Mặt trái/Lưu ý:</em> Đi quá nhiều khiến tâm khảm khó tìm thấy chốn an vị; ở quá lâu một chỗ khiến tầm nhìn bị bó hẹp.</p><p style="margin:0;"><em>Nền tảng lá số:</em> Sự hiện diện của sao Dịch Mã và năng lượng tương tác giữa các trụ quyết định tần suất xê dịch.</p></div><p class="pdf-paragraph" style="font-weight:600; color:#b69255; font-size:10pt;">💡 Lài khuyên: Mỗi chuyến đi, mỗi sự dịch chuyển là một cơ hội để làm mới bản thân và mở rộng chân trời phía trước.</p>
+    </div>
+    <div class="pdf-section" style="page-break-inside:avoid; margin-bottom:25pt;">
+        <h3 class="pdf-section-title" style="border-bottom:1px solid #eee; padding-bottom:5pt;">
+            🌿 TẬT ÁCH &amp; SỨC KHỎE
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:6pt;"><strong style="color:#1a1a2e;">Trạng thái cân bằng ngũ hành của cơ thể là ưu tiên hàng đầu để duy trì tinh lực lâu dài.</strong> Phổi và hệ hô hấp cần được chú ý bảo vệ. Nên tập thở sâu (pranayama, thiền thở), tránh khói bụi và không khí ô nhiễm. Mùa thu là thời điểm phổi dễ tổn thương nhất — giữ ấm vùng cổ ngực. Sức khỏe và thể lực của bạn duy trì ở mức độ tốt, dẻo dai và có khả năng phục hồi nhanh.</p><div style="background:#f7f7f9; padding:8pt 12pt; border-left:3px solid #666; font-size:9.5pt; color:#555; margin-bottom:8pt;"><p style="margin:0 0 4pt 0;"><em>Mặt trái/Lưu ý:</em> Căn nguyên của bệnh lôi đa phần từ tâm trí bất an và thói quen sinh hoạt mất cân bằng.</p><p style="margin:0;"><em>Nền tảng lá số:</em> Nhật Chủ và sự thịnh suy của các hành trong lá số chỉ báo các hệ cơ quan cần được quan tâm bảo dưỡng.</p></div><p class="pdf-paragraph" style="font-weight:600; color:#b69255; font-size:10pt;">💡 Lài khuyên: Cơ thể là đền thờ của tâm hồn. Lắng nghe những cảnh báo từ vũ trụ để giữ gìn tài sản quý giá nhất này.</p>
+    </div>
+    <div class="pdf-section" style="page-break-inside:avoid; margin-bottom:25pt;">
+        <h3 class="pdf-section-title" style="border-bottom:1px solid #eee; padding-bottom:5pt;">
+            💎 TÀI BẠCH &amp; DÒNG TIỀN
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:6pt;"><strong style="color:#1a1a2e;">Tài lộc của bạn không nằm phơi bày ngoài sáng mà ẩn giấu qua sự cần mẫn tích tiểu thành đại.</strong> Thiếu Tài Tinh lộ diện ở Thiên Can, bạn cần một chiến lược tài chính dài hạn thay vì mong mỏi giàu sổi. Sự nhẫn nại chính là kho báu lớn nhất. Việc kết hợp với hành hỷ dụng (Kim, Thủy) sẽ giúp kích hoạt tối đa dòng chảy kim tiền.</p><div style="background:#f7f7f9; padding:8pt 12pt; border-left:3px solid #666; font-size:9.5pt; color:#555; margin-bottom:8pt;"><p style="margin:0 0 4pt 0;"><em>Mặt trái/Lưu ý:</em> Quá chú trọng đồng tiền dễ đánh mất cái đạo làm người. Tiền là công cụ, không phải ông chủ.</p><p style="margin:0;"><em>Nền tảng lá số:</em> Tài Tinh (Chính Tài, Thiên Tài) đại diện cho khả năng kiểm soát vật chất và dòng tiền.</p></div><p class="pdf-paragraph" style="font-weight:600; color:#b69255; font-size:10pt;">💡 Lài khuyên: Quản lý tài chính thông minh kết hợp với thao lược sinh tồn sẽ biến cơ hội thành sự thịnh vượng bền vững.</p>
+    </div>
+    <div class="pdf-section" style="page-break-inside:avoid; margin-bottom:25pt;">
+        <h3 class="pdf-section-title" style="border-bottom:1px solid #eee; padding-bottom:5pt;">
+            🌱 TỬ TỨC &amp; SÁNG TẠO
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:6pt;"><strong style="color:#1a1a2e;">Thế hệ sau hoặc các ý tưởng sáng tạo của bạn cần thời gian ươm mầm để nở hoa.</strong> Con cái và những dự án cá nhân đôi khi không đến ngay lập tức. Cần tích lũy nghiệp nội lực để gặt hái sau này.</p><div style="background:#f7f7f9; padding:8pt 12pt; border-left:3px solid #666; font-size:9.5pt; color:#555; margin-bottom:8pt;"><p style="margin:0 0 4pt 0;"><em>Mặt trái/Lưu ý:</em> Sự kỳ vọng quá lớn vào con cái hoặc vào tác phẩm do mình tạo ra thường mang lại thất vọng cho cả đôi bên.</p><p style="margin:0;"><em>Nền tảng lá số:</em> Thực Thương đại diện cho sự sinh xuất, bao gồm con cái (với nữ giới), sự sáng tạo và năng lượng nói ra.</p></div><p class="pdf-paragraph" style="font-weight:600; color:#b69255; font-size:10pt;">💡 Lài khuyên: Cách bạn gieo trồng và nuôi dạy thế hệ sau (hoặc một dự án mới) chính là sự tiếp nối di sản của cuộc đời mình.</p>
+    </div>
+    <div class="pdf-section" style="page-break-inside:avoid; margin-bottom:25pt;">
+        <h3 class="pdf-section-title" style="border-bottom:1px solid #eee; padding-bottom:5pt;">
+            💕 PHU THÊ &amp; TÌNH TRƯỜNG
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:6pt;"><strong style="color:#1a1a2e;">Góc nhìn về tình yêu và hôn nhân của bạn được dệt nên từ những kỳ vọng sâu kín ở trụ ngày.</strong> Canh Kim trung thành, bảo vệ người yêu nhưng ít lãng mạn. Cần học cách thể hiện tình cảm nhẹ nhàng hơn. Tình yêu đối với bạn ưu tiên sự chân thành và thực tế hơn là những lãng mạn thoáng qua.</p><div style="background:#f7f7f9; padding:8pt 12pt; border-left:3px solid #666; font-size:9.5pt; color:#555; margin-bottom:8pt;"><p style="margin:0 0 4pt 0;"><em>Mặt trái/Lưu ý:</em> Hào quang tình ái rực rỡ mang đến nhiều sự lựa chọn nhưng cũng đi kèm với rủi ro thị phi và vướng mắc cảm xúc.</p><p style="margin:0;"><em>Nền tảng lá số:</em> Nhật Chi (Địa Chi trụ ngày) và sự tương tác với Tài/Quan Tinh định hình toàn bộ đời sống tình cảm.</p></div><p class="pdf-paragraph" style="font-weight:600; color:#b69255; font-size:10pt;">💡 Lài khuyên: Tình cảm là tấm gương phản chiếu chính mình. Thấu hiểu những khuôn mẫu gắn kết sẽ mở đường cho quan hệ bền vững.</p>
+    </div>
+    <div class="pdf-section" style="page-break-inside:avoid; margin-bottom:25pt;">
+        <h3 class="pdf-section-title" style="border-bottom:1px solid #eee; padding-bottom:5pt;">
+            🤝 HUYNH ĐỆ &amp; BẠN BÈ
+        </h3>
+        <p class="pdf-paragraph" style="margin-bottom:6pt;"><strong style="color:#1a1a2e;">Tình anh em, đồng đội là một phần mảnh ghép quan trọng xây đắp nên tính cách của bạn.</strong> Lá số có nhiều Tỉ Kiên, Kiếp Tài, anh chị em và bạn bè đóng vai trò trung tâm trong cuộc đời bạn. Bạn có tinh thần trượng nghĩa, nhiệt thành chia sẻ đắng cay ngọt bùi.</p><div style="background:#f7f7f9; padding:8pt 12pt; border-left:3px solid #666; font-size:9.5pt; color:#555; margin-bottom:8pt;"><p style="margin:0 0 4pt 0;"><em>Mặt trái/Lưu ý:</em> Sự gần gũi quá mức hoặc lòng tin tuyệt đối đôi khi có thể bị lợi dụng, sinh ra những món nợ ân tình khó trả.</p><p style="margin:0;"><em>Nền tảng lá số:</em> Tỉ Kiên đại diện cho sự sẻ chia tài nguyên, anh em ruột thịt và bạn bè đồng lứa.</p></div><p class="pdf-paragraph" style="font-weight:600; color:#b69255; font-size:10pt;">💡 Lài khuyên: Gắn kết, hỗ trợ đúng cách cùng anh chị em và bạn bè giúp bạn xây dựng nền móng xã hội đầu tiên.</p>
+    </div>
+</div>
+    
+<div class="pdf-chapter">
+    <div class="pdf-chapter-header">
+        <span class="pdf-chapter-emoji">🌊</span>
+        <span class="pdf-chapter-number">Chương IX</span>
+        <h2 class="pdf-chapter-title">Đại Vận — Dòng Chảy Vận Mệnh</h2>
+        <p class="pdf-chapter-subtitle">Mỗi 10 năm, một chương mới mở ra</p>
+    </div>
+
+    <p class="pdf-paragraph">Theo sách "Uyên Hải Tử Bình" của Từ Tử Bình — ông tổ trường phái — và "Tam Mệnh Thông Hội" chương "Luận Đại Vận", Đại Vận (大運) là hệ thống chu kỳ 10 năm quyết định "mùa" của cuộc đời: mùa xuân để gieo hạt, mùa hè để phát triển, mùa thu để gặt hái, mùa đông để nghỉ ngơi. Nếu tứ trụ là "bản đồ địa hình" bất biến — cho biết bạn được sinh ra trên vùng đất như thế nào — thì Đại Vận là "thời tiết" luân chuyển — cùng một vùng đất nhưng mùa xuân khác hẳn mùa đông. Mỗi giai đoạn mang một cặp Can Chi mới, tạo ra tương tác (hợp, xung, hình, hại) với tứ trụ gốc, dẫn đến những biến đổi rõ rệt về sự nghiệp, tài lộc, sức khỏe, và mối quan hệ.</p>
+
+    <p class="pdf-paragraph">Nguyên lý cổ điển mà "Trích Thiên Tủy" dạy: "Vận giả, mệnh chi phụ dực dã" — Vận là đôi cánh của Mệnh. Mệnh tốt mà Vận xấu như chim đại bàng bị cắt cánh — có tiềm năng nhưng chưa thể bay. Mệnh trung bình mà Vận tốt như chim bình thường gặp gió thuận — bay xa hơn mong đợi. Hiểu Đại Vận giúp bạn biết KHI NÀO nên tiến (mùa cát), KHI NÀO nên thủ (mùa hung), KHI NÀO nên thay đổi (mùa xung), và KHI NÀO nên kiên nhẫn (mùa tĩnh). Đây là "lịch chiến lược" quan trọng nhất mà Bát Tự mang lại cho cuộc đời bạn.</p>
+
+    <p class="pdf-paragraph">Theo phép "Luận Khởi Đại Vận" trong "Tam Mệnh Thông Hội", Đại Vận của bạn bắt đầu từ <strong>7 tuổi</strong>. Trước độ tuổi này, vận mệnh chịu chi phối chính từ Trụ Tháng (Nguyệt Lệnh) — giai đoạn "tiền vận" định hình nền tảng ban đầu. Tuổi khởi Đại Vận được tính bằng phương pháp "đếm ngày" từ ngày sinh đến ranh giới Tiết Khí gần nhất, theo công thức cổ điện: 3 ngày = 1 năm vận. Sự chính xác của con số này quyết định độ chính xác của toàn bộ phân tích Đại Vận — đó là lý do chúng tôi sử dụng thuật toán thiên văn hiện đại để tính ranh giới Tiết Khí chính xác đến từng phút.</p>
+    
+<div class="bazi-cycle-card">
+    <div class="bazi-cycle-header">
+        <div>
+            <strong style="font-size:12pt;color:#d4a017">Canh Thìn</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">3–12 tuổi · Bạch Lạp Kim</span>
+        </div>
+        <span class="bazi-cycle-badge bazi-cycle-badge--cat">✅ Cát</span>
+    </div>
+    <p style="font-size:9.5pt;color:#444;line-height:1.8;margin:0">Đại vận Canh Thìn (3–12 tuổi) — thời niên thiếu của bạn được dẫn dắt bởi Tỉ Kiên (Bạn bè · Đồng nghiệp). Bạn bước vào giai đoạn tự lập — thành bại phụ thuộc vào bản lĩnh của chính bạn. Sức mạnh nội tại giúp bạn tự đứng vững và mở rộng qua nỗ lực cá nhân. Nạp Âm &quot;Bạch Lạp Kim&quot; tô thêm sắc thái: vẻ ngoài giản dị nhưng bên trong quý giá.</p>
+    <p style="font-size:9pt;color:#666;margin:4pt 0"><strong>Thập Thần chủ đạo:</strong> Tỉ Kiên — theo "Tử Bình Chân Thuyên", khi vị thần này "cầm quyền" suốt 10 năm, nó định nghĩa chủ đề của cả giai đoạn.</p>
+    
+        <div style="margin-top:6pt;padding-top:6pt;border-top:1px solid #e5e5ea">
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Sự nghiệp:</strong> Sự nghiệp của bạn trong giai đoạn này giống như con đường mà bạn phải tự mở lối. Đừng chờ đợi ai đề bạt hay dẫn dắt — nếu muốn tiến lên, bạn phải tự tạo cơ hội cho mình. Đây là thời điểm tuyệt vời để khởi nghiệp, tự học kỹ năng mới, hoặc âm thầm xây dựng nền tảng riêng. Tránh hùn hạp kinh doanh hoặc dự án cần quá nhiều người cùng ra quyết định.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Tài chính:</strong> Tiền bạc trong giai đoạn này đến từ mồ hôi của chính bạn — không có con đường tắt, không có quý nhân tài chính. Tin tốt là: những gì bạn kiếm được đều vững chắc và thuộc về bạn hoàn toàn. Hãy tránh cho vay lớn, cũng đừng hùn vốn theo cảm xúc. Bạn giữ được bao nhiêu phụ thuộc vào kỷ luật chi tiêu của chính mình.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Quan hệ:</strong> Mạng lưới quan hệ của bạn mở rộng, nhưng đi kèm với cảm giác cạnh tranh ngầm. Bạn có thể gặp nhiều người cùng tần số, cùng chí hướng — nhưng cũng dễ đụng chạm khi ý kiến khác nhau. Trong hôn nhân, đôi khi bạn cảm thấy áp lực từ bên ngoài nhiều hơn bên trong — ai đó muốn xen vào, hoặc bạn bè chiếm quá nhiều thời gian. Hãy ưu tiên người thân nhất.</p>
+        </div>
+    <p class="pdf-paragraph">Theo kinh nghiệm 50 năm luận mệnh, giai đoạn Đại Vận cát như cánh buồm gặp gió thuận — mọi nỗ lực đều nhân đôi kết quả. Đây là thời điểm vàng để khởi nghiệp, đầu tư, mở rộng quan hệ, và theo đuổi giấc mơ lớn. Tuy nhiên, sách "Trích Thiên Tủy" cảnh báo: "Cát vận bất khả kiêu, kiêu tắc hoạ sinh" — vận tốt mà kiêu ngạo thì họa sẽ sinh. Hãy tận dụng mà vẫn giữ khiêm tốn, cho đi khi được nhiều, và chuẩn bị "kho lương" cho những giai đoạn khó khăn phía trước — vì như chu kỳ mặt trời và mặt trăng, không có vận nào kéo dài mãi.</p>
+</div>
+<div class="bazi-cycle-card">
+    <div class="bazi-cycle-header">
+        <div>
+            <strong style="font-size:12pt;color:#d97706">Kỷ Mão</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">13–22 tuổi · Thành Đầu Thổ</span>
+        </div>
+        <span class="bazi-cycle-badge bazi-cycle-badge--trung">☯️ Trung</span>
+    </div>
+    <p style="font-size:9.5pt;color:#444;line-height:1.8;margin:0">Đại vận Kỷ Mão (13–22 tuổi) — thời niên thiếu của bạn được dẫn dắt bởi Chính Ấn (Học vấn · Che chở). Bạn bước vào giai đoạn trí tuệ tỏa sáng — quý nhân và tri thức đến cùng lúc. Đây là giai đoạn bình ổn — không có sóng lớn, nhưng cũng là lúc bạn xây dựng nền tảng vững chắc cho chương tiếp theo. Nạp Âm &quot;Thành Đầu Thổ&quot; tô thêm sắc thái: kiên cố, bảo vệ, có vị trí vững chắc.</p>
+    <p style="font-size:9pt;color:#666;margin:4pt 0"><strong>Thập Thần chủ đạo:</strong> Chính Ấn — theo "Tử Bình Chân Thuyên", khi vị thần này "cầm quyền" suốt 10 năm, nó định nghĩa chủ đề của cả giai đoạn.</p>
+    
+        <div style="margin-top:6pt;padding-top:6pt;border-top:1px solid #e5e5ea">
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Sự nghiệp:</strong> Sự nghiệp phát triển qua con đường tri thức — bạn không cạnh tranh bằng sức mạnh mà bằng hiểu biết và phẩm chất. Đặc biệt thuận lợi cho giáo dục, nghiên cứu, tôn giáo, y học, hoặc bất kỳ lĩnh vực nào đòi hỏi chiều sâu. Bạn sẽ được bảo trợ và dẫn dắt — hãy mở lòng đón nhận sự giúp đỡ.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Tài chính:</strong> Tài chính đến qua đường tri thức — bạn không kiếm nhiều tiền từ lao động chân tay, nhưng cuộc sống ổn định, an nhàn, và đầy đủ theo cách riêng. Thu nhập có thể đến từ giảng dạy, viết lách, tư vấn, hoặc sở hữu trí tuệ. Đây là giai đoạn giàu có về tinh thần hơn vật chất — và đôi khi, đó mới là sự giàu có thực sự.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Quan hệ:</strong> Mối quan hệ trong giai đoạn này sâu sắc và chân thành — bạn thu hút những người nhìn vào bên trong bạn, không phải bề ngoài. Hôn nhân bình yên, êm đềm. Mẹ hoặc người phụ nữ lớn tuổi đóng vai trò đặc biệt quan trọng — có thể là người cho bạn lời khuyên quý giá nhất trong đời.</p>
+        </div>
+    <p class="pdf-paragraph">Giai đoạn trung tính — theo "Mệnh Lý Ước Ngôn", đây là thời gian "tĩnh lặng giữa hai cơn sóng." Năng lượng ổn định, không quá thuận cũng không quá nghịch — phù hợp để duy trì, cải thiện dần, và chuẩn bị chiến lược cho giai đoạn tiếp theo. Đừng cố làm điều quá lớn, nhưng cũng đừng ngồi im — hãy như người nông dân cần mẫn chăm sóc vườn cây trong mùa trung gian.</p>
+</div>
+<div class="bazi-cycle-card">
+    <div class="bazi-cycle-header">
+        <div>
+            <strong style="font-size:12pt;color:#d97706">Mậu Dần</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">23–32 tuổi · Thành Đầu Thổ</span>
+        </div>
+        <span class="bazi-cycle-badge bazi-cycle-badge--trung">☯️ Trung</span>
+    </div>
+    <p style="font-size:9.5pt;color:#444;line-height:1.8;margin:0">Đại vận Mậu Dần (23–32 tuổi) — giai đoạn thanh xuân của bạn được dẫn dắt bởi Thiên Ấn (Tâm linh · Nghiên cứu). Bạn bước vào giai đoạn giác ngộ — cô liêu nhưng trực giác phi thường. Đây là giai đoạn bình ổn — không có sóng lớn, nhưng cũng là lúc bạn xây dựng nền tảng vững chắc cho chương tiếp theo. Nạp Âm &quot;Thành Đầu Thổ&quot; tô thêm sắc thái: kiên cố, bảo vệ, có vị trí vững chắc.</p>
+    <p style="font-size:9pt;color:#666;margin:4pt 0"><strong>Thập Thần chủ đạo:</strong> Thiên Ấn — theo "Tử Bình Chân Thuyên", khi vị thần này "cầm quyền" suốt 10 năm, nó định nghĩa chủ đề của cả giai đoạn.</p>
+    
+        <div style="margin-top:6pt;padding-top:6pt;border-top:1px solid #e5e5ea">
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Sự nghiệp:</strong> Sự nghiệp của bạn đi theo lối riêng biệt — phong thủy, y học cổ truyền, lập trình, nghiên cứu chuyên sâu, hoặc bất kỳ lĩnh vực nào mà đám đông không hiểu nhưng thế giới vẫn cần. Bạn có thể ít được đánh giá đúng năng lực trong giai đoạn này, nhưng điều đó không quan trọng — giá trị thật sẽ tỏa sáng theo thời gian.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Tài chính:</strong> Tài chính không theo quy luật thông thường — bạn có thể kiếm tiền từ những lĩnh vực kỳ lạ mà ít ai nghĩ tới, hoặc thu nhập lúc có lúc không theo kiểu freelancer. Đừng so sánh ví tiền của mình với người khác — con đường tài chính của bạn độc đáo như chính con người bạn. Chỉ cần đảm bảo nhu cầu cơ bản, phần còn lại sẽ đến khi đúng thời điểm.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Quan hệ:</strong> Đời sống tình cảm có phần cô đơn — bạn khó tìm được người thực sự hiểu mình. Duyên có thể đến muộn, nhưng khi đến sẽ sâu sắc. Bạn cần tìm người đồng tần số — ai đó cũng có chiều sâu nội tâm và tôn trọng không gian riêng của bạn. Đừng ép mình sống theo chuẩn mực của đám đông trong chuyện tình cảm.</p>
+        </div>
+    <p class="pdf-paragraph">Giai đoạn trung tính — theo "Mệnh Lý Ước Ngôn", đây là thời gian "tĩnh lặng giữa hai cơn sóng." Năng lượng ổn định, không quá thuận cũng không quá nghịch — phù hợp để duy trì, cải thiện dần, và chuẩn bị chiến lược cho giai đoạn tiếp theo. Đừng cố làm điều quá lớn, nhưng cũng đừng ngồi im — hãy như người nông dân cần mẫn chăm sóc vườn cây trong mùa trung gian.</p>
+</div>
+<div class="bazi-cycle-card">
+    <div class="bazi-cycle-header">
+        <div>
+            <strong style="font-size:12pt;color:#dc2626">Đinh Sửu</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">33–42 tuổi · Giản Hạ Thủy</span>
+        </div>
+        <span class="bazi-cycle-badge bazi-cycle-badge--trung">☯️ Trung</span>
+    </div>
+    <p style="font-size:9.5pt;color:#444;line-height:1.8;margin:0">Đại vận Đinh Sửu (33–42 tuổi) — giai đoạn sung mãn của bạn được dẫn dắt bởi Chính Quan (Danh tiếng · Kỷ luật). Bạn bước vào giai đoạn kỷ cương và danh dự — sống đoan chính sẽ gặt hái lớn. Đây là giai đoạn bình ổn — không có sóng lớn, nhưng cũng là lúc bạn xây dựng nền tảng vững chắc cho chương tiếp theo. Nạp Âm &quot;Giản Hạ Thủy&quot; tô thêm sắc thái: trong lành, thanh khiết, âm thầm chảy.</p>
+    <p style="font-size:9pt;color:#666;margin:4pt 0"><strong>Thập Thần chủ đạo:</strong> Chính Quan — theo "Tử Bình Chân Thuyên", khi vị thần này "cầm quyền" suốt 10 năm, nó định nghĩa chủ đề của cả giai đoạn.</p>
+    
+        <div style="margin-top:6pt;padding-top:6pt;border-top:1px solid #e5e5ea">
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Sự nghiệp:</strong> Sự nghiệp thăng tiến rõ ràng — bạn được cấp trên nhìn nhận, được đề bạt vào vị trí có trách nhiệm. Uy tín và năng lực thực sự là vé vào cửa trong giai đoạn này. Phù hợp nhất cho công chức, quản lý, lãnh đạo, hoặc bất kỳ vai trò nào đòi hỏi sự tin tưởng tuyệt đối. Đây là lúc bạn tỏa sáng bằng phẩm chất, không phải chiêu trò.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Tài chính:</strong> Tài chính ổn định theo cấp bậc — lương, thưởng, phúc lợi. Bạn không giàu nhanh nhưng sống đầy đủ và đáng trọng. Nguồn thu nhập chính đáng, minh bạch. Đây không phải lúc mạo hiểm đầu tư — hãy giữ sự ổn định mà bạn đang có và xây dựng uy tín dài hạn.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Quan hệ:</strong> Đối với nữ giới, đây là giai đoạn hôn nhân thuận lợi nhất — bạn gặp được hoặc đang sống cùng người đàn ông đáng tin cậy, có trách nhiệm, biết lo lắng cho gia đình. Với nam giới, năng lượng Chính Quan mang lại sự ổn định và kỷ luật trong mối quan hệ. Tình cảm bền chặt, ít drama.</p>
+        </div>
+    <p class="pdf-paragraph">Giai đoạn trung tính — theo "Mệnh Lý Ước Ngôn", đây là thời gian "tĩnh lặng giữa hai cơn sóng." Năng lượng ổn định, không quá thuận cũng không quá nghịch — phù hợp để duy trì, cải thiện dần, và chuẩn bị chiến lược cho giai đoạn tiếp theo. Đừng cố làm điều quá lớn, nhưng cũng đừng ngồi im — hãy như người nông dân cần mẫn chăm sóc vườn cây trong mùa trung gian.</p>
+</div>
+<div class="bazi-cycle-card">
+    <div class="bazi-cycle-header">
+        <div>
+            <strong style="font-size:12pt;color:#dc2626">Bính Tý</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">43–52 tuổi · Giản Hạ Thủy</span>
+        </div>
+        <span class="bazi-cycle-badge bazi-cycle-badge--trung">☯️ Trung</span>
+    </div>
+    <p style="font-size:9.5pt;color:#444;line-height:1.8;margin:0">Đại vận Bính Tý (43–52 tuổi) — giai đoạn sung mãn của bạn được dẫn dắt bởi Thất Sát (Áp lực · Quyền lực). Bạn bước vào giai đoạn thử thách cam go — áp lực lớn nhưng cũng là cơ hội phi thường. Đây là giai đoạn bình ổn — không có sóng lớn, nhưng cũng là lúc bạn xây dựng nền tảng vững chắc cho chương tiếp theo. Nạp Âm &quot;Giản Hạ Thủy&quot; tô thêm sắc thái: trong lành, thanh khiết, âm thầm chảy.</p>
+    <p style="font-size:9pt;color:#666;margin:4pt 0"><strong>Thập Thần chủ đạo:</strong> Thất Sát — theo "Tử Bình Chân Thuyên", khi vị thần này "cầm quyền" suốt 10 năm, nó định nghĩa chủ đề của cả giai đoạn.</p>
+    
+        <div style="margin-top:6pt;padding-top:6pt;border-top:1px solid #e5e5ea">
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Sự nghiệp:</strong> Sự nghiệp của bạn đang ở chế độ 'tất cả hoặc không' — thăng tiến đột ngột hoặc sa sút bất ngờ, không có giữa. Áp lực cạnh tranh cực lớn, nhưng ai vượt qua được sẽ đứng ở vị trí mà ít ai chạm tới. Đặc biệt phù hợp cho quân sự, thể thao chuyên nghiệp, startup giai đoạn khốc liệt, hoặc bất kỳ môi trường nào đòi hỏi bản lĩnh thép.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Tài chính:</strong> Tài chính biến động mạnh — bạn có thể làm giàu nhanh chóng hoặc mất trắng trong thời gian ngắn. Đây là 'all-in or fold' — nếu bạn chọn chơi, hãy chơi với chiến lược rõ ràng và mức dừng lỗ nghiêm ngặt. Quan trọng nhất: đừng bao giờ đặt cược số tiền mà bạn không thể mất.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Quan hệ:</strong> Mối quan hệ chịu áp lực lớn — bạn hoặc đối phương có thể đang trong trạng thái stress cao, dẫn đến tranh cãi và hiểu lầm. Nhưng nếu cả hai cùng vượt qua giai đoạn này, mối gắn kết sẽ trở nên sắt đá. Bí quyết: nhượng bộ khi cần, thấu hiểu thay vì phán xét, và nhớ rằng cả hai đều đang chiến đấu — không phải chống nhau.</p>
+        </div>
+    <p class="pdf-paragraph">Giai đoạn trung tính — theo "Mệnh Lý Ước Ngôn", đây là thời gian "tĩnh lặng giữa hai cơn sóng." Năng lượng ổn định, không quá thuận cũng không quá nghịch — phù hợp để duy trì, cải thiện dần, và chuẩn bị chiến lược cho giai đoạn tiếp theo. Đừng cố làm điều quá lớn, nhưng cũng đừng ngồi im — hãy như người nông dân cần mẫn chăm sóc vườn cây trong mùa trung gian.</p>
+</div>
+<div class="bazi-cycle-card">
+    <div class="bazi-cycle-header">
+        <div>
+            <strong style="font-size:12pt;color:#16a34a">Ất Hợi</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">53–62 tuổi · Sơn Đầu Hỏa</span>
+        </div>
+        <span class="bazi-cycle-badge bazi-cycle-badge--hung">⚠️ Hung</span>
+    </div>
+    <p style="font-size:9.5pt;color:#444;line-height:1.8;margin:0">Đại vận Ất Hợi (53–62 tuổi) — giai đoạn trưởng thành của bạn được dẫn dắt bởi Chính Tài (Lương bổng · Ổn định). Bạn bước vào giai đoạn ổn định và thu hoạch — công sức được đền đáp xứng đáng. Áp lực tài chính hoặc sự đơn điệu có thể khiến bạn mệt mỏi — cần duy trì động lực. Nạp Âm &quot;Sơn Đầu Hỏa&quot; tô thêm sắc thái: tham vọng cao, ánh sáng tỏa xa.</p>
+    <p style="font-size:9pt;color:#666;margin:4pt 0"><strong>Thập Thần chủ đạo:</strong> Chính Tài — theo "Tử Bình Chân Thuyên", khi vị thần này "cầm quyền" suốt 10 năm, nó định nghĩa chủ đề của cả giai đoạn.</p>
+    
+        <div style="margin-top:6pt;padding-top:6pt;border-top:1px solid #e5e5ea">
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Sự nghiệp:</strong> Sự nghiệp của bạn vững chắc như ngôi nhà xây trên nền đá — không phát triển nhanh chóng mặt, nhưng mỗi bước tiến đều chắc chắn. Thăng tiến đến từ từ, nhờ sự đáng tin cậy và thành tích tích lũy. Đây là giai đoạn tuyệt vời cho kế toán, quản lý, kinh doanh truyền thống — những nghề đòi hỏi sự tỉ mỉ và ổn định.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Tài chính:</strong> Đây có thể là giai đoạn tài chính tốt nhất trong cuộc đời bạn — tiền đến từ lao động chân chính, từ giá trị thật bạn tạo ra. Không có tài lộc trên trời rơi xuống, nhưng dòng tiền ổn định và dự đoán được. Bạn có khả năng tích lũy và quản lý tiền bạc xuất sắc trong giai đoạn này. Hãy tận dụng để xây dựng tài sản dài hạn.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Quan hệ:</strong> Hôn nhân ổn định, bình yên — không có drama hay sóng gió bất ngờ. Đối với nam giới, đây là giai đoạn vợ chồng hỗ trợ nhau tốt nhất, cùng xây dựng gia đình vững chắc. Tình cảm có thể không lãng mạn kiểu phim, nhưng sự ấm áp và đáng tin cậy mới là thứ bền lâu.</p>
+        </div>
+    <p class="pdf-paragraph">Theo "Cùng Thông Bảo Giám" và "Tam Mệnh Thông Hội", giai đoạn Đại Vận hung không phải "án tử" — mà là "trường huấn luyện" của tạo hóa. Sách ghi: "Hung vận luyện tâm, luyện chí, luyện thần" — vận hung rèn luyện tâm, ý chí, và tinh thần. Trong giai đoạn này, hãy thận trọng với tài chính, tránh mạo hiểm lớn, tập trung vào sức khỏe và quan hệ gia đình. Đây cũng là thời gian lý tưởng để học hỏi, nâng cấp kỹ năng, và chuẩn bị cho "bước nhảy lớn" khi vận cát trở lại. Tôi đã chứng kiến nhiều người vượt qua hung vận và trở nên mạnh mẽ hơn bao giờ hết — vì "kim cương chỉ hình thành dưới áp lực khổng lồ."</p>
+</div>
+<div class="bazi-cycle-card">
+    <div class="bazi-cycle-header">
+        <div>
+            <strong style="font-size:12pt;color:#16a34a">Giáp Tuất</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">63–72 tuổi · Sơn Đầu Hỏa</span>
+        </div>
+        <span class="bazi-cycle-badge bazi-cycle-badge--hung">⚠️ Hung</span>
+    </div>
+    <p style="font-size:9.5pt;color:#444;line-height:1.8;margin:0">Đại vận Giáp Tuất (63–72 tuổi) — giai đoạn trưởng thành của bạn được dẫn dắt bởi Thiên Tài (Tiền ngoài · Đầu tư). Bạn bước vào giai đoạn cơ hội bất ngờ — cánh cửa mở từ nơi bạn ít ngờ nhất. Cơ hội đến kèm rủi ro — lòng tham lúc này là kẻ thù nguy hiểm nhất. Nạp Âm &quot;Sơn Đầu Hỏa&quot; tô thêm sắc thái: tham vọng cao, ánh sáng tỏa xa.</p>
+    <p style="font-size:9pt;color:#666;margin:4pt 0"><strong>Thập Thần chủ đạo:</strong> Thiên Tài — theo "Tử Bình Chân Thuyên", khi vị thần này "cầm quyền" suốt 10 năm, nó định nghĩa chủ đề của cả giai đoạn.</p>
+    
+        <div style="margin-top:6pt;padding-top:6pt;border-top:1px solid #e5e5ea">
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Sự nghiệp:</strong> Công việc của bạn không còn đi theo con đường mòn — bạn bị cuốn vào những cơ hội kinh doanh, đầu tư, hoặc dự án mang tính đột phá. Đây không phải thời điểm cho công việc văn phòng ổn định — năng lượng này muốn bạn ra ngoài, giao dịch, mở rộng. Nhiều cơ hội bất ngờ sẽ xuất hiện, nhưng bạn cần phân biệt vàng thật và vàng giả.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Tài chính:</strong> Tiền bạc đến bất ngờ — có thể từ di sản, trúng thưởng, đầu tư sinh lời ngoạn mục, hoặc nguồn thu nhập bạn chưa từng nghĩ tới. Cảm giác hưng phấn rất lớn, nhưng đó cũng là lúc nguy hiểm nhất. Biết dừng đúng lúc là kỹ năng quan trọng nhất trong giai đoạn này — tham lam một bước có thể mất tất cả.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Quan hệ:</strong> Đời sống tình cảm đầy bất ngờ — bạn có thể gặp ai đó ngoài kế hoạch, hoặc một mối quan hệ xuất hiện từ nơi bạn không ngờ. Đối với nam giới, giai đoạn này cần đặc biệt cẩn thận với tình cảm phức tạp — sự hấp dẫn của cái mới có thể khiến bạn quên mất giá trị của cái đang có.</p>
+        </div>
+    <p class="pdf-paragraph">Theo "Cùng Thông Bảo Giám" và "Tam Mệnh Thông Hội", giai đoạn Đại Vận hung không phải "án tử" — mà là "trường huấn luyện" của tạo hóa. Sách ghi: "Hung vận luyện tâm, luyện chí, luyện thần" — vận hung rèn luyện tâm, ý chí, và tinh thần. Trong giai đoạn này, hãy thận trọng với tài chính, tránh mạo hiểm lớn, tập trung vào sức khỏe và quan hệ gia đình. Đây cũng là thời gian lý tưởng để học hỏi, nâng cấp kỹ năng, và chuẩn bị cho "bước nhảy lớn" khi vận cát trở lại. Tôi đã chứng kiến nhiều người vượt qua hung vận và trở nên mạnh mẽ hơn bao giờ hết — vì "kim cương chỉ hình thành dưới áp lực khổng lồ."</p>
+</div>
+<div class="bazi-cycle-card">
+    <div class="bazi-cycle-header">
+        <div>
+            <strong style="font-size:12pt;color:#2563eb">Quý Dậu</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">73–82 tuổi · Kiếm Phong Kim</span>
+        </div>
+        <span class="bazi-cycle-badge bazi-cycle-badge--cat">✅ Cát</span>
+    </div>
+    <p style="font-size:9.5pt;color:#444;line-height:1.8;margin:0">Đại vận Quý Dậu (73–82 tuổi) — giai đoạn trưởng thành của bạn được dẫn dắt bởi Thương Quan (Phản kháng · Sáng tạo). Bạn bước vào giai đoạn đột phá ngoạn mục — khuôn khổ cũ không còn giữ nổi bạn. Sáng tạo đột phá mang lại kết quả bất ngờ — đây là lúc bạn tỏa sáng khác biệt. Nạp Âm &quot;Kiếm Phong Kim&quot; tô thêm sắc thái: sắc bén, quyết đoán, có tài năng xuất chúng.</p>
+    <p style="font-size:9pt;color:#666;margin:4pt 0"><strong>Thập Thần chủ đạo:</strong> Thương Quan — theo "Tử Bình Chân Thuyên", khi vị thần này "cầm quyền" suốt 10 năm, nó định nghĩa chủ đề của cả giai đoạn.</p>
+    
+        <div style="margin-top:6pt;padding-top:6pt;border-top:1px solid #e5e5ea">
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Sự nghiệp:</strong> Sự nghiệp của bạn đang ở ngã rẽ ngoạn mục — bạn có thể thay đổi nghề hoàn toàn, khởi nghiệp táo bạo, hoặc làm điều gì đó chưa ai dám làm. Tài năng của bạn tỏa sáng mạnh mẽ, nhưng cấp trên có thể không thích vì bạn quá thẳng thắn hoặc quá sáng lấn át họ. Hãy khéo léo — thiên tài cũng cần biết cách trình bày.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Tài chính:</strong> Tiền đến nhanh nhưng cũng đi nhanh — bạn kiếm tiền bằng sáng tạo và đột phá, nhưng cũng dễ tiêu hoang vì cảm xúc bốc đồng. Giai đoạn này không phải để tích lũy, mà để đầu tư vào những ý tưởng có tiềm năng bùng nổ. Chỉ cần nhớ: đừng bỏ hết trứng vào một giỏ.</p>
+          <p style="font-size:9pt;color:#444;line-height:1.7;margin:4pt 0"><strong>Quan hệ:</strong> Tình cảm trong giai đoạn này giống như bão lửa — cuồng nhiệt, sâu sắc, nhưng cũng dễ đốt cháy cả hai. Bạn có xu hướng nói thẳng quá mức, phê phán đối phương, hoặc đòi hỏi tự do tuyệt đối. Nếu không kiểm soát lời nói, mâu thuẫn có thể leo thang nhanh chóng. Hãy nhớ: đúng mà không đúng cách, vẫn là sai.</p>
+        </div>
+    <p class="pdf-paragraph">Theo kinh nghiệm 50 năm luận mệnh, giai đoạn Đại Vận cát như cánh buồm gặp gió thuận — mọi nỗ lực đều nhân đôi kết quả. Đây là thời điểm vàng để khởi nghiệp, đầu tư, mở rộng quan hệ, và theo đuổi giấc mơ lớn. Tuy nhiên, sách "Trích Thiên Tủy" cảnh báo: "Cát vận bất khả kiêu, kiêu tắc hoạ sinh" — vận tốt mà kiêu ngạo thì họa sẽ sinh. Hãy tận dụng mà vẫn giữ khiêm tốn, cho đi khi được nhiều, và chuẩn bị "kho lương" cho những giai đoạn khó khăn phía trước — vì như chu kỳ mặt trời và mặt trăng, không có vận nào kéo dài mãi.</p>
+</div>
+
+    <div class="pdf-pullquote">"Đại Vận không định nghĩa bạn — nó vẽ ra sân chơi. Cách bạn chơi mới là quyết định cuối cùng."</div>
+</div>
+    
+<div class="pdf-chapter">
+    <div class="pdf-chapter-header">
+        <span class="pdf-chapter-emoji">💡</span>
+        <span class="pdf-chapter-number">Chương X</span>
+        <h2 class="pdf-chapter-title">Lời Khuyên Thực Hành</h2>
+        <p class="pdf-chapter-subtitle">Ứng dụng Ngũ Hành vào cuộc sống hàng ngày</p>
+    </div>
+
+    <p class="pdf-paragraph">Khi đã xác định được Hỷ Dụng Thần (hành năng lượng cần bổ sung), bước tiếp theo là biến kiến thức thành hành động hàng ngày. Hành hỷ dụng chính là Kim và Thủy. Nên ưu tiên màu Trắng, Bạc; hướng Tây, Tây Bắc; số may mắn 4, 9. Bổ sung: màu Đen, hướng Bắc.. Đây không phải mê tín — mà là ứng dụng thực tiễn nguyên lý Ngũ Hành, tương tự cách y học cổ truyền dùng Ngũ Hành để cân bằng cơ thể. Những thay đổi nhỏ nhất — một màu sắc khác, một hướng ngồi khác — đôi khi tạo ra sự khác biệt lớn đến bất ngờ.</p>
+
+    <div class="bazi-advice-grid">
+        <div class="bazi-advice-box">
+            <h4>🎨 Màu Sắc Hỷ Dụng</h4>
+            <p>Trắng, Bạc, Vàng kim loại, Xám nhạt. Bổ sung: Đen, Xanh dương đậm</p>
+        </div>
+        <div class="bazi-advice-box">
+            <h4>🧭 Hướng Tốt</h4>
+            <p>Tây, Tây Bắc. Bổ sung: Bắc</p>
+        </div>
+        <div class="bazi-advice-box">
+            <h4>🔢 Số May Mắn</h4>
+            <p>4, 9, 1, 6</p>
+        </div>
+        <div class="bazi-advice-box">
+            <h4>📅 Mùa Thuận</h4>
+            <p>Thu (tháng 7-9 âm lịch). Bổ sung: Đông (tháng 10-12 âm lịch)</p>
+        </div>
+    </div>
+
+    <p class="pdf-paragraph">Theo "Hoàng Đế Nội Kinh" và lý thuyết "Ngũ Sắc Ngũ Khí" trong y học Đông y, mỗi hành tương ứng với nhóm màu: Kim → trắng, bạc, vàng kim (kim loại quý); Mộc → xanh lá, xanh ngọc (cây cối); Thủy → đen, xanh dương đậm (đại dương); Hỏa → đỏ, cam, hồng (lửa); Thổ → vàng đất, nâu, be (đất nông). Mặc màu hỷ dụng không phải "phép thuật" — mà là cách "đồng bộ hóa" tần số năng lượng cá nhân với môi trường. Khi bạn mặc đúng màu, bạn cảm thấy tự tin hơn, thoải mái hơn — và cảm giác đó tạo ra kết quả tốt hơn trong giao tiếp, đàm phán, và quyết định. Tâm lý học gọi đó là "enclothed cognition" — trang phục ảnh hưởng đến nhận thức và hành vi.</p>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">💼 Nghề Nghiệp Phù Hợp</h3>
+        <p class="pdf-paragraph">Theo phép "Luận Nghệ Nghiệp" trong "Tam Mệnh Thông Hội", nghề nghiệp phù hợp nhất: <strong>Tài chính, ngân hàng · Cơ khí, luyện kim · Trang sức, thời trang · Luật sư, thẩm phán · Công nghệ, IT · Phẫu thuật, nha khoa · Thương mại, xuất nhập khẩu · Du lịch, vận tải · Ngành nước, đồ uống</strong>. Chọn nghề nghiệp phù hợp với hành hỷ dụng không phải là "bị giới hạn" — mà là tìm "dòng chảy" (flow state) mà nhà tâm lý học Mihaly Csikszentmihalyi mô tả: trạng thái bạn làm việc quên thời gian, đầy hào hứng, và kết quả đến tự nhiên. Khi năng lượng nghề nghiệp đồng bộ với năng lượng bản mệnh, bạn không cần "cố gắng" mà vẫn tiến — như cá bơi xuôi dòng.</p>
+    </div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">🍽️ Chế Độ Ăn Uống Theo Ngũ Hành</h3>
+        <p class="pdf-paragraph">Theo "Hoàng Đế Nội Kinh" chương "Tứ Khí Điều Thần Đại Luận" và phép "Ngũ Vị Điều Hòa" trong Đông y, thực phẩm được phân loại theo Ngũ Hành dựa trên vị: chua → Mộc (bổ gan); đắng → Hỏa (bổ tim); ngọt → Thổ (bổ tỳ vị); cay → Kim (bổ phổi); mặn → Thủy (bổ thận). Ăn nhiều thực phẩm màu trắng: củ sen, hạt sen, lê, bạch quả, đậu phụ, cháo gạo trắng. Tránh đồ cay nóng quá mức vì Hỏa khắc Kim. Uống trà cúc hoa hoặc bạc hà thanh nhiệt phổi. Bổ sung vitamin C bảo vệ da.. Bổ sung thực phẩm có vị và màu tương ứng hành hỷ dụng giúp "nạp năng lượng" cho cơ quan cần tăng cường. Tôi thường nói: ăn đúng theo mệnh không phải kiêng khem khổ sở — mà là THÊM VÀO những thực phẩm "đồng tần" với bạn, và bạn sẽ cảm nhận được sự khác biệt trong vài tuần.</p>
+    </div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">🏃 Thói Quen & Nhịp Sinh Học</h3>
+        <p class="pdf-paragraph">Theo "Hoàng Đế Nội Kinh" chương "Tý Ngọ Lưu Chú" — hệ thống thời gian sinh học cổ đại — mỗi giờ trong ngày thuộc về một hành: giờ Dần-Mão (3-7h) thuộc Mộc (gan-phổi thải độc), giờ Tỵ-Ngọ (9-13h) thuộc Hỏa (tim-tiểu tràng hoạt động mạnh), giờ Thân-Dậu (15-19h) thuộc Kim (phổi-thận nạp năng lượng), giờ Hợi-Tý (21-1h) thuộc Thủy (thận tái tạo). Thức dậy sớm lúc 5-7h (giờ Kim vượng). Tập thở sâu 10 phút mỗi sáng. Mặc trang phục gọn gàng, lịch sự — Kim cần sự ngăn nắp. Nghe nhạc nhẹ nhàng buổi tối. Ngủ trước 23h để bảo vệ phổi.. Thực hiện hoạt động quan trọng nhất vào giờ tương ứng hành hỷ dụng sẽ thuận lợi gấp bội. Ví dụ, nếu hỷ dụng là Hỏa, hãy họp quan trọng, phỏng vấn, hoặc đàm phán vào buổi trưa (giờ Ngọ, 11-13h) — và bạn sẽ nhận thấy sự khác biệt rõ ràng.</p>
+    </div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">💰 Chiến Lược Tài Chính Theo Vận</h3>
+        <p class="pdf-paragraph">Theo "Mệnh Lý Ước Ngôn" chương "Luận Tài Vận Thông Biến", chiến lược tài chính cần "đồng bộ" với nhịp Đại Vận hiện tại. Kim chủ về tích lũy và bảo toàn. Nên đầu tư vào vàng, kim loại quý, trái phiếu, chứng chỉ quỹ ổn định. Tránh đầu cơ nóng vội. Nghề tài chính, luật sư, bất động sản sang trọng phù hợp nhất. Tiết kiệm đều đặn theo tháng.. Trong giai đoạn Đại Vận cát (thuận lợi), sách dạy: "Đắc thời thừa thế, bất khả thất cơ" — gặp thời thuận lợi, phải nắm lấy cơ hội, đừng để trôi qua. Ngược lại, giai đoạn Đại Vận hung: "Thu liễm tích trữ, dĩ đãi thời cơ" — thu gọn tích lũy, chờ đợi thời cơ. Ngành đầu tư phù hợp nên liên quan hành hỷ dụng — đầu tư "thuận hành" như cá bơi xuôi dòng, đầu tư "trái hành" như leo dốc ngược gió.</p>
+    </div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">🌤️ Sống Theo Mùa — Thuận Thiên Ứng Thời</h3>
+        <p class="pdf-paragraph">Theo "Hoàng Đế Nội Kinh" và triết lý "Thiên Nhân Hợp Nhất" — con người và thiên nhiên là một thể thống nhất — mỗi mùa mang năng lượng khác nhau: Xuân → Mộc (sinh sôi), Hạ → Hỏa (bùng phát), Trường Hạ → Thổ (chuyển giao), Thu → Kim (thu hoạch), Đông → Thủy (tích trữ). Mùa thu (tháng 7-9 ÂL): Kim vượng nhất — thời điểm vàng cho quyết định lớn, ký kết. Mùa hạ: cẩn thận sức khỏe, Hỏa khắc Kim. Mùa đông: Kim sinh Thủy, năng lượng suy, nên nghỉ ngơi tích lũy.. Khi mùa hỷ dụng đến, bạn sẽ cảm thấy năng lượng tự nhiên dâng trào — đây là "cửa sổ vàng" cho quyết định quan trọng. Khi mùa kỵ đến, hãy đặc biệt chú ý sức khỏe và tránh mạo hiểm lớn. Nguyên tắc đơn giản: "Mùa thuận thì tiến, mùa nghịch thì tĩnh."</p>
+    </div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">💕 Lời Khuyên Tình Cảm</h3>
+        <p class="pdf-paragraph">Theo phép "Luận Cung Phu Thê" trong "Uyên Hải Tử Bình" và kinh nghiệm tư vấn hàng nghìn cặp đôi, Người Kim cần bạn đời kiên nhẫn, biết lắng nghe vì tính cách quyết đoán đôi khi trở thành cứng nhắc. Kết hợp với người Thổ (nền tảng vững) hoặc Thủy (mềm mại cân bằng) sẽ hạnh phúc. Tránh va chạm với người Hỏa mạnh.. Trong mối quan hệ, hiểu "bản đồ năng lượng" của bạn và đối phương giúp tránh 80% xung đột không cần thiết — vì phần lớn mâu thuẫn đến từ sự khác biệt BẢN CHẤT chứ không phải THIỆN Ý. Khi biết đối phương thuộc hành nào, bạn sẽ hiểu tại sao họ hành xử khác bạn, và thay vì phán xét, bạn sẽ THẤU HIỂU.</p>
+    </div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">🩺 Chăm Sóc Sức Khỏe Chuyên Sâu</h3>
+        <p class="pdf-paragraph">Theo "Hoàng Đế Nội Kinh" và nguyên tắc "Trị Vị Bệnh" (治未病 — chữa bệnh trước khi phát), cơ quan cần chú ý đặc biệt: <strong>Phổi, đại tràng, da, xương, mũi, hệ hô hấp</strong>. Phổi và hệ hô hấp cần được chú ý bảo vệ. Nên tập thở sâu (pranayama, thiền thở), tránh khói bụi và không khí ô nhiễm. Mùa thu là thời điểm phổi dễ tổn thương nhất — giữ ấm vùng cổ ngực.. Phòng bệnh quan trọng hơn chữa bệnh gấp trăm lần — duy trì cân bằng Ngũ Hành trong cơ thể qua ăn uống, vận động, và thói quen sinh hoạt là phương pháp mà y học Đông phương đã áp dụng thành công hơn 4,000 năm. Điều tuyệt vời nhất: bạn không cần thuốc hay bác sĩ cho phần lớn những lời khuyên này — chỉ cần ý thức và kỷ luật bản thân.</p>
+    </div>
+</div>
+    
+<div class="pdf-chapter">
+    <div class="pdf-chapter-header">
+        <span class="pdf-chapter-emoji">🔄</span>
+        <span class="pdf-chapter-number">Chương XI</span>
+        <h2 class="pdf-chapter-title">Trường Sinh — 12 Giai Đoạn Sinh Mệnh</h2>
+        <p class="pdf-chapter-subtitle">Chu kỳ sinh, vượng, suy, tử và tái sinh</p>
+    </div>
+
+    <p class="pdf-paragraph">Theo sách "Tam Mệnh Thông Hội" chương "Luận Trường Sinh Thập Nhị Cung" và "Trích Thiên Tủy" — Trường Sinh (長生) là hệ thống 12 giai đoạn mô tả chu kỳ sinh mệnh hoàn chỉnh: Thai → Dưỡng → Trường Sinh → Mộc Dục → Quan Đới → Lâm Quan → Đế Vượng → Suy → Bệnh → Tử → Mộ → Tuyệt, rồi quay lại Thai — một vòng tròn bất tận, phản ánh quy luật vũ trụ mà triết học phương Đông gọi là "chu nhi phục thủy" (周而復始) — vòng rồi lại bắt đầu. Mỗi trụ trong lá số tương ứng với một giai đoạn, cho thấy "chất lượng năng lượng" của từng khía cạnh cuộc đời.</p>
+
+    <p class="pdf-paragraph">Nguyên lý tính Trường Sinh: Nhật Chủ Canh (🪙 Kim) được "chiếu" lên từng Địa Chi trong tứ trụ. Can Dương (Giáp, Bính, Mậu, Canh, Nhâm) đi thuận chiều — từ Trường Sinh đến Mộ Tuyệt theo thứ tự 12 Chi; Can Âm (Ất, Đinh, Kỷ, Tân, Quý) đi nghịch chiều. Sự khác biệt Dương-Âm này phản ánh hai phong cách sống: Dương tiến thẳng, mạnh mẽ, trực diện; Âm tiến gián tiếp, linh hoạt, uyển chuyển. Hiểu vị trí Trường Sinh trong lá số giúp bạn biết mình đang ở "chương nào" trong quyển sách cuộc đời — và chương tiếp theo sẽ là gì.</p>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Tổng Quan Năng Lượng Bốn Trụ</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:4pt">
+<span class="bazi-ts-phase" style="background:#fefce8">
+    <strong>Trụ Năm</strong> · Ngọ → Mộc Dục (neutral)
+</span>
+<span class="bazi-ts-phase" style="background:#fefce8">
+    <strong>Trụ Tháng</strong> · Tỵ → Trường Sinh (strong)
+</span>
+<span class="bazi-ts-phase" style="background:#fefce8">
+    <strong>Trụ Ngày</strong> · Thìn → Dưỡng (nurturing)
+</span>
+<span class="bazi-ts-phase" style="background:#fefce8">
+    <strong>Trụ Giờ</strong> · Thìn → Dưỡng (nurturing)
+</span></div>
+        <p class="pdf-paragraph">Trong lá số của bạn, <strong>0/4 trụ ở giai đoạn Vượng</strong> và <strong>0/4 trụ ở giai đoạn Suy</strong>. Năng lượng cân bằng — trạng thái lý tưởng mà cổ nhân gọi là "trung hòa chi mệnh." Mỗi trụ mang một giai đoạn khác nhau, tạo nên sự đa dạng và phong phú trong trải nghiệm cuộc sống.</p>
+    </div>
+
+    <div class="pdf-section">
+        <h3 class="pdf-section-title">Chi Tiết Từng Trụ — Vị Trí Của Bạn Trong Chu Kỳ</h3>
+        
+<div style="margin-bottom:12pt;page-break-inside:avoid">
+    <strong style="font-size:10pt">Trụ Năm — Mộc Dục (neutral)</strong>
+    <p style="font-size:9pt;color:#555;margin:2pt 0 0 0">Tắm gội — giai đoạn thanh lọc, dễ bị dao động</p>
+    <p class="pdf-paragraph">Theo "Uyên Hải Tử Bình" chương "Luận Mộc Dục", giai đoạn Mộc Dục (Tắm gội) tượng trưng cho sự thanh tẩy và nhạy cảm — như đứa trẻ vừa sinh cần được tắm rửa và bảo vệ. Năng lượng đang ở trạng thái "mềm, dễ tổn thương" — bạn tiếp thu nhanh nhưng cũng dễ bị ảnh hưởng bởi môi trường xung quanh. Trong cuộc sống, người có Mộc Dục ở trụ quan trọng thường có cá tính nghệ sĩ: nhạy cảm, đa tình, yêu cái đẹp, nhưng cũng dễ bất ổn cảm xúc. Cổ nhân nói "Mộc Dục chi địa, kỵ phùng đào hoa" — Mộc Dục gặp Đào Hoa thì chuyện tình cảm phức tạp. Nếu bạn nhận ra mình "có lúc rất mạnh mẽ, có lúc rất mong manh" — đó chính là biểu hiện của Mộc Dục.</p>
+</div>
+<div style="margin-bottom:12pt;page-break-inside:avoid">
+    <strong style="font-size:10pt">Trụ Tháng — Trường Sinh (strong)</strong>
+    <p style="font-size:9pt;color:#555;margin:2pt 0 0 0">Khởi đầu, sinh sôi — năng lượng khởi phát mạnh mẽ</p>
+    <p class="pdf-paragraph">Theo sách "Tam Mệnh Thông Hội" chương "Luận Trường Sinh Thập Nhị Cung", giai đoạn Trường Sinh tượng trưng cho sự khởi đầu tràn đầy sinh khí — như mầm cây vừa phá vỏ hạt, đầy sức sống và khao khát vươn lên ánh sáng. Trong cuộc đời, Trường Sinh ở trụ nào thì khía cạnh đó thường phát triển thuận lợi từ nền tảng tốt. Người có nhiều Trường Sinh trong lá số thường lạc quan, sáng tạo, và có khả năng phục hồi tuyệt vời sau mỗi thất bại — như cây xuân đâm chồi sau mùa đông khắc nghiệt. Bạn có thể đã nhận ra rằng mình luôn tìm thấy hy vọng ngay trong những tình huống tưởng chừng tuyệt vọng — đó là năng lượng Trường Sinh đang hoạt động.</p>
+</div>
+<div style="margin-bottom:12pt;page-break-inside:avoid">
+    <strong style="font-size:10pt">Trụ Ngày — Dưỡng (nurturing)</strong>
+    <p style="font-size:9pt;color:#555;margin:2pt 0 0 0">Dưỡng — nuôi dưỡng, chuẩn bị cho chu kỳ mới</p>
+    <p class="pdf-paragraph">Theo "Uyên Hải Tử Bình", giai đoạn Dưỡng tượng trưng cho sự nuôi dưỡng — thai nhi đang lớn trong bụng mẹ, chuẩn bị cho lần "chào đời" sắp tới. Năng lượng mới đang được bổ sung và củng cố — mọi thứ đang đúng hướng, chỉ cần thêm thời gian. Trong cuộc sống, Dưỡng ở trụ nào thì hãy kiên nhẫn chăm sóc và nuôi dưỡng khía cạnh đó — đừng vội vàng, đừng gấp gáp. Sách dạy: "Dưỡng chi thì dĩ đãi, bất khả cưỡng cầu" — lúc Dưỡng phải chờ đợi, không thể ép buộc.</p>
+</div>
+<div style="margin-bottom:12pt;page-break-inside:avoid">
+    <strong style="font-size:10pt">Trụ Giờ — Dưỡng (nurturing)</strong>
+    <p style="font-size:9pt;color:#555;margin:2pt 0 0 0">Dưỡng — nuôi dưỡng, chuẩn bị cho chu kỳ mới</p>
+    <p class="pdf-paragraph">Theo "Uyên Hải Tử Bình", giai đoạn Dưỡng tượng trưng cho sự nuôi dưỡng — thai nhi đang lớn trong bụng mẹ, chuẩn bị cho lần "chào đời" sắp tới. Năng lượng mới đang được bổ sung và củng cố — mọi thứ đang đúng hướng, chỉ cần thêm thời gian. Trong cuộc sống, Dưỡng ở trụ nào thì hãy kiên nhẫn chăm sóc và nuôi dưỡng khía cạnh đó — đừng vội vàng, đừng gấp gáp. Sách dạy: "Dưỡng chi thì dĩ đãi, bất khả cưỡng cầu" — lúc Dưỡng phải chờ đợi, không thể ép buộc.</p>
+</div>
+    </div>
+
+    <div class="pdf-pullquote">"Vạn vật đều tuân theo chu kỳ — sinh, trưởng, thu, tàng. Hiểu chu kỳ, thuận chu kỳ — đó là trí tuệ cao nhất."</div>
+</div>
+    
+<div class="pdf-chapter pdf-appendix">
+    <div class="pdf-chapter-header">
+        <span class="pdf-chapter-emoji">📚</span>
+        <span class="pdf-chapter-number">Phụ Lục</span>
+        <h2 class="pdf-chapter-title">Thuật Ngữ Bát Tự</h2>
+        <p class="pdf-chapter-subtitle">Giải thích các thuật ngữ chuyên môn sử dụng trong báo cáo</p>
+    </div>
+    
+<dl class="pdf-appendix-term">
+    <dt>Bát Tự / Tứ Trụ</dt>
+    <dd>Hệ thống phân tích vận mệnh dựa trên 8 chữ Can Chi từ 4 trụ thời gian: Năm, Tháng, Ngày, Giờ sinh.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Nhật Chủ</dt>
+    <dd>Thiên Can của Trụ Ngày — đại diện cho bản thân, là trung tâm để phân tích toàn bộ lá số.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Thiên Can</dt>
+    <dd>10 ký tự trời: Giáp, Ất, Bính, Đinh, Mậu, Kỷ, Canh, Tân, Nhâm, Quý — mỗi can thuộc một hành.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Địa Chi</dt>
+    <dd>12 con giáp: Tý, Sửu, Dần, Mão, Thìn, Tỵ, Ngọ, Mùi, Thân, Dậu, Tuất, Hợi — mỗi chi chứa tàng can.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Ngũ Hành</dt>
+    <dd>Năm nguyên tố: Kim (Metal), Mộc (Wood), Thủy (Water), Hỏa (Fire), Thổ (Earth) — nền tảng của mọi phân tích.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Thập Thần</dt>
+    <dd>Mười mối quan hệ giữa các Can với Nhật Chủ: Tỉ Kiên, Kiếp Tài, Thực Thần, Thương Quan, Chính Tài, Thiên Tài, Chính Quan, Thất Sát, Chính Ấn, Thiên Ấn.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Tàng Can</dt>
+    <dd>Thiên Can ẩn bên trong mỗi Địa Chi — nguồn lực ngầm ảnh hưởng tính cách và vận mệnh.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Thần Sát</dt>
+    <dd>Các &quot;sao&quot; đặc biệt tính từ mối quan hệ Can Chi, mang ý nghĩa cát (tốt), hung (thách thức), hoặc trung tính.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Đại Vận</dt>
+    <dd>Chu kỳ vận mệnh 10 năm — mỗi giai đoạn mang năng lượng Can Chi riêng, ảnh hưởng sâu sắc đến cuộc sống.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Cách Cục</dt>
+    <dd>Mô hình phân loại lá số dựa trên cấu trúc tổng thể — cho thấy xu hướng vận mệnh và con đường phù hợp.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Điều Hậu</dt>
+    <dd>Phân tích cân bằng mùa sinh — xem xét &quot;nhiệt độ&quot; lá số để xác định hành cần bổ sung.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Nạp Âm</dt>
+    <dd>Hệ thống 60 Giáp Tử — mỗi cặp Can Chi được gán một tên gọi hành kim loại, mang ý nghĩa biểu tượng.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Trường Sinh</dt>
+    <dd>12 giai đoạn sinh mệnh: Thai → Dưỡng → Trường Sinh → Mộc Dục → … → Tuyệt — chu kỳ năng lượng.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Không Vong</dt>
+    <dd>Hai Địa Chi &quot;trống&quot; trong Tuần — đại diện cho những vùng năng lượng yếu hoặc bất khả.</dd>
+</dl>
+<dl class="pdf-appendix-term">
+    <dt>Hỷ Dụng</dt>
+    <dd>Hành có lợi cho lá số — nên tăng cường qua màu sắc, hướng, nghề nghiệp, và lối sống.</dd>
+</dl>
+    <div class="pdf-divider">✦ ✦ ✦</div>
+    <p class="pdf-paragraph" style="text-align:center;font-style:italic;color:#888">
+        Báo cáo được tạo tự động bởi Lịch Việt — lichviet.app<br>
+        Thuật toán đa trường phái: Tử Bình · Cách Cục · Điều Hậu · Thần Sát
+    </p>
+</div>
+</body>
+</html>

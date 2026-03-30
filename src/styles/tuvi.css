@@ -1,0 +1,929 @@
+/* tuvi.css - TuVi chart styling, extracted from index.css for lazy-loading */
+
+@reference "../index.css";
+
+@layer components {
+  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     Phase 3: Tá»¬ VI CHART LAYOUT & STYLING
+     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+  /* â”€â”€ Tab Bar â€” LÃ¡ Sá»‘ Gá»‘c / Xem Háº¡n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-tab-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    @apply bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light/50 dark:border-border-dark/50 overflow-hidden;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .tuvi-tab {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    @apply text-text-secondary-light dark:text-text-secondary-dark;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .tuvi-tab:hover {
+    @apply bg-surface-subtle-light dark:bg-surface-subtle-dark;
+  }
+
+  .tuvi-tab-active {
+    @apply text-gold dark:text-gold-dark bg-amber-50/50 dark:bg-amber-900/15;
+    box-shadow: inset 0 -2px 0 0 var(--color-gold);
+    transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .tuvi-tab-year-selector {
+    margin-left: auto;
+    padding: 6px 12px;
+  }
+
+  .tuvi-year-select {
+    @apply bg-surface-subtle-light dark:bg-surface-subtle-dark text-text-primary-light dark:text-text-primary-dark;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid;
+    @apply border-border-light dark:border-border-dark;
+    border-radius: 6px;
+    padding: 5px 10px;
+    outline: none;
+  }
+
+  .tuvi-year-select:focus {
+    @apply ring-1 ring-gold;
+  }
+
+  /* â”€â”€ Grid Wrapper â€” horizontal scroll on small screens â”€â”€ */
+  .tuvi-grid-wrapper {
+    @apply overflow-x-auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* â”€â”€ 4Ã—4 CSS Grid â€” Standard Tá»­ Vi Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(170px, 1fr));
+    grid-template-rows: repeat(4, auto);
+    grid-template-areas:
+      "ty_  ngo  mui  than"
+      "thin center center dau"
+      "mao  center center tuat"
+      "dan  suu  ty   hoi";
+    gap: 0;
+    min-width: 700px;
+    max-width: 1000px;
+    margin: 0 auto;
+    border: 2px solid #B8860B;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 12px rgba(0, 0, 0, 0.04);
+    animation: tuvi-grid-entrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes tuvi-grid-entrance {
+    from {
+      opacity: 0;
+      transform: scale(0.98) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .dark .tuvi-grid {
+    border-color: #7C6A3A;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.40), 0 2px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  /* â”€â”€ Palace Cell â€” shared border approach (no doubling) â”€â”€ */
+  .tuvi-palace {
+    @apply bg-surface-light dark:bg-surface-dark;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 12px 8px;
+    min-height: 210px;
+    font-size: 14px;
+    line-height: 1.65;
+    position: relative;
+    transition: background 0.2s ease;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    @apply border-border-light/50 dark:border-border-dark/50;
+    overflow: hidden;
+    /* Fix 1: Prevent star name text from overflowing cell boundaries */
+    container-type: inline-size;
+  }
+
+  .tuvi-palace:hover {
+    @apply bg-surface-subtle-light dark:bg-surface-subtle-dark;
+    transform: scale(1.01);
+    z-index: 2;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .dark .tuvi-palace:hover {
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.08);
+  }
+
+  .tuvi-palace-empty {
+    @apply bg-surface-light dark:bg-surface-dark;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    @apply border-border-light/50 dark:border-border-dark/50;
+  }
+
+  /* â”€â”€ Má»‡nh Palace Highlight â€”â€” gold â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-palace-menh {
+    @apply bg-amber-50/40 dark:bg-amber-900/15;
+    background-image: linear-gradient(135deg, rgba(184, 134, 11, 0.04) 0%, transparent 60%);
+  }
+
+  .dark .tuvi-palace-menh {
+    background-image: linear-gradient(135deg, rgba(212, 168, 67, 0.06) 0%, transparent 60%);
+  }
+
+  /* â”€â”€ ThÃ¢n Palace Highlight â€”â€” silver â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-palace-than {
+    background-image: linear-gradient(135deg, rgba(156, 163, 175, 0.04) 0%, transparent 60%);
+  }
+
+  .dark .tuvi-palace-than {
+    background-image: linear-gradient(135deg, rgba(107, 114, 128, 0.06) 0%, transparent 60%);
+  }
+
+  /* â”€â”€ Palace Header Row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-palace-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+    border-bottom: 1.5px solid;
+    @apply border-gold/25 dark:border-gold-dark/20;
+  }
+
+  .tuvi-prefix {
+    font-size: 12px;
+    font-weight: 600;
+    @apply text-text-secondary-light dark:text-text-secondary-dark;
+    white-space: nowrap;
+    flex-shrink: 0;
+    opacity: 0.75;
+  }
+
+  .tuvi-palace-name-header {
+    font-size: 14px;
+    font-weight: 800;
+    text-align: center;
+    flex: 1;
+    @apply text-text-primary-light dark:text-text-primary-dark;
+    letter-spacing: 0.06em;
+  }
+
+  .tuvi-stage-number {
+    font-size: 13px;
+    font-weight: 700;
+    @apply text-text-secondary-light dark:text-text-secondary-dark;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  /* â”€â”€ Má»‡nh/ThÃ¢n Indicators â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-menh-indicator {
+    color: var(--color-gold);
+    margin-left: 2px;
+    font-size: 11px;
+  }
+
+  .tuvi-than-indicator {
+    color: #9CA3AF;
+    margin-left: 3px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  /* â”€â”€ Tuá»•i (LÆ°u NiÃªn Ages) Row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-ages-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 4px;
+    padding: 3px 0;
+    border-bottom: 1px dotted;
+    @apply border-border-light/30 dark:border-border-dark/30;
+  }
+
+  .tuvi-age-number {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0D9488;
+    font-variant-numeric: tabular-nums;
+    background: rgba(13, 148, 136, 0.08);
+    padding: 0 3px;
+    border-radius: 3px;
+    line-height: 1.5;
+  }
+
+  .dark .tuvi-age-number {
+    color: #2DD4BF;
+    background: rgba(45, 212, 191, 0.10);
+  }
+
+  /* â”€â”€ Month Label (ThÃ¡ng) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-month-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #4F46E5;
+    flex-shrink: 0;
+    background: rgba(79, 70, 229, 0.08);
+    padding: 0 4px;
+    border-radius: 3px;
+    line-height: 1.6;
+  }
+
+  .dark .tuvi-month-label {
+    color: #A5B4FC;
+    background: rgba(165, 180, 252, 0.10);
+  }
+
+  /* â”€â”€ Stars Zone â€” Main content area (top-aligned) â”€â”€â”€â”€â”€ */
+  .tuvi-stars-zone {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    padding: 4px 0;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  /* ── Tier 1: Major Stars (Centered) ── */
+  .tuvi-tier-major {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    margin-bottom: 2px;
+  }
+
+  .tuvi-tier-major .tuvi-star-major {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  /* ── Tier 2: Split Layout (Cát Tinh Left, Sát Tinh Right) ── */
+  .tuvi-tier-split {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 4px;
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  /* Make Cát Tinh / Sát Tinh minor stars smaller */
+  .tuvi-tier-split .tuvi-star-item {
+    font-size: 11px;
+    letter-spacing: -0.01em;
+  }
+
+  .tuvi-split-col-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    flex: 1 1 50%;
+    min-width: 0;
+  }
+
+  .tuvi-split-col-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    flex: 1 1 50%;
+    min-width: 0;
+  }
+
+  /* Right column: wrapped mutagen badges right-align */
+  .tuvi-split-col-right .tuvi-star-has-mutagen {
+    justify-content: flex-end;
+  }
+
+  /* ── Tier 3: Minor Stars (2-Column Grid) ── */
+  .tuvi-tier-minor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 4px;
+    row-gap: 3px;
+    width: 100%;
+    opacity: 0.9;
+  }
+
+  .tuvi-tier-minor-grid .tuvi-star-item {
+    font-size: 11px;
+    letter-spacing: -0.01em;
+  }
+
+  /* Right column of grid aligns content to the right */
+  .tuvi-tier-minor-grid > :nth-child(even) {
+    justify-self: end;
+  }
+
+  /* â”€â”€ Star Group â€” flex-wrap row of stars â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-star-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    align-items: baseline;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .tuvi-star-group-adj {
+    margin-top: 2px;
+    opacity: 0.7;
+    font-size: 10px;
+    border-top: 1px dotted;
+    @apply border-border-light/20 dark:border-border-dark/20;
+    padding-top: 5px;
+  }
+
+
+  /* â”€â”€ Inline flow for adjective stars (no grid) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-star-flow-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+    align-items: baseline;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* â”€â”€ Individual Star Item â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-star-item {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    line-height: 1.6;
+    max-width: 100%;
+  }
+
+  .tuvi-star-text-wrapper {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  /* Stars with Tá»© HÃ³a â€” full width, mutagen pushed right */
+  .tuvi-star-has-mutagen {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tuvi-mutagen-group {
+    display: flex;
+    gap: 4px;
+    align-items: baseline;
+    flex-shrink: 0;
+  }
+
+  /* â”€â”€ Star Colors â€” Traditional Chart Palette â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-star-major {
+    color: #B91C1C;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .dark .tuvi-star-major {
+    color: #FCA5A5;
+  }
+
+  .tuvi-star-auspicious {
+    color: #047857; /* Green */
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .dark .tuvi-star-auspicious {
+    color: #6EE7B7;
+  }
+
+  .tuvi-star-malefic {
+    color: #DC2626; /* Red */
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .dark .tuvi-star-malefic {
+    color: #F87171;
+  }
+
+  .tuvi-star-neutral {
+    color: #CA8A04; /* Earth Yellow */
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  /* Utility color overrides (e.g., for Chính Tinh) */
+  .tuvi-color-auspicious {
+    color: #047857 !important;
+  }
+  .dark .tuvi-color-auspicious {
+    color: #6EE7B7 !important;
+  }
+  .tuvi-color-malefic {
+    color: #DC2626 !important;
+  }
+  .dark .tuvi-color-malefic {
+    color: #F87171 !important;
+  }
+  .tuvi-color-neutral {
+    color: #CA8A04 !important;
+  }
+
+  .tuvi-star-dynamic {
+    color: #6B7280;
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  .dark .tuvi-star-dynamic {
+    color: #9CA3AF;
+  }
+
+  /* â”€â”€ Brightness Inline Label â€” color-coded by level â”€â”€â”€â”€ */
+  .tuvi-brightness-inline {
+    font-size: 0.85em;
+    font-weight: 700;
+    margin-left: 1px;
+    color: inherit;
+    opacity: 0.85;
+  }
+
+  /* â”€â”€ Tá»© HÃ³a Mutagen Badges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-mutagen-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 3px;
+    line-height: 1.3;
+    vertical-align: super;
+  }
+
+  /* â”€â”€ Tá»© HÃ³a Inline Text (new style) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-mutagen-inline {
+    font-size: inherit;
+    font-weight: 700;
+    margin-left: 1px;
+  }
+
+  .tuvi-hua-loc {
+    color: #059669;
+    background: rgba(5, 150, 105, 0.1);
+  }
+
+  .dark .tuvi-hua-loc {
+    color: #34D399;
+    background: rgba(52, 211, 153, 0.15);
+  }
+
+  .tuvi-hua-quyen {
+    color: #7C3AED;
+    background: rgba(124, 58, 237, 0.1);
+  }
+
+  .dark .tuvi-hua-quyen {
+    color: #A78BFA;
+    background: rgba(167, 139, 250, 0.15);
+  }
+
+  .tuvi-hua-khoa {
+    color: #2563EB;
+    background: rgba(37, 99, 235, 0.1);
+  }
+
+  .dark .tuvi-hua-khoa {
+    color: #60A5FA;
+    background: rgba(96, 165, 250, 0.15);
+  }
+
+  .tuvi-hua-ky {
+    color: #DC2626;
+    background: rgba(220, 38, 38, 0.1);
+  }
+
+  .dark .tuvi-hua-ky {
+    color: #F87171;
+    background: rgba(248, 113, 113, 0.15);
+  }
+
+  /* â”€â”€ Temporal Overlay Sections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-temporal-section {
+    margin-top: 3px;
+    padding-top: 3px;
+    border-top: 1px dashed;
+  }
+
+  .tuvi-temporal-decadal {
+    @apply border-gold/30 dark:border-gold-dark/30;
+  }
+
+  .tuvi-temporal-yearly {
+    @apply border-red-400/30 dark:border-red-400/30;
+  }
+
+  .tuvi-temporal-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 1px;
+    @apply text-text-secondary-light dark:text-text-secondary-dark;
+  }
+
+  /* â”€â”€ Palace Footer V2 â€” 2-row layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-palace-footer-v2 {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    border-top: 1px solid;
+    @apply border-gold/15 dark:border-gold-dark/12;
+    padding-top: 8px;
+    margin-top: auto;
+  }
+
+  .tuvi-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+  }
+
+  .tuvi-branch-label {
+    font-size: 13px;
+    font-weight: 800;
+    @apply text-text-primary-light dark:text-text-primary-dark;
+    flex-shrink: 0;
+  }
+
+  .tuvi-changsheng {
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    color: #7C3AED;
+    background: rgba(124, 58, 237, 0.08);
+    padding: 0 4px;
+    border-radius: 3px;
+    line-height: 1.6;
+  }
+
+  .dark .tuvi-changsheng {
+    color: #A78BFA;
+    background: rgba(167, 139, 250, 0.10);
+  }
+
+  .tuvi-boshi {
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    color: #0D9488;
+    background: rgba(13, 148, 136, 0.08);
+    padding: 0 4px;
+    border-radius: 3px;
+    line-height: 1.6;
+  }
+
+  .dark .tuvi-boshi {
+    color: #2DD4BF;
+    background: rgba(45, 212, 191, 0.10);
+  }
+
+  /* â”€â”€ Tuáº§n KhÃ´ng / Triá»‡t KhÃ´ng Markers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-tuan-marker,
+  .tuvi-triet-marker {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  .tuvi-tuan-marker {
+    color: #c26100;
+    background: rgba(224, 112, 0, 0.12);
+    border: 1px solid rgba(224, 112, 0, 0.30);
+  }
+
+  .dark .tuvi-tuan-marker {
+    color: #fb923c;
+    background: rgba(251, 146, 60, 0.15);
+    border: 1px solid rgba(251, 146, 60, 0.30);
+  }
+
+  .tuvi-triet-marker {
+    color: #c62828;
+    background: rgba(211, 47, 47, 0.12);
+    border: 1px solid rgba(211, 47, 47, 0.30);
+  }
+
+  .dark .tuvi-triet-marker {
+    color: #ef5350;
+    background: rgba(239, 83, 80, 0.15);
+    border: 1px solid rgba(239, 83, 80, 0.30);
+  }
+
+  .tuvi-stage-range {
+    font-size: 12px;
+    font-weight: 600;
+    @apply text-text-secondary-light dark:text-text-secondary-dark;
+    flex-shrink: 0;
+  }
+
+  /* â”€â”€ Center Info Panel (2Ã—2 merged) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-center-panel {
+    @apply bg-surface-subtle-light dark:bg-surface-subtle-dark;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    @apply border-border-light/50 dark:border-border-dark/50;
+    background-image: linear-gradient(180deg, rgba(184, 134, 11, 0.025) 0%, transparent 40%);
+  }
+
+  .dark .tuvi-center-panel {
+    background-image: linear-gradient(180deg, rgba(212, 168, 67, 0.04) 0%, transparent 40%);
+  }
+
+  /* Center panel sections */
+  .tuvi-center-title-section {
+    text-align: center;
+    padding: 14px 16px 12px;
+    border-bottom: 2px solid;
+    @apply border-gold/30 dark:border-gold-dark/25;
+    background: linear-gradient(180deg, rgba(184, 134, 11, 0.07) 0%, rgba(184, 134, 11, 0.01) 100%);
+  }
+
+  .dark .tuvi-center-title-section {
+    background: linear-gradient(180deg, rgba(212, 168, 67, 0.10) 0%, rgba(212, 168, 67, 0.02) 100%);
+  }
+
+  .tuvi-center-title {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    color: #B91C1C;
+    text-shadow: 0 1px 2px rgba(185, 28, 28, 0.06);
+  }
+
+  .dark .tuvi-center-title {
+    color: #FCA5A5;
+    text-shadow: 0 1px 3px rgba(252, 165, 165, 0.10);
+  }
+
+  .tuvi-center-name-section {
+    text-align: center;
+    padding: 6px 12px;
+    border-bottom: 1px solid;
+    @apply border-border-light/30 dark:border-border-dark/30;
+  }
+
+  .tuvi-center-name {
+    font-size: 16px;
+    font-weight: 700;
+    @apply text-gold dark:text-gold-dark;
+    letter-spacing: 0.02em;
+  }
+
+  .tuvi-center-section {
+    padding: 7px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .tuvi-center-section:nth-child(even) {
+    background: rgba(0, 0, 0, 0.012);
+  }
+
+  .dark .tuvi-center-section:nth-child(even) {
+    background: rgba(255, 255, 255, 0.015);
+  }
+
+  .tuvi-center-divider {
+    height: 1px;
+    @apply bg-border-light/20 dark:bg-border-dark/20;
+    margin: 0 16px;
+  }
+
+  /* Center panel info rows */
+  .tuvi-center-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    line-height: 1.6;
+  }
+
+  .tuvi-center-label {
+    font-size: 13px;
+    font-weight: 600;
+    @apply text-text-secondary-light dark:text-text-secondary-dark;
+    flex-shrink: 0;
+    min-width: 76px;
+  }
+
+  .tuvi-center-values {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 13px;
+    text-align: right;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .tuvi-center-value-primary {
+    font-weight: 600;
+    @apply text-text-primary-light dark:text-text-primary-dark;
+  }
+
+  .tuvi-center-value-secondary {
+    font-weight: 600;
+    color: #B91C1C;
+    font-size: 13px;
+  }
+
+  .dark .tuvi-center-value-secondary {
+    color: #FCA5A5;
+  }
+
+  .tuvi-center-value-green {
+    font-weight: 700;
+    color: #047857;
+  }
+
+  .dark .tuvi-center-value-green {
+    color: #6EE7B7;
+  }
+
+  .tuvi-center-value-red {
+    font-weight: 700;
+    color: #B91C1C;
+  }
+
+  .dark .tuvi-center-value-red {
+    color: #FCA5A5;
+  }
+
+  /* â”€â”€ Tá»© Trá»¥ Grid â€” Four Pillars in center panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-tutu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    padding: 4px 12px 6px;
+    text-align: center;
+  }
+
+  .tuvi-tutu-header {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    @apply text-text-secondary-light dark:text-text-secondary-dark;
+    padding-bottom: 2px;
+    border-bottom: 1px solid;
+    @apply border-border-light/30 dark:border-border-dark/30;
+  }
+
+  .tuvi-tutu-stem {
+    font-size: 14px;
+    font-weight: 700;
+    color: #B91C1C;
+    padding-top: 3px;
+  }
+
+  .dark .tuvi-tutu-stem {
+    color: #FCA5A5;
+  }
+
+  .tuvi-tutu-branch {
+    font-size: 14px;
+    font-weight: 700;
+    color: #047857;
+  }
+
+  .dark .tuvi-tutu-branch {
+    color: #6EE7B7;
+  }
+
+  /* â”€â”€ SVG Connection Lines Overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .tuvi-connection-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .tuvi-connection-line {
+    stroke: #9CA3AF;
+    stroke-width: 1.8;
+    stroke-opacity: 0.45;
+    fill: none;
+    stroke-dasharray: 6, 3;
+  }
+
+  .dark .tuvi-connection-line {
+    stroke: #6B7280;
+    stroke-opacity: 0.4;
+  }
+
+  /* â”€â”€ Responsive: Scale grid to fit on mobile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  @media (max-width: 640px) {
+    .tuvi-grid-wrapper {
+      overflow: hidden;
+      margin-left: -1rem;
+      margin-right: -1rem;
+      padding: 0 0.5rem;
+      /* Fix 3: Scroll indicator shadows for discoverability */
+      position: relative;
+    }
+
+    .tuvi-grid-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 24px;
+      background: linear-gradient(to right, transparent, rgba(0,0,0,0.06));
+      pointer-events: none;
+      z-index: 5;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .dark .tuvi-grid-wrapper::after {
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.04));
+    }
+
+    /* Reduce palace sizes on mobile for better fit */
+    .tuvi-palace {
+      padding: 6px 8px 5px;
+      min-height: 170px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .tuvi-star-major {
+      font-size: 13px;
+    }
+
+    .tuvi-star-auspicious,
+    .tuvi-star-malefic {
+      font-size: 12px;
+    }
+
+    .tuvi-star-neutral,
+    .tuvi-star-dynamic {
+      font-size: 11px;
+    }
+
+    .tuvi-palace-name-header {
+      font-size: 14px;
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ACCESSIBILITY: Reduced Motion
+   ═══════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .tuvi-grid {
+    animation: none !important;
+  }
+
+  .tuvi-palace:hover {
+    transform: none !important;
+  }
+}

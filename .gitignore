@@ -54,6 +54,18 @@ Desktop.ini
 coverage/
 .nyc_output/
 
+# Debug/Lint/Test output artifacts (temp files)
+lint*.txt
+lint*.json
+test_*.txt
+test_*.json
+test_*.log
+typecheck*.txt
+typecheck*.log
+failed_tests*.txt
+parse-lint.js
+fix-tiers*.ps1
+
 # Cache directories
 .eslintcache
 .stylelintcache

@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bản Phân Tích Thần Số Học — Nguyễn Văn A</title>
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Page Setup: tight margins for maximum text density ── */
+@page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+}
+@page :first {
+    margin: 0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Serif', 'Times New Roman', Georgia, serif;
+    font-size: 10.5pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* ── Cover Page ── */
+.pdf-cover {
+    width: 210mm;
+    height: 297mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #1a1a2e;
+    color: white;
+    text-align: center;
+    page-break-after: always;
+    position: relative;
+}
+.pdf-cover-emoji {
+    font-size: 48pt;
+    margin-bottom: 16pt;
+}
+.pdf-cover-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 24pt;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4pt;
+}
+.pdf-cover-subtitle {
+    font-size: 12pt;
+    font-weight: 400;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 22pt;
+}
+.pdf-cover-archetype {
+    font-family: 'Noto Serif', serif;
+    font-size: 15pt;
+    font-weight: 600;
+    font-style: italic;
+    color: #c4b5fd;
+    margin-bottom: 4pt;
+}
+.pdf-cover-element {
+    font-size: 10pt;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 32pt;
+}
+.pdf-cover-meta {
+    font-size: 9pt;
+    color: rgba(255,255,255,0.35);
+}
+.pdf-cover-brand {
+    position: absolute;
+    bottom: 22mm;
+    font-size: 9pt;
+    color: rgba(255,255,255,0.25);
+}
+
+/* ── Table of Contents ── */
+.pdf-toc {
+    page-break-after: always;
+    padding-top: 4mm;
+}
+.pdf-toc-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 16pt;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 12pt;
+    text-align: center;
+}
+.pdf-toc-list {
+    list-style: none;
+    padding: 0;
+}
+.pdf-toc-item {
+    display: flex;
+    align-items: baseline;
+    gap: 6pt;
+    padding: 4pt 0;
+    border-bottom: 1px solid #e8e8e8;
+    font-size: 10.5pt;
+}
+.pdf-toc-item-number {
+    font-weight: 600;
+    color: #444;
+    min-width: 20pt;
+}
+.pdf-toc-item-title {
+    flex: 1;
+    color: #1a1a1a;
+}
+.pdf-toc-item-dots {
+    flex: 1;
+    border-bottom: 1px dotted #bbb;
+    margin: 0 4pt;
+    min-width: 16pt;
+}
+
+/* ── Chapter Headings: only first chapter avoids break ── */
+.pdf-chapter {
+    page-break-before: always;
+}
+.pdf-chapter:first-of-type {
+    page-break-before: auto;
+}
+.pdf-chapter-header {
+    text-align: left;
+    margin-bottom: 10pt;
+    padding-bottom: 6pt;
+    border-bottom: 1.5px solid #333;
+}
+.pdf-chapter-emoji {
+    font-size: 16pt;
+    display: inline;
+    margin-right: 4pt;
+    vertical-align: middle;
+}
+.pdf-chapter-number {
+    font-family: 'Inter', sans-serif;
+    font-size: 8pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5pt;
+    color: #666;
+    display: block;
+    margin-bottom: 2pt;
+}
+.pdf-chapter-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 16pt;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+.pdf-chapter-subtitle {
+    font-size: 9.5pt;
+    color: #666;
+    font-style: italic;
+    margin-top: 2pt;
+}
+
+/* ── Section & Content Blocks: minimal spacing ── */
+.pdf-section {
+    margin-bottom: 6pt;
+}
+.pdf-section-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 12pt;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4pt;
+    margin-top: 10pt;
+    padding-bottom: 2pt;
+    border-bottom: 1px solid #ddd;
+}
+
+/* ── Prose Paragraphs: dense justified text ── */
+.pdf-paragraph {
+    font-size: 10.5pt;
+    line-height: 1.6;
+    color: #222;
+    margin-bottom: 4pt;
+    text-align: justify;
+    hyphens: auto;
+    text-indent: 1.5em;
+}
+.pdf-paragraph:first-child {
+    text-indent: 0;
+}
+.pdf-paragraph--no-indent {
+    text-indent: 0;
+}
+
+/* ── ETC Narrative Block: flowing prose, tight ── */
+.pdf-etc {
+    margin-bottom: 6pt;
+    page-break-inside: avoid;
+}
+.pdf-etc-hook {
+    font-size: 10.5pt;
+    font-weight: 600;
+    font-style: italic;
+    color: #1a1a1a;
+    margin-bottom: 3pt;
+    line-height: 1.55;
+    text-indent: 0;
+}
+.pdf-etc-effect {
+    font-size: 10.5pt;
+    line-height: 1.6;
+    color: #222;
+    margin-bottom: 3pt;
+    text-align: justify;
+    text-indent: 1.5em;
+}
+.pdf-etc-nuance {
+    font-size: 10pt;
+    line-height: 1.55;
+    color: #333;
+    margin: 4pt 0;
+    text-align: justify;
+    text-indent: 1.5em;
+    font-style: italic;
+}
+.pdf-etc-nuance::before {
+    content: 'Lưu ý: ';
+    font-weight: 600;
+    font-style: normal;
+}
+.pdf-etc-cause {
+    font-size: 10pt;
+    line-height: 1.55;
+    color: #444;
+    margin: 4pt 0;
+    text-align: justify;
+    text-indent: 1.5em;
+}
+.pdf-etc-cause::before {
+    content: 'Nguyên nhân: ';
+    font-weight: 600;
+}
+.pdf-etc-tip {
+    font-size: 10pt;
+    line-height: 1.55;
+    color: #222;
+    margin: 4pt 0;
+    text-align: justify;
+    text-indent: 1.5em;
+}
+.pdf-etc-tip::before {
+    content: 'Lời khuyên: ';
+    font-weight: 600;
+}
+
+/* ── Block Quotes: compact ── */
+.pdf-pullquote {
+    font-family: 'Noto Serif', serif;
+    font-size: 10.5pt;
+    font-style: italic;
+    color: #444;
+    padding: 4pt 0 4pt 12pt;
+    margin: 6pt 0;
+    border-left: 2px solid #888;
+    page-break-inside: avoid;
+}
+
+/* ── Strengths/Challenges: inline prose, no cards ── */
+.pdf-traits-grid {
+    margin: 6pt 0;
+}
+.pdf-traits-column {
+    margin-bottom: 6pt;
+}
+.pdf-traits-column--positive {}
+.pdf-traits-column--challenge {}
+.pdf-traits-column-title {
+    font-size: 11pt;
+    font-weight: 700;
+    margin-bottom: 4pt;
+    color: #1a1a1a;
+}
+.pdf-traits-column--positive .pdf-traits-column-title { color: #1a6b3a; }
+.pdf-traits-column--challenge .pdf-traits-column-title { color: #a3420c; }
+.pdf-trait-item {
+    margin-bottom: 4pt;
+    font-size: 10.5pt;
+    line-height: 1.55;
+}
+.pdf-trait-item:last-child { margin-bottom: 0; }
+.pdf-trait-label {
+    font-weight: 600;
+    color: #1a1a1a;
+    display: inline;
+}
+.pdf-trait-desc {
+    color: #333;
+    font-size: 10.5pt;
+    display: inline;
+    margin-left: 3pt;
+}
+
+/* ── Key Influences: inline ── */
+.pdf-influences {
+    font-size: 10.5pt;
+    line-height: 1.55;
+    color: #333;
+    margin: 4pt 0;
+}
+.pdf-influence-tag {
+    font-weight: 500;
+    color: #1a1a1a;
+}
+.pdf-influence-tag::after {
+    content: ' \00B7  ';
+    color: #999;
+    font-weight: 400;
+}
+.pdf-influence-tag:last-child::after {
+    content: '';
+}
+
+/* ── Yearly Outlook ── */
+.pdf-outlook {
+    page-break-before: always;
+}
+.pdf-outlook-themes {
+    font-size: 10.5pt;
+    line-height: 1.55;
+    margin: 4pt 0;
+}
+.pdf-outlook-theme {
+    font-weight: 500;
+    color: #1a1a1a;
+}
+.pdf-outlook-theme::after {
+    content: ' \00B7  ';
+    color: #999;
+    font-weight: 400;
+}
+.pdf-outlook-theme:last-child::after {
+    content: '';
+}
+
+/* ── Closing Meditation: compact ── */
+.pdf-meditation {
+    page-break-before: always;
+}
+.pdf-meditation-body p {
+    font-family: 'Noto Serif', serif;
+    font-size: 10.5pt;
+    font-style: italic;
+    line-height: 1.65;
+    color: #333;
+    margin-bottom: 6pt;
+    text-align: justify;
+}
+.pdf-meditation-body p:last-child {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+/* ── Appendix ── */
+.pdf-appendix {
+    page-break-before: always;
+}
+.pdf-appendix-term {
+    margin-bottom: 4pt;
+}
+.pdf-appendix-term dt {
+    font-weight: 700;
+    font-size: 10.5pt;
+    color: #1a1a1a;
+    display: inline;
+}
+.pdf-appendix-term dt::after {
+    content: ': ';
+}
+.pdf-appendix-term dd {
+    font-size: 10.5pt;
+    color: #333;
+    margin-left: 0;
+    line-height: 1.55;
+    display: inline;
+}
+
+/* ── Divider: minimal ── */
+.pdf-divider {
+    text-align: center;
+    margin: 6pt 0;
+    color: #ccc;
+    font-size: 8pt;
+    letter-spacing: 3pt;
+}
+
+/* ── Sub-heading within chapter ── */
+.pdf-subheading {
+    font-family: 'Noto Serif', serif;
+    font-size: 11pt;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-top: 8pt;
+    margin-bottom: 3pt;
+}
+
+/* ── Footer / Page Number ── */
+@media print {
+    @page {
+        @bottom-center {
+            content: counter(page);
+            font-size: 8pt;
+            color: #999;
+        }
+    }
+}
+/* ── Life Area Accent Colors ── */
+:root {
+    --pdf-accent-personality: #6366f1;
+    --pdf-accent-love: #ec4899;
+    --pdf-accent-career: #0ea5e9;
+    --pdf-accent-health: #22c55e;
+    --pdf-accent-growth: #f59e0b;
+    --pdf-accent-default: #6366f1;
+}
+
+/* ── Per-area accent overrides ── */
+.pdf-area-personality { --pdf-accent-default: var(--pdf-accent-personality); }
+.pdf-area-love { --pdf-accent-default: var(--pdf-accent-love); }
+.pdf-area-career { --pdf-accent-default: var(--pdf-accent-career); }
+.pdf-area-health { --pdf-accent-default: var(--pdf-accent-health); }
+.pdf-area-growth { --pdf-accent-default: var(--pdf-accent-growth); }
+
+/* ── Key Insight Box ── */
+.pdf-insight-box {
+    border-left: 4pt solid var(--pdf-accent-default);
+    background: rgba(99, 102, 241, 0.04);
+    padding: 10pt 14pt;
+    margin: 12pt 0;
+    page-break-inside: avoid;
+    border-radius: 0 4pt 4pt 0;
+}
+.pdf-insight-box .pdf-insight-icon {
+    display: inline-block;
+    font-size: 14pt;
+    margin-right: 6pt;
+    vertical-align: middle;
+}
+.pdf-insight-box .pdf-insight-text {
+    font-size: 9.5pt;
+    line-height: 1.5;
+    color: #2d2d3f;
+    font-style: italic;
+}
+
+/* ── Medium Cover (simpler, monochrome) ── */
+.pdf-cover--medium {
+    background: #2d2d3f !important;
+}
+.pdf-cover--medium .pdf-cover-title {
+    color: rgba(255,255,255,0.9);
+}
+.pdf-cover--medium .pdf-cover-label {
+    position: absolute;
+    bottom: 32pt;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 8pt;
+    letter-spacing: 3pt;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+}
+
+/* ── Full Cover (rich, prestigious) ── */
+.pdf-cover--full {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+}
+.pdf-cover--full .pdf-cover-ornament-top,
+.pdf-cover--full .pdf-cover-ornament-bottom {
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    height: 1pt;
+    background: linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent);
+}
+.pdf-cover--full .pdf-cover-ornament-top { top: 24pt; }
+.pdf-cover--full .pdf-cover-ornament-bottom { bottom: 24pt; }
+.pdf-cover--full .pdf-cover-title {
+    text-shadow: 0 0 20pt rgba(212,175,55,0.3);
+}
+
+/* ── Chapter Header Tiers ── */
+.pdf-chapter-header--full {
+    border-left: 5pt solid var(--pdf-accent-default);
+    padding-left: 12pt;
+    background: rgba(99, 102, 241, 0.02);
+}
+.pdf-chapter-header--medium {
+    border-left: 2pt solid #999;
+    padding-left: 8pt;
+}
+
+/* ── CTA Upsell Page (medium PDF only) ── */
+.pdf-cta-page {
+    page-break-before: always;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 40pt 30pt;
+}
+.pdf-cta-headline {
+    font-family: 'Noto Serif', serif;
+    font-size: 20pt;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 8pt;
+}
+.pdf-cta-subtitle {
+    font-size: 11pt;
+    color: #555;
+    margin-bottom: 24pt;
+    max-width: 400pt;
+    line-height: 1.6;
+}
+.pdf-cta-benefits {
+    list-style: none;
+    text-align: left;
+    margin: 0 auto 20pt;
+    max-width: 380pt;
+}
+.pdf-cta-benefits li {
+    font-size: 9.5pt;
+    line-height: 1.6;
+    margin-bottom: 6pt;
+    padding-left: 4pt;
+}
+.pdf-cta-comparison {
+    width: 100%;
+    max-width: 420pt;
+    border-collapse: collapse;
+    margin: 16pt auto;
+    font-size: 9pt;
+}
+.pdf-cta-comparison th {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    padding: 6pt 8pt;
+    border-bottom: 2pt solid #1a1a2e;
+    text-align: left;
+}
+.pdf-cta-comparison td {
+    padding: 5pt 8pt;
+    border-bottom: 0.5pt solid #e5e7eb;
+}
+.pdf-cta-comparison .cta-check { color: #22c55e; font-weight: 600; }
+.pdf-cta-comparison .cta-dash { color: #ccc; }
+.pdf-cta-button {
+    display: inline-block;
+    padding: 12pt 28pt;
+    border-radius: 8pt;
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 12pt;
+    text-decoration: none;
+    margin-top: 20pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+.pdf-cta-social-proof {
+    font-size: 8.5pt;
+    color: #888;
+    margin-top: 12pt;
+    font-style: italic;
+}
+
+/* ── Executive Summary Card ── */
+.pdf-summary-card {
+    page-break-before: always;
+    padding: 20pt;
+}
+.pdf-summary-card-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 18pt;
+    font-weight: 700;
+    text-align: center;
+    color: #1a1a2e;
+    margin-bottom: 6pt;
+}
+.pdf-summary-card-subtitle {
+    font-size: 10pt;
+    text-align: center;
+    color: #666;
+    margin-bottom: 20pt;
+}
+.pdf-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16pt;
+    margin-top: 16pt;
+}
+.pdf-summary-section {
+    border: 1pt solid #e5e7eb;
+    border-radius: 6pt;
+    padding: 14pt;
+    page-break-inside: avoid;
+}
+.pdf-summary-section-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 11pt;
+    margin-bottom: 8pt;
+    color: #1a1a2e;
+}
+.pdf-summary-section-content {
+    font-size: 9.5pt;
+    line-height: 1.5;
+    color: #333;
+}
+.pdf-summary-section-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.pdf-summary-section-list li {
+    font-size: 9.5pt;
+    line-height: 1.5;
+    padding: 2pt 0;
+}
+
+/* ── Luck Cycle Timeline ── */
+.pdf-timeline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin: 16pt 0;
+    padding: 8pt 0;
+    position: relative;
+}
+.pdf-timeline::before {
+    content: '';
+    position: absolute;
+    top: 6pt;
+    left: 0;
+    right: 0;
+    height: 2pt;
+    background: #e5e7eb;
+    z-index: 0;
+}
+.pdf-timeline-node {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    flex: 1;
+}
+.pdf-timeline-dot {
+    width: 12pt;
+    height: 12pt;
+    border-radius: 50%;
+    background: #6366f1;
+    margin: 0 auto 4pt;
+    border: 2pt solid white;
+    box-shadow: 0 0 0 1pt #6366f1;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+.pdf-timeline-dot--active {
+    background: #f59e0b;
+    box-shadow: 0 0 0 2pt #f59e0b;
+    width: 16pt;
+    height: 16pt;
+}
+.pdf-timeline-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 7pt;
+    color: #666;
+    margin-top: 2pt;
+}
+.pdf-timeline-label--active {
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+/* ── Sharing Card ── */
+.pdf-share-card {
+    page-break-before: always;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    text-align: center;
+    padding: 40pt;
+}
+.pdf-share-headline {
+    font-family: 'Noto Serif', serif;
+    font-size: 16pt;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 6pt;
+}
+.pdf-share-subtitle {
+    font-size: 10pt;
+    color: #555;
+    margin-bottom: 16pt;
+}
+.pdf-share-tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 8pt;
+    color: #999;
+    letter-spacing: 1pt;
+}
+
+.num-core-card { padding: 12pt 16pt; border-radius: 8pt; margin-bottom: 14pt; page-break-inside: avoid; border-left: 4px solid; background: #fafafa; }
+.num-core-card--master { border-color: #8b5cf6; background: #f5f3ff; }
+.num-core-card--karmic { border-color: #ef4444; background: #fef2f2; }
+.num-core-card--normal { border-color: #3b82f6; background: #eff6ff; }
+.num-grid-table { border-collapse: collapse; margin: 16pt auto; }
+.num-grid-table td { width: 50pt; height: 50pt; border: 2px solid #e5e5ea; text-align: center; font-size: 14pt; font-weight: 700; }
+.num-grid-table td.num-present { background: #dbeafe; color: #1d4ed8; }
+.num-grid-table td.num-missing { background: #fef2f2; color: #dc2626; opacity: 0.4; }
+.num-arrow-badge { display: inline-block; padding: 4pt 12pt; border-radius: 16pt; margin: 3pt; font-size: 9pt; font-weight: 600; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+.num-missing-badge { display: inline-block; padding: 4pt 12pt; border-radius: 16pt; margin: 3pt; font-size: 9pt; font-weight: 600; background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+.num-cycle-card { padding: 10pt 14pt; border-radius: 6pt; margin-bottom: 8pt; page-break-inside: avoid; border: 1px solid #e5e5ea; }
+.num-cycle-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6pt; }
+.num-period-badge { font-size: 9pt; font-weight: 600; padding: 2pt 10pt; border-radius: 12pt; background: #dbeafe; color: #1d4ed8; }
+.num-interaction-card { padding: 8pt 12pt; border-radius: 6pt; margin-bottom: 8pt; border: 1px solid #e5e5ea; page-break-inside: avoid; }
+.num-interaction-card--synergy { border-left: 3px solid #22c55e; background: #f0fdf4; }
+.num-interaction-card--tension { border-left: 3px solid #ef4444; background: #fef2f2; }
+.num-interaction-card--complementary { border-left: 3px solid #f59e0b; background: #fffbeb; }
+</style>
+</head>
+<body>
+    
+<div class="pdf-cover">
+    <div class="pdf-cover-logo">🔮</div>
+    <h1 class="pdf-cover-title">Bản Phân Tích Thần Số Học</h1>
+    <p class="pdf-cover-subtitle">Hệ thống Pythagoras</p>
+    <div class="pdf-cover-divider"></div>
+    <p class="pdf-cover-name">Nguyễn Văn A</p>
+    <p class="pdf-cover-date">Ngày sinh: 01/01/1990</p>
+    <p class="pdf-cover-meta">Số Chủ Đạo: 3 · Số Biểu Đạt: 7 · Số Linh Hồn: 1</p>
+</div>
+    
+<div class="pdf-toc">
+    <h2 class="pdf-toc-title">Mục Lục</h2>
+    <ol class="pdf-toc-list">
+        <li>Tóm Tắt Tổng Quan</li>
+        <li>Giới Thiệu Phương Pháp</li>
+        <li>Các Con Số Cốt Lõi</li>
+        <li>Bảng Ngày Sinh & Mũi Tên</li>
+        <li>Các Con Số Thiếu & Bài Học</li>
+        <li>Đỉnh Cao & Thử Thách Cuộc Đời</li>
+        <li>Chu Kỳ Cá Nhân</li>
+        <li>Tương Tác Giữa Các Con Số</li>
+        <li>Phân Tích Đời Sống (Life Areas)</li>
+        <li>Nghiệp Lực & Số Bậc Thầy</li>
+        <li>Lời Kết & Hướng Dẫn Thực Hành</li>
+    </ol>
+</div>
+    
+<div class="pdf-chapter-break"></div>
+<h2 class="pdf-chapter-title">Chương 1</h2>
+<h3 class="pdf-chapter-subtitle">Tóm Tắt Tổng Quan (Executive Summary)</h3>
+<p class="pdf-chapter-tagline">Bức tranh toàn cảnh về nhân cách và sứ mệnh của bạn</p>
+
+<div class="pdf-highlight-box" style="margin-bottom: 24pt;">
+    <h4 style="font-size: 14pt; color: var(--color-primary); margin-bottom: 12pt;">Hồ Sơ Năng Lượng Rung Động</h4>
+    <ul style="list-style-type: none; padding-left: 0; margin-bottom: 12pt;">
+        <li style="margin-bottom: 8pt;"><strong>Định hình:</strong> Người Truyền Cảm Hứng</li>
+        <li style="margin-bottom: 8pt;"><strong>Hướng đi chính:</strong> Đường Đời 3: Sáng tạo, biểu đạt, vui vẻ</li>
+        <li style="margin-bottom: 8pt;"><strong>Phong cách:</strong> Biểu Đạt 7: Tâm linh, phân tích, tri thức</li>
+        <li style="margin-bottom: 8pt;"><strong>Động lực ẩn sâu:</strong> Linh Hồn 1: Lãnh đạo, độc lập, sáng tạo</li>
+    </ul>
+    <p style="font-size: 11pt; color: #4b5563; font-weight: 500; font-style: italic; background: #f3f4f6; padding: 12pt; border-left: 4px solid var(--color-primary);">Bức tranh tổng thể của bạn được dẫn dắt bởi năng lượng 3 của Người Truyền Cảm Hứng, thể hiện ra bên ngoài thông qua phong cách 7 và được thôi thúc sâu xa bởi khao khát 1. Sự kết hợp này tạo nên một hành trình độc đáo: bạn học cách sống đúng với cốt lõi của mình trong khi cân bằng giữa động lực bên trong và cách thức thể hiện ra thế giới.</p>
+</div>
+
+<h4 class="pdf-h4">Lời Khuyên Cốt Lõi</h4>
+<p class="pdf-paragraph">Hãy tập trung vào thế mạnh tự nhiên của Số Đường Đời 3, đồng thời thỏa mãn khát vọng của Số Linh Hồn 1. Đừng quên sử dụng Số Biểu Đạt 7 như một &quot;công cụ&quot; đắc lực để giao tiếp và đạt được mục tiêu trong cuộc sống.</p>
+
+    
+<div class="pdf-chapter-break"></div>
+<h2 class="pdf-chapter-title">Chương 1</h2>
+<h3 class="pdf-chapter-subtitle">Giới Thiệu Phương Pháp</h3>
+<p class="pdf-chapter-tagline">Khoa học về con số và năng lượng vũ trụ</p>
+
+<p class="pdf-paragraph">Mỗi con số từ 1 đến 9 mang trong mình một tần số rung động đặc biệt, tương tự như sóng âm thanh hay sóng ánh sáng. Mỗi người sinh ra đều mang theo một "mã số" độc đáo được ấn định bởi tên gọi và ngày sinh. Bản phân tích này giải mã "bản đồ số" cá nhân của bạn — từ số Đường Đời đến Bảng Ngày Sinh — mỗi yếu tố là một mảnh ghép trong bức tranh tổng thể về tiềm năng, thách thức, và sứ mệnh cuộc đời bạn.</p>
+
+<p class="pdf-paragraph">Con số không "quyết định" số phận — chúng "phản ánh" năng lượng bẩm sinh mà bạn mang theo khi sinh ra. Giống như bản đồ địa lý cho thấy địa hình nhưng không quyết định bạn đi đường nào, bản đồ số cho thấy tiềm năng nhưng cách bạn sử dụng nó mới quyết định kết quả. <em>"Biết mình biết ta, trăm trận trăm thắng"</em> — chương tiếp theo sẽ phân tích chi tiết từng con số trong bản đồ cá nhân của bạn.</p>
+    
+<div class="pdf-chapter-break"></div>
+<h2 class="pdf-chapter-title">Chương 2</h2>
+<h3 class="pdf-chapter-subtitle">Các Con Số Cốt Lõi</h3>
+<p class="pdf-chapter-tagline">Giải mã bản đồ năng lượng cá nhân</p>
+
+<p class="pdf-paragraph">Sách "Numerology: Key to Your Inner Self" của Hans Decoz ghi: "Core numbers là xương sống của bản đồ số — chúng define WHO YOU ARE ở cấp độ sâu nhất." Trong bản đồ của bạn, 8 con số cốt lõi sau đây tạo thành một hệ thống tương tác phức tạp — mỗi số ảnh hưởng và bổ sung cho các số khác, tạo nên bức tranh tổng thể độc đáo chỉ thuộc về bạn.</p>
+
+
+<div class="num-core-card num-core-card--normal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6pt">
+        <strong style="font-size:13pt;color:#1a1a2e">🛤️ Số Đường Đời — Số 3</strong>
+        
+    </div>
+    <p style="font-size:9pt;color:#666;margin:0 0 6pt 0;font-style:italic">Đường Đời: Sáng tạo, biểu đạt, vui vẻ</p>
+</div>
+
+<p class="pdf-paragraph">Theo "The Life You Were Born to Live" của Dan Millman, Số Đường Đời (Life Path) số 3 mang tần số rung động đặc trưng: "Sáng tạo, biểu đạt, vui vẻ." Số 3 là số của sự sáng tạo, giao tiếp và niềm vui. Người số 3 có tài ăn nói, nghệ thuật và thường là linh hồn của mọi buổi tiệc. Họ mang năng lượng tích cực và truyền cảm hứng cho người khác. Trong bản đồ số của bạn, con số này tọa tại vị trí Đường Đời — Mục đích sống và con đường định mệnh — cho thấy đây không chỉ là một khuynh hướng thoảng qua mà là năng lượng CƠ BẢN chi phối khía cạnh Đường Đời trong cuộc đời bạn. Khi bạn đọc dòng này, hãy tự hỏi: "Điều này có đúng với mình không?" — và có lẽ câu trả lời sẽ khiến bạn ngạc nhiên.</p>
+
+<p class="pdf-paragraph">Con đường đời là trở thành người truyền cảm hứng qua sáng tạo và biểu đạt. Cuộc sống liên tục mời gọi bạn thể hiện — viết, nói, hát, vẽ, hoặc đơn giản là truyền năng lượng tích cực. Bài học lớn: sáng tạo không phải xa xỉ, đó là sứ mệnh. Theo Phillips, mỗi con số đều có "vùng bóng tối" — không phải để sợ hãi mà để ý THỨC. Khi bạn nhận ra cả mặt sáng lẫn mặt tối, bạn đã nắm 50% chìa khóa để chuyển hóa.</p>
+
+
+<div class="num-core-card num-core-card--normal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6pt">
+        <strong style="font-size:13pt;color:#1a1a2e">🎭 Số Biểu Đạt — Số 7</strong>
+        
+    </div>
+    <p style="font-size:9pt;color:#666;margin:0 0 6pt 0;font-style:italic">Biểu Đạt: Tâm linh, phân tích, tri thức</p>
+</div>
+
+<p class="pdf-paragraph">Theo "The Life You Were Born to Live" của Dan Millman, Số Biểu Đạt (Expression) số 7 mang tần số rung động đặc trưng: "Tâm linh, phân tích, tri thức." Số 7 đại diện cho trí tuệ, tâm linh và sự nội tâm. Người số 7 thích nghiên cứu, phân tích sâu và có thiên hướng triết học. Họ thường tìm kiếm ý nghĩa sâu xa của cuộc sống. Trong bản đồ số của bạn, con số này tọa tại vị trí Biểu Đạt — Cách tài năng thể hiện ra thế giới — cho thấy đây không chỉ là một khuynh hướng thoảng qua mà là năng lượng CƠ BẢN chi phối khía cạnh Biểu Đạt trong cuộc đời bạn. Khi bạn đọc dòng này, hãy tự hỏi: "Điều này có đúng với mình không?" — và có lẽ câu trả lời sẽ khiến bạn ngạc nhiên.</p>
+
+<p class="pdf-paragraph">Tài năng biểu hiện qua phân tích, nghiên cứu và trực giác. Bạn nhìn xuyên bề mặt để tìm bản chất. Trong team, bạn là &quot;người giải mã&quot; — phát hiện pattern mà ai cũng bỏ sót. Theo Phillips, mỗi con số đều có "vùng bóng tối" — không phải để sợ hãi mà để ý THỨC. Khi bạn nhận ra cả mặt sáng lẫn mặt tối, bạn đã nắm 50% chìa khóa để chuyển hóa.</p>
+
+
+<div class="num-core-card num-core-card--normal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6pt">
+        <strong style="font-size:13pt;color:#1a1a2e">💖 Số Linh Hồn — Số 1</strong>
+        
+    </div>
+    <p style="font-size:9pt;color:#666;margin:0 0 6pt 0;font-style:italic">Linh Hồn: Lãnh đạo, độc lập, sáng tạo</p>
+</div>
+
+<p class="pdf-paragraph">Theo "The Life You Were Born to Live" của Dan Millman, Số Linh Hồn (Soul Urge) số 1 mang tần số rung động đặc trưng: "Lãnh đạo, độc lập, sáng tạo." Số 1 đại diện cho sự khởi đầu, tiên phong và lãnh đạo. Người mang số 1 có tinh thần độc lập cao, quyết đoán và có khả năng dẫn dắt. Họ thường đi tiên phong trong các lĩnh vực mới và không ngại đối mặt thử thách. Trong bản đồ số của bạn, con số này tọa tại vị trí Linh Hồn — Khao khát và động lực nội tâm — cho thấy đây không chỉ là một khuynh hướng thoảng qua mà là năng lượng CƠ BẢN chi phối khía cạnh Linh Hồn trong cuộc đời bạn. Khi bạn đọc dòng này, hãy tự hỏi: "Điều này có đúng với mình không?" — và có lẽ câu trả lời sẽ khiến bạn ngạc nhiên.</p>
+
+<p class="pdf-paragraph">Sâu trong tâm hồn, bạn khao khát sự độc lập và tự do — được là chính mình mà không cần ai chấp thuận. Động lực thầm kín là nhu cầu chứng minh rằng bạn có thể tự đứng trên đôi chân mình. Bạn cảm thấy sống nhất khi đang tạo ra điều gì đó hoàn toàn mới. Theo Phillips, mỗi con số đều có "vùng bóng tối" — không phải để sợ hãi mà để ý THỨC. Khi bạn nhận ra cả mặt sáng lẫn mặt tối, bạn đã nắm 50% chìa khóa để chuyển hóa.</p>
+
+
+<div class="num-core-card num-core-card--master">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6pt">
+        <strong style="font-size:13pt;color:#1a1a2e">🪞 Số Nhân Cách — Số 33</strong>
+        <span style="font-size:8pt;font-weight:600;color:#8b5cf6">✨ Số Bậc Thầy</span>
+    </div>
+    <p style="font-size:9pt;color:#666;margin:0 0 6pt 0;font-style:italic">Nhân Cách: Bậc thầy giáo dễ thương — Tình yêu &amp; Phụng sự</p>
+</div>
+
+<p class="pdf-paragraph">Theo "The Life You Were Born to Live" của Dan Millman, Số Nhân Cách (Personality) số 33 mang tần số rung động đặc trưng: "Bậc thầy giáo dễ thương — Tình yêu &amp; Phụng sự." Số 33 là Số Bậc Thầy hiếm nhất, đại diện cho tình yêu vô điều kiện và sự hy sinh. Người số 33 có khả năng chữa lành, dẫn dắt bằng tình thương và truyền cảm hứng sâu sắc. Trong bản đồ số của bạn, con số này tọa tại vị trí Nhân Cách — Cách người khác nhìn nhận bạn — cho thấy đây không chỉ là một khuynh hướng thoảng qua mà là năng lượng CƠ BẢN chi phối khía cạnh Nhân Cách trong cuộc đời bạn. Khi bạn đọc dòng này, hãy tự hỏi: "Điều này có đúng với mình không?" — và có lẽ câu trả lời sẽ khiến bạn ngạc nhiên.</p>
+
+<p class="pdf-paragraph">Bạn tỏa ra ánh sáng ấm áp — người ta cảm thấy an toàn, được yêu thương chỉ bằng cách ở gần bạn. Phong thái &quot;thầy tình yêu&quot; — điềm tĩnh, từ bi, và vô cùng bao dung. Theo Phillips, mỗi con số đều có "vùng bóng tối" — không phải để sợ hãi mà để ý THỨC. Khi bạn nhận ra cả mặt sáng lẫn mặt tối, bạn đã nắm 50% chìa khóa để chuyển hóa.</p>
+
+
+<div class="num-core-card num-core-card--normal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6pt">
+        <strong style="font-size:13pt;color:#1a1a2e">🎂 Số Ngày Sinh — Số 1</strong>
+        
+    </div>
+    <p style="font-size:9pt;color:#666;margin:0 0 6pt 0;font-style:italic">Ngày Sinh: Lãnh đạo, độc lập, sáng tạo</p>
+</div>
+
+<p class="pdf-paragraph">Theo "The Life You Were Born to Live" của Dan Millman, Số Ngày Sinh (Birthday) số 1 mang tần số rung động đặc trưng: "Lãnh đạo, độc lập, sáng tạo." Số 1 đại diện cho sự khởi đầu, tiên phong và lãnh đạo. Người mang số 1 có tinh thần độc lập cao, quyết đoán và có khả năng dẫn dắt. Họ thường đi tiên phong trong các lĩnh vực mới và không ngại đối mặt thử thách. Trong bản đồ số của bạn, con số này tọa tại vị trí Ngày Sinh — Tài năng và năng khiếu tự nhiên — cho thấy đây không chỉ là một khuynh hướng thoảng qua mà là năng lượng CƠ BẢN chi phối khía cạnh Ngày Sinh trong cuộc đời bạn. Khi bạn đọc dòng này, hãy tự hỏi: "Điều này có đúng với mình không?" — và có lẽ câu trả lời sẽ khiến bạn ngạc nhiên.</p>
+
+<p class="pdf-paragraph">Năng khiếu bẩm sinh của bạn là khả năng bắt đầu — bạn khởi động dự án, ý tưởng, và phong trào một cách tự nhiên. Ngày sinh cho bạn sự dũng cảm ban đầu — viên gạch đầu tiên mà mọi công trình cần. Theo Phillips, mỗi con số đều có "vùng bóng tối" — không phải để sợ hãi mà để ý THỨC. Khi bạn nhận ra cả mặt sáng lẫn mặt tối, bạn đã nắm 50% chìa khóa để chuyển hóa.</p>
+
+
+<div class="num-core-card num-core-card--normal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6pt">
+        <strong style="font-size:13pt;color:#1a1a2e">🌳 Số Trưởng Thành — Số 1</strong>
+        
+    </div>
+    <p style="font-size:9pt;color:#666;margin:0 0 6pt 0;font-style:italic">Trưởng Thành: Lãnh đạo, độc lập, sáng tạo</p>
+</div>
+
+<p class="pdf-paragraph">Theo "The Life You Were Born to Live" của Dan Millman, Số Trưởng Thành (Maturity) số 1 mang tần số rung động đặc trưng: "Lãnh đạo, độc lập, sáng tạo." Số 1 đại diện cho sự khởi đầu, tiên phong và lãnh đạo. Người mang số 1 có tinh thần độc lập cao, quyết đoán và có khả năng dẫn dắt. Họ thường đi tiên phong trong các lĩnh vực mới và không ngại đối mặt thử thách. Trong bản đồ số của bạn, con số này tọa tại vị trí Trưởng Thành — Sự tiến hóa từ giữa đời (~35 tuổi) — cho thấy đây không chỉ là một khuynh hướng thoảng qua mà là năng lượng CƠ BẢN chi phối khía cạnh Trưởng Thành trong cuộc đời bạn. Khi bạn đọc dòng này, hãy tự hỏi: "Điều này có đúng với mình không?" — và có lẽ câu trả lời sẽ khiến bạn ngạc nhiên.</p>
+
+<p class="pdf-paragraph">Từ giữa đời trở đi, bạn sẽ ngày càng tự tin dẫn dắt cuộc sống theo cách riêng. Giai đoạn trưởng thành mang đến sự bình tĩnh trong lãnh đạo — không còn cần chứng minh, chỉ cần sống đúng tầm nhìn. Theo Phillips, mỗi con số đều có "vùng bóng tối" — không phải để sợ hãi mà để ý THỨC. Khi bạn nhận ra cả mặt sáng lẫn mặt tối, bạn đã nắm 50% chìa khóa để chuyển hóa.</p>
+
+
+<div class="num-core-card num-core-card--normal">
+    <strong style="font-size:13pt;color:#1a1a2e">🔢 Đam Mê Ẩn — Số 5</strong>
+    <p style="font-size:9pt;color:#666;margin:4pt 0 0 0;font-style:italic">Tự do, phiêu lưu, đa dạng</p>
+</div>
+<p class="pdf-paragraph">Số 5 tượng trưng cho tự do, thay đổi và trải nghiệm. Người số 5 yêu thích khám phá, linh hoạt và ghét sự đơn điệu. Họ có khả năng thích ứng cao và luôn tìm kiếm điều mới mẻ.</p>
+
+
+<div class="num-core-card num-core-card--normal">
+    <strong style="font-size:13pt;color:#1a1a2e">🔢 Tiềm Thức — Số 2</strong>
+    <p style="font-size:9pt;color:#666;margin:4pt 0 0 0;font-style:italic">Hợp tác, cân bằng, ngoại giao</p>
+</div>
+<p class="pdf-paragraph">Số 2 tượng trưng cho sự hài hòa, quan hệ đối tác và trực giác. Người số 2 nhạy cảm, có khả năng ngoại giao tốt và luôn tìm kiếm sự cân bằng. Họ là những người trung gian hòa giải tuyệt vời.</p>
+
+    
+<div class="pdf-chapter-break"></div>
+<h2 class="pdf-chapter-title">Chương 3</h2>
+<h3 class="pdf-chapter-subtitle">Bảng Ngày Sinh & Mũi Tên</h3>
+<p class="pdf-chapter-tagline">Bản đồ Pythagoras — tấm gương phản chiếu năng lượng bẩm sinh</p>
+
+<p class="pdf-paragraph">Theo David A. Phillips trong "The Complete Book of Numerology," Bảng Ngày Sinh (Birthday Grid) là công cụ quan trọng nhất trong Thần Số Học Pythagoras — nó cho thấy CONCENTRATION (tập trung) năng lượng ở đâu, ABSENCE (vắng mặt) ở đâu, và ARROWS (mũi tên) nào đang hoạt động. Hãy tưởng tượng bảng 3×3 như "tấm gương năng lượng" — nơi mỗi ô phản chiếu một khía cạnh cơ bản: trí tuệ (hàng 1-2-3), cảm xúc (hàng 4-5-6), và hành động (hàng 7-8-9).</p>
+
+
+<table class="num-grid-table">
+    <tr><td class="num-present">111</td><td class="num-missing">2</td><td class="num-missing">3</td></tr>
+    <tr><td class="num-missing">4</td><td class="num-missing">5</td><td class="num-missing">6</td></tr>
+    <tr><td class="num-missing">7</td><td class="num-missing">8</td><td class="num-present">99</td></tr>
+</table>
+
+<p class="pdf-paragraph">Trong bảng trên, các ô có số (highlight xanh) cho thấy năng lượng HIỆN HỮU — số xuất hiện càng nhiều lần, năng lượng càng mạnh. Các ô trống (highlight đỏ nhạt) cho thấy năng lượng CẦN PHÁT TRIỂN. Phillips nhấn mạnh: "Missing numbers" không phải "weaknesses" — chúng là "lessons" — bài học mà linh hồn bạn chọn trải nghiệm trong kiếp này.</p>
+
+<p class="pdf-paragraph">Bản đồ số của bạn không có mũi tên hoàn chỉnh — điều này không phải là "thiếu sót" mà cho thấy năng lượng phân bố đều, không tập trung quá mức vào một khía cạnh. Theo Phillips, bảng không có mũi tên cho phép sự linh hoạt và đa dạng trong phát triển.</p>
+    
+<div class="pdf-chapter-break"></div>
+<h2 class="pdf-chapter-title">Chương 4</h2>
+<h3 class="pdf-chapter-subtitle">Các Con Số Thiếu & Bài Học</h3>
+<p class="pdf-chapter-tagline">Những bài học mà linh hồn bạn chọn trải nghiệm</p>
+
+<p class="pdf-paragraph">Bạn có 7 con số thiếu trong bảng ngày sinh: 2, 3, 4, 5, 6, 7, 8. Mỗi con số thiếu là một lời mời từ vũ trụ — mời bạn phát triển phẩm chất đó qua trải nghiệm thực tế. Con số thiếu không phải "lỗ hổng" — chúng là "cửa sổ cơ hội" cho sự phát triển vượt bậc.</p>
+
+
+<div style="margin-bottom:8pt">
+    <span class="num-missing-badge">Thiếu số 2</span>
+</div>
+<p class="pdf-paragraph">Theo sách "Numerology and the Divine Triangle" của Javane & Bunker, thiếu số 2 trong bảng ngày sinh cho thấy: Thiếu số 2 cho thấy bạn có thể thiếu nhạy cảm với cảm xúc người khác, gặp khó khăn trong hợp tác, và không đọc được &quot;không khí&quot; trong phòng. Kiên nhẫn không phải thế mạnh.. Đây không phải "điểm yếu cố hữu" — mà là lĩnh vực mà linh hồn bạn chọn TRẢI NGHIỆM và PHÁT TRIỂN trong kiếp này. Theo Phillips: "Missing numbers are karmic lessons — they represent qualities you are here to develop." Lời khuyên phát triển: Thực hành lắng nghe chủ động — đừng nghĩ câu trả lời khi người khác đang nói. Hỏi &quot;Bạn cảm thấy thế nào?&quot; thường xuyên hơn.. Biểu hiện tích cực: khi ý thức phát triển số thiếu, bạn thường đạt được chiều sâu VƯỢT TRỘI. Biểu hiện tiêu cực: nếu không ý thức, số thiếu có thể biểu hiện như "điểm mù."</p>
+
+<div style="margin-bottom:8pt">
+    <span class="num-missing-badge">Thiếu số 3</span>
+</div>
+<p class="pdf-paragraph">Theo sách "Numerology and the Divine Triangle" của Javane & Bunker, thiếu số 3 trong bảng ngày sinh cho thấy: Thiếu số 3 cho thấy bạn có thể gặp khó khăn trong biểu đạt — viết, nói, hoặc thể hiện sáng tạo. Cảm xúc bị &quot;đóng gói&quot; bên trong, khó tìm cách bày tỏ phù hợp.. Đây không phải "điểm yếu cố hữu" — mà là lĩnh vực mà linh hồn bạn chọn TRẢI NGHIỆM và PHÁT TRIỂN trong kiếp này. Theo Phillips: "Missing numbers are karmic lessons — they represent qualities you are here to develop." Lời khuyên phát triển: Viết nhật ký tự do (free writing) — 10 phút không dừng, không sửa, chỉ viết. Thử một hình thức nghệ thuật mới mỗi tháng.. Biểu hiện tích cực: khi ý thức phát triển số thiếu, bạn thường đạt được chiều sâu VƯỢT TRỘI. Biểu hiện tiêu cực: nếu không ý thức, số thiếu có thể biểu hiện như "điểm mù."</p>
+
+<div style="margin-bottom:8pt">
+    <span class="num-missing-badge">Thiếu số 4</span>
+</div>
+<p class="pdf-paragraph">Theo sách "Numerology and the Divine Triangle" của Javane & Bunker, thiếu số 4 trong bảng ngày sinh cho thấy: Thiếu số 4 cho thấy bạn có thể thiếu kỷ luật, khó duy trì routine, và dễ bỏ dở. Tổ chức và sắp xếp không phải bản năng, công việc có thể bị trì hoãn thường xuyên.. Đây không phải "điểm yếu cố hữu" — mà là lĩnh vực mà linh hồn bạn chọn TRẢI NGHIỆM và PHÁT TRIỂN trong kiếp này. Theo Phillips: "Missing numbers are karmic lessons — they represent qualities you are here to develop." Lời khuyên phát triển: Bắt đầu với 1 thói quen nhỏ duy nhất — và giữ nó 30 ngày. Dùng app quản lý công việc. &quot;Done is better than perfect.&quot;. Biểu hiện tích cực: khi ý thức phát triển số thiếu, bạn thường đạt được chiều sâu VƯỢT TRỘI. Biểu hiện tiêu cực: nếu không ý thức, số thiếu có thể biểu hiện như "điểm mù."</p>
+
+<div style="margin-bottom:8pt">
+    <span class="num-missing-badge">Thiếu số 5</span>
+</div>
+<p class="pdf-paragraph">Theo sách "Numerology and the Divine Triangle" của Javane & Bunker, thiếu số 5 trong bảng ngày sinh cho thấy: Thiếu số 5 cho thấy bạn có thể sợ thay đổi, thiếu linh hoạt, và hay bám víu vào vùng an toàn. Cuộc sống có thể cảm thấy &quot;đơn điệu&quot; nhưng bạn ngại bước ra.. Đây không phải "điểm yếu cố hữu" — mà là lĩnh vực mà linh hồn bạn chọn TRẢI NGHIỆM và PHÁT TRIỂN trong kiếp này. Theo Phillips: "Missing numbers are karmic lessons — they represent qualities you are here to develop." Lời khuyên phát triển: Mỗi tuần, thử MỘT điều mới — quán mới, đường đi mới, sở thích mới. Nhỏ thôi, nhưng đều đặn &quot;cơ bắp thay đổi&quot; sẽ mạnh dần.. Biểu hiện tích cực: khi ý thức phát triển số thiếu, bạn thường đạt được chiều sâu VƯỢT TRỘI. Biểu hiện tiêu cực: nếu không ý thức, số thiếu có thể biểu hiện như "điểm mù."</p>
+
+<div style="margin-bottom:8pt">
+    <span class="num-missing-badge">Thiếu số 6</span>
+</div>
+<p class="pdf-paragraph">Theo sách "Numerology and the Divine Triangle" của Javane & Bunker, thiếu số 6 trong bảng ngày sinh cho thấy: Thiếu số 6 cho thấy bạn có thể gặp khó khăn trong cam kết gia đình, trách nhiệm với cộng đồng, hoặc khó thể hiện tình yêu thương qua hành động. Thiếu ý thức về nghĩa vụ.. Đây không phải "điểm yếu cố hữu" — mà là lĩnh vực mà linh hồn bạn chọn TRẢI NGHIỆM và PHÁT TRIỂN trong kiếp này. Theo Phillips: "Missing numbers are karmic lessons — they represent qualities you are here to develop." Lời khuyên phát triển: Tình nguyện giúp đỡ 1 người mỗi tuần. Gọi điện cho gia đình — đừng đợi dịp đặc biệt. Tạo &quot;rituals&quot; gia đình nhỏ.. Biểu hiện tích cực: khi ý thức phát triển số thiếu, bạn thường đạt được chiều sâu VƯỢT TRỘI. Biểu hiện tiêu cực: nếu không ý thức, số thiếu có thể biểu hiện như "điểm mù."</p>
+
+<div style="margin-bottom:8pt">
+    <span class="num-missing-badge">Thiếu số 7</span>
+</div>
+<p class="pdf-paragraph">Theo sách "Numerology and the Divine Triangle" của Javane & Bunker, thiếu số 7 trong bảng ngày sinh cho thấy: Thiếu số 7 cho thấy bạn có thể thiếu kiên nhẫn với suy nghĩ sâu, ngại nghi vấn bản thân, và chấp nhận mọi thứ at face value mà không phân tích. Thiếu kết nối tâm linh.. Đây không phải "điểm yếu cố hữu" — mà là lĩnh vực mà linh hồn bạn chọn TRẢI NGHIỆM và PHÁT TRIỂN trong kiếp này. Theo Phillips: "Missing numbers are karmic lessons — they represent qualities you are here to develop." Lời khuyên phát triển: Đọc 1 cuốn sách triết học/tâm linh mỗi tháng. Dành 15 phút mỗi ngày trong im lặng — không phone, không nhạc, chỉ suy nghĩ.. Biểu hiện tích cực: khi ý thức phát triển số thiếu, bạn thường đạt được chiều sâu VƯỢT TRỘI. Biểu hiện tiêu cực: nếu không ý thức, số thiếu có thể biểu hiện như "điểm mù."</p>
+
+<div style="margin-bottom:8pt">
+    <span class="num-missing-badge">Thiếu số 8</span>
+</div>
+<p class="pdf-paragraph">Theo sách "Numerology and the Divine Triangle" của Javane & Bunker, thiếu số 8 trong bảng ngày sinh cho thấy: Thiếu số 8 cho thấy bạn có thể gặp khó khăn với tài chính, thiếu tham vọng vật chất, hoặc ngại quyền lực. Quản lý tiền không phải thế mạnh, dễ tránh né topic tài chính.. Đây không phải "điểm yếu cố hữu" — mà là lĩnh vực mà linh hồn bạn chọn TRẢI NGHIỆM và PHÁT TRIỂN trong kiếp này. Theo Phillips: "Missing numbers are karmic lessons — they represent qualities you are here to develop." Lời khuyên phát triển: Học financial literacy — đọc 1 cuốn về quản lý tài chính cá nhân. Thiết lập ngân sách tháng. &quot;Tiền không phải mục tiêu, nhưng là công cụ cần thiết.&quot;. Biểu hiện tích cực: khi ý thức phát triển số thiếu, bạn thường đạt được chiều sâu VƯỢT TRỘI. Biểu hiện tiêu cực: nếu không ý thức, số thiếu có thể biểu hiện như "điểm mù."</p>
+    
+<div class="pdf-chapter-break"></div>
+<h2 class="pdf-chapter-title">Chương 5</h2>
+<h3 class="pdf-chapter-subtitle">Đỉnh Cao & Thử Thách Cuộc Đời</h3>
+<p class="pdf-chapter-tagline">Bốn mùa của cuộc đời — từ gieo trồng đến thu hoạch</p>
+
+<p class="pdf-paragraph">Theo Dan Millman trong "The Life You Were Born to Live," cuộc đời mỗi người được chia thành 4 giai đoạn lớn — mỗi giai đoạn mang một "Đỉnh Cao" (Pinnacle) và một "Thử Thách" (Challenge). Đỉnh Cao cho thấy CƠ HỘI và NĂNG LƯỢNG chủ đạo. Thử Thách cho thấy BÀI HỌC và RÀO CẢN cần vượt qua. Hiểu cả hai giúp bạn biết đang ở "mùa" nào và cần làm gì.</p>
+
+<h3 style="font-size:12pt;color:#1d4ed8;margin:16pt 0 8pt">Bốn Đỉnh Cao</h3>
+
+<div class="num-cycle-card">
+    <div class="num-cycle-header">
+        <div>
+            <strong style="font-size:11pt;color:#1d4ed8">Đỉnh Cao 1: Số 2</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">0–33 tuổi</span>
+        </div>
+        <span class="num-period-badge">Đỉnh Cao</span>
+    </div>
+    <p style="font-size:10pt;font-weight:600;color:#444;margin:4pt 0">Hợp tác &amp; Ngoại giao</p>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Thời kỳ cần kiên nhẫn, hợp tác và quan hệ đối tác. Thành công đến qua sự nhẹ nhàng, ngoại giao, không phải sức mạnh.</p>
+</div>
+<p class="pdf-paragraph">Theo "Numerology: Key to Your Inner Self" của Hans Decoz, Đỉnh Cao 1 (Pinnacle) — số 2 — hoạt động từ 0 đến 33 tuổi. Đỉnh cao của hợp tác và ngoại giao. Giai đoạn này phát triển qua các mối quan hệ — partnership, hôn nhân, hoặc đồng minh kinh doanh. Kiên nhẫn và lắng nghe là chìa khóa.. Lời khuyên: Học cách lắng nghe và nhượng bộ. Đừng cố gắng kiểm soát mọi thứ.. Mỗi Pinnacle là một "chương" trong cuốn sách cuộc đời — hiểu chủ đề từng chương giúp bạn sống chủ động thay vì bị động.</p>
+
+<div class="num-cycle-card">
+    <div class="num-cycle-header">
+        <div>
+            <strong style="font-size:11pt;color:#1d4ed8">Đỉnh Cao 2: Số 2</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">34–42 tuổi</span>
+        </div>
+        <span class="num-period-badge">Đỉnh Cao</span>
+    </div>
+    <p style="font-size:10pt;font-weight:600;color:#444;margin:4pt 0">Hợp tác &amp; Ngoại giao</p>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Thời kỳ cần kiên nhẫn, hợp tác và quan hệ đối tác. Thành công đến qua sự nhẹ nhàng, ngoại giao, không phải sức mạnh.</p>
+</div>
+<p class="pdf-paragraph">Theo "Numerology: Key to Your Inner Self" của Hans Decoz, Đỉnh Cao 2 (Pinnacle) — số 2 — hoạt động từ 34 đến 42 tuổi. Đỉnh cao của hợp tác và ngoại giao. Giai đoạn này phát triển qua các mối quan hệ — partnership, hôn nhân, hoặc đồng minh kinh doanh. Kiên nhẫn và lắng nghe là chìa khóa.. Lời khuyên: Học cách lắng nghe và nhượng bộ. Đừng cố gắng kiểm soát mọi thứ.. Mỗi Pinnacle là một "chương" trong cuốn sách cuộc đời — hiểu chủ đề từng chương giúp bạn sống chủ động thay vì bị động.</p>
+
+<div class="num-cycle-card">
+    <div class="num-cycle-header">
+        <div>
+            <strong style="font-size:11pt;color:#1d4ed8">Đỉnh Cao 3: Số 4</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">43–51 tuổi</span>
+        </div>
+        <span class="num-period-badge">Đỉnh Cao</span>
+    </div>
+    <p style="font-size:10pt;font-weight:600;color:#444;margin:4pt 0">Xây dựng &amp; Kỷ luật</p>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Thời kỳ cần lao động chăm chỉ, xây dựng nền tảng vững chắc. Kết quả đến chậm nhưng bền vững.</p>
+</div>
+<p class="pdf-paragraph">Theo "Numerology: Key to Your Inner Self" của Hans Decoz, Đỉnh Cao 3 (Pinnacle) — số 4 — hoạt động từ 43 đến 51 tuổi. Đỉnh cao của xây dựng nền tảng. Giai đoạn làm việc chăm chỉ, kỷ luật, và tạo ra thứ bền vững. Có thể cảm thấy nặng nề nhưng kết quả sẽ tồn tại rất lâu.. Lời khuyên: Kiên nhẫn và có hệ thống. Đây không phải lúc để mạo hiểm.. Mỗi Pinnacle là một "chương" trong cuốn sách cuộc đời — hiểu chủ đề từng chương giúp bạn sống chủ động thay vì bị động.</p>
+
+<div class="num-cycle-card">
+    <div class="num-cycle-header">
+        <div>
+            <strong style="font-size:11pt;color:#1d4ed8">Đỉnh Cao 4: Số 2</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">52–∞ tuổi</span>
+        </div>
+        <span class="num-period-badge">Đỉnh Cao</span>
+    </div>
+    <p style="font-size:10pt;font-weight:600;color:#444;margin:4pt 0">Hợp tác &amp; Ngoại giao</p>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Thời kỳ cần kiên nhẫn, hợp tác và quan hệ đối tác. Thành công đến qua sự nhẹ nhàng, ngoại giao, không phải sức mạnh.</p>
+</div>
+<p class="pdf-paragraph">Theo "Numerology: Key to Your Inner Self" của Hans Decoz, Đỉnh Cao 4 (Pinnacle) — số 2 — hoạt động từ 52 đến ∞ tuổi. Đỉnh cao của hợp tác và ngoại giao. Giai đoạn này phát triển qua các mối quan hệ — partnership, hôn nhân, hoặc đồng minh kinh doanh. Kiên nhẫn và lắng nghe là chìa khóa.. Lời khuyên: Học cách lắng nghe và nhượng bộ. Đừng cố gắng kiểm soát mọi thứ.. Mỗi Pinnacle là một "chương" trong cuốn sách cuộc đời — hiểu chủ đề từng chương giúp bạn sống chủ động thay vì bị động.</p>
+
+<h3 style="font-size:12pt;color:#dc2626;margin:16pt 0 8pt">Bốn Thử Thách</h3>
+
+<div class="num-cycle-card" style="border-left:3px solid #ef4444">
+    <div class="num-cycle-header">
+        <div>
+            <strong style="font-size:11pt;color:#dc2626">Thử Thách 1: Số 0</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">0–33 tuổi</span>
+        </div>
+        <span style="padding:2pt 10pt;border-radius:12pt;font-size:9pt;font-weight:600;background:#fef2f2;color:#dc2626">Thử Thách</span>
+    </div>
+    <p style="font-size:10pt;font-weight:600;color:#444;margin:4pt 0">Thử thách tổng hợp</p>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Bạn phải đối mặt với tất cả các bài học. Không có thử thách cụ thể nào chiếm ưu thế — mỗi tình huống đều là bài kiểm tra.</p>
+</div>
+<p class="pdf-paragraph">Theo Decoz, Thử Thách 1 (Challenge) — số 0 — là "bài kiểm tra" mà cuộc đời đặt ra trong giai đoạn 0–33 tuổi. Thử thách số 0 — &quot;Challenge of Choice&quot;. Bạn có TẤT CẢ các thử thách tiềm ẩn — hoặc không có thử thách cụ thể nào. Tự do hoàn toàn nhưng cũng có nghĩa là thiếu hướng dẫn rõ ràng. Bài học: tự tìm ra thử thách và đối mặt thay vì trốn tránh. Lời khuyên vượt qua: Linh hoạt và cởi mở với mọi bài học cuộc sống.. Thử Thách không phải "hình phạt" — nó là "trường huấn luyện" để bạn phát triển phẩm chất mà con số đó đại diện.</p>
+
+<div class="num-cycle-card" style="border-left:3px solid #ef4444">
+    <div class="num-cycle-header">
+        <div>
+            <strong style="font-size:11pt;color:#dc2626">Thử Thách 2: Số 0</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">34–42 tuổi</span>
+        </div>
+        <span style="padding:2pt 10pt;border-radius:12pt;font-size:9pt;font-weight:600;background:#fef2f2;color:#dc2626">Thử Thách</span>
+    </div>
+    <p style="font-size:10pt;font-weight:600;color:#444;margin:4pt 0">Thử thách tổng hợp</p>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Bạn phải đối mặt với tất cả các bài học. Không có thử thách cụ thể nào chiếm ưu thế — mỗi tình huống đều là bài kiểm tra.</p>
+</div>
+<p class="pdf-paragraph">Theo Decoz, Thử Thách 2 (Challenge) — số 0 — là "bài kiểm tra" mà cuộc đời đặt ra trong giai đoạn 34–42 tuổi. Thử thách số 0 — &quot;Challenge of Choice&quot;. Bạn có TẤT CẢ các thử thách tiềm ẩn — hoặc không có thử thách cụ thể nào. Tự do hoàn toàn nhưng cũng có nghĩa là thiếu hướng dẫn rõ ràng. Bài học: tự tìm ra thử thách và đối mặt thay vì trốn tránh. Lời khuyên vượt qua: Linh hoạt và cởi mở với mọi bài học cuộc sống.. Thử Thách không phải "hình phạt" — nó là "trường huấn luyện" để bạn phát triển phẩm chất mà con số đó đại diện.</p>
+
+<div class="num-cycle-card" style="border-left:3px solid #ef4444">
+    <div class="num-cycle-header">
+        <div>
+            <strong style="font-size:11pt;color:#dc2626">Thử Thách 3: Số 0</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">43–51 tuổi</span>
+        </div>
+        <span style="padding:2pt 10pt;border-radius:12pt;font-size:9pt;font-weight:600;background:#fef2f2;color:#dc2626">Thử Thách</span>
+    </div>
+    <p style="font-size:10pt;font-weight:600;color:#444;margin:4pt 0">Thử thách tổng hợp</p>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Bạn phải đối mặt với tất cả các bài học. Không có thử thách cụ thể nào chiếm ưu thế — mỗi tình huống đều là bài kiểm tra.</p>
+</div>
+<p class="pdf-paragraph">Theo Decoz, Thử Thách 3 (Challenge) — số 0 — là "bài kiểm tra" mà cuộc đời đặt ra trong giai đoạn 43–51 tuổi. Thử thách số 0 — &quot;Challenge of Choice&quot;. Bạn có TẤT CẢ các thử thách tiềm ẩn — hoặc không có thử thách cụ thể nào. Tự do hoàn toàn nhưng cũng có nghĩa là thiếu hướng dẫn rõ ràng. Bài học: tự tìm ra thử thách và đối mặt thay vì trốn tránh. Lời khuyên vượt qua: Linh hoạt và cởi mở với mọi bài học cuộc sống.. Thử Thách không phải "hình phạt" — nó là "trường huấn luyện" để bạn phát triển phẩm chất mà con số đó đại diện.</p>
+
+<div class="num-cycle-card" style="border-left:3px solid #ef4444">
+    <div class="num-cycle-header">
+        <div>
+            <strong style="font-size:11pt;color:#dc2626">Thử Thách 4: Số 0</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">52–∞ tuổi</span>
+        </div>
+        <span style="padding:2pt 10pt;border-radius:12pt;font-size:9pt;font-weight:600;background:#fef2f2;color:#dc2626">Thử Thách</span>
+    </div>
+    <p style="font-size:10pt;font-weight:600;color:#444;margin:4pt 0">Thử thách tổng hợp</p>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Bạn phải đối mặt với tất cả các bài học. Không có thử thách cụ thể nào chiếm ưu thế — mỗi tình huống đều là bài kiểm tra.</p>
+</div>
+<p class="pdf-paragraph">Theo Decoz, Thử Thách 4 (Challenge) — số 0 — là "bài kiểm tra" mà cuộc đời đặt ra trong giai đoạn 52–∞ tuổi. Thử thách số 0 — &quot;Challenge of Choice&quot;. Bạn có TẤT CẢ các thử thách tiềm ẩn — hoặc không có thử thách cụ thể nào. Tự do hoàn toàn nhưng cũng có nghĩa là thiếu hướng dẫn rõ ràng. Bài học: tự tìm ra thử thách và đối mặt thay vì trốn tránh. Lời khuyên vượt qua: Linh hoạt và cởi mở với mọi bài học cuộc sống.. Thử Thách không phải "hình phạt" — nó là "trường huấn luyện" để bạn phát triển phẩm chất mà con số đó đại diện.</p>
+    
+<div class="pdf-chapter-break"></div>
+<h2 class="pdf-chapter-title">Chương 6</h2>
+<h3 class="pdf-chapter-subtitle">Chu Kỳ Cá Nhân</h3>
+<p class="pdf-chapter-tagline">Nhịp điệu thời gian trong cuộc đời bạn</p>
+
+<p class="pdf-paragraph">Theo "Numerology: The Complete Guide" của Matthew Oliver Goodwin, mỗi người sống trong một nhịp 9 năm tuần hoàn — và biết mình đang ở năm thứ mấy trong chu kỳ giúp đưa ra quyết định đúng thời điểm. "Timing is everything" — và Thần Số Học cho bạn công cụ để hiểu timing cá nhân.</p>
+
+<div class="num-core-card num-core-card--normal">
+    <strong style="font-size:12pt">📅 Năm Cá Nhân: Số 3</strong>
+    <p style="font-size:10pt;color:#555;margin:6pt 0">Năm Sáng Tạo &amp; Biểu Đạt — Tỏa Sáng. Năng lượng như khu vườn nở rộ! Đây là năm vui nhất trong chu kỳ — sáng tạo, giao tiếp, và thể hiện bản thân là &quot;nhiên liệu&quot; chính. Bạn cảm thấy nhẹ nhàng, lạc quan, và đầy cảm hứng. — Tập trung vào: sáng tạo (viết, vẽ, nhạc, thiết kế), networking, marketing bản thân, và tận hưởng cuộc sống. Show the world who you are!</p>
+</div>
+
+<p class="pdf-paragraph">Theo sách "The Secret Science of Numerology" của Shirley Blackwell Lawrence, Năm Cá Nhân 3 là năm "Năm sáng tạo và giao tiếp. Thể hiện bản thân và tận hưởng cuộc sống." Trong vòng quay 9 năm, mỗi năm đóng một vai trò riêng: năm 1 là gieo hạt, năm 4-5 là phát triển, năm 8 là thu hoạch, năm 9 là buông bỏ chuẩn bị cho chu kỳ mới. Biết mình đang ở năm nào giúp bạn biết nên ĐẨY MẠNH hay NÉN LẠI — nên HÀNH ĐỘNG hay KIÊN NHẪN.</p>
+
+<div class="num-core-card num-core-card--normal">
+    <strong style="font-size:12pt">📆 Tháng Cá Nhân: Số 6</strong>
+    <p style="font-size:10pt;color:#555;margin:6pt 0">Tháng Gia Đình — Chăm sóc gia đình, home improvement, mối quan hệ tình cảm. Trách nhiệm tăng nhưng cũng vậy là tình yêu. Đừng quên chăm sóc bản thân.</p>
+</div>
+
+<h3 style="font-size:12pt;color:#1a1a2e;margin:16pt 0 8pt">Ba Giai Đoạn Lớn Của Cuộc Đời</h3>
+<p class="pdf-paragraph">Cuộc đời được chia thành 3 giai đoạn lớn (Life Periods): Hình Thành (0-27 tuổi), Phát Triển (28-55 tuổi), và Thu Hoạch (56+ tuổi). Mỗi giai đoạn mang một con số chi phối khác nhau — giống như ba "chương sách" với ba chủ đề riêng biệt.</p>
+
+<div class="num-cycle-card">
+    <div class="num-cycle-header">
+        <div>
+            <strong style="font-size:11pt;color:#1a1a2e">Giai Đoạn Hình Thành: Số 1</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">0–27 tuổi</span>
+        </div>
+        <span class="num-period-badge">Giai Đoạn 1/3</span>
+    </div>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Tuổi thơ và thanh niên dưới năng lượng 1: sớm phát triển tính tự lập, có thể phải tự lo liệu sớm. Môi trường đòi hỏi sự mạnh mẽ — bạn học cách đứng lên cho mình từ nhỏ.</p>
+</div>
+
+<div class="num-cycle-card">
+    <div class="num-cycle-header">
+        <div>
+            <strong style="font-size:11pt;color:#1a1a2e">Giai Đoạn Phát Triển: Số 1</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">28–55 tuổi</span>
+        </div>
+        <span class="num-period-badge">Giai Đoạn 2/3</span>
+    </div>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Giai đoạn trưởng thành với năng lượng 1: sự nghiệp dẫn dắt bởi tinh thần tiên phong. Bạn thăng tiến qua khả năng lãnh đạo và sáng kiến cá nhân.</p>
+</div>
+
+<div class="num-cycle-card">
+    <div class="num-cycle-header">
+        <div>
+            <strong style="font-size:11pt;color:#1a1a2e">Giai Đoạn Thu Hoạch: Số 1</strong>
+            <span style="font-size:9pt;color:#888;margin-left:6pt">56–∞ tuổi</span>
+        </div>
+        <span class="num-period-badge">Giai Đoạn 3/3</span>
+    </div>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Giai đoạn thu hoạch với năng lượng 1: cuộc đời sau 56 vẫn năng động, độc lập. Bạn có thể khởi nghiệp muộn hoặc dẫn dắt cộng đồng.</p>
+</div>
+    
+<div class="pdf-chapter-break"></div>
+<h2 class="pdf-chapter-title">Chương 7</h2>
+<h3 class="pdf-chapter-subtitle">Tương Tác Giữa Các Con Số</h3>
+<p class="pdf-chapter-tagline">Hòa âm và bất hòa trong bản đồ số</p>
+
+<p class="pdf-paragraph">Theo "Numerology for Healing" của Michael Brill, các con số trong bản đồ không hoạt động đơn lẻ — chúng tương tác liên tục, tạo ra "hòa âm" (harmony) hoặc "bất hòa" (disharmony). Phân tích tương tác cho thấy TRONG NỘI TÂM bạn, có những năng lượng nào cộng hưởng (synergy), những năng lượng nào xung đột (tension), và những năng lượng nào bổ sung nhau (complementary). Hiểu điều này giúp bạn không tự mâu thuẫn với chính mình.</p>
+
+
+<div class="num-interaction-card num-interaction-card--complementary">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:10pt;color:#1a1a2e">Đường Đời (3) × Biểu Đạt (7)</strong>
+        <span style="font-size:8pt;font-weight:600">🔄 Bổ Sung</span>
+    </div>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Sáng tạo bề nổi (3) kết hợp chiều sâu (7). Tác phẩm có cả vẻ đẹp lẫn ý nghĩa.</p>
+</div>
+
+<div class="num-interaction-card num-interaction-card--synergy">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:10pt;color:#1a1a2e">Đường Đời (3) × Linh Hồn (1)</strong>
+        <span style="font-size:8pt;font-weight:600">✅ Cộng Hưởng</span>
+    </div>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Tự lập (1) kết hợp sáng tạo (3) tạo năng lượng khởi nghiệp mạnh mẽ. Dễ thành công trong nghệ thuật độc lập.</p>
+</div>
+
+<div class="num-interaction-card num-interaction-card--complementary">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4pt">
+        <strong style="font-size:10pt;color:#1a1a2e">Biểu Đạt (7) × Linh Hồn (1)</strong>
+        <span style="font-size:8pt;font-weight:600">🔄 Bổ Sung</span>
+    </div>
+    <p style="font-size:9pt;color:#555;line-height:1.7;margin:0">Hành động (1) kết hợp với chiêm nghiệm (7). Tốt cho nghiên cứu chuyên sâu và lãnh đạo tri thức.</p>
+</div>
+
+<p class="pdf-paragraph">Brill nhấn mạnh: "Sự căng thẳng giữa các con số không phải vấn đề — nó là ĐỘNG LỰC cho phát triển. Giống như cơ bắp cần kháng lực để mạnh hơn, tính cách cần xung đột nội tại để trưởng thành." Nếu bạn nhận thấy mình thường "kéo hai hướng" — ví dụ, vừa muốn tự do (5) vừa muốn ổn định (4) — đó chính là biểu hiện của tương tác số. Giải pháp không phải chọn một bỏ một, mà là tìm ĐIỂM CÂN BẰNG mới giữa cả hai.</p>
+    
+<div class="pdf-chapter-break"></div>
+<h2 class="pdf-chapter-title">Chương 9</h2>
+<h3 class="pdf-chapter-subtitle">Phân Tích Đời Sống Thông Qua Các Con Số</h3>
+<p class="pdf-chapter-tagline">Sự nghiệp, Tình cảm và Phát triển Bản thân</p>
+
+<p class="pdf-paragraph">Mỗi khía cạnh trong cuộc sống của bạn như một bức tranh ghép hình, nơi các con số cốt lõi và chu kỳ ngày sinh cùng tương tác. Không có yếu tố nào hoàn toàn đứng độc lập; chúng tác động lẫn nhau tạo nên những biểu hiện thực tế (Effect), những sắc thái tinh tế (Nuance) và đòi hỏi những cách tiếp cận riêng biệt.</p>
+
+
+<div class="pdf-life-area-card" style="margin-bottom: 24pt;">
+    <h4 style="font-size: 14pt; color: var(--color-primary); margin-bottom: 12pt; display: flex; align-items: center; gap: 8pt;">
+        <span style="font-size: 18pt;">💼</span> Sự nghiệp &amp; Tài chính
+    </h4>
+    
+    <div style="padding-left: 12pt; border-left: 3px solid #e5e7eb;">
+        <!-- H: Hook -->
+        <p style="font-size: 11pt; font-weight: 600; color: #1f2937; margin-bottom: 8pt;">
+            Bạn tỏa sáng mảng truyền thông, sáng tạo và những môi trường linh hoạt, đa dạng.
+        </p>
+        
+        <!-- E: Effect & N: Nuance -->
+        <p style="font-size: 10.5pt; color: #4b5563; line-height: 1.7; margin-bottom: 8pt; text-align: justify;">
+            <strong>Biểu hiện thực tế:</strong> Trên thực tế, bạn thường có xu hướng tiếp cận công việc một cách đặc trưng theo biểu đạt số 7, giúp bạn giải quyết các tình huống và giao tiếp trong môi trường chuyên nghiệp.
+            <br>
+            <strong>Điểm tinh tế:</strong> <em>Tuy nhiên, đôi khi động lực sâu kín bên trong bạn (Linh Hồn 1) lại thúc đẩy bạn tìm kiếm những giá trị khác biệt, đôi khi trái ngược với con đường sự nghiệp bề ngoài, tạo ra những ngã rẽ hoặc sự thay đổi trong định hướng.</em>
+        </p>
+        
+        <!-- C: Cause -->
+        <p style="font-size: 10pt; color: #6b7280; line-height: 1.6; margin-bottom: 10pt; text-align: justify; font-style: italic;">
+            <strong>Góc nhìn Thần Số Học:</strong> Điều này bắt nguồn từ sự kết hợp giữa Đường Đời 3 định hình bức tranh lớn và Số Linh Hồn 1 chi phối cảm giác thỏa mãn thực sự của bạn. Nếu hai số này không đồng điệu, bạn sẽ cảm thấy thiếu trọn vẹn dù đã đạt được thành tựu nhất định.
+        </p>
+        
+        <!-- T: Tip -->
+        <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 10pt 12pt; border-radius: 4pt;">
+            <p style="margin: 0; font-size: 10pt; color: #166534; font-weight: 500;">
+                💡 <strong>Lời khuyên:</strong> Để tối ưu hóa sự nghiệp, hãy chọn một công việc đáp ứng được phương hướng của Đường Đời 3 và đồng thời nuôi dưỡng khát khao của Linh Hồn 1. Hãy sử dụng cách tiếp cận của Biểu Đạt 7 để làm &quot;vũ khí&quot; ghi dấu ấn cá nhân.
+            </p>
+        </div>
+    </div>
+</div>
+\n
+<div class="pdf-life-area-card" style="margin-bottom: 24pt;">
+    <h4 style="font-size: 14pt; color: var(--color-primary); margin-bottom: 12pt; display: flex; align-items: center; gap: 8pt;">
+        <span style="font-size: 18pt;">❤️</span> Tình duyên &amp; Các mối quan hệ
+    </h4>
+    
+    <div style="padding-left: 12pt; border-left: 3px solid #e5e7eb;">
+        <!-- H: Hook -->
+        <p style="font-size: 11pt; font-weight: 600; color: #1f2937; margin-bottom: 8pt;">
+            Bạn đánh giá cao sự tự do, không gian riêng và sự kích thích trong tình yêu, đôi khi có phần độc lập quá mức.
+        </p>
+        
+        <!-- E: Effect & N: Nuance -->
+        <p style="font-size: 10.5pt; color: #4b5563; line-height: 1.7; margin-bottom: 8pt; text-align: justify;">
+            <strong>Biểu hiện thực tế:</strong> Cách bạn thể hiện ra bên ngoài và ấn tượng đầu tiên bạn tạo ra (Nhân Cách 33) thường là điểm thu hút ban đầu, định hình cách mọi người tiếp cận bạn.
+            <br>
+            <strong>Điểm tinh tế:</strong> <em>Nhưng khi mối quan hệ tiến sâu hơn, khao khát thực sự của bạn (Linh Hồn 1) mới bộc lộ. Điều này đôi lúc làm đối tác bất ngờ nếu Số Nhân Cách và Số Linh Hồn của bạn có sự khác biệt lớn.</em>
+        </p>
+        
+        <!-- C: Cause -->
+        <p style="font-size: 10pt; color: #6b7280; line-height: 1.6; margin-bottom: 10pt; text-align: justify; font-style: italic;">
+            <strong>Góc nhìn Thần Số Học:</strong> Bởi vì Nhân Cách 33 chỉ là &quot;lớp áo khoác&quot; bên ngoài để bảo vệ, trong khi Linh Hồn 1 là cốt lõi nhạy cảm bên trong cần được nuôi dưỡng và thấu hiểu. Đường Đời 3 sẽ định hình bài học lớn nhất của bạn thông qua các đối tác.
+        </p>
+        
+        <!-- T: Tip -->
+        <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 10pt 12pt; border-radius: 4pt;">
+            <p style="margin: 0; font-size: 10pt; color: #166534; font-weight: 500;">
+                💡 <strong>Lời khuyên:</strong> Hãy trung thực với khao khát của Số Linh Hồn 1 từ sớm trong các mối quan hệ quan trọng. Đừng để &quot;lớp áo&quot; Nhân Cách che khuất đi nhu cầu tình cảm thực sự của bạn. Cởi mở và rõ ràng là chìa khóa.
+            </p>
+        </div>
+    </div>
+</div>
+\n
+<div class="pdf-life-area-card" style="margin-bottom: 24pt;">
+    <h4 style="font-size: 14pt; color: var(--color-primary); margin-bottom: 12pt; display: flex; align-items: center; gap: 8pt;">
+        <span style="font-size: 18pt;">🌱</span> Phát triển Bản thân &amp; Tâm linh
+    </h4>
+    
+    <div style="padding-left: 12pt; border-left: 3px solid #e5e7eb;">
+        <!-- H: Hook -->
+        <p style="font-size: 11pt; font-weight: 600; color: #1f2937; margin-bottom: 8pt;">
+            Bản đồ số của bạn là một hải trình tu tập và phát triển độ chín chắn, hướng đến sự cân bằng của tuổi trưởng thành (Maturity 1).
+        </p>
+        
+        <!-- E: Effect & N: Nuance -->
+        <p style="font-size: 10.5pt; color: #4b5563; line-height: 1.7; margin-bottom: 8pt; text-align: justify;">
+            <strong>Biểu hiện thực tế:</strong> Trong nửa sau của cuộc đời, năng lượng của số 1 sẽ càng lúc càng rõ rệt, mang đến cảm giác thôi thúc bạn phải thực hiện một sứ mệnh hay học một bài học đặc thù, bất kể bạn có muốn hay không.
+            <br>
+            <strong>Điểm tinh tế:</strong> <em>Bên cạnh đó, với các con số thiếu (2, 3, 4, 5, 6, 7, 8), bạn sẽ thường xuyên gặp phải những tình huống &quot;thử lửa&quot; trong những lĩnh vực này, buộc bạn phải bước ra khỏi vùng an toàn để trực tiếp trải nghiệm và rèn luyện.</em>
+        </p>
+        
+        <!-- C: Cause -->
+        <p style="font-size: 10pt; color: #6b7280; line-height: 1.6; margin-bottom: 10pt; text-align: justify; font-style: italic;">
+            <strong>Góc nhìn Thần Số Học:</strong> Các con số thiếu không phải là sự trừng phạt mà là những bài học nghiệp quả (Karmic lessons) bạn đã chọn trước khi sinh ra. Trong khi đó, Số Trưởng Thành 1 là kết tinh từ Đường Đời và Biểu Đạt, là món quà nếu bạn làm tốt các phần trước.
+        </p>
+        
+        <!-- T: Tip -->
+        <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 10pt 12pt; border-radius: 4pt;">
+            <p style="margin: 0; font-size: 10pt; color: #166534; font-weight: 500;">
+                💡 <strong>Lời khuyên:</strong> Thay vì né tránh những bài học từ các con số thiếu, hãy chủ động trau dồi thông qua các thói quen hàng ngày. Đồng thời, hãy bắt đầu tích hợp dần năng lượng của Số Trưởng Thành 1 vào cuộc sống trước khi độ tuổi trung niên kéo đến.
+            </p>
+        </div>
+    </div>
+</div>
+
+
+    
+<div class="pdf-chapter-break"></div>
+<h2 class="pdf-chapter-title">Chương 8</h2>
+<h3 class="pdf-chapter-subtitle">Nghiệp Lực & Số Bậc Thầy</h3>
+<p class="pdf-chapter-tagline">Những bài học sâu xa và tiềm năng vượt trội</p>
+
+<p class="pdf-paragraph">Theo truyền thống Thần Số Học Pythagoras, có hai loại số đặc biệt: Karmic Debt (Nghiệp Lực — 13, 14, 16, 19) và Master Numbers (Số Bậc Thầy — 11, 22, 33). Karmic Debt cho thấy bài học mà linh hồn cần hoàn thành. Master Numbers cho thấy tiềm năng vượt trội cần được kích hoạt. Cả hai đều là "thông điệp đặc biệt" từ bản đồ số.</p>
+
+<h3 style="font-size:12pt;color:#dc2626;margin:16pt 0 8pt">Nghiệp Lực (Karmic Debt)</h3>
+<p class="pdf-paragraph">Bản đồ số của bạn không chứa Karmic Debt (Nghiệp Lực) — điều này cho thấy bạn không mang nghiệp lực nặng từ quá khứ. Tuy nhiên, Phillips lưu ý: "No karmic debt doesn't mean no lessons — it means different lessons." Bạn vẫn có bài học riêng qua các con số thiếu và thử thách.</p>
+
+<h3 style="font-size:12pt;color:#8b5cf6;margin:16pt 0 8pt">Số Bậc Thầy (Master Numbers)</h3>
+
+<div class="num-core-card num-core-card--master">
+    <strong style="font-size:11pt">✨ Số Bậc Thầy 33</strong>
+</div>
+<p class="pdf-paragraph">Theo Dan Millman, Số Bậc Thầy (Master Number) 33 mang tần số rung động CAO HƠN bình thường: Số 33 dao động giữa Master Teacher of Love (33) — tình yêu vô điều kiện, chữa lành siêu nhiên, compassion ở mức cao nhất; và tần số nền (6) — chăm sóc, trách nhiệm gia đình, nhưng có thể kiểm soát. Ở 33, bạn yêu CẢ NHÂN LOẠI; ở 6, bạn yêu GIA ĐÌNH. Sự khác biệt: 33 cho đi mà không đếm, 6 cho đi nhưng đôi khi đòi &quot;biết ơn&quot;. Khi kiệt sức hoặc thất vọng, năng lượng 33 rơi về 6 — vẫn yêu thương nhưng mất đi tính vô điều kiện. Năng lượng Master 33 kích hoạt khi: bạn ở trạng thái bình an nội tâm, được nuôi dưỡng (không chỉ nuôi dưỡng người khác), sống trong cộng đồng yêu thương, và CHẤP NHẬN sứ mệnh thay vì chạy trốn. Nó &quot;tắt&quot; khi: bạn cho đi quá mức mà không nhận, cảm thấy bị lợi dụng, kiệt sức cảm xúc, hoặc mất niềm tin vào con người. Giai đoạn activation thường sau một trải nghiệm mất mát lớn — từ tro tàn, lòng từ bi thật sự nở rộ. Để sống trọn năng lượng 33: (1) TỰ CHĂM SÓC TRƯỚC — bạn không thể rót từ ly rỗng, (2) Cho phép người khác cho BẠN — nhận cũng là một dạng cho, (3) Đặt ranh giới lành mạnh — yêu vô điều kiện không có nghĩa là chấp nhận mọi hành vi, (4) Retreat tâm linh định kỳ — nạp năng lượng, (5) Ghi nhớ: bạn đến để LÀ tình yêu, không phải để SỬA thế giới — sự hiện diện đủ.. Master Number giống như "tần số WiFi mạnh" — bạn có khả năng kết nối với tầng năng lượng cao hơn, nhưng cũng dễ bị "quá tải" nếu không biết quản lý. Mặt bóng tối cần lưu ý: Mặt tối của 33: tự hy sinh đến mức tự hủy, &quot;messiah complex&quot; (ảo tưởng mình phải cứu thế giới), gánh nợ cảm xúc cho mọi người, kiệt sức vì cảm nhận nỗi đau nhân loại. Nguy hiểm nhất: khi thất vọng về con người, 33 có thể rơi vào cynicism sâu — &quot;Tôi đã yêu hết sức, nhưng thế giới không xứng đáng.&quot;. Lời khuyên: hãy chấp nhận rằng bạn MANG TIỀM NĂNG ĐẶC BIỆT — và cho phép bản thân thời gian để phát triển nó.</p>
+    
+<div class="pdf-chapter-break"></div>
+<h2 class="pdf-chapter-title">Chương 9</h2>
+<h3 class="pdf-chapter-subtitle">Lời Kết & Hướng Dẫn Thực Hành</h3>
+<p class="pdf-chapter-tagline">Từ hiểu biết đến hành động</p>
+
+<p class="pdf-paragraph">Bản phân tích Thần Số Học này đã giải mã các con số cốt lõi (Đường Đời 3, Biểu Đạt 7, Linh Hồn 1, Nhân Cách 33), bảng ngày sinh với 0 mũi tên và 7 con số thiếu, 4 Đỉnh Cao và 4 Thử Thách, cùng chu kỳ cá nhân hiện tại. Mỗi yếu tố là một mảnh ghép — và bức tranh tổng thể cho thấy bạn là một sinh mệnh ĐỘC NHẤT VÔ NHỊ với một bản đồ năng lượng không ai giống ai.</p>
+
+<p class="pdf-paragraph">Con số không quyết định số phận — chúng soi sáng con đường. Hãy sử dụng bản phân tích này như một "bản đồ nội tâm": (1) Tiềm năng bẩm sinh qua các con số cốt lõi; (2) Bài học cần phát triển qua con số thiếu; (3) Thời cơ thuận lợi qua Đỉnh Cao và Chu kỳ; (4) Thách thức cần chuẩn bị qua Thử Thách. Nhớ rằng: BẠN là người lái xe, con số chỉ là bản đồ.</p>
+
+<div style="text-align:center;margin-top:24pt;padding:16pt;border-top:2px solid #e5e5ea">
+    <p style="font-size:10pt;color:#888;font-style:italic">"Biết mình biết ta, trăm trận trăm thắng."</p>
+    <p style="font-size:9pt;color:#aaa;margin-top:8pt">Bản phân tích được tạo bởi Lịch Việt v2 — Thần Số Học Engine</p>
+</div>
+</body>
+</html>

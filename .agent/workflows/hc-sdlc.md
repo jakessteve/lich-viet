@@ -21,7 +21,14 @@ Execute sequentially, DO NOT skip steps:
 1. **[RESEARCH]:** Assume **@ba persona** → read `.agent/roles/@ba.md` → investigate the domain using `search_web`, `context7`, `view_file` → write `docs/biz/PRODUCT_BRIEF.md`. Use research-analysis skill.
 2. **[SPECIFY]:** As **@ba** → use `.agent/templates/feature-spec-template.md` to write the feature spec. Focus on WHAT/WHY, not HOW. Mark ALL ambiguities with `[NEEDS CLARIFICATION: question]`.
 3. **[CLARIFY] (MANDATORY):** As **@ba** → invoke `requirement-interviewer` skill → walk through all `[NEEDS CLARIFICATION]` markers. Ask user max 5 questions at a time. Repeat until ZERO markers remain. Update spec with answers.
-4. **[REQUIREMENTS]:** Switch to **@pm persona** → read the spec → write `docs/biz/PRD.md`, define acceptance criteria, break scope into stories in `.hc/stories/`.
+4. **[DISCUSS] (Gray-Area Lock-In):** As **@ba** → analyze the clarified spec and surface implicit decisions that could cause rework if left ambiguous. Categorize by feature type:
+   - **Visual features:** Layout, density, interactions, empty states, responsive behavior
+   - **APIs/CLIs:** Response format, error codes, pagination, rate limiting, versioning
+   - **Data/engines:** Calculation precision, edge case handling, locale behavior
+   - **Content:** Structure, tone, depth, cross-references
+   - For each gray area, ask targeted questions OR (if `--assumptions` flag) present what you would do and why, asking for corrections.
+   - **Output:** `.hc/context/[feature]-CONTEXT.md` — locked decisions that feed directly into pseudocode and architecture. Researchers read this to know what patterns to investigate; planners read this to know what decisions are final.
+5. **[REQUIREMENTS]:** Switch to **@pm persona** → read the spec → write `docs/biz/PRD.md`, define acceptance criteria, break scope into stories in `.hc/stories/`.
 
 ### ⇄ Model Handoff Gate: S → P (GEMINI → OPUS)
 > If the current session is on **Gemini** (ideal for Specification research), the **Pseudocode** phase benefits from **Opus-level reasoning**. Run `model-selector` Step 5. If a handoff is warranted, execute `/handoff` workflow and instruct the user to switch to Opus for the next phase. If already on Opus, skip this gate.
