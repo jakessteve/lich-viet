@@ -1,8 +1,8 @@
-import { BaseTuViEngine, VI_CHI } from './BaseTuViEngine';
+import { BaseTuViEngine } from './BaseTuViEngine';
 import { getKuiYueIndex, fixIndex } from './starLocation';
 import { getLunarDate } from '../../sharedCore';
 import { getTuHoaTable } from '../tuHoaTables';
-import { TuViPalace } from '../tuviTypes';
+import { TuViPalace, TuViStar, TuViChartData } from '../tuviTypes';
 import { calculateSihuaFlows } from '../sihuaEngine';
 
 export class TaiwaneseTuViEngine extends BaseTuViEngine {
@@ -84,7 +84,7 @@ export class TaiwaneseTuViEngine extends BaseTuViEngine {
                     const allStars = [...palace.majorStars, ...palace.minorStars, ...palace.adjectiveStars];
                     const found = allStars.find(s => s.name === starName);
                     if (found) {
-                        (found as any).mutagen = [...(found.mutagen || []), label];
+                        (found as TuViStar & { mutagen?: string[] }).mutagen = [...(found.mutagen || []), label];
                         break;
                     }
                 }
@@ -94,7 +94,7 @@ export class TaiwaneseTuViEngine extends BaseTuViEngine {
 
     protected override buildOutput() {
         const data = super.buildOutput();
-        (data as any).sihuaFlows = calculateSihuaFlows(this.palaces as unknown as TuViPalace[], 'phiTinh');
+        (data as TuViChartData & { sihuaFlows?: unknown }).sihuaFlows = calculateSihuaFlows(this.palaces as unknown as TuViPalace[], 'phiTinh');
         return data;
     }
 }

@@ -3,28 +3,38 @@ import { VietnameseTuViEngine } from './engine/VietnameseTuViEngine';
 import { ChineseTuViEngine } from './engine/ChineseTuViEngine';
 import { TaiwaneseTuViEngine } from './engine/TaiwaneseTuViEngine';
 
+import type { BaseTuViEngine } from './engine/BaseTuViEngine';
+
 /** Feature Flag: Set to true to bypass iztro and use our custom high-performance AST engine */
 export const USE_NATIVE_ENGINE = true;
 
 /**
+ * Registry of available Tử Vi calculation engines by school.
+ * Decouples engine instantiation and allows easy extension of new regional variants.
+ */
+const engineRegistry: Record<string, new (input: ChartInput) => BaseTuViEngine> = {
+    'vi': VietnameseTuViEngine,
+    'cn': ChineseTuViEngine,
+    'tw': TaiwaneseTuViEngine,
+};
+
+/**
  * Generate a Tử Vi chart from user birth data using the natively built TS engine.
  * 
- * Delegates to the appropriate regional school engine via Strategy pattern.
+ * Delegates to the appropriate regional school engine via Registry pattern.
  * 
  * @param input - User's birth data (date, time index, gender, name, school)
  * @returns Fully typed chart data ready for rendering
  */
 export function generateChart(input: ChartInput): TuViChartData {
     const school = input.school || 'vi';
-    switch (school) {
-        case 'cn':
-            return new ChineseTuViEngine(input).generate();
-        case 'tw':
-            return new TaiwaneseTuViEngine(input).generate();
-        case 'vi':
-        default:
-            return new VietnameseTuViEngine(input).generate();
+    const EngineClass = engineRegistry[school] || engineRegistry['vi'];
+    
+    if (!EngineClass) {
+        throw new Error(`TuVi Engine for school '${school}' is not registered and fallback failed.`);
     }
+    
+    return new EngineClass(input).generate();
 }
 
 /**
@@ -176,3 +186,7 @@ export function getStarCategory(star: TuViStar): 'major' | 'auspicious' | 'malef
 
     return 'neutral';
 }
+
+/** Alias for Web Worker registry mapping */
+export const generateTuViChart = generateChart;
+

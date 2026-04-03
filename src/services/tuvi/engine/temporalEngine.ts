@@ -4,10 +4,9 @@ import {
     getLuYangTuoMaIndex,
     getLuanXiIndex,
     getNianjieIndex,
-    fixIndex,
-    fixEarthlyBranchIndex
+    fixIndex
 } from './starLocation';
-import type { TuViChartData, TuViStar, TuViPalace, StarScope, StageInfo } from '../tuviTypes';
+import type { TuViChartData, TuViStar, TuViPalace, StarScope } from '../tuviTypes';
 
 const STAR_NAMES: Record<string, string> = {
     tiankui: 'Thiên Khôi',
@@ -149,11 +148,17 @@ export function applyTemporalOverlays(chart: TuViChartData, targetYear: number):
     const yearlyStarsLists = constructStarsByStemBranch(targetStem, targetBranch, 'yearly');
     const decadalStarsLists = constructStarsByStemBranch(decadalStem, decadalBranch, 'decadal');
 
+    const LUU_NIEN_NAMES = ["Mệnh", "Phụ Mẫu", "Phúc Đức", "Điền Trạch", "Quan Lộc", "Nô Bộc", "Thiên Di", "Tật Ách", "Tài Bạch", "Tử Tức", "Phu Thê", "Huynh Đệ"];
+
+    type MutablePalace = { -readonly [K in keyof TuViPalace]: TuViPalace[K] };
+
     const newPalaces = chart.palaces.map((p, i) => {
-        const pCopy: any = { ...p };
+        const pCopy: MutablePalace = { ...p } as MutablePalace;
         
         if (i === decadalIndex) pCopy.decadalName = isChildhood ? 'Đại Hạn (Đồng)' : 'Đại Hạn';
-        if (i === targetBranch) pCopy.yearlyName = 'Lưu Niên';
+        
+        const distFromLuuNien = fixIndex(i - targetBranch);
+        pCopy.yearlyName = LUU_NIEN_NAMES[distFromLuuNien];
         
         pCopy.decadalStars = decadalStarsLists[i];
         pCopy.yearlyStars = yearlyStarsLists[i];

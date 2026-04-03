@@ -1,4 +1,4 @@
-import React, { Suspense, useState, lazy, useCallback, startTransition } from 'react';
+import React, { useCallback, startTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/stores/appStore';
 import { useHolidays } from '@/hooks/useHolidays';
@@ -37,7 +37,7 @@ function AppSidebar({ activeTab }: AppSidebarProps) {
       {/* Mobile Conversion Banner (Only on explicit premium tools) */}
       {isPremiumTool && (
         <div className="lg:hidden w-full bg-gradient-to-br from-gold/10 via-amber-500/10 to-gold/5 dark:from-gold-dark/20 dark:via-amber-600/10 dark:to-gold-dark/10 border border-gold/30 dark:border-gold-dark/30 rounded-2xl p-4 sm:p-5 text-center flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
-           <div className="absolute top-0 right-0 w-32 h-32 bg-gold/20 dark:bg-gold-dark/20 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+           <div className="absolute top-0 right-0 w-32 h-32 bg-gold/20 dark:bg-gold-dark/20 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
            <span className="material-icons-round text-gold dark:text-gold-dark text-3xl mb-1.5 relative z-10" aria-hidden="true">workspace_premium</span>
            <h3 className="text-gold dark:text-gold-dark font-bold text-base sm:text-base mb-1 relative z-10">Lịch Việt Premium</h3>
            <p className="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark mb-3.5 relative z-10 leading-relaxed max-w-[280px]">Mở khóa luận giải AI chuyên sâu và lưu trữ lá số không giới hạn.</p>

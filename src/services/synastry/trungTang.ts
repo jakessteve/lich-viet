@@ -1,144 +1,42 @@
 /**
- * Trùng Tang Algorithm — Bấm Cung Tay Tradition
- * 
- * Deterministic funeral safety check based on the 12-Cung cycle.
- * Reference: Bấm Cung Tay (Vietnamese folk tradition)
+ * Trùng Tang Algorithm — Authentic Bấm Cung Tay Tradition
  *
+ * Deterministic funeral safety check based on the 12-Cung cycle 
+ * using the age, month, day, and hour of death.
+ * 
  * Algorithm:
- *   Starting position = Deceased's birth Earthly Branch (Chi)
- *   Count forward through the 12-Cung cycle by the proposed funeral day's Chi index
- *   Landing position determines safety outcome.
+ * 1. Male starts Dần forward, Female starts Thân backward.
+ * 2. Count tens digit (1 per Chi), then unit digit (1 per Chi) -> Age Landing
+ * 3. From Age Landing, next Chi is Month 1. Count to Death Month -> Month Landing
+ * 4. From Month Landing, next Chi is Day 1. Count to Death Day -> Day Landing
+ * 5. From Day Landing, next Chi is Hour Tý. Count to Death Hour -> Hour Landing
  */
 
-const CHI_LIST = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'] as const;
+export const CHI_LIST = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'] as const;
 
-/**
- * The 12 Cung Tay positions in the traditional cycle.
- * Positions 0-11 map to the finger-counting stations.
- */
-const CUNG_TAY = [
-  'Thiên Cương',   // 0 — Heaven's Pinnacle
-  'Thiên Phúc',    // 1 — Heavenly Fortune ✅
-  'Thiên Quý',     // 2 — Heavenly Noble   ✅
-  'Thiên Hình',    // 3 — Heavenly Punishment ❌
-  'Thiên Lộc',     // 4 — Heavenly Prosperity ✅
-  'Thiên Đức',     // 5 — Heavenly Virtue    ✅
-  'Thiên Hỏa',    // 6 — Heavenly Fire      ❌
-  'Thiên Tài',     // 7 — Heavenly Wealth    ✅
-  'Thiên Mã',      // 8 — Heavenly Horse     ⚠️ (Thiên Di)
-  'Trùng Tang',    // 9 — Double Mourning    ❌❌
-  'Thiên Ấn',      // 10 — Heavenly Seal     ✅
-  'Thiên Di',      // 11 — Heavenly Migration ⚠️
-] as const;
+export type TrungTangClassification = 'trung-tang' | 'thien-di' | 'nhap-mo';
 
-/** Safety classification per Cung landing */
-type CungSafety = 'safe' | 'trung-tang' | 'thien-di' | 'danger';
-
-const CUNG_SAFETY: Record<string, CungSafety> = {
-  'Thiên Cương': 'danger',     // Cứng, khắc — xấu
-  'Thiên Phúc': 'safe',
-  'Thiên Quý': 'safe',
-  'Thiên Hình': 'danger',      // Hình phạt — xấu
-  'Thiên Lộc': 'safe',
-  'Thiên Đức': 'safe',
-  'Thiên Hỏa': 'danger',       // Hỏa tai — xấu
-  'Thiên Tài': 'safe',
-  'Thiên Mã': 'thien-di',      // Di chuyển — cẩn trọng
-  'Trùng Tang': 'trung-tang',  // ❌ Critical — double mourning
-  'Thiên Ấn': 'safe',
-  'Thiên Di': 'thien-di',      // Di chuyển — cẩn trọng
-};
+export interface TrungTangLanding {
+  chi: string;
+  classification: TrungTangClassification;
+}
 
 export interface TrungTangResult {
-  /** Is it safe to proceed with burial on this day? */
   safe: boolean;
-  /** Specific safety classification */
-  classification: CungSafety;
-  /** The Cung position the counting landed on */
-  cungLanding: string;
-  /** Position index in the 12-Cung cycle */
-  cungIndex: number;
-  /** Human-readable summary */
+  ageLanding: TrungTangLanding;
+  monthLanding: TrungTangLanding;
+  dayLanding: TrungTangLanding;
+  hourLanding: TrungTangLanding;
   summary: string;
-  /** Warning text if not safe */
   warning?: string;
-  /** Advice text */
   advice: string;
 }
 
-/**
- * Check Trùng Tang safety for a proposed funeral date.
- * 
- * @param deceasedBirthChi - Earthly Branch (Chi) of the deceased's birth year
- * @param funeralDayChi - Earthly Branch (Chi) of the proposed funeral day
- * @param deceasedGender - Gender of the deceased ('male' | 'female')
- * @returns TrungTangResult with safety classification
- */
-export function checkTrungTang(
-  deceasedBirthChi: string,
-  funeralDayChi: string,
-  deceasedGender: 'male' | 'female' = 'male',
-): TrungTangResult {
-  const birthIdx = CHI_LIST.indexOf(deceasedBirthChi as typeof CHI_LIST[number]);
-  const funeralIdx = CHI_LIST.indexOf(funeralDayChi as typeof CHI_LIST[number]);
-
-  if (birthIdx === -1 || funeralIdx === -1) {
-    return {
-      safe: false,
-      classification: 'danger',
-      cungLanding: 'Không xác định',
-      cungIndex: -1,
-      summary: 'Không xác định được Chi — vui lòng kiểm tra lại.',
-      advice: 'Kiểm tra lại năm sinh và ngày tang lễ.',
-    };
-  }
-
-  // Gender offset: Male starts from Thiên Cương (0), Female from position 6 (Thiên Hỏa)
-  const genderOffset = deceasedGender === 'female' ? 6 : 0;
-
-  // Count: from birth Chi position, advance by funeral Chi index steps
-  const steps = ((funeralIdx - birthIdx + 12) % 12);
-  const cungIdx = (steps + genderOffset) % 12;
-  const cungName = CUNG_TAY[cungIdx];
-  const safety = CUNG_SAFETY[cungName];
-
-  const isSafe = safety === 'safe';
-
-  let summary: string;
-  let warning: string | undefined;
-  let advice: string;
-
-  switch (safety) {
-    case 'safe':
-      summary = `✅ An toàn — ${cungName}`;
-      advice = `Ngày ${funeralDayChi} an toàn cho tang lễ. Cung ${cungName} là cung lành, có thể tiến hành.`;
-      break;
-    case 'trung-tang':
-      summary = `❌ Trùng Tang — Cảnh báo nghiêm trọng`;
-      warning = 'Ngày này rơi vào cung Trùng Tang — theo truyền thống, nếu chôn cất vào ngày này, gia đình có nguy cơ gặp thêm tang sự trong vòng 100 ngày.';
-      advice = 'NÊN chọn ngày khác. Nếu bắt buộc, cần làm lễ giải trừ theo phong tục địa phương.';
-      break;
-    case 'thien-di':
-      summary = `⚠️ Thiên Di — Cần cẩn trọng`;
-      warning = `Cung ${cungName} thuộc hướng di chuyển — có thể ảnh hưởng đến vận khí gia đình.`;
-      advice = 'Có thể tiến hành nhưng nên kết hợp với xem ngày Hoàng Đạo để chắc chắn. Tham khảo thêm ý kiến thầy phong thủy.';
-      break;
-    case 'danger':
-      summary = `🔴 ${cungName} — Không thuận lợi`;
-      warning = `Cung ${cungName} mang tính chất bất lợi cho tang lễ.`;
-      advice = 'Nên cân nhắc chọn ngày khác nếu có thể. Nếu bắt buộc, làm lễ cầu an.';
-      break;
-  }
-
-  return {
-    safe: isSafe,
-    classification: safety,
-    cungLanding: cungName,
-    cungIndex: cungIdx,
-    summary,
-    warning,
-    advice,
-  };
+function getClassification(chiIndex: number): TrungTangClassification {
+  const chi = CHI_LIST[chiIndex];
+  if (['Thìn', 'Tuất', 'Sửu', 'Mùi'].includes(chi)) return 'nhap-mo';
+  if (['Tý', 'Ngọ', 'Mão', 'Dậu'].includes(chi)) return 'thien-di';
+  return 'trung-tang'; // Dần, Thân, Tỵ, Hợi
 }
 
 /**
@@ -150,9 +48,89 @@ export function yearToChiString(year: number): string {
 }
 
 /**
- * Utility: get Chi from a lunar or solar day's Can Chi.
- * Expects the day Chi from DayDetailsData.canChi.day.chi
+ * Check Trùng Tang safety using the authentic Folk counting method.
  */
-export function getDayChiFromData(dayChi: string): string {
-  return dayChi;
+export function checkTrungTang(
+  deceasedLunarAge: number,
+  deathLunarMonth: number,
+  deathLunarDay: number,
+  deathHourChi: string,
+  deceasedGender: 'male' | 'female' = 'male',
+): TrungTangResult | null {
+  if (!deceasedLunarAge || !deathLunarMonth || !deathLunarDay || !deathHourChi) return null;
+  
+  const hourIdx = CHI_LIST.indexOf(deathHourChi as typeof CHI_LIST[number]);
+  if (hourIdx === -1) return null;
+
+  // Starting index: Male = Dần (2), Female = Thân (8)
+  const startIdx = deceasedGender === 'male' ? 2 : 8;
+  const direction = deceasedGender === 'male' ? 1 : -1;
+
+  // 1. Age Landing
+  const tens = Math.floor(deceasedLunarAge / 10);
+  const units = deceasedLunarAge % 10;
+  
+  // Example for Tens=7, Units=3: Tens moves (7-1)=6 steps. Units moves 3 steps. Total = 9.
+  // Example for Tens=0, Units=5: Tens 0 steps. Units moves 4 steps. Total = 4.
+  const ageSteps = tens > 0 ? (tens - 1 + units) : (units > 0 ? units - 1 : 0);
+  const ageIdx = (startIdx + ageSteps * direction + 120) % 12;
+
+  // 2. Month Landing
+  const monthSteps = deathLunarMonth - 1;
+  const monthIdx = (ageIdx + direction + monthSteps * direction + 120) % 12;
+
+  // 3. Day Landing
+  const daySteps = deathLunarDay - 1;
+  const dayIdx = (monthIdx + direction + daySteps * direction + 120) % 12;
+
+  // 4. Hour Landing
+  // Hour Tý = 0 steps from next branch.
+  const hourSteps = hourIdx;
+  const hourIdxLanding = (dayIdx + direction + hourSteps * direction + 120) % 12;
+
+  const ageLanding: TrungTangLanding = { chi: CHI_LIST[ageIdx], classification: getClassification(ageIdx) };
+  const monthLanding: TrungTangLanding = { chi: CHI_LIST[monthIdx], classification: getClassification(monthIdx) };
+  const dayLanding: TrungTangLanding = { chi: CHI_LIST[dayIdx], classification: getClassification(dayIdx) };
+  const hourLanding: TrungTangLanding = { chi: CHI_LIST[hourIdxLanding], classification: getClassification(hourIdxLanding) };
+
+  const landings = [ageLanding, monthLanding, dayLanding, hourLanding];
+  const hasNhapMo = landings.some(l => l.classification === 'nhap-mo');
+  const hasTrungTang = landings.some(l => l.classification === 'trung-tang');
+  // Technically, if Day is Trung Tang, it's called Trùng Tang Liên Táng (worst kind)
+  const dayIsTrungTang = dayLanding.classification === 'trung-tang';
+
+  let safe = false;
+  let summary = '';
+  let warning: string | undefined;
+  let advice = '';
+
+  if (hasNhapMo) {
+    safe = true;
+    summary = '✅ An Toàn — Có Nhập Mộ (Nhất Mộ siêu bách sát)';
+    advice = 'Kết quả xuất hiện cung Nhập Mộ nên sự hung hiểm đã được hóa giải. Sự quy tiên này là sự an bài hợp lý, gia quyến có thể an tâm.';
+  } else if (hasTrungTang) {
+    safe = false;
+    summary = dayIsTrungTang ? '❌ Trùng Tang Liên Táng (Cực Hung)' : '❌ Phạm Trùng Tang';
+    warning = dayIsTrungTang 
+      ? 'Ngày mất rơi vào cung Trùng Tang (Trùng Tang Liên Táng), mức độ ảnh hưởng rất xấu đến người thân trong vòng 100 ngày.'
+      : 'Rơi vào cung Trùng Tang nhưng không phạm vào Ngày. Tuy vậy vẫn có tính hung sát cao, cần hết sức lưu ý.';
+    advice = 'Bắt buộc phải thiết lập đàn tràng làm lễ giải Trùng Tang, nhờ sư thầy/chuyên gia cao tay ấn định thời gian khâm liệm và nhập mộ.';
+  } else {
+    // only thien di
+    safe = true;
+    summary = '⚠️ Thiên Di — Chậm Siêu Thoát';
+    warning = 'Toàn bộ rơi vào cung Thiên Di (Lạc đường). Vong linh khó tìm đường siêu thoát, nhưng gia đạo không bị ảnh hưởng mạnh.';
+    advice = 'Có thể tiến hành thêm các lễ Tụng Kinh, Cầu Siêu để vong linh nhanh chóng rũ bỏ chấp niệm tìm được đàng về với Phật/Tổ Tiên.';
+  }
+
+  return {
+    safe,
+    ageLanding,
+    monthLanding,
+    dayLanding,
+    hourLanding,
+    summary,
+    warning,
+    advice
+  };
 }

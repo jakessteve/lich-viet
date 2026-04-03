@@ -1,6 +1,10 @@
-import type { BirthData, NatalChart } from '../types/westernAstro';
+import type { BirthData, NatalChart, ZodiacSignId, ChartAngles } from '../types/westernAstro';
 import { calculateNatalChart } from './natalChartCalculator';
-import { calculateInterAspects, TransitAspect, TransitChartResult } from './transitCalculator';
+import { calculateInterAspects, TransitChartResult } from './transitCalculator';
+
+const SIGN_NAMES: ZodiacSignId[] = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
+const ANGLE_KEYS = ['ascendant', 'midheaven', 'descendant', 'imumCoeli'] as const;
+type AngleKey = typeof ANGLE_KEYS[number];
 
 /**
  * Calculates Secondary Progressions (Lá số Tiến trình).
@@ -107,9 +111,7 @@ export function calculateSolarArc(
         // Update sign and signDegree
         p.signDegree = p.degree % 30;
         p.signMinute = Math.floor((p.signDegree % 1) * 60);
-        
-        const signNames = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
-        p.sign = signNames[Math.floor(p.degree / 30)] as any;
+        p.sign = SIGN_NAMES[Math.floor(p.degree / 30)];
     });
 
     // Move Points (Nodes)
@@ -117,25 +119,22 @@ export function calculateSolarArc(
         p.degree = (p.degree + solarArc) % 360;
         p.signDegree = p.degree % 30;
         p.signMinute = Math.floor((p.signDegree % 1) * 60);
-        const signNames = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
-        p.sign = signNames[Math.floor(p.degree / 30)] as any;
+        p.sign = SIGN_NAMES[Math.floor(p.degree / 30)];
     });
 
     // Move Angles (ASC/MC) -> Typically angles are directed too
-    ['ascendant', 'midheaven', 'descendant', 'imumCoeli'].forEach(key => {
-        const a = (directedChart.angles as any)[key];
+    ANGLE_KEYS.forEach(key => {
+        const a = directedChart.angles[key];
         a.degree = (a.degree + solarArc) % 360;
         a.signDegree = a.degree % 30;
-        const signNames = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
-        a.sign = signNames[Math.floor(a.degree / 30)] as any;
+        a.sign = SIGN_NAMES[Math.floor(a.degree / 30)];
     });
 
     // Move Houses
     directedChart.houses.forEach(h => {
         h.degree = (h.degree + solarArc) % 360;
         h.signDegree = h.degree % 30;
-        const signNames = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
-        h.sign = signNames[Math.floor(h.degree / 30)] as any;
+        h.sign = SIGN_NAMES[Math.floor(h.degree / 30)];
     });
 
     // Solar Arc orbs are very tight (< 1 degree)
@@ -159,7 +158,7 @@ export function calculateCompositeChart(chart1: NatalChart, chart2: NatalChart):
     
     // Utility to get midpoint of two angles
     const getMidpoint = (d1: number, d2: number) => {
-        let diff = Math.abs(d1 - d2);
+        const diff = Math.abs(d1 - d2);
         let mid = (d1 + d2) / 2;
         if (diff > 180) {
             mid = (mid + 180) % 360;
@@ -174,23 +173,21 @@ export function calculateCompositeChart(chart1: NatalChart, chart2: NatalChart):
             cp.degree = getMidpoint(p1.degree, p2.degree);
             cp.signDegree = cp.degree % 30;
             cp.signMinute = Math.floor((cp.signDegree % 1) * 60);
-            const signNames = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
-            cp.sign = signNames[Math.floor(cp.degree / 30)] as any;
+            cp.sign = SIGN_NAMES[Math.floor(cp.degree / 30)];
         }
     });
 
     // Repeat for points, aspects (recalculate), angles, houses...
     // Note: Composite charts usually recalculate aspects from scratch.
     // For simplicity, we just mid-point angles
-    ['ascendant', 'midheaven', 'descendant', 'imumCoeli'].forEach(key => {
-        const a1 = (chart1.angles as any)[key].degree;
-        const a2 = (chart2.angles as any)[key].degree;
-        const cpA = (composite.angles as any)[key];
+    ANGLE_KEYS.forEach(key => {
+        const a1 = chart1.angles[key].degree;
+        const a2 = chart2.angles[key].degree;
+        const cpA = composite.angles[key];
         
         cpA.degree = getMidpoint(a1, a2);
         cpA.signDegree = cpA.degree % 30;
-        const signNames = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
-        cpA.sign = signNames[Math.floor(cpA.degree / 30)] as any;
+        cpA.sign = SIGN_NAMES[Math.floor(cpA.degree / 30)];
     });
 
     // Houses midpoints
@@ -200,8 +197,7 @@ export function calculateCompositeChart(chart1: NatalChart, chart2: NatalChart):
         if (h1 && h2) {
             ch.degree = getMidpoint(h1.degree, h2.degree);
             ch.signDegree = ch.degree % 30;
-            const signNames = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
-            ch.sign = signNames[Math.floor(ch.degree / 30)] as any;
+            ch.sign = SIGN_NAMES[Math.floor(ch.degree / 30)];
         }
     });
 

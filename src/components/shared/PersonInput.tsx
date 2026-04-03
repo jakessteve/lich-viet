@@ -35,7 +35,11 @@ const PersonInput: React.FC<PersonInputProps> = ({
     'w-full px-2.5 py-2 text-center rounded-lg bg-surface-subtle-light dark:bg-white/10 border border-border-light dark:border-border-dark text-sm font-medium text-text-primary-light dark:text-text-primary-dark focus:outline-none focus:ring-2 focus:ring-gold/50 dark:focus:ring-gold-dark/50 tabular-nums transition-all';
 
   const update = (field: keyof PersonData, value: string) => {
-    onChange({ ...person, [field]: value });
+    let sanitizedValue = value;
+    if (field === 'name') {
+      sanitizedValue = value.replace(/[<>]/g, '');
+    }
+    onChange({ ...person, [field]: sanitizedValue });
   };
 
   return (

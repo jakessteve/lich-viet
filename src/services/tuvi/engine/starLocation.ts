@@ -60,18 +60,18 @@ export const getZiweiTianfuIndex = (
     fiveElementsValue: number // 2 for Water, 3 for Wood, 4 for Metal, 5 for Earth, 6 for Fire
 ): { ziweiIndex: number; tianfuIndex: number } => {
     
-    let remainder = -1;
-    let quotient = 0;
+    let remainder: number;
+    let quotient: number;
     let offset = -1;
     
     // Copy the original iztro loop logic exactly:
     do {
         offset++;
         const divisor = lunarDay + offset;
-        quotient = Math.floor(divisor / fiveElementsValue);
         remainder = divisor % fiveElementsValue;
     } while (remainder !== 0);
 
+    quotient = Math.floor((lunarDay + offset) / fiveElementsValue);
     quotient %= 12;
 
     // Start from Yin (Dần) which is index 2.
@@ -131,7 +131,6 @@ export const getMajorStarsLocation = (ziweiIndex: number, tianfuIndex: number) =
  * Lộc Tồn, Kình Dương, Đà La, Thiên Mã (Dependent on Year Stem and Branch)
  */
 export const getLuYangTuoMaIndex = (heavenlyStemIndex: number, earthlyBranchIndex: number) => {
-    let luIndex = -1;
     let maIndex = 0;
 
     // Thiên Mã (only appears in the 4 corners: Dần, Thân, Tỵ, Hợi)
@@ -172,7 +171,7 @@ export const getLuYangTuoMaIndex = (heavenlyStemIndex: number, earthlyBranchInde
         11,// Nhâm -> Hợi
         0  // Quý -> Tý
     ];
-    luIndex = luMap[heavenlyStemIndex % 10];
+    const luIndex = luMap[heavenlyStemIndex % 10];
 
     return {
         luIndex,

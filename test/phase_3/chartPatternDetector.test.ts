@@ -56,10 +56,12 @@ describe('Chart Pattern Detector', () => {
             ];
 
             const overview = analyzeChartOverview(planets);
-            expect(overview.elementBalance.fire).toBe(2);
-            expect(overview.elementBalance.earth).toBe(1);
-            expect(overview.elementBalance.water).toBe(2);
-            expect(overview.elementBalance.air).toBe(2);
+            // Weighted percentages (sun/moon=4, mercury/venus/mars=2, jupiter/saturn=1)
+            // fire: 4+4=8, earth: 2, water: 2+2=4, air: 1+1=2, total=16
+            expect(overview.elementBalance.fire).toBe(50);
+            expect(overview.elementBalance.earth).toBe(12.5);
+            expect(overview.elementBalance.water).toBe(25);
+            expect(overview.elementBalance.air).toBe(12.5);
         });
 
         it('detects bundle pattern when all planets within ~120°', () => {

@@ -13,7 +13,6 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { BIRTH_HOURS, type ChartInput, type Gender, type SchoolStrategy } from '../../services/tuvi/tuviTypes';
 import { useAuthStore } from '../../stores/authStore';
 import LocationPicker, { type SelectedLocation } from '../ChiemTinh/LocationPicker';
-import { computeBirthContext } from '../../services/shared/birthContext';
 
 
 interface TuViInputFormProps {

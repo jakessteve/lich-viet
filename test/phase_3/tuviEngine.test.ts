@@ -112,7 +112,7 @@ describe('getStarCategory', () => {
     });
 
     it('returns "neutral" for adjective/unknown stars', () => {
-        expect(getStarCategory(makeStar('Đào Hoa', { type: 'adjective' }))).toBe('neutral');
+        expect(getStarCategory(makeStar('Sao Vô Danh', { type: 'adjective' }))).toBe('neutral');
     });
 });
 

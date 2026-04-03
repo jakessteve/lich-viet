@@ -81,14 +81,17 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen transition-colors duration-300 overflow-x-hidden relative">
 
-      {/* ──── Ambient Mystery Background ──── */}
+      {/* ──── Base Global Background ──── */}
       <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
         <div className="hidden dark:block absolute inset-0 bg-gradient-to-b from-mystery-deep via-[#0f0a24] to-mystery-deep" />
+      </div>
+
+      {/* ──── Hero Textures (Constrained to top fold) ──── */}
+      <div className="absolute top-0 left-0 right-0 h-[1400px] pointer-events-none z-0 overflow-hidden" aria-hidden="true">
         <div className="hidden dark:block">
           <div className="mystery-orb mystery-orb-purple w-[600px] h-[600px] top-[-10%] left-[-10%] opacity-50" style={{ animationDelay: '0s' }} />
           <div className="mystery-orb mystery-orb-blue w-[500px] h-[500px] top-[20%] right-[-15%] opacity-40" style={{ animationDelay: '5s' }} />
           <div className="mystery-orb mystery-orb-gold w-[450px] h-[450px] top-[50%] left-[10%] opacity-35" style={{ animationDelay: '8s' }} />
-          <div className="mystery-orb mystery-orb-purple w-[300px] h-[300px] bottom-[10%] right-[20%] opacity-30" style={{ animationDelay: '12s' }} />
         </div>
         {/* Starfield */}
         <div className="hidden dark:block absolute inset-0" style={{
@@ -104,7 +107,7 @@ export default function LandingPage() {
                            radial-gradient(1px 1px at 15% 45%, rgba(255,255,255,0.1), transparent)`,
           backgroundSize: '250px 250px, 300px 300px, 200px 200px, 350px 350px, 400px 400px, 450px 450px, 280px 280px, 320px 320px, 380px 380px, 260px 260px',
         }} />
-        {/* Subtle sacred-geometry dot pattern — both modes */}
+        {/* Subtle sacred-geometry dot pattern */}
         <div className="absolute inset-0" style={{
           backgroundImage: `
             radial-gradient(circle, currentColor 0.5px, transparent 0.5px),
@@ -112,15 +115,18 @@ export default function LandingPage() {
           backgroundSize: '32px 32px, 16px 16px',
           backgroundPosition: '0 0, 8px 8px',
           opacity: 0.04,
+          maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)'
         }} />
-        {/* Faint concentric rings — mystic / astrolabe feel */}
-        <div className="absolute inset-0 overflow-hidden">
+        {/* Faint concentric rings */}
+        <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/4 w-[1200px] h-[1200px] rounded-full border border-gold/[0.03] dark:border-gold-dark/[0.04]" />
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/4 w-[900px] h-[900px] rounded-full border border-gold/[0.04] dark:border-gold-dark/[0.05]" />
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/4 w-[600px] h-[600px] rounded-full border border-gold/[0.05] dark:border-gold-dark/[0.06]" />
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/4 w-[300px] h-[300px] rounded-full border border-gold/[0.06] dark:border-gold-dark/[0.07]" />
         </div>
       </div>
+
 
       {/* ──── Floating Nav ──── */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-nav">
@@ -331,8 +337,8 @@ export default function LandingPage() {
          ════════════════════════════════════════════════════════ */}
       <section className="py-14 sm:py-20 px-5 relative z-10 overflow-hidden">
         {/* Background Pattern */}
-        <div className="absolute top-10 right-[-20%] md:right-[-5%] w-[600px] h-[600px] opacity-[0.03] dark:opacity-[0.05] pointer-events-none z-0">
-          <MysticBackgroundPattern variant="bagua" />
+        <div className="absolute top-[-10%] right-[-20%] md:right-[0%] w-[800px] h-[800px] opacity-40 dark:opacity-60 pointer-events-none z-0">
+          <MysticBackgroundPattern variant="compass" />
         </div>
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="text-center mb-12">
@@ -358,7 +364,7 @@ export default function LandingPage() {
                 <button
                   key={f.id}
                   onClick={() => navigate(`/app/${f.id}`)}
-                  className="group relative text-left p-6 rounded-2xl bg-surface-container-lowest dark:bg-surface-dark hover:bg-surface-bright transition-colors duration-500 animate-fade-in-up"
+                  className="group relative w-full h-full flex flex-col justify-start items-start text-left p-6 rounded-2xl bg-surface-container-lowest dark:bg-surface-dark hover:bg-surface-bright transition-colors duration-500 animate-fade-in-up"
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
                   <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${f.glowColor} dark:opacity-100 opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none`} />
@@ -399,7 +405,7 @@ export default function LandingPage() {
                 <button
                   key={f.id}
                   onClick={() => navigate(`/app/${f.id}`)}
-                  className="group relative text-left p-6 rounded-2xl bg-surface-container-lowest dark:bg-surface-dark hover:bg-surface-bright transition-colors duration-500 animate-fade-in-up"
+                  className="group relative w-full h-full flex flex-col justify-start items-start text-left p-6 rounded-2xl bg-surface-container-lowest dark:bg-surface-dark hover:bg-surface-bright transition-colors duration-500 animate-fade-in-up"
                   style={{ animationDelay: `${i * 80 + 300}ms` }}
                 >
                   <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${f.glowColor} dark:opacity-100 opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none`} />
@@ -442,8 +448,8 @@ export default function LandingPage() {
          ════════════════════════════════════════════════════════ */}
       <section className="py-14 sm:py-16 px-5 relative z-10 bg-surface-subtle-light dark:bg-[#0c0b20] overflow-hidden">
         {/* Background Pattern */}
-        <div className="absolute top-1/2 left-[-30%] md:left-[-10%] -translate-y-1/2 w-[800px] h-[800px] opacity-[0.03] dark:opacity-[0.05] pointer-events-none z-0">
-          <MysticBackgroundPattern variant="constellation" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-40 dark:opacity-60 pointer-events-none z-0">
+          <MysticBackgroundPattern variant="dipper" />
         </div>
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-10">
@@ -494,8 +500,8 @@ export default function LandingPage() {
          ════════════════════════════════════════════════════════ */}
       <section className="py-14 sm:py-20 px-5 relative z-10 overflow-hidden">
         {/* Background Pattern */}
-        <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[800px] h-[800px] opacity-[0.02] dark:opacity-[0.04] pointer-events-none z-0">
-          <MysticBackgroundPattern variant="compass" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-40 dark:opacity-60 pointer-events-none z-0">
+          <MysticBackgroundPattern variant="four-symbols" />
         </div>
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-10">

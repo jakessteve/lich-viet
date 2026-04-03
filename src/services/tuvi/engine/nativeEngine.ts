@@ -1,14 +1,12 @@
 import {
     getLunarDate,
-    crossValidateLunarDate,
     getNapAmForStemBranch,
     getSolarTermForDate,
     classifyBirthHour,
     getCanChiYear,
     getCanChiDay,
     parseCanChi,
-    getHourCanChi,
-    getJDN
+    getHourCanChi
 } from '../../sharedCore';
 import type { ChartInput, TuViChartData, TuViPalace, TuViStar, StageInfo } from '../tuviTypes';
 import { calculateSihuaFlows } from '../sihuaEngine';
@@ -16,11 +14,7 @@ import { getTuHoaTable } from '../tuHoaTables';
 import { applyTemporalOverlays } from './temporalEngine';
 
 import {
-    HEAVENLY_STEMS,
-    EARTHLY_BRANCHES,
-    PALACES,
     fixIndex,
-    fixEarthlyBranchIndex,
     getZiweiTianfuIndex,
     getMajorStarsLocation,
     getLuYangTuoMaIndex,
@@ -32,11 +26,6 @@ import {
     getKongJieIndex,
     getHuoLingIndex,
     getLuanXiIndex,
-    getHuagaiXianchiIndex,
-    getGuGuaIndex,
-    getJieshaAdjIndex,
-    getDahaoIndex,
-    getTianshiTianshangIndex,
     getNianjieIndex,
     getYearlyStarIndex,
     getMonthlyStarIndex,
@@ -45,7 +34,7 @@ import {
     getYinYangDirection
 } from './starLocation';
 
-import { STAR_NAMES, STARS_INFO, BRIGHTNESS_LEVELS } from './starCatalog';
+import { STAR_NAMES, STARS_INFO } from './starCatalog';
 
 const VI_CAN = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
 const VI_CHI = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
@@ -156,8 +145,8 @@ export function generateNativeChart(input: ChartInput): TuViChartData {
         palaces[i].name = palaceNames[distFromSoul];
 
         // Decadal Calculation (Đại Hạn)
-        let decadalStart = cucVal + i * 10;
-        let decadalIndex = 0;
+        const decadalStart = cucVal + i * 10;
+        let decadalIndex: number;
         if (yinYangDir === 1) {
             decadalIndex = fixIndex(soulIndex + i);
         } else {
@@ -183,7 +172,7 @@ export function generateNativeChart(input: ChartInput): TuViChartData {
 
     const addStar = (palaceIndex: number, starId: keyof typeof STAR_NAMES, type: TuViStar['type'], scope: TuViStar['scope'] = 'origin') => {
         const name = STAR_NAMES[starId] || starId;
-        const info = (STARS_INFO as any)[starId];
+        const info = (STARS_INFO as Record<string, { brightness?: string[] }>)[starId];
         
         const viBrightnessMap: Record<string, string> = {
             'miao': 'M',  // Miếu — strongest
@@ -349,7 +338,7 @@ export function generateNativeChart(input: ChartInput): TuViChartData {
                 const found = allStars.find(s => s.name === starName);
                 if (found) {
                     // TuViStar's mutagen is readonly string[], create mutable reference
-                    (found as any).mutagen = [...(found.mutagen || []), label];
+                    (found as TuViStar & { mutagen?: string[] }).mutagen = [...(found.mutagen || []), label];
                     break;
                 }
             }
@@ -357,12 +346,14 @@ export function generateNativeChart(input: ChartInput): TuViChartData {
     }
 
     // ── Metadata ────────────────────────────────────────────────
-    const jd = getJDN(solarDateObj.getDate(), solarDateObj.getMonth() + 1, solarDateObj.getFullYear());
-    const dayCanChiStr = getCanChiDay(solarDateObj);
-    const dayCan = dayCanChiStr.split(' ')[0] as any;
-    const dayChi = dayCanChiStr.split(' ')[1] as any;
+    type HeavenlyStem = 'Giáp' | 'Ất' | 'Bính' | 'Đinh' | 'Mậu' | 'Kỷ' | 'Canh' | 'Tân' | 'Nhâm' | 'Quý';
+    type EarthlyBranch = 'Tý' | 'Sửu' | 'Dần' | 'Mão' | 'Thìn' | 'Tỵ' | 'Ngọ' | 'Mùi' | 'Thân' | 'Dậu' | 'Tuất' | 'Hợi';
 
-    const hourCanChiObj = getHourCanChi(dayCan, VI_CHI[timeIndex] as any);
+    const dayCanChiStr = getCanChiDay(solarDateObj);
+    const dayCan = dayCanChiStr.split(' ')[0] as HeavenlyStem;
+    const dayChi = dayCanChiStr.split(' ')[1] as EarthlyBranch;
+
+    const hourCanChiObj = getHourCanChi(dayCan, VI_CHI[timeIndex] as EarthlyBranch);
     const hourCanChiStr = `${hourCanChiObj.can} ${hourCanChiObj.chi}`;
     
     const napAmYear = getNapAmForStemBranch(yearCanChiStr);

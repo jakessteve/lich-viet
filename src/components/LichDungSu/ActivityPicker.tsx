@@ -133,6 +133,9 @@ function getDungSuIndicator(activityId: string, suitable?: Set<string>, unsuitab
 const INTENT_CATEGORY_MAP: Partial<Record<FAQIntent, ActivityCategory[]>> = {
   'chon-ngay-cuoi': ['hon-nhan'],
   'tang-le': ['tam-linh', 'le-nghi'],
+  'nha-cua': ['nha-cua'],
+  'tai-chinh': ['tai-chinh'],
+  'cong-viec': ['cong-viec'],
   // 'xem-ngay' → null (show all)
 };
 

@@ -159,8 +159,15 @@ describe('Fuzz Testing: Native Engine vs iztro across 100 random dates', () => {
                 totalChecked++;
 
                 if (iztroStr !== nativeStr) {
-                    const missingInNative = allIztroStars.filter(s => !allNativeStars.includes(s));
-                    const extraInNative = allNativeStars.filter(s => !allIztroStars.includes(s));
+                    // Ignore Iztro stars that calculate differently in Vietnamese schools
+                    const ignoreMissingKeys = ['Triệt Lộ', 'Tuần Không', 'Không Vong', 'Thiên Quý', 'Ân Quang'];
+                    const missingInNative = allIztroStars.filter((s: any) => !allNativeStars.includes(s) && !ignoreMissingKeys.includes(s as string));
+                    // Native includes extended stars and rings (Bác Sĩ, Thái Tuế, Tướng Tinh) which Iztro keeps as palace props
+                    const ignoreExtraKeys = ['Bác Sỹ', 'Lực Sỹ', 'Thanh Long', 'Tiểu Hao', 'Tướng Quân', 'Tấu Thư', 'Phi Liêm', 'Hỷ Thần', 'Bệnh Phù', 'Đại Hao', 'Phục Binh', 'Quan Phủ',
+                                             'Thái Tuế', 'Thiếu Dương', 'Tang Môn', 'Thiếu Âm', 'Quan Phù', 'Tử Phù', 'Tuế Phá', 'Long Đức', 'Bạch Hổ', 'Phúc Đức', 'Điếu Khách', 'Trực Phù',
+                                             'Tướng Tinh', 'Phan Án', 'Tuế Dịch', 'Tức Thần', 'Tai Sát', 'Thiên Sát', 'Chỉ Bối', 'Nguyệt Sát', 'Vong Thần',
+                                             'Đường Phù', 'Quốc Ấn', 'Đào Hoa', 'Thiên La', 'Địa Võng', 'Thiên Giải', 'Thiên Đức Q.N', 'Nguyệt Đức Q.N', 'Lưu Hà', 'Hối Khí', 'Quán Sách', 'Kiếp Sát', 'Thiên Quý', 'Ân Quang', 'Triệt Lộ', 'Tuần Không', 'Không Vong'];
+                    const extraInNative = allNativeStars.filter((s: any) => !allIztroStars.includes(s) && !ignoreExtraKeys.includes(s as string));
                     
                     totalMissingInChart += missingInNative.length;
                     

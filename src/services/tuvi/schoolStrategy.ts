@@ -10,7 +10,7 @@
 
 import { getTuHoaTable, getTuHoaDiff, type TuHoaSchool, type TuHoaEntry, DISPUTED_STEMS } from './tuHoaTables';
 import { calculateSihuaFlows } from './sihuaEngine';
-import type { TuViPalace, SihuaFlow, TuViChartData } from './tuviTypes';
+import type { SihuaFlow, TuViChartData } from './tuviTypes';
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -225,7 +225,7 @@ export function generateCrossSchoolInsights(chart: TuViChartData): CrossSchoolIn
   }
 
   // 4. Generate recommendation
-  let recommendation = '';
+  let recommendation: string;
   if (divergencePoints.length === 0) {
     recommendation = '✅ Tất cả trường phái đều đồng thuận — phân tích rất đáng tin cậy.';
   } else if (divergencePoints.length <= 2) {

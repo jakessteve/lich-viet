@@ -8,6 +8,9 @@ import React from 'react';
 export type FAQIntent =
   | 'chon-ngay-cuoi'
   | 'tang-le'
+  | 'nha-cua'
+  | 'tai-chinh'
+  | 'cong-viec'
   | 'xem-ngay';
 
 interface FAQCard {
@@ -20,7 +23,10 @@ interface FAQCard {
 
 const FAQ_CARDS: FAQCard[] = [
   { id: 'chon-ngay-cuoi', icon: '🏠', title: 'Chọn ngày cưới', desc: 'Ngày tốt cho đám cưới', needsSecondPerson: true },
-  { id: 'tang-le', icon: '🕯️', title: 'Tang lễ / Trùng Tang', desc: 'Kiểm tra nhập mộ an toàn', needsSecondPerson: false },
+  { id: 'tang-le', icon: '🕯️', title: 'Tang lễ', desc: 'Kiểm tra nhập mộ an toàn', needsSecondPerson: false },
+  { id: 'nha-cua', icon: '🏘️', title: 'Nhà cửa', desc: 'Động thổ, nhập trạch, sửa chữa', needsSecondPerson: false },
+  { id: 'tai-chinh', icon: '💰', title: 'Tài chính', desc: 'Ký hợp đồng, giao dịch', needsSecondPerson: false },
+  { id: 'cong-viec', icon: '💼', title: 'Công việc', desc: 'Khai trương, nhậm chức', needsSecondPerson: false },
   { id: 'xem-ngay', icon: '📅', title: 'Xem ngày tổng hợp', desc: 'Chọn ngày cho mọi hoạt động', needsSecondPerson: false },
 ];
 
@@ -32,7 +38,7 @@ interface FAQIntentCardsProps {
 const FAQIntentCards: React.FC<FAQIntentCardsProps> = ({ selectedIntent, onSelectIntent }) => {
   return (
     <div className="w-full">
-      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
         {FAQ_CARDS.map((card) => {
           const isActive = selectedIntent === card.id;
           return (

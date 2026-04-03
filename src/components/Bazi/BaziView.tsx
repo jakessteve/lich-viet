@@ -1,16 +1,16 @@
 /**
- * BaziView — Bát Tự / Tứ Trụ Main View
+ * BaziView — Bát Tự / Tứ Trụ Main View (Applet Architecture)
  *
  * Four Pillars of Destiny with unified multi-school analysis.
+ * Features DataSummaryBar collapse pattern for viewport liberation.
  */
 
-import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useAuthStore } from '../../stores/authStore';
 import { generateBaziChart, type BaziChart, type BaziSchool, type BaziInput } from '@lich-viet/core/bazi';
 import { getSolarDate as getVnSolarDate } from '../../packages/vn-lunar';
 import { BIRTH_HOURS, type Gender } from '../../services/tuvi/tuviTypes';
 import {
-  TIMEZONE_OPTIONS,
   INPUT_CLASS,
   SELECT_CLASS,
   timeZoneToLongitude,
@@ -20,6 +20,7 @@ import {
 import BaziResultsView from './BaziResultsView';
 import LocationPicker, { type SelectedLocation } from '../ChiemTinh/LocationPicker';
 import { computeBirthContext } from '../../services/shared/birthContext';
+import DataSummaryBar from '../shared/DataSummaryBar';
 
 
 
@@ -81,6 +82,7 @@ export default function BaziView() {
   const [chart, setChart] = useState<BaziChart | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleLocationSelect = useCallback((loc: SelectedLocation) => {
       setLatitude(loc.lat.toString());
@@ -189,10 +191,50 @@ export default function BaziView() {
     setError('');
   }, []);
 
+  // Build summary data for DataSummaryBar
+  const summaryDate = useMemo(() => {
+    if (!baziInput) return '';
+    const d = baziInput.dateObj;
+    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()} DL`;
+  }, [baziInput]);
+
   return (
     <div className="space-y-6">
-      {/* Input Card — matches Tử Vi layout */}
-      {!chart && (
+      {/* ═══ DataSummaryBar — Shown when chart is generated ═══ */}
+      {chart && !isEditing && (
+        <DataSummaryBar
+          name={name || 'Lá Số Bát Tự'}
+          date={summaryDate}
+          badges={[{ label: chart.school === 'cn' ? 'Trung Châu' : chart.school === 'tw' ? 'Bắc Phái' : 'Việt Nam' }]}
+          onEdit={() => setIsEditing(true)}
+          onReset={handleReset}
+        >
+          {/* Inline school selector */}
+          <select
+            value={chart.school || 'vi'}
+            onChange={(e) => {
+              const newSchool = e.target.value as BaziSchool;
+              setSchool(newSchool);
+              handleGenerate(newSchool);
+            }}
+            className="px-2.5 py-1.5 rounded-xl text-xs font-semibold border border-border-light dark:border-border-dark bg-surface-subtle-light dark:bg-surface-subtle-dark text-text-primary-light dark:text-text-primary-dark appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all"
+            style={{
+              paddingRight: '1.75rem',
+              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+              backgroundPosition: `right 0.25rem center`,
+              backgroundRepeat: `no-repeat`,
+              backgroundSize: `1.25em 1.25em`,
+            }}
+          >
+            <option value="vi">VN</option>
+            <option value="cn">TQ</option>
+            <option value="tw">ĐL</option>
+          </select>
+        </DataSummaryBar>
+      )}
+
+      {/* Input Card — shown when no chart OR editing */}
+      {(!chart || isEditing) && (
         <form
           className="card-surface"
           onSubmit={(e) => {
@@ -477,41 +519,9 @@ export default function BaziView() {
         </div>
       )}
 
-      {/* Results */}
-      {chart && !isLoading && (
+      {/* Results — School selector is now in DataSummaryBar above */}
+      {chart && !isLoading && !isEditing && (
         <div className="space-y-4 animate-fade-in-up" id="bazi-workspace">
-            {/* Action toolbar */}
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-                {/* Left side info */}
-                <div className="flex items-center gap-2 text-sm text-text-secondary-light dark:text-text-secondary-dark font-medium px-2">
-                    <span className="material-icons-round text-base text-gold dark:text-gold-dark">library_books</span>
-                    So Sánh & Phân Tích:
-                </div>
-                {/* Right Actions */}
-                <div className="flex items-center gap-2">
-                    <select
-                        value={chart.school || 'vi'}
-                        onChange={(e) => {
-                            const newSchool = e.target.value as BaziSchool;
-                            setSchool(newSchool);
-                            handleGenerate(newSchool);
-                        }}
-                        className="px-4 py-2 rounded-full text-xs font-semibold border-2 border-border-light dark:border-border-dark bg-surface-subtle-light dark:bg-surface-subtle-dark text-text-primary-light dark:text-text-primary-dark appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all relative custom-select-arrow"
-                        style={{
-                            paddingRight: '2.5rem',
-                            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                            backgroundPosition: `right 0.75rem center`,
-                            backgroundRepeat: `no-repeat`,
-                            backgroundSize: `1.5em 1.5em`
-                        }}
-                    >
-                        <option value="vi">Việt Nam (Lý Số)</option>
-                        <option value="cn">Trung Châu Phái</option>
-                        <option value="tw">Bắc Phái (Đài Loan)</option>
-                    </select>
-                </div>
-            </div>
-
             {chart && baziInput && (
                 <BaziResultsView chart={chart} input={baziInput} name={name} onReset={handleReset} />
             )}

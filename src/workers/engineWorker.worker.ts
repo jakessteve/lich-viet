@@ -22,6 +22,9 @@ const ENGINE_REGISTRY: Record<string, () => Promise<Record<string, (...args: unk
   calculateFlyingStars: () => import('../utils/flyingStarEngine').then(m => m as unknown as Record<string, (...args: unknown[]) => unknown>),
   calculateNumerology: () => import('../utils/numerologyEngine').then(m => m as unknown as Record<string, (...args: unknown[]) => unknown>),
   calculateNatalChart: () => import('../utils/natalChartCalculator').then(m => m as unknown as Record<string, (...args: unknown[]) => unknown>),
+  // Added from performance audit:
+  generateTuViChart: () => import('../services/tuvi/tuviEngine').then(m => m as unknown as Record<string, (...args: unknown[]) => unknown>),
+  generateFullNarrative: () => import('../services/interpretation/synthesisEngine').then(m => m as unknown as Record<string, (...args: unknown[]) => unknown>),
 };
 
 self.onmessage = async (event: MessageEvent<EngineTask>) => {

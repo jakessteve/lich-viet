@@ -35,11 +35,11 @@ export default function DetailedInterpretationPane({ chart }: DetailedInterpreta
                 <div className="relative p-6 overflow-hidden">
                     <PremiumPaywallModal featureName="Luận Giải Mệnh & 12 Cung" />
                     <div className="blur-md select-none opacity-40 pointer-events-none mt-4 space-y-4">
-                        <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-xl w-full"></div>
-                        <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-xl w-full"></div>
-                        <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-xl w-full"></div>
-                        <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-xl w-full"></div>
-                        <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-xl w-full"></div>
+                        <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-xl w-full" />
+                        <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-xl w-full" />
+                        <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-xl w-full" />
+                        <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-xl w-full" />
+                        <div className="h-12 bg-gray-200 dark:bg-gray-800 rounded-xl w-full" />
                     </div>
                 </div>
             ) : (
@@ -138,12 +138,12 @@ function PalaceAccordionItem({
                 </span>
             </button>
 
-            {/* ── Palace Content (flat, no nested accordions) ── */}
+            {/* ── Palace Content (Tabbed) ── */}
             <div
                 className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-[8000px] opacity-100' : 'max-h-0 opacity-0'}`}
             >
                 <div className="px-3 pb-4 pt-1">
-                    <PalaceFlatContent analysis={analysis} />
+                    <PalaceTabbedContent analysis={analysis} />
                 </div>
             </div>
         </div>
@@ -161,11 +161,23 @@ function DotIndicator({ color, title }: { color: string; title: string }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// PalaceFlatContent — All sections rendered flat (no nested collapse)
+// PalaceTabbedContent — Renders sections grouped into 4 tabs
 // ═══════════════════════════════════════════════════════════════════
 
-function PalaceFlatContent({ analysis }: { analysis: PalaceAnalysis }) {
-    const sections = useMemo(() => buildSections(analysis), [analysis]);
+type TabId = 'overview' | 'stars' | 'linkages' | 'modifiers';
+
+function PalaceTabbedContent({ analysis }: { analysis: PalaceAnalysis }) {
+    const [activeTab, setActiveTab] = useState<TabId>('overview');
+
+    const tabs: Record<TabId, SectionData[]> = useMemo(() => {
+        const allSections = buildSections(analysis);
+        return {
+            overview: allSections.filter(s => s.groupId === 'overview'),
+            stars: allSections.filter(s => s.groupId === 'stars'),
+            linkages: allSections.filter(s => s.groupId === 'linkages'),
+            modifiers: allSections.filter(s => s.groupId === 'modifiers'),
+        };
+    }, [analysis]);
 
     return (
         <div className="space-y-4">
@@ -180,29 +192,85 @@ function PalaceFlatContent({ analysis }: { analysis: PalaceAnalysis }) {
                 </div>
             )}
 
-            {/* All sections rendered as flat blocks */}
-            {sections.map((section, idx) => (
-                <div key={section.title}>
-                    {/* Section header */}
-                    <div className="flex items-center gap-2 mb-2">
-                        <span className={`w-1 h-5 rounded-full shrink-0 ${section.accentColor}`} />
-                        <span className="text-base font-bold text-text-primary-light/80 dark:text-text-primary-dark/80 tracking-wide">
-                            {section.title}
-                        </span>
-                    </div>
+            {/* Tab Navigation Pills */}
+            <div className="flex overflow-x-auto hide-scrollbar -mx-1 px-1 py-1 gap-1.5">
+                <TabPill
+                    label="Tổng Quan"
+                    icon="📋"
+                    isActive={activeTab === 'overview'}
+                    onClick={() => setActiveTab('overview')}
+                    hasContent={tabs.overview.length > 0}
+                />
+                <TabPill
+                    label="Tinh Hệ"
+                    icon="⭐"
+                    isActive={activeTab === 'stars'}
+                    onClick={() => setActiveTab('stars')}
+                    hasContent={tabs.stars.length > 0}
+                />
+                <TabPill
+                    label="Giao Luận"
+                    icon="🔗"
+                    isActive={activeTab === 'linkages'}
+                    onClick={() => setActiveTab('linkages')}
+                    hasContent={tabs.linkages.length > 0}
+                />
+                <TabPill
+                    label="Biến Số"
+                    icon="🌀"
+                    isActive={activeTab === 'modifiers'}
+                    onClick={() => setActiveTab('modifiers')}
+                    hasContent={tabs.modifiers.length > 0}
+                />
+            </div>
 
-                    {/* Section content */}
-                    <div className="pl-4 text-sm leading-relaxed text-text-primary-light/85 dark:text-text-primary-dark/85">
-                        {section.content}
-                    </div>
+            {/* Tab Content Area */}
+            <div className="min-h-[150px] animate-fade-in">
+                {tabs[activeTab].length > 0 ? (
+                    <div className="space-y-4">
+                        {tabs[activeTab].map((section, idx) => (
+                            <div key={section.title} className="bg-white/40 dark:bg-black/20 rounded-xl p-3.5 border border-border-light/5 dark:border-border-dark/10">
+                                {/* Section header */}
+                                <div className="flex items-center gap-2 mb-2.5">
+                                    <span className={`w-1 h-4 rounded-full shrink-0 ${section.accentColor}`} />
+                                    <span className="text-sm font-bold text-text-primary-light/90 dark:text-text-primary-dark/90 tracking-wide uppercase">
+                                        {section.title}
+                                    </span>
+                                </div>
 
-                    {/* Divider between sections (except last) */}
-                    {idx < sections.length - 1 && (
-                        <div className="mt-4 border-t border-border-light/8 dark:border-border-dark/8" />
-                    )}
-                </div>
-            ))}
+                                {/* Section content */}
+                                <div className="text-sm leading-relaxed text-text-primary-light/85 dark:text-text-primary-dark/85">
+                                    {section.content}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="h-24 flex items-center justify-center text-xs text-text-secondary-light dark:text-text-secondary-dark italic bg-white/40 dark:bg-black/20 rounded-xl border border-border-light/5 dark:border-border-dark/10">
+                        Không có dữ liệu nổi bật cho mục này.
+                    </div>
+                )}
+            </div>
         </div>
+    );
+}
+
+function TabPill({ label, icon, isActive, onClick, hasContent }: { label: string; icon: string; isActive: boolean; onClick: () => void; hasContent: boolean }) {
+    if (!hasContent) return null;
+    return (
+        <button
+            onClick={onClick}
+            className={`
+                flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap
+                ${isActive
+                    ? 'bg-gold/90 dark:bg-gold-dark text-white shadow-sm'
+                    : 'bg-surface-light/80 dark:bg-surface-dark/80 text-text-secondary-light dark:text-text-secondary-dark hover:bg-gold/10 dark:hover:bg-gold-dark/10 hover:text-gold dark:hover:text-gold-dark border border-border-light/10 dark:border-border-dark/10'
+                }
+            `}
+        >
+            <span>{icon}</span>
+            <span>{label}</span>
+        </button>
     );
 }
 
@@ -211,6 +279,7 @@ function PalaceFlatContent({ analysis }: { analysis: PalaceAnalysis }) {
 // ═══════════════════════════════════════════════════════════════════
 
 interface SectionData {
+    groupId: TabId;
     icon: string;
     title: string;
     accentColor: string;
@@ -220,8 +289,9 @@ interface SectionData {
 function buildSections(analysis: PalaceAnalysis): SectionData[] {
     const sections: SectionData[] = [];
 
-    // §1 Tổng Quan Cung — basic info + overall grade
+    // TỔNG QUAN TAB (Overview)
     sections.push({
+        groupId: 'overview',
         icon: '📋',
         title: 'Tổng Quan Cung',
         accentColor: 'bg-gold/70 dark:bg-gold-dark/70',
@@ -229,7 +299,7 @@ function buildSections(analysis: PalaceAnalysis): SectionData[] {
             <div className="space-y-2">
                 {analysis.basicInfo && <Line text={analysis.basicInfo} />}
                 {analysis.overallAssessment && (
-                    <div className="mt-2 p-2.5 rounded-lg bg-gradient-to-r from-gold/8 to-transparent dark:from-gold-dark/8 border border-gold/15 dark:border-gold-dark/15">
+                    <div className="mt-3 p-3 rounded-lg bg-gradient-to-br from-gold/10 to-transparent dark:from-gold-dark/10 border border-gold/20 dark:border-gold-dark/20 shadow-sm">
                         <Line text={analysis.overallAssessment} />
                     </div>
                 )}
@@ -237,72 +307,124 @@ function buildSections(analysis: PalaceAnalysis): SectionData[] {
         ),
     });
 
-    // §2 Chức Năng Cung
     if (analysis.palaceFunction) {
         sections.push({
+            groupId: 'overview',
             icon: '🏛️',
             title: 'Chức Năng Cung',
             accentColor: 'bg-violet-500/70 dark:bg-violet-400/70',
             content: (
-                <div className="space-y-2">
+                <div className="space-y-3">
                     <FuncRow label="Sức khỏe" color="rose" text={analysis.palaceFunction.health} />
                     <FuncRow label="Tính cách" color="violet" text={analysis.palaceFunction.personality} />
                     <FuncRow label="Sự nghiệp" color="amber" text={analysis.palaceFunction.career} />
-                    <div className="mt-2 p-2.5 rounded-lg bg-surface-light/50 dark:bg-surface-dark/50 border border-border-light/10 dark:border-border-dark/10">
-                        <span className="text-xs font-bold text-gold dark:text-gold-dark">Lưu ý: </span>
-                        <span className="text-xs text-text-secondary-light dark:text-text-secondary-dark italic">
+                    <div className="mt-3 p-3 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light/20 dark:border-border-dark/20 shadow-sm">
+                        <div className="text-xs font-bold text-violet-600 dark:text-violet-400 mb-1 flex items-center gap-1">
+                            <span className="material-icons-round text-sm">lightbulb</span> Lời khuyên:
+                        </div>
+                        <div className="text-sm text-text-primary-light/90 dark:text-text-primary-dark/90 italic pl-5 border-l-2 border-violet-200 dark:border-violet-800">
                             {analysis.palaceFunction.advice}
-                        </span>
+                        </div>
                     </div>
                 </div>
             ),
         });
     }
 
-    // §3 Chính Tinh & Ngũ Hành — includes palace summary + star meanings
+    // TINH HỆ TAB (Stars)
     sections.push({
+        groupId: 'stars',
         icon: '⭐',
         title: 'Chính Tinh & Ngũ Hành',
         accentColor: 'bg-yellow-500/70 dark:bg-yellow-400/70',
         content: (
-            <div className="space-y-2">
+            <div className="space-y-3">
                 {analysis.palaceSummary && <Line text={analysis.palaceSummary} />}
-                {analysis.starInterpretation.split('\n\n').map((paragraph, idx) => {
-                    if (paragraph.startsWith('- **')) {
-                        return (
-                            <div key={idx} className="pl-2.5 border-l-2 border-gold/30 dark:border-gold-dark/30">
-                                <Line text={paragraph} />
-                            </div>
-                        );
-                    }
-                    if (paragraph.startsWith('**')) {
-                        return (
-                            <h4 key={idx} className="text-xs font-bold text-gold dark:text-gold-dark mt-2.5 mb-1">
-                                {paragraph.replace(/\*\*/g, '')}
-                            </h4>
-                        );
-                    }
-                    return <Line key={idx} text={paragraph} />;
-                })}
+                
                 {analysis.elementAnalysis && (
-                    <div className="mt-2 pl-2.5 border-l-2 border-teal-400/40 dark:border-teal-500/40">
+                    <div className="my-2 p-2.5 rounded-md bg-teal-50/50 dark:bg-teal-900/10 border border-teal-200/40 dark:border-teal-700/30 text-teal-800 dark:text-teal-200 italic">
                         <Line text={analysis.elementAnalysis} />
+                    </div>
+                )}
+
+                {analysis.starInterpretation && (
+                    <div className="space-y-2.5 mt-2">
+                        {analysis.starInterpretation.split('\n\n').map((paragraph, idx) => {
+                            if (paragraph.startsWith('- **')) {
+                                return (
+                                    <div key={idx} className="pl-3 py-1 border-l-2 border-gold/30 dark:border-gold-dark/30 bg-surface-light/30 dark:bg-surface-dark/30 rounded-r-md">
+                                        <Line text={paragraph} />
+                                    </div>
+                                );
+                            }
+                            if (paragraph.startsWith('**')) {
+                                return (
+                                    <h4 key={idx} className="text-sm font-bold text-gold dark:text-gold-dark mt-3 mb-1">
+                                        {paragraph.replace(/\*\*/g, '')}
+                                    </h4>
+                                );
+                            }
+                            return <Line key={idx} text={paragraph} />;
+                        })}
                     </div>
                 )}
             </div>
         ),
     });
 
-    // §4 Tổ Hợp Sao
+    if (analysis.catHungGroups.catTinh.length > 0 || analysis.catHungGroups.hungSat.length > 0) {
+        sections.push({
+            groupId: 'stars',
+            icon: '✨',
+            title: 'Phân Bổ Cát Hung',
+            accentColor: 'bg-emerald-500/70 dark:bg-emerald-400/70',
+            content: (
+                <div className="space-y-3">
+                    {analysis.catHungGroups.catTinh.length > 0 && (
+                        <div>
+                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 block mb-1.5 uppercase tracking-wider">Cát Tinh Hội Tụ</span>
+                            <div className="flex flex-wrap gap-1.5">
+                                {analysis.catHungGroups.catTinh.map((s, i) => (
+                                    <span key={i} className="text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/50 shadow-sm">{s}</span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    {analysis.catHungGroups.hungSat.length > 0 && (
+                        <div>
+                            <span className="text-xs font-bold text-red-600 dark:text-red-400 block mb-1.5 uppercase tracking-wider">Hung Sát Tinh</span>
+                            <div className="flex flex-wrap gap-1.5">
+                                {analysis.catHungGroups.hungSat.map((s, i) => (
+                                    <span key={i} className="text-xs font-medium px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-700/50 shadow-sm">{s}</span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    {analysis.catHungGroups.dacBiet.length > 0 && (
+                        <div>
+                            <span className="text-xs font-bold text-blue-600 dark:text-blue-400 block mb-1.5 uppercase tracking-wider">Sao Phụ Trợ / Đặc Biệt</span>
+                            <div className="flex flex-wrap gap-1.5">
+                                {analysis.catHungGroups.dacBiet.map((s, i) => (
+                                    <span key={i} className="text-xs font-medium px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700/50 shadow-sm">{s}</span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ),
+        });
+    }
+
     if (analysis.starCombinations.length > 0) {
         sections.push({
-            icon: '🔗',
-            title: 'Tổ Hợp Sao',
+            groupId: 'stars',
+            icon: '🏆',
+            title: 'Cách Cục Mệnh',
             accentColor: 'bg-purple-500/70 dark:bg-purple-400/70',
             content: (
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                     {analysis.starCombinations.map((combo, idx) => (
-                        <div key={idx} className="pl-2.5 border-l-2 border-purple-400/40 dark:border-purple-500/40">
+                        <div key={idx} className="pl-3 py-1.5 border-l-2 border-purple-400/50 dark:border-purple-500/50 bg-purple-50/30 dark:bg-purple-900/10 rounded-r-md">
                             <Line text={combo} />
                         </div>
                     ))}
@@ -311,70 +433,27 @@ function buildSections(analysis: PalaceAnalysis): SectionData[] {
         });
     }
 
-    // §5 Cát Tinh & Hung Tinh
-    if (analysis.catHungGroups.catTinh.length > 0 || analysis.catHungGroups.hungSat.length > 0) {
-        sections.push({
-            icon: '✨',
-            title: 'Cát Tinh & Hung Tinh',
-            accentColor: 'bg-emerald-500/70 dark:bg-emerald-400/70',
-            content: (
-                <div className="space-y-2.5">
-                    {analysis.catHungGroups.catTinh.length > 0 && (
-                        <div>
-                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Cát Tinh</span>
-                            <div className="flex flex-wrap gap-1.5">
-                                {analysis.catHungGroups.catTinh.map((s, i) => (
-                                    <span key={i} className="text-xs px-2 py-1 rounded-md bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200/40 dark:border-emerald-700/30">{s}</span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                    {analysis.catHungGroups.hungSat.length > 0 && (
-                        <div>
-                            <span className="text-xs font-bold text-red-600 dark:text-red-400 block mb-1">Hung Tinh</span>
-                            <div className="flex flex-wrap gap-1.5">
-                                {analysis.catHungGroups.hungSat.map((s, i) => (
-                                    <span key={i} className="text-xs px-2 py-1 rounded-md bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200/40 dark:border-red-700/30">{s}</span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                    {analysis.catHungGroups.dacBiet.length > 0 && (
-                        <div>
-                            <span className="text-xs font-bold text-blue-600 dark:text-blue-400 block mb-1">Đặc biệt</span>
-                            <div className="flex flex-wrap gap-1.5">
-                                {analysis.catHungGroups.dacBiet.map((s, i) => (
-                                    <span key={i} className="text-xs px-2 py-1 rounded-md bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200/40 dark:border-blue-700/30">{s}</span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            ),
-        });
-    }
-
-    // §6 Tứ Hóa Phân Tích
     if (analysis.tuHoaDeepAnalysis.length > 0 || analysis.tuHoaCombinations.length > 0) {
         sections.push({
-            icon: '🌀',
-            title: 'Tứ Hóa Phân Tích',
+            groupId: 'stars',
+            icon: '💫',
+            title: 'Tứ Hóa Tương Tác',
             accentColor: 'bg-indigo-500/70 dark:bg-indigo-400/70',
             content: (
-                <div className="space-y-2">
+                <div className="space-y-3">
                     {analysis.tuHoaCombinations.length > 0 && (
                         <div className="space-y-2">
                             {analysis.tuHoaCombinations.map((entry, idx) => (
-                                <div key={idx} className="p-2.5 rounded-lg bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-200/30 dark:border-indigo-700/30">
+                                <div key={idx} className="p-3 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200/50 dark:border-indigo-700/50 shadow-sm">
                                     <Line text={entry} />
                                 </div>
                             ))}
                         </div>
                     )}
                     {analysis.tuHoaDeepAnalysis.length > 0 && (
-                        <div className="space-y-2">
+                        <div className="space-y-2 mt-2">
                             {analysis.tuHoaDeepAnalysis.map((entry, idx) => (
-                                <div key={idx} className="pl-2.5 border-l-2 border-emerald-400/40 dark:border-emerald-500/40">
+                                <div key={idx} className="font-medium text-indigo-800 dark:text-indigo-200 pl-3 border-l-2 border-indigo-300 dark:border-indigo-600">
                                     <Line text={entry} />
                                 </div>
                             ))}
@@ -385,9 +464,10 @@ function buildSections(analysis: PalaceAnalysis): SectionData[] {
         });
     }
 
-    // §7 Tam Hợp Chiếu
+    // GIAO LUẬN TAB (Linkages)
     if (analysis.tamHopAnalysis) {
         sections.push({
+            groupId: 'linkages',
             icon: '🔺',
             title: 'Tam Hợp Chiếu',
             accentColor: 'bg-orange-500/70 dark:bg-orange-400/70',
@@ -395,17 +475,17 @@ function buildSections(analysis: PalaceAnalysis): SectionData[] {
         });
     }
 
-    // §8 Đối Cung & Giáp Cung
     if (analysis.doiCungAnalysis || analysis.giapCungAnalysis) {
         sections.push({
+            groupId: 'linkages',
             icon: '🔄',
             title: 'Đối Cung & Giáp Cung',
             accentColor: 'bg-sky-500/70 dark:bg-sky-400/70',
             content: (
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                     {analysis.doiCungAnalysis && <Line text={analysis.doiCungAnalysis} />}
                     {analysis.giapCungAnalysis && (
-                        <div className="pl-2.5 border-l-2 border-sky-400/40 dark:border-sky-500/40">
+                        <div className="pl-3 py-1.5 border-l-2 border-sky-400/50 dark:border-sky-500/50 bg-sky-50/30 dark:bg-sky-900/10 rounded-r-md mt-2">
                             <Line text={analysis.giapCungAnalysis} />
                         </div>
                     )}
@@ -414,9 +494,9 @@ function buildSections(analysis: PalaceAnalysis): SectionData[] {
         });
     }
 
-    // §9 Nhị Hợp & Lục Hại
     if (analysis.nhiHopAnalysis) {
         sections.push({
+            groupId: 'linkages',
             icon: '🤝',
             title: 'Nhị Hợp & Lục Hại',
             accentColor: 'bg-cyan-500/70 dark:bg-cyan-400/70',
@@ -424,9 +504,10 @@ function buildSections(analysis: PalaceAnalysis): SectionData[] {
         });
     }
 
-    // §10 Vòng Tràng Sinh
+    // BIẾN SỐ TAB (Modifiers)
     if (analysis.changShengAnalysis) {
         sections.push({
+            groupId: 'modifiers',
             icon: '♻️',
             title: 'Vòng Tràng Sinh',
             accentColor: 'bg-lime-500/70 dark:bg-lime-400/70',
@@ -434,16 +515,16 @@ function buildSections(analysis: PalaceAnalysis): SectionData[] {
         });
     }
 
-    // §10 Tuần Không / Triệt Không
     if (analysis.tuanTrietAnalysis.length > 0) {
         sections.push({
+            groupId: 'modifiers',
             icon: '🚫',
-            title: 'Tuần Không / Triệt Không',
-            accentColor: 'bg-amber-500/70 dark:bg-amber-400/70',
+            title: 'Tuần Triệt Không Vong',
+            accentColor: 'bg-amber-600/70 dark:bg-amber-500/70',
             content: (
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                     {analysis.tuanTrietAnalysis.map((entry, idx) => (
-                        <div key={idx} className="p-2.5 rounded-lg bg-amber-50/50 dark:bg-amber-900/10 border border-amber-200/30 dark:border-amber-700/30">
+                        <div key={idx} className="p-3 rounded-md bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 dark:border-amber-600 shadow-sm text-amber-900 dark:text-amber-100">
                             <Line text={entry} />
                         </div>
                     ))}
@@ -460,17 +541,17 @@ function buildSections(analysis: PalaceAnalysis): SectionData[] {
 // ═══════════════════════════════════════════════════════════════════
 
 const FUNC_COLORS = {
-    rose: { border: 'border-rose-400/40 dark:border-rose-500/40', label: 'text-rose-600 dark:text-rose-400' },
-    violet: { border: 'border-violet-400/40 dark:border-violet-500/40', label: 'text-violet-600 dark:text-violet-400' },
-    amber: { border: 'border-amber-400/40 dark:border-amber-500/40', label: 'text-amber-600 dark:text-amber-400' },
+    rose: { border: 'border-rose-400 dark:border-rose-500', label: 'text-rose-600 dark:text-rose-400' },
+    violet: { border: 'border-violet-400 dark:border-violet-500', label: 'text-violet-600 dark:text-violet-400' },
+    amber: { border: 'border-amber-400 dark:border-amber-500', label: 'text-amber-600 dark:text-amber-400' },
 } as const;
 
 function FuncRow({ label, color, text }: { label: string; color: keyof typeof FUNC_COLORS; text: string }) {
     const c = FUNC_COLORS[color];
     return (
-        <div className={`pl-2.5 border-l-2 ${c.border} py-0.5`}>
-            <span className={`text-xs font-bold ${c.label}`}>{label}: </span>
-            <span className="text-text-primary-light/80 dark:text-text-primary-dark/80">{text}</span>
+        <div className={`pl-3 border-l-2 ${c.border} py-1`}>
+            <span className={`text-xs font-bold uppercase tracking-wider ${c.label} block mb-0.5`}>{label}</span>
+            <span className="text-sm font-medium text-text-primary-light/85 dark:text-text-primary-dark/85">{text}</span>
         </div>
     );
 }
@@ -492,3 +573,4 @@ function Line({ text }: { text: string }) {
         </span>
     );
 }
+

@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import Icon from '../shared/Icon';
 import type { TuViChartData, ChartInput, TuViPalace } from '../../services/tuvi/tuviTypes';
 import TuViGrid from './TuViGrid';
 import TongQuanLaSo from './TongQuanLaSo';
+import LuanGiaiLinhVucPane from './LuanGiaiLinhVucPane';
 import DetailedInterpretationPane from './DetailedInterpretationPane';
 import AcademicToggle from '../shared/AcademicToggle';
 import DaiVanPane from './DaiVanPane';
@@ -16,7 +16,6 @@ import { generateFullNarrative } from '../../services/interpretation/synthesisEn
 import PdfDownloadButton from '../shared/PdfDownloadButton';
 import ShareButton from '../shared/ShareButton';
 import PremiumStickyActionBar from '../shared/PremiumStickyActionBar';
-import ProModeToggle from '../shared/ProModeToggle';
 
 interface TuViWorkspaceProps {
   readonly chart: TuViChartData;
@@ -112,6 +111,9 @@ export default function TuViWorkspace({ chart, input, chartRef, onUpdateInput, i
 
       {/* ② Tổng Quan Lá Số — Unified Hook (ALL TIERS) */}
       <TongQuanLaSo chart={chart} />
+
+      {/* ②.5 Luận Giải Các Lĩnh Vực — Independent Pane (ALL TIERS with Free/Guest gating inside) */}
+      <LuanGiaiLinhVucPane chart={chart} />
 
       {/* ②b Multi-School Tab Switcher — PREMIUM */}
       <ContentGate requiredTier="premium" sectionTitle="Phân Tích Đa Trường Phái" showBlurPreview>

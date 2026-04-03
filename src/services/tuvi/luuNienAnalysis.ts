@@ -41,20 +41,20 @@ export interface LuuNienAnalysis {
 /** Key Lưu Niên palace names to analyze (in order) */
 const LUU_NIEN_KEY_PALACES = ['Mệnh', 'Tài Bạch', 'Quan Lộc', 'Phu Thê', 'Phúc Đức'];
 
-/** Classical interpretation templates for palace roles */
+/** Conversational interpretation templates for palace roles */
 const PALACE_ROLE_CONTEXT: Record<string, string> = {
-    'Mệnh': 'Tổng vận năm nay — phản ánh tâm thể, sức khỏe, tâm trạng và hướng đi chủ đạo.',
-    'Tài Bạch': 'Tài chính năm nay — thu nhập, chi tiêu, cơ hội tài lộc và rủi ro tài chính.',
-    'Quan Lộc': 'Sự nghiệp năm nay — công danh, thăng tiến, thay đổi nghề nghiệp.',
-    'Phu Thê': 'Tình cảm năm nay — mối quan hệ tình cảm, hôn nhân, đối tác.',
-    'Phúc Đức': 'Phúc đức năm nay — may mắn, sức khỏe tinh thần, sự bình an nội tâm.',
-    'Thiên Di': 'Di chuyển năm nay — quan hệ xã hội, đi xa, thay đổi môi trường.',
-    'Huynh Đệ': 'Anh em, bằng hữu năm nay — người đồng hành, cộng sự, hợp tác.',
-    'Tử Tức': 'Con cái năm nay — vấn đề con cái, dự án sáng tạo, đầu tư.',
-    'Tật Ách': 'Sức khỏe năm nay — bệnh tật, tai nạn, áp lực tinh thần.',
-    'Điền Trạch': 'Nhà cửa năm nay — bất động sản, gia đình, nơi ở.',
-    'Nô Bộc': 'Nhân sự năm nay — thuộc hạ, cộng sự, người dưới quyền.',
-    'Phụ Mẫu': 'Cha mẹ năm nay — các bậc bề trên, giấy tờ, pháp luật.',
+    'Mệnh': 'Năm nay, trọng tâm của bạn xoay quanh vấn đề năng lượng bản thân, sức khỏe tổng quan và hướng đi chủ đạo trong cuộc sống.',
+    'Tài Bạch': 'Về phương diện tài chính, đây là lúc cần chú ý đến dòng tiền, các cơ hội gia tăng thu nhập cũng như rủi ro hao tài.',
+    'Quan Lộc': 'Trong công việc và sự nghiệp, năm nay mang đến những mốc thời gian quan trọng về thăng tiến hoặc thay đổi môi trường làm việc.',
+    'Phu Thê': 'Về mặt tình cảm và các mối quan hệ gắn kết (hôn nhân, đối tác), năm nay sẽ có những điểm nhấn đáng chú ý.',
+    'Phúc Đức': 'Về khía cạnh tinh thần và may mắn cốt lõi, đây là lúc đánh giá lại sự bình an nội tâm và phước báu của bạn.',
+    'Thiên Di': 'Các hoạt động giao tế xã hội, thay đổi môi trường hoặc những chuyến đi xa sẽ mang lại nhiều tác động trong năm nay.',
+    'Huynh Đệ': 'Mối quan hệ với anh chị em, bạn bè thân thiết hoặc cộng sự sẽ là một chủ đề quan trọng bạn cần lưu tâm.',
+    'Tử Tức': 'Những vấn đề liên quan đến con cái, người dưới quyền hoặc các dự án đầu tư tâm huyết của bạn sẽ nổi bật.',
+    'Tật Ách': 'Bạn cần đặc biệt lưu ý chăm sóc bản thân, phòng ngừa bệnh tật hoặc giải tỏa những áp lực tinh thần tiềm ẩn.',
+    'Điền Trạch': 'Các vấn đề liên quan đến nhà cửa, bất động sản và môi trường sống của gia đình bạn có thể sẽ có biến động.',
+    'Nô Bộc': 'Mối quan hệ với cấp dưới, đối tác xã giao hoặc khách quan sẽ đem lại cho bạn cả cơ hội lẫn thử thách.',
+    'Phụ Mẫu': 'Năm nay, bạn cần dành sự quan tâm cho các bậc bề trên, cha mẹ hoặc chú ý các vấn đề liên quan đến giấy tờ, pháp lý.',
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -149,21 +149,21 @@ export function getLuuNienAnalysis(chart: TuViChartData): LuuNienAnalysis | null
 
         // Natal stars in this palace
         if (natalMajorStars.length > 0) {
-            parts.push(`Chính tinh gốc: ${natalMajorStars.join(', ')}.`);
+            parts.push(`Với năng lượng nền tảng từ chòm sao ${natalMajorStars.join(', ')}, bạn có cơ sở nội lực vững vàng để đối diện với các vấn đề này.`);
         } else {
-            parts.push('Cung này vô chính diệu, chịu ảnh hưởng từ cung chiếu và phụ tinh.');
+            parts.push('Tuy nhiên, do cung này không có chính tinh tọa thủ (Vô Chính Diệu), bạn sẽ dễ bị tác động bởi hoàn cảnh bên ngoài và cần linh hoạt ứng biến theo thời cuộc.');
         }
 
-        // Overlay stars (Lưu Niên tinh)
+        // Overlay stars (Lưu Niên tinh) const overlayStars = ... is evaluated above
         if (overlayStars.length > 0) {
-            parts.push(`Sao lưu niên: ${overlayStars.join(', ')}.`);
+            parts.push(`Đặc biệt, sự hiện diện của các sao lưu niên như ${overlayStars.join(', ')} sẽ trực tiếp kích phát nhiều sự kiện hội tụ trong năm.`);
         }
 
         // Lưu Niên Tứ Hóa landing in this palace
         const tuHoaHere = tuHoaYearly.filter(t => t.palaceName === palace.name);
         if (tuHoaHere.length > 0) {
-            const labels = tuHoaHere.map(t => `${t.starName} ${t.mutagenLabel}`).join(', ');
-            parts.push(`Lưu Niên Tứ Hóa tại đây: ${labels}.`);
+            const labels = tuHoaHere.map(t => `${t.starName} biến thành ${t.mutagenLabel}`).join('; ');
+            parts.push(`Điểm nhấn đáng kể là dấu ấn của Tứ Hóa bay về đây (${labels}), mang đến nguồn năng lượng chuyển hóa mạnh mẽ.`);
         }
 
         // Auspicious / malefic star assessment
@@ -176,17 +176,33 @@ export function getLuuNienAnalysis(chart: TuViChartData): LuuNienAnalysis | null
         const hasHoaLoc = tuHoaHere.some(t => t.mutagenLabel === 'Hóa Lộc');
         const hasHoaKy = tuHoaHere.some(t => t.mutagenLabel === 'Hóa Kỵ');
 
+        // Conversational conclusion
+        const conclusions: string[] = [];
         if (hasHoaLoc || hasLocTon) {
-            parts.push('→ Năm nay có tài lộc khá, cơ hội phát triển tích cực.');
-        }
-        if (hasHoaKy) {
-            parts.push('→ Hóa Kỵ rơi vào đây — cần cẩn trọng, dễ gặp trở ngại hoặc thị phi.');
+            conclusions.push('mở ra những cơ hội đón nhận tài lộc, sự sinh sôi và những kết quả rực rỡ mang tính tích cực');
         }
         if (hasAuspicious && !hasMalefic) {
-            parts.push('→ Cát tinh hội tụ, năm thuận lợi cho lĩnh vực này.');
+            conclusions.push('dễ dàng gặp được quý nhân phù trợ, mọi việc diễn ra khá hanh thông và thuận lợi');
+        }
+        if (hasHoaKy) {
+            conclusions.push('tiềm ẩn những rắc rối, thị phi hoặc cảm giác bế tắc cần kiên nhẫn tháo gỡ');
         }
         if (hasMalefic && !hasAuspicious) {
-            parts.push('→ Có sát tinh, cần chú ý phòng tránh rủi ro.');
+            conclusions.push('cảnh báo những chướng ngại, áp lực hoặc rủi ro bất ngờ đòi hỏi sự phòng bị kỹ lưỡng');
+        }
+
+        if (conclusions.length > 0) {
+            let conclusionText: string;
+            if (conclusions.length === 1) {
+                conclusionText = conclusions[0];
+            } else if (conclusions.length === 2) {
+                conclusionText = conclusions[0] + ', nhưng đồng thời cũng ' + conclusions[1];
+            } else {
+                conclusionText = conclusions.slice(0, -1).join(', ') + ', và ' + conclusions[conclusions.length - 1];
+            }
+            parts.push(`👉 Lời khuyên: Tổ hợp sao báo hiệu năm nay sẽ ${conclusionText}.`);
+        } else {
+            parts.push('👉 Lời khuyên: Hãy giữ trạng thái cân bằng, làm tốt công việc hiện tại vì đây là khoảng thời gian bình ổn, không có quá nhiều xáo trộn lớn ở khía cạnh này.');
         }
 
         palaceAnalyses.push({
@@ -211,29 +227,29 @@ export function getLuuNienAnalysis(chart: TuViChartData): LuuNienAnalysis | null
             ['Kình Dương', 'Đà La', 'Hỏa Tinh', 'Linh Tinh', 'Địa Không', 'Địa Kiếp'].includes(s.name));
 
         if (hasMajors && menhAuspicious.length > 0 && menhMalefic.length === 0) {
-            assessmentParts.push(`Lưu Niên Mệnh rơi vào cung ${luuNienMenhPalace} — có chính tinh tọa thủ và cát tinh hội tụ. Nhìn chung, đây là một năm thuận lợi.`);
+            assessmentParts.push(`Năm nay, trọng tâm cuộc vận (Lưu Niên Mệnh) của bạn rơi vào cung ${luuNienMenhPalace}. Sở hữu dàn chính tinh hội tụ cùng nhiều cát tinh ủng hộ, đây hứa hẹn sẽ là một năm rực rỡ, mọi sự thuận lợi hanh thông và có nhiều bước tiến lớn cần nắm bắt.`);
         } else if (hasMajors && menhMalefic.length > 0) {
-            assessmentParts.push(`Lưu Niên Mệnh rơi vào cung ${luuNienMenhPalace} — có chính tinh tọa thủ nhưng cũng có sát tinh. Năm có cả cơ hội lẫn thử thách, cần khéo léo ứng biến.`);
+            assessmentParts.push(`Năm nay, trọng tâm cuộc vận (Lưu Niên Mệnh) rơi vào cung ${luuNienMenhPalace}. Dù có nền tảng chính tinh vững chắc, sự đan xen của các sát tinh cho thấy bạn sẽ trải qua một năm đầy biến động — cơ hội luôn song hành cùng thử thách, đòi hỏi bản lĩnh ứng biến cao.`);
         } else if (!hasMajors) {
-            assessmentParts.push(`Lưu Niên Mệnh rơi vào cung ${luuNienMenhPalace} — cung vô chính diệu. Năm nay chịu nhiều ảnh hưởng từ hoàn cảnh bên ngoài, cần chủ động hơn.`);
+            assessmentParts.push(`Năm nay, trọng tâm cuộc vận (Lưu Niên Mệnh) rơi vào cung ${luuNienMenhPalace} — một cung Vô Chính Diệu. Năng lượng năm nay khá bấp bênh, bạn sẽ chịu nhiều tác động từ hoàn cảnh bên ngoài. Hãy học cách mượn lực từ quý nhân thay vì tự mình gánh vác mọi thứ.`);
         } else {
-            assessmentParts.push(`Lưu Niên Mệnh rơi vào cung ${luuNienMenhPalace}.`);
+            assessmentParts.push(`Năm nay, trọng tâm cuộc vận (Lưu Niên Mệnh) rơi vào cung ${luuNienMenhPalace}. Đây là giai đoạn để bạn củng cố nội lực và hành động dựa trên những gì đã tích lũy.`);
         }
     }
 
     // Đại Hạn note
     if (daiHanPalace) {
-        assessmentParts.push(`Đại Hạn hiện tại: ${daiHanPalace} (${daiHanRange}). Lưu Niên nằm trong bối cảnh Đại Hạn này.`);
+        assessmentParts.push(`(Ghi chú: Vận trình lưu niên này nằm trong bối cảnh vĩ mô của Đại Hạn ${daiHanRange} tại cung ${daiHanPalace}).`);
     }
 
     // Lưu Niên Tứ Hóa summary
     const locPalaces = tuHoaYearly.filter(t => t.mutagenLabel === 'Hóa Lộc').map(t => t.palaceName);
     const kyPalaces = tuHoaYearly.filter(t => t.mutagenLabel === 'Hóa Kỵ').map(t => t.palaceName);
     if (locPalaces.length > 0) {
-        assessmentParts.push(`Hóa Lộc năm nay chiếu vào cung ${locPalaces.join(', ')} — hướng tài lộc thuận lợi.`);
+        assessmentParts.push(`✨ Điểm sáng lớn nhất: Hóa Lộc chiếu rọi cung ${locPalaces.join(', ')}, báo hiệu đây là nơi khởi nguồn cho tài lộc, sự sinh sôi và cơ hội tốt lành nhất trong năm.`);
     }
     if (kyPalaces.length > 0) {
-        assessmentParts.push(`Hóa Kỵ năm nay rơi vào cung ${kyPalaces.join(', ')} — lĩnh vực cần cẩn trọng.`);
+        assessmentParts.push(`⚠️ Góc khuất cần lưu tâm: Hóa Kỵ ngự tại cung ${kyPalaces.join(', ')}, hãy đặc biệt cẩn trọng với những quyết định liên quan đến lĩnh vực này để tránh chuốc lấy phiền muộn, thị phi.`);
     }
 
     return {

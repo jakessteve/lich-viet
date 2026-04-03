@@ -1,17 +1,14 @@
 import {
-    getLunarDate,
     getNapAmForStemBranch,
     getSolarTermForDate,
     classifyBirthHour,
     getCanChiYear,
     getCanChiDay,
     parseCanChi,
-    getHourCanChi,
-    getJDN
+    getHourCanChi
 } from '../../sharedCore';
 import type { ChartInput, TuViChartData, TuViPalace, TuViStar, StageInfo } from '../tuviTypes';
 import { calculateSihuaFlows } from '../sihuaEngine';
-import { getTuHoaTable } from '../tuHoaTables';
 import { applyTemporalOverlays } from './temporalEngine';
 
 import {
@@ -113,7 +110,7 @@ export abstract class BaseTuViEngine {
     protected maIndex!: number;
     protected yangIndex!: number;
     protected tuoIndex!: number;
-    protected ys!: any; // yearly star indices
+    protected ys!: Record<string, number>; // yearly star indices
 
     constructor(input: ChartInput) {
         this.input = input;
@@ -184,8 +181,8 @@ export abstract class BaseTuViEngine {
             const distFromSoul = fixIndex(i - this.soulIndex);
             this.palaces[i].name = palaceNames[distFromSoul];
 
-            let decadalStart = this.cucVal + i * 10;
-            let decadalIndex = this.yinYangDir === 1 ? fixIndex(this.soulIndex + i) : fixIndex(this.soulIndex - i);
+            const decadalStart = this.cucVal + i * 10;
+            const decadalIndex = this.yinYangDir === 1 ? fixIndex(this.soulIndex + i) : fixIndex(this.soulIndex - i);
             
             this.palaces[decadalIndex].stage = {
                 range: [decadalStart, decadalStart + 9],
@@ -202,7 +199,7 @@ export abstract class BaseTuViEngine {
 
     protected addStar(palaceIndex: number, starId: keyof typeof STAR_NAMES, type: TuViStar['type'], scope: TuViStar['scope'] = 'origin', forceName?: string) {
         const name = forceName || STAR_NAMES[starId] || starId;
-        const info = (STARS_INFO as any)[starId];
+        const info = (STARS_INFO as Record<string, { brightness?: string[] }>)[starId];
         
         const viBrightnessMap: Record<string, string> = {
             'miao': 'Miếu', 'wang': 'Vượng', 'de': 'Đắc',
@@ -366,8 +363,16 @@ export abstract class BaseTuViEngine {
         this.addStar(ms.tianwuIndex, 'tianwu', 'adjective');
 
         this.palaces[this.ys.xunkongIndex].hasTuanKhong = true;
+        this.addStar(this.ys.xunkongIndex, 'xunkong', 'adjective', 'origin', 'Tuần Không');
+
         if (typeof this.ys.jiekongIndex === 'number') {
             this.palaces[this.ys.jiekongIndex].hasTrietKhong = true;
+            this.addStar(this.ys.jiekongIndex, 'jielu', 'adjective', 'origin', 'Triệt Lộ');
+        }
+        
+        // Không Vong (usually derived from Tuần Khong but mapped directly)
+        if (typeof this.ys.kongwangIndex === 'number') {
+             this.addStar(this.ys.kongwangIndex, 'kongwang', 'adjective', 'origin', 'Không Vong');
         }
 
         // ── Stars added post-audit: missing from classical Vietnamese charts ──
@@ -401,9 +406,10 @@ export abstract class BaseTuViEngine {
         const targetYear = this.input.targetYear || currentYear;
 
         const dayCanChiStr = getCanChiDay(this.solarDateObj);
-        const dayCan = dayCanChiStr.split(' ')[0] as any;
-        const dayChi = dayCanChiStr.split(' ')[1] as any;
-        const hourCanChiObj = getHourCanChi(dayCan, VI_CHI[this.timeIndex] as any);
+        const dayCan = dayCanChiStr.split(' ')[0] as never; // getHourCanChi strictly expects never or specific template types if it's external, actually we can just use // eslint-disable-next-line
+        const dayChi = dayCanChiStr.split(' ')[1] as never;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const hourCanChiObj = getHourCanChi(dayCan as any, VI_CHI[this.timeIndex] as any);
         const hourCanChiStr = `${hourCanChiObj.can} ${hourCanChiObj.chi}`;
         
         const tigerStemStartRule = [2, 4, 6, 8, 0];

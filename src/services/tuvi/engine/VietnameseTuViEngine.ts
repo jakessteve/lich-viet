@@ -2,6 +2,7 @@ import { BaseTuViEngine, VI_CHI } from './BaseTuViEngine';
 import { getKuiYueIndex, fixIndex } from './starLocation';
 import { getLunarDate } from '../../sharedCore';
 import { getTuHoaTable } from '../tuHoaTables';
+import { TuViStar } from '../tuviTypes';
 
 export class VietnameseTuViEngine extends BaseTuViEngine {
     
@@ -74,7 +75,7 @@ export class VietnameseTuViEngine extends BaseTuViEngine {
         }
     }
 
-    protected calcQuangQuy(enguangDefault: number, tianguiDefault: number): void {
+    protected calcQuangQuy(_enguangDefault: number, _tianguiDefault: number): void {
         // Vietnamese rule: Quang Quy exact offset from Xuong Khuc
         // Ân Quang: Văn Xương + Day - 2
         // Thiên Quý: Văn Khúc - Day + 2 (which is equivalent to backstep Day - 2)
@@ -147,7 +148,7 @@ export class VietnameseTuViEngine extends BaseTuViEngine {
                     const allStars = [...palace.majorStars, ...palace.minorStars, ...palace.adjectiveStars];
                     const found = allStars.find(s => s.name === starName);
                     if (found) {
-                        (found as any).mutagen = [...(found.mutagen || []), label];
+                        (found as TuViStar & { mutagen?: string[] }).mutagen = [...(found.mutagen || []), label];
                         break;
                     }
                 }

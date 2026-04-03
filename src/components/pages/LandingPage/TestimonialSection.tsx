@@ -33,6 +33,8 @@ const TESTIMONIALS: Testimonial[] = [
   },
 ];
 
+import MysticBackgroundPattern from './MysticBackgroundPattern';
+
 const TestimonialSection: React.FC = () => {
   const [active, setActive] = useState(0);
 
@@ -44,8 +46,12 @@ const TestimonialSection: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-16 sm:py-20 px-5 relative z-10">
-      <div className="max-w-3xl mx-auto">
+    <section className="py-16 sm:py-20 px-5 relative z-10 overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-40 dark:opacity-60 pointer-events-none z-0">
+        <MysticBackgroundPattern variant="luoshu" />
+      </div>
+      <div className="max-w-3xl mx-auto relative z-10">
         <div className="text-center mb-10">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold dark:text-gold-dark mb-2">
             Cộng đồng

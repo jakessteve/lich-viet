@@ -32,7 +32,9 @@ describe('MonthCalendar', () => {
         render(<MonthCalendar selectedDate={defaultDate} onSelectDate={mockOnSelectDate} />);
         const weekDayLabels = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
         weekDayLabels.forEach(label => {
-            expect(screen.getByText(label)).toBeInTheDocument();
+            // Use getAllByText because some labels (e.g. T7) also appear in the legend
+            const matches = screen.getAllByText(label);
+            expect(matches.length).toBeGreaterThanOrEqual(1);
         });
     });
 

@@ -57,6 +57,10 @@ function getWorker(): Worker {
 
     worker.onerror = (event) => {
       console.error('[Worker] Unhandled error:', event.message);
+      for (const pending of pendingTasks.values()) {
+        pending.reject(new Error(`Worker exception: ${event.message}`));
+      }
+      pendingTasks.clear();
     };
   }
   return worker;

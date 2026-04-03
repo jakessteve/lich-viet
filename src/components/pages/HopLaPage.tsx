@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useRef, useEffect, Suspense } from 'react';
+import React, { useState, useRef, useEffect, useCallback, Suspense } from 'react';
 import { useAuthStore } from '../../stores/authStore';
 import PersonInput, { type PersonData } from '../shared/PersonInput';
 import SynergyRadar from '../shared/SynergyRadar';
 import BondsScoreCard from '../shared/BondsScoreCard';
 import { ContentGate } from '../shared/ContentGate';
 import EngineTabNav, { type EngineTab } from '../shared/EngineTabNav';
+import DataSummaryBar from '../shared/DataSummaryBar';
 
 const SocialShareCard = React.lazy(() => import('../shared/SocialShareCard'));
 
@@ -21,10 +22,10 @@ export default function HopLaPage() {
 
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [results, setResults] = useState<{
-    tuvi: any;
-    bazi: any;
-    num: any;
-    western: any;
+    tuvi: { totalScore: number; detail: string; phuTheSummaryA: string; phuTheSummaryB: string } | null;
+    bazi: { totalScore: number; maxScore: number; detail: string; layers: { detail: string }[] } | null;
+    num: { totalScore: number; detail: string } | null;
+    western: { score: number; aspects: { description: string; orb: number; score: number }[] } | null;
     radarData: Record<string, number>;
   } | null>(null);
 
@@ -143,6 +144,12 @@ export default function HopLaPage() {
     }
   };
 
+  const handleReset = useCallback(() => {
+    setResults(null);
+    setIsFormCollapsed(false);
+    setSynastryType('all');
+  }, []);
+
   return (
     <div className="mystery-bg max-w-[1400px] mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in relative grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[calc(100vh-4rem)] auto-rows-min pb-24 lg:pb-8">
       {/* Background decoration */}
@@ -164,15 +171,12 @@ export default function HopLaPage() {
 
         {/* Input Cards */}
         {isFormCollapsed && (
-          <div className="flex justify-center mb-8">
-            <button 
-              onClick={() => setIsFormCollapsed(false)}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-full glass-card hover-lift text-sm font-semibold text-text-primary-light dark:text-text-primary-dark shadow-sm bg-white/50 dark:bg-black/20 border border-primary-light/10 dark:border-primary-dark/10"
-            >
-              <span className="material-icons-round text-lg text-purple-500">edit</span>
-              Đang xem: {personA.name || 'Người A'} & {personB.name || 'Người B'} - <span className="underline opacity-70">Sửa</span>
-            </button>
-          </div>
+          <DataSummaryBar
+            name={`${personA.name || 'Người A'} & ${personB.name || 'Người B'}`}
+            badges={[{ label: TYPE_OPTIONS.find(o => o.id === synastryType)?.label || 'Toàn Diện' }]}
+            onEdit={() => setIsFormCollapsed(false)}
+            onReset={handleReset}
+          />
         )}
         <div className={`grid grid-cols-1 gap-6 max-w-3xl mx-auto transition-all duration-500 origin-top overflow-hidden ${isFormCollapsed ? 'max-h-0 opacity-0 mb-0 scale-y-95' : 'max-h-[1200px] opacity-100 mb-8 scale-y-100'}`}>
           <div className="glass-card-strong hover-lift p-6 relative overflow-hidden group">
@@ -376,7 +380,7 @@ export default function HopLaPage() {
                     </div>
 
                     <div className="space-y-2.5">
-                      {results.bazi.layers.slice(0, 4).map((layer: any, idx: number) => (
+                      {results.bazi.layers.slice(0, 4).map((layer: { detail: string }, idx: number) => (
                         <div key={idx} className="flex gap-3 text-sm items-start bg-white/40 dark:bg-black/20 p-2.5 rounded-lg border border-border-light/40 dark:border-border-dark/40">
                           <span className="material-icons-round text-[18px] text-red-500/80 mt-0.5 shrink-0">check_circle</span>
                           <span className="text-text-secondary-light dark:text-text-secondary-dark text-sm leading-relaxed">{layer.detail}</span>
@@ -437,7 +441,7 @@ export default function HopLaPage() {
                     </div>
                     
                     <div className="space-y-2.5 mb-2">
-                      {results.western.aspects.sort((a: any, b: any) => Math.abs(b.score) - Math.abs(a.score)).slice(0, 4).map((asp: any, idx: number) => (
+                      {results.western.aspects.sort((a: { score: number }, b: { score: number }) => Math.abs(b.score) - Math.abs(a.score)).slice(0, 4).map((asp: { description: string; orb: number; score: number }, idx: number) => (
                         <div key={idx} className="flex gap-3 text-sm items-start bg-white/40 dark:bg-black/20 p-2.5 rounded-lg border border-border-light/40 dark:border-border-dark/40">
                           <span className="material-icons-round text-[18px] text-indigo-500/80 mt-0.5 shrink-0">flare</span>
                           <span className="text-text-secondary-light dark:text-text-secondary-dark text-sm leading-relaxed">
@@ -457,8 +461,8 @@ export default function HopLaPage() {
           !isEvaluating && (
             <div className="flex flex-col items-center justify-center py-24 opacity-70 animate-fade-in-up">
               <div className="w-40 h-40 rounded-full border border-primary-light/10 dark:border-primary-dark/10 flex items-center justify-center mb-6 relative">
-                 <div className="absolute inset-4 rounded-full border border-dashed border-primary-light/20 dark:border-primary-dark/20 animate-[spin_8s_linear_infinite]"></div>
-                 <div className="absolute inset-8 rounded-full border border-dashed border-purple-500/20 animate-[spin_5s_linear_infinite_reverse]"></div>
+                 <div className="absolute inset-4 rounded-full border border-dashed border-primary-light/20 dark:border-primary-dark/20 animate-[spin_8s_linear_infinite]" />
+                 <div className="absolute inset-8 rounded-full border border-dashed border-purple-500/20 animate-[spin_5s_linear_infinite_reverse]" />
                  <span className="material-icons-round text-5xl text-primary-light/40 dark:text-primary-dark/40 animate-pulse">auto_awesome</span>
               </div>
               <p className="text-text-secondary-light dark:text-text-secondary-dark font-medium px-4 text-center max-w-sm text-balance">

@@ -172,7 +172,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       "chi": "Sửu",
       "description": "Vận Đinh Sửu (Giản Hạ Thủy) — Chính Ấn: bình ổn, giữ vững nền tảng.",
       "element": "Hỏa",
-      "endAge": 12,
+      "endAge": 18,
       "interpretation": {
         "career": "Sự nghiệp phát triển qua con đường tri thức — bạn không cạnh tranh bằng sức mạnh mà bằng hiểu biết và phẩm chất. Đặc biệt thuận lợi cho giáo dục, nghiên cứu, tôn giáo, y học, hoặc bất kỳ lĩnh vực nào đòi hỏi chiều sâu. Bạn sẽ được bảo trợ và dẫn dắt — hãy mở lòng đón nhận sự giúp đỡ.",
         "finance": "Tài chính đến qua đường tri thức — bạn không kiếm nhiều tiền từ lao động chân tay, nhưng cuộc sống ổn định, an nhàn, và đầy đủ theo cách riêng. Thu nhập có thể đến từ giảng dạy, viết lách, tư vấn, hoặc sở hữu trí tuệ. Đây là giai đoạn giàu có về tinh thần hơn vật chất — và đôi khi, đó mới là sự giàu có thực sự.",
@@ -181,7 +181,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       },
       "napAm": "Giản Hạ Thủy",
       "rating": "trung",
-      "startAge": 3,
+      "startAge": 9,
       "thapThan": "Chính Ấn",
     },
     {
@@ -189,7 +189,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       "chi": "Tý",
       "description": "Vận Bính Tý (Giản Hạ Thủy) — Thiên Ấn: bình ổn, giữ vững nền tảng.",
       "element": "Hỏa",
-      "endAge": 22,
+      "endAge": 28,
       "interpretation": {
         "career": "Sự nghiệp của bạn đi theo lối riêng biệt — phong thủy, y học cổ truyền, lập trình, nghiên cứu chuyên sâu, hoặc bất kỳ lĩnh vực nào mà đám đông không hiểu nhưng thế giới vẫn cần. Bạn có thể ít được đánh giá đúng năng lực trong giai đoạn này, nhưng điều đó không quan trọng — giá trị thật sẽ tỏa sáng theo thời gian.",
         "finance": "Tài chính không theo quy luật thông thường — bạn có thể kiếm tiền từ những lĩnh vực kỳ lạ mà ít ai nghĩ tới, hoặc thu nhập lúc có lúc không theo kiểu freelancer. Đừng so sánh ví tiền của mình với người khác — con đường tài chính của bạn độc đáo như chính con người bạn. Chỉ cần đảm bảo nhu cầu cơ bản, phần còn lại sẽ đến khi đúng thời điểm.",
@@ -198,7 +198,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       },
       "napAm": "Giản Hạ Thủy",
       "rating": "trung",
-      "startAge": 13,
+      "startAge": 19,
       "thapThan": "Thiên Ấn",
     },
     {
@@ -206,7 +206,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       "chi": "Hợi",
       "description": "Vận Ất Hợi (Sơn Đầu Hỏa) — Chính Quan: bình ổn, giữ vững nền tảng.",
       "element": "Mộc",
-      "endAge": 32,
+      "endAge": 38,
       "interpretation": {
         "career": "Sự nghiệp thăng tiến rõ ràng — bạn được cấp trên nhìn nhận, được đề bạt vào vị trí có trách nhiệm. Uy tín và năng lực thực sự là vé vào cửa trong giai đoạn này. Phù hợp nhất cho công chức, quản lý, lãnh đạo, hoặc bất kỳ vai trò nào đòi hỏi sự tin tưởng tuyệt đối. Đây là lúc bạn tỏa sáng bằng phẩm chất, không phải chiêu trò.",
         "finance": "Tài chính ổn định theo cấp bậc — lương, thưởng, phúc lợi. Bạn không giàu nhanh nhưng sống đầy đủ và đáng trọng. Nguồn thu nhập chính đáng, minh bạch. Đây không phải lúc mạo hiểm đầu tư — hãy giữ sự ổn định mà bạn đang có và xây dựng uy tín dài hạn.",
@@ -215,7 +215,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       },
       "napAm": "Sơn Đầu Hỏa",
       "rating": "trung",
-      "startAge": 23,
+      "startAge": 29,
       "thapThan": "Chính Quan",
     },
     {
@@ -223,7 +223,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       "chi": "Tuất",
       "description": "Vận Giáp Tuất (Sơn Đầu Hỏa) — Thất Sát: bình ổn, giữ vững nền tảng.",
       "element": "Mộc",
-      "endAge": 42,
+      "endAge": 48,
       "interpretation": {
         "career": "Sự nghiệp của bạn đang ở chế độ 'tất cả hoặc không' — thăng tiến đột ngột hoặc sa sút bất ngờ, không có giữa. Áp lực cạnh tranh cực lớn, nhưng ai vượt qua được sẽ đứng ở vị trí mà ít ai chạm tới. Đặc biệt phù hợp cho quân sự, thể thao chuyên nghiệp, startup giai đoạn khốc liệt, hoặc bất kỳ môi trường nào đòi hỏi bản lĩnh thép.",
         "finance": "Tài chính biến động mạnh — bạn có thể làm giàu nhanh chóng hoặc mất trắng trong thời gian ngắn. Đây là 'all-in or fold' — nếu bạn chọn chơi, hãy chơi với chiến lược rõ ràng và mức dừng lỗ nghiêm ngặt. Quan trọng nhất: đừng bao giờ đặt cược số tiền mà bạn không thể mất.",
@@ -232,7 +232,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       },
       "napAm": "Sơn Đầu Hỏa",
       "rating": "trung",
-      "startAge": 33,
+      "startAge": 39,
       "thapThan": "Thất Sát",
     },
     {
@@ -240,7 +240,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       "chi": "Dậu",
       "description": "Vận Quý Dậu (Kiếm Phong Kim) — Chính Tài: cần cẩn trọng, nhiều thử thách.",
       "element": "Thủy",
-      "endAge": 52,
+      "endAge": 58,
       "interpretation": {
         "career": "Sự nghiệp của bạn vững chắc như ngôi nhà xây trên nền đá — không phát triển nhanh chóng mặt, nhưng mỗi bước tiến đều chắc chắn. Thăng tiến đến từ từ, nhờ sự đáng tin cậy và thành tích tích lũy. Đây là giai đoạn tuyệt vời cho kế toán, quản lý, kinh doanh truyền thống — những nghề đòi hỏi sự tỉ mỉ và ổn định.",
         "finance": "Đây có thể là giai đoạn tài chính tốt nhất trong cuộc đời bạn — tiền đến từ lao động chân chính, từ giá trị thật bạn tạo ra. Không có tài lộc trên trời rơi xuống, nhưng dòng tiền ổn định và dự đoán được. Bạn có khả năng tích lũy và quản lý tiền bạc xuất sắc trong giai đoạn này. Hãy tận dụng để xây dựng tài sản dài hạn.",
@@ -249,7 +249,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       },
       "napAm": "Kiếm Phong Kim",
       "rating": "hung",
-      "startAge": 43,
+      "startAge": 49,
       "thapThan": "Chính Tài",
     },
     {
@@ -257,7 +257,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       "chi": "Thân",
       "description": "Vận Nhâm Thân (Kiếm Phong Kim) — Thiên Tài: cần cẩn trọng, nhiều thử thách.",
       "element": "Thủy",
-      "endAge": 62,
+      "endAge": 68,
       "interpretation": {
         "career": "Công việc của bạn không còn đi theo con đường mòn — bạn bị cuốn vào những cơ hội kinh doanh, đầu tư, hoặc dự án mang tính đột phá. Đây không phải thời điểm cho công việc văn phòng ổn định — năng lượng này muốn bạn ra ngoài, giao dịch, mở rộng. Nhiều cơ hội bất ngờ sẽ xuất hiện, nhưng bạn cần phân biệt vàng thật và vàng giả.",
         "finance": "Tiền bạc đến bất ngờ — có thể từ di sản, trúng thưởng, đầu tư sinh lời ngoạn mục, hoặc nguồn thu nhập bạn chưa từng nghĩ tới. Cảm giác hưng phấn rất lớn, nhưng đó cũng là lúc nguy hiểm nhất. Biết dừng đúng lúc là kỹ năng quan trọng nhất trong giai đoạn này — tham lam một bước có thể mất tất cả.",
@@ -266,7 +266,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       },
       "napAm": "Kiếm Phong Kim",
       "rating": "hung",
-      "startAge": 53,
+      "startAge": 59,
       "thapThan": "Thiên Tài",
     },
     {
@@ -274,7 +274,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       "chi": "Mùi",
       "description": "Vận Tân Mùi (Lộ Bàng Thổ) — Thương Quan: thuận lợi, phát triển tốt.",
       "element": "Kim",
-      "endAge": 72,
+      "endAge": 78,
       "interpretation": {
         "career": "Sự nghiệp của bạn đang ở ngã rẽ ngoạn mục — bạn có thể thay đổi nghề hoàn toàn, khởi nghiệp táo bạo, hoặc làm điều gì đó chưa ai dám làm. Tài năng của bạn tỏa sáng mạnh mẽ, nhưng cấp trên có thể không thích vì bạn quá thẳng thắn hoặc quá sáng lấn át họ. Hãy khéo léo — thiên tài cũng cần biết cách trình bày.",
         "finance": "Tiền đến nhanh nhưng cũng đi nhanh — bạn kiếm tiền bằng sáng tạo và đột phá, nhưng cũng dễ tiêu hoang vì cảm xúc bốc đồng. Giai đoạn này không phải để tích lũy, mà để đầu tư vào những ý tưởng có tiềm năng bùng nổ. Chỉ cần nhớ: đừng bỏ hết trứng vào một giỏ.",
@@ -283,7 +283,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       },
       "napAm": "Lộ Bàng Thổ",
       "rating": "cat",
-      "startAge": 63,
+      "startAge": 69,
       "thapThan": "Thương Quan",
     },
     {
@@ -291,7 +291,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       "chi": "Ngọ",
       "description": "Vận Canh Ngọ (Lộ Bàng Thổ) — Thực Thần: thuận lợi, phát triển tốt.",
       "element": "Kim",
-      "endAge": 82,
+      "endAge": 88,
       "interpretation": {
         "career": "Sự nghiệp của bạn đang thuận dòng nước — bạn không cần phải gồng mình hay cạnh tranh gay gắt. Thành công đến từ tài năng tự nhiên và sự yêu thích công việc. Nếu bạn làm trong lĩnh vực sáng tạo, nghệ thuật, ẩm thực, giáo dục, hoặc chăm sóc — đây là thời kỳ hoàng kim. Hãy để đam mê dẫn đường, kết quả sẽ tự đến.",
         "finance": "Tiền bạc chảy vào đều đặn nhờ tài năng và giá trị bạn mang lại. Bạn không cần xoay sở hay lách luật — chỉ cần làm tốt việc mình yêu thích, thu nhập sẽ đi theo. Tuy nhiên, vì tâm trạng thoải mái nên bạn cũng dễ chi tiêu phóng tay hơn bình thường. Hãy thưởng cho mình, nhưng đừng quên dành một phần cho tương lai.",
@@ -300,7 +300,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
       },
       "napAm": "Lộ Bàng Thổ",
       "rating": "cat",
-      "startAge": 73,
+      "startAge": 79,
       "thapThan": "Thực Thần",
     },
   ],
@@ -314,6 +314,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for female, 2000-03-
     "napAm": "Thành Đầu Thổ",
     "napAmElement": "Thổ",
   },
+  "school": "vi",
   "tangCan": [
     {
       "chi": "Thìn",
@@ -657,7 +658,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       "chi": "Dậu",
       "description": "Vận Ất Dậu (Tuyền Trung Thủy) — Thương Quan: thuận lợi, phát triển tốt.",
       "element": "Mộc",
-      "endAge": 12,
+      "endAge": 17,
       "interpretation": {
         "career": "Sự nghiệp của bạn đang ở ngã rẽ ngoạn mục — bạn có thể thay đổi nghề hoàn toàn, khởi nghiệp táo bạo, hoặc làm điều gì đó chưa ai dám làm. Tài năng của bạn tỏa sáng mạnh mẽ, nhưng cấp trên có thể không thích vì bạn quá thẳng thắn hoặc quá sáng lấn át họ. Hãy khéo léo — thiên tài cũng cần biết cách trình bày.",
         "finance": "Tiền đến nhanh nhưng cũng đi nhanh — bạn kiếm tiền bằng sáng tạo và đột phá, nhưng cũng dễ tiêu hoang vì cảm xúc bốc đồng. Giai đoạn này không phải để tích lũy, mà để đầu tư vào những ý tưởng có tiềm năng bùng nổ. Chỉ cần nhớ: đừng bỏ hết trứng vào một giỏ.",
@@ -666,7 +667,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       },
       "napAm": "Tuyền Trung Thủy",
       "rating": "cat",
-      "startAge": 3,
+      "startAge": 8,
       "thapThan": "Thương Quan",
     },
     {
@@ -674,7 +675,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       "chi": "Tuất",
       "description": "Vận Bính Tuất (Ốc Thượng Thổ) — Thiên Tài: thuận lợi, phát triển tốt.",
       "element": "Hỏa",
-      "endAge": 22,
+      "endAge": 27,
       "interpretation": {
         "career": "Công việc của bạn không còn đi theo con đường mòn — bạn bị cuốn vào những cơ hội kinh doanh, đầu tư, hoặc dự án mang tính đột phá. Đây không phải thời điểm cho công việc văn phòng ổn định — năng lượng này muốn bạn ra ngoài, giao dịch, mở rộng. Nhiều cơ hội bất ngờ sẽ xuất hiện, nhưng bạn cần phân biệt vàng thật và vàng giả.",
         "finance": "Tiền bạc đến bất ngờ — có thể từ di sản, trúng thưởng, đầu tư sinh lời ngoạn mục, hoặc nguồn thu nhập bạn chưa từng nghĩ tới. Cảm giác hưng phấn rất lớn, nhưng đó cũng là lúc nguy hiểm nhất. Biết dừng đúng lúc là kỹ năng quan trọng nhất trong giai đoạn này — tham lam một bước có thể mất tất cả.",
@@ -683,7 +684,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       },
       "napAm": "Ốc Thượng Thổ",
       "rating": "cat",
-      "startAge": 13,
+      "startAge": 18,
       "thapThan": "Thiên Tài",
     },
     {
@@ -691,7 +692,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       "chi": "Hợi",
       "description": "Vận Đinh Hợi (Ốc Thượng Thổ) — Chính Tài: thuận lợi, phát triển tốt.",
       "element": "Hỏa",
-      "endAge": 32,
+      "endAge": 37,
       "interpretation": {
         "career": "Sự nghiệp của bạn vững chắc như ngôi nhà xây trên nền đá — không phát triển nhanh chóng mặt, nhưng mỗi bước tiến đều chắc chắn. Thăng tiến đến từ từ, nhờ sự đáng tin cậy và thành tích tích lũy. Đây là giai đoạn tuyệt vời cho kế toán, quản lý, kinh doanh truyền thống — những nghề đòi hỏi sự tỉ mỉ và ổn định.",
         "finance": "Đây có thể là giai đoạn tài chính tốt nhất trong cuộc đời bạn — tiền đến từ lao động chân chính, từ giá trị thật bạn tạo ra. Không có tài lộc trên trời rơi xuống, nhưng dòng tiền ổn định và dự đoán được. Bạn có khả năng tích lũy và quản lý tiền bạc xuất sắc trong giai đoạn này. Hãy tận dụng để xây dựng tài sản dài hạn.",
@@ -700,7 +701,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       },
       "napAm": "Ốc Thượng Thổ",
       "rating": "cat",
-      "startAge": 23,
+      "startAge": 28,
       "thapThan": "Chính Tài",
     },
     {
@@ -708,7 +709,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       "chi": "Tý",
       "description": "Vận Mậu Tý (Tích Lịch Hỏa) — Thất Sát: bình ổn, giữ vững nền tảng.",
       "element": "Thổ",
-      "endAge": 42,
+      "endAge": 47,
       "interpretation": {
         "career": "Sự nghiệp của bạn đang ở chế độ 'tất cả hoặc không' — thăng tiến đột ngột hoặc sa sút bất ngờ, không có giữa. Áp lực cạnh tranh cực lớn, nhưng ai vượt qua được sẽ đứng ở vị trí mà ít ai chạm tới. Đặc biệt phù hợp cho quân sự, thể thao chuyên nghiệp, startup giai đoạn khốc liệt, hoặc bất kỳ môi trường nào đòi hỏi bản lĩnh thép.",
         "finance": "Tài chính biến động mạnh — bạn có thể làm giàu nhanh chóng hoặc mất trắng trong thời gian ngắn. Đây là 'all-in or fold' — nếu bạn chọn chơi, hãy chơi với chiến lược rõ ràng và mức dừng lỗ nghiêm ngặt. Quan trọng nhất: đừng bao giờ đặt cược số tiền mà bạn không thể mất.",
@@ -717,7 +718,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       },
       "napAm": "Tích Lịch Hỏa",
       "rating": "trung",
-      "startAge": 33,
+      "startAge": 38,
       "thapThan": "Thất Sát",
     },
     {
@@ -725,7 +726,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       "chi": "Sửu",
       "description": "Vận Kỷ Sửu (Tích Lịch Hỏa) — Chính Quan: bình ổn, giữ vững nền tảng.",
       "element": "Thổ",
-      "endAge": 52,
+      "endAge": 57,
       "interpretation": {
         "career": "Sự nghiệp thăng tiến rõ ràng — bạn được cấp trên nhìn nhận, được đề bạt vào vị trí có trách nhiệm. Uy tín và năng lực thực sự là vé vào cửa trong giai đoạn này. Phù hợp nhất cho công chức, quản lý, lãnh đạo, hoặc bất kỳ vai trò nào đòi hỏi sự tin tưởng tuyệt đối. Đây là lúc bạn tỏa sáng bằng phẩm chất, không phải chiêu trò.",
         "finance": "Tài chính ổn định theo cấp bậc — lương, thưởng, phúc lợi. Bạn không giàu nhanh nhưng sống đầy đủ và đáng trọng. Nguồn thu nhập chính đáng, minh bạch. Đây không phải lúc mạo hiểm đầu tư — hãy giữ sự ổn định mà bạn đang có và xây dựng uy tín dài hạn.",
@@ -734,7 +735,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       },
       "napAm": "Tích Lịch Hỏa",
       "rating": "trung",
-      "startAge": 43,
+      "startAge": 48,
       "thapThan": "Chính Quan",
     },
     {
@@ -742,7 +743,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       "chi": "Dần",
       "description": "Vận Canh Dần (Tùng Bách Mộc) — Thiên Ấn: cần cẩn trọng, nhiều thử thách.",
       "element": "Kim",
-      "endAge": 62,
+      "endAge": 67,
       "interpretation": {
         "career": "Sự nghiệp của bạn đi theo lối riêng biệt — phong thủy, y học cổ truyền, lập trình, nghiên cứu chuyên sâu, hoặc bất kỳ lĩnh vực nào mà đám đông không hiểu nhưng thế giới vẫn cần. Bạn có thể ít được đánh giá đúng năng lực trong giai đoạn này, nhưng điều đó không quan trọng — giá trị thật sẽ tỏa sáng theo thời gian.",
         "finance": "Tài chính không theo quy luật thông thường — bạn có thể kiếm tiền từ những lĩnh vực kỳ lạ mà ít ai nghĩ tới, hoặc thu nhập lúc có lúc không theo kiểu freelancer. Đừng so sánh ví tiền của mình với người khác — con đường tài chính của bạn độc đáo như chính con người bạn. Chỉ cần đảm bảo nhu cầu cơ bản, phần còn lại sẽ đến khi đúng thời điểm.",
@@ -751,7 +752,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       },
       "napAm": "Tùng Bách Mộc",
       "rating": "hung",
-      "startAge": 53,
+      "startAge": 58,
       "thapThan": "Thiên Ấn",
     },
     {
@@ -759,7 +760,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       "chi": "Mão",
       "description": "Vận Tân Mão (Tùng Bách Mộc) — Chính Ấn: cần cẩn trọng, nhiều thử thách.",
       "element": "Kim",
-      "endAge": 72,
+      "endAge": 77,
       "interpretation": {
         "career": "Sự nghiệp phát triển qua con đường tri thức — bạn không cạnh tranh bằng sức mạnh mà bằng hiểu biết và phẩm chất. Đặc biệt thuận lợi cho giáo dục, nghiên cứu, tôn giáo, y học, hoặc bất kỳ lĩnh vực nào đòi hỏi chiều sâu. Bạn sẽ được bảo trợ và dẫn dắt — hãy mở lòng đón nhận sự giúp đỡ.",
         "finance": "Tài chính đến qua đường tri thức — bạn không kiếm nhiều tiền từ lao động chân tay, nhưng cuộc sống ổn định, an nhàn, và đầy đủ theo cách riêng. Thu nhập có thể đến từ giảng dạy, viết lách, tư vấn, hoặc sở hữu trí tuệ. Đây là giai đoạn giàu có về tinh thần hơn vật chất — và đôi khi, đó mới là sự giàu có thực sự.",
@@ -768,7 +769,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       },
       "napAm": "Tùng Bách Mộc",
       "rating": "hung",
-      "startAge": 63,
+      "startAge": 68,
       "thapThan": "Chính Ấn",
     },
     {
@@ -776,7 +777,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       "chi": "Thìn",
       "description": "Vận Nhâm Thìn (Trường Lưu Thủy) — Tỉ Kiên: cần cẩn trọng, nhiều thử thách.",
       "element": "Thủy",
-      "endAge": 82,
+      "endAge": 87,
       "interpretation": {
         "career": "Sự nghiệp của bạn trong giai đoạn này giống như con đường mà bạn phải tự mở lối. Đừng chờ đợi ai đề bạt hay dẫn dắt — nếu muốn tiến lên, bạn phải tự tạo cơ hội cho mình. Đây là thời điểm tuyệt vời để khởi nghiệp, tự học kỹ năng mới, hoặc âm thầm xây dựng nền tảng riêng. Tránh hùn hạp kinh doanh hoặc dự án cần quá nhiều người cùng ra quyết định.",
         "finance": "Tiền bạc trong giai đoạn này đến từ mồ hôi của chính bạn — không có con đường tắt, không có quý nhân tài chính. Tin tốt là: những gì bạn kiếm được đều vững chắc và thuộc về bạn hoàn toàn. Hãy tránh cho vay lớn, cũng đừng hùn vốn theo cảm xúc. Bạn giữ được bao nhiêu phụ thuộc vào kỷ luật chi tiêu của chính mình.",
@@ -785,7 +786,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
       },
       "napAm": "Trường Lưu Thủy",
       "rating": "hung",
-      "startAge": 73,
+      "startAge": 78,
       "thapThan": "Tỉ Kiên",
     },
   ],
@@ -799,6 +800,7 @@ exports[`Bazi Engine — Snapshot > produces a stable chart for male, 1990-08-15
     "napAm": "Tuyền Trung Thủy",
     "napAmElement": "Thủy",
   },
+  "school": "vi",
   "tangCan": [
     {
       "chi": "Ngọ",
@@ -5140,23 +5142,23 @@ exports[`Natal Chart Engine — Snapshot > produces a stable chart for Hanoi bir
     "dominantElement": "earth",
     "dominantPlanet": "sun",
     "dominantQuality": "cardinal",
-    "dominantSign": "capricorn",
+    "dominantSign": "leo",
     "elementBalance": {
-      "air": 1,
-      "earth": 5,
-      "fire": 2,
-      "water": 2,
+      "air": 29.166666666666668,
+      "earth": 29.166666666666668,
+      "fire": 25,
+      "water": 16.666666666666664,
     },
     "pattern": "locomotive",
     "patternDescription": "Mẫu hình Đầu Máy — động lực mạnh mẽ, liên tục tìm kiếm sự hoàn thiện.",
     "polarityBalance": {
-      "yang": 3,
-      "yin": 7,
+      "yang": 54.166666666666664,
+      "yin": 45.83333333333333,
     },
     "qualityBalance": {
-      "cardinal": 4,
-      "fixed": 4,
-      "mutable": 2,
+      "cardinal": 37.5,
+      "fixed": 37.5,
+      "mutable": 25,
     },
   },
   "planets": [

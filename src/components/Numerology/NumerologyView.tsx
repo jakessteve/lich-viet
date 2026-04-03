@@ -1,8 +1,13 @@
 /**
- * NumerologyView — Thần Số Học Main View (Enriched)
+ * NumerologyView — Thần Số Học Main View (Applet Architecture)
  *
  * Input: Full name + birth date → generates complete numerology profile
- * with deep analysis, number interactions, pinnacle timeline, and enriched cycles.
+ *
+ * Standardized 4-Tab layout:
+ *  Tab 1: Tổng Quan (Dashboard) — Core numbers grid + hero cards (Free)
+ *  Tab 2: Phân Tích (Analysis) — Deep analysis + life domains (Freemium)
+ *  Tab 3: Chu Kỳ (Cycles) — Pinnacles + Personal cycles (Premium)
+ *  Tab 4: Học Thuật (Academic) — Birthday grid + Karmic debts (Elite)
  */
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
@@ -10,9 +15,9 @@ import { useAuthStore } from '../../stores/authStore';
 import { useAnalysisDepth } from '../../hooks/useAnalysisDepth';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { generateNumerologyProfile, type NumerologyProfile, type NumerologySystem } from '@lich-viet/core/numerology';
-import CollapsibleCard from '../CollapsibleCard';
 import { ContentGate } from '../shared/ContentGate';
 import { CORE_MEANINGS } from '../../data/interpretation/numerology/coreMeanings';
+import DataSummaryBar from '../shared/DataSummaryBar';
 
 import PdfDownloadButton from '../shared/PdfDownloadButton';
 import ShareButton from '../shared/ShareButton';
@@ -49,7 +54,8 @@ export default function NumerologyView() {
   const [error, setError] = useState('');
   const [profilePrefilled, setProfilePrefilled] = useState(false);
   const [isProMode, setIsProMode] = useState(false);
-  const [activeSection, setActiveSection] = useState<'core' | 'analysis' | 'cycles'>('core');
+  const [activeTab, setActiveTab] = useState<string>('dashboard');
+  const [isEditing, setIsEditing] = useState(false);
   const { hasAccess } = useUserTier();
 
   // Pre-fill from user profile on mount
@@ -93,10 +99,37 @@ export default function NumerologyView() {
   const isValid = fullName.trim() && day && month && year;
   const coreMeaning = profile ? CORE_MEANINGS[profile.lifePath.value] : null;
 
+  const handleReset = useCallback(() => {
+    setProfile(null);
+    setError('');
+    setIsEditing(false);
+    setActiveTab('dashboard');
+  }, []);
+
+  // Tab definitions
+  const NUM_TABS: EngineTab[] = [
+    { id: 'dashboard', label: 'Tổng Quan', icon: 'grid_view' },
+    { id: 'analysis', label: 'Phân Tích', icon: 'insights' },
+    { id: 'cycles', label: 'Chu Kỳ', icon: 'timeline' },
+    { id: 'academic', label: 'Học Thuật', icon: 'school' },
+  ];
+
   return (
     <div className="space-y-6">
 
-      {/* Input Form */}
+      {/* ═══ DataSummaryBar — shown when profile is generated ═══ */}
+      {profile && !isEditing && (
+        <DataSummaryBar
+          name={profile.fullName}
+          date={`${profile.birthDate.getDate()}/${profile.birthDate.getMonth() + 1}/${profile.birthDate.getFullYear()}`}
+          badges={[{ label: profile.system === 'pythagorean' ? 'Pythagorean' : 'Chaldean' }]}
+          onEdit={() => setIsEditing(true)}
+          onReset={handleReset}
+        />
+      )}
+
+      {/* Input Form — shown when no profile OR editing */}
+      {(!profile || isEditing) && (
       <form className="card-surface" onSubmit={(e) => { e.preventDefault(); handleGenerate(); }}>
         <div className="card-header">
           <div className="text-center w-full space-y-1">
@@ -182,6 +215,8 @@ export default function NumerologyView() {
           </button>
         </div>
       </form>
+      )}
+
 
       {/* Loading */}
       {isLoading && (
@@ -199,56 +234,10 @@ export default function NumerologyView() {
       )}
 
       {/* Results */}
-      {profile && !isLoading && (
+      {profile && !isLoading && !isEditing && (
         <div className="space-y-5 animate-fade-in-up" id="numerology-export-area">
 
-          {/* TIER 1: Life Path & Destiny (Expression) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <CoreNumberCard number={profile.lifePath} index={0} variant="hero" />
-            <CoreNumberCard number={profile.expression} index={1} variant="hero" />
-          </div>
-
-          {/* At-a-Glance Profile Summary */}
-          <div className="glass-card p-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary-light/50 dark:text-text-secondary-dark/40 mb-3 text-center">Tổng quan nhanh</p>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              {[
-                { label: 'Đường Đời', labelEn: 'Life Path', num: profile.lifePath },
-                { label: 'Biểu Đạt', labelEn: 'Expression', num: profile.expression },
-                { label: 'Linh Hồn', labelEn: 'Soul Urge', num: profile.soulUrge },
-                { label: 'Nhân Cách', labelEn: 'Personality', num: profile.personality },
-                { label: 'Ngày Sinh', labelEn: 'Birthday', num: profile.birthday },
-                { label: 'Trưởng Thành', labelEn: 'Maturity', num: profile.maturity },
-              ].map((item) => (
-                <div key={item.labelEn} className="text-center space-y-1">
-                  <div className={`mx-auto w-10 h-10 rounded-xl flex items-center justify-center text-base font-black text-white ${item.num.masterNumber
-                    ? 'bg-gradient-to-br from-amber-400 to-orange-500'
-                    : item.num.karmicDebt
-                      ? 'bg-gradient-to-br from-red-400 to-rose-500'
-                      : 'bg-gradient-to-br from-gold/80 to-amber-600/80'
-                    }`}>
-                    {item.num.value}
-                  </div>
-                  <p className="text-[10px] font-semibold text-text-primary-light dark:text-text-primary-dark leading-tight">{item.label}</p>
-                  <p className="text-[10px] text-text-secondary-light/60 dark:text-text-secondary-dark/40">{item.labelEn}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* TIER 2: Soul Urge & Personality */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <CoreNumberCard number={profile.soulUrge} index={2} variant="normal" />
-            <CoreNumberCard number={profile.personality} index={3} variant="normal" />
-          </div>
-
-          {/* TIER 3: Supporting Numbers */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <CoreNumberCard number={profile.birthday} index={4} variant="compact" />
-            <CoreNumberCard number={profile.maturity} index={5} variant="compact" />
-          </div>
-
-          {/* PDF Download Button & Share — Premium Action Bar */}
+          {/* PDF Download Button & Share */}
           <PremiumStickyActionBar>
             <PdfDownloadButton
               label="Tải Báo Cáo Thần Số Học (PDF)"
@@ -260,90 +249,107 @@ export default function NumerologyView() {
             <ShareButton targetId="numerology-export-area" fileName={`than-so-hoc-${profile.fullName || 'lich-viet'}`} className="flex-1 min-w-[140px]" />
           </PremiumStickyActionBar>
 
-          {/* Section tabs — EngineTabNav with ProModeToggle in headerRight */}
-          {(() => {
-            const NUM_TABS: EngineTab[] = [
-              { id: 'core', label: 'Số Cốt Lõi', icon: 'tag' },
-              { id: 'analysis', label: 'Phân Tích', icon: 'insights' },
-              { id: 'cycles', label: 'Chu Kỳ', icon: 'loop' },
-            ];
-            return (
-              <EngineTabNav
-                tabs={NUM_TABS}
-                activeTab={activeSection}
-                onTabChange={(id) => setActiveSection(id as 'core' | 'analysis' | 'cycles')}
-                headerRight={<ProModeToggle isProMode={isProMode} onToggle={setIsProMode} label="Lưới số" />}
-                className="mb-2"
-              />
-            );
-          })()}
+          {/* Unified 4-Tab Navigation */}
+          <EngineTabNav
+            tabs={NUM_TABS}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            headerRight={<ProModeToggle isProMode={isProMode} onToggle={setIsProMode} label="Lưới số" />}
+          />
 
-          {/* All Advanced Analysis — GATED: Partial Premium+ */}
-          <ContentGate requiredTier="premium" sectionTitle="Phân Tích Nâng Cao" showBlurPreview>
-            {/* Deep Analysis */}
-            <CollapsibleCard title="Phân Tích Sâu" defaultOpen={defaultOpen('normal')}>
-              <div className="p-4">
+          {/* ═══ TAB 1: DASHBOARD (Tổng Quan) — FREE ═══ */}
+          {activeTab === 'dashboard' && (
+            <div className="space-y-4">
+              {/* TIER 1: Life Path & Destiny (Expression) */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <CoreNumberCard number={profile.lifePath} index={0} variant="hero" />
+                <CoreNumberCard number={profile.expression} index={1} variant="hero" />
+              </div>
+
+              {/* At-a-Glance Profile Summary */}
+              <div className="glass-card p-4">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary-light/50 dark:text-text-secondary-dark/40 mb-3 text-center">Tổng quan nhanh</p>
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                  {[
+                    { label: 'Đường Đời', labelEn: 'Life Path', num: profile.lifePath },
+                    { label: 'Biểu Đạt', labelEn: 'Expression', num: profile.expression },
+                    { label: 'Linh Hồn', labelEn: 'Soul Urge', num: profile.soulUrge },
+                    { label: 'Nhân Cách', labelEn: 'Personality', num: profile.personality },
+                    { label: 'Ngày Sinh', labelEn: 'Birthday', num: profile.birthday },
+                    { label: 'Trưởng Thành', labelEn: 'Maturity', num: profile.maturity },
+                  ].map((item) => (
+                    <div key={item.labelEn} className="text-center space-y-1">
+                      <div className={`mx-auto w-10 h-10 rounded-xl flex items-center justify-center text-base font-black text-white ${item.num.masterNumber
+                        ? 'bg-gradient-to-br from-amber-400 to-orange-500'
+                        : item.num.karmicDebt
+                          ? 'bg-gradient-to-br from-red-400 to-rose-500'
+                          : 'bg-gradient-to-br from-gold/80 to-amber-600/80'
+                        }`}>
+                        {item.num.value}
+                      </div>
+                      <p className="text-[10px] font-semibold text-text-primary-light dark:text-text-primary-dark leading-tight">{item.label}</p>
+                      <p className="text-[10px] text-text-secondary-light/60 dark:text-text-secondary-dark/40">{item.labelEn}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* TIER 2: Soul Urge & Personality */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <CoreNumberCard number={profile.soulUrge} index={2} variant="normal" />
+                <CoreNumberCard number={profile.personality} index={3} variant="normal" />
+              </div>
+
+              {/* TIER 3: Supporting Numbers */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <CoreNumberCard number={profile.birthday} index={4} variant="compact" />
+                <CoreNumberCard number={profile.maturity} index={5} variant="compact" />
+              </div>
+            </div>
+          )}
+
+          {/* ═══ TAB 2: ANALYSIS (Phân Tích) — FREEMIUM ═══ */}
+          {activeTab === 'analysis' && (
+            <ContentGate requiredTier="premium" sectionTitle="Phân Tích Nâng Cao" showBlurPreview>
+              <div className="space-y-4">
                 <DeepAnalysisSection profile={profile} />
-              </div>
-            </CollapsibleCard>
-
-            {/* Life Domains */}
-            <CollapsibleCard title="Các Lĩnh Vực Cuộc Sống" defaultOpen={defaultOpen('normal')}>
-              <div className="p-4">
                 <LifeDomainSection profile={profile} />
-              </div>
-            </CollapsibleCard>
-
-
-            {/* Number Interactions */}
-            <CollapsibleCard title="Tương Tác Số" defaultOpen={defaultOpen('low')}>
-              <div className="p-4">
                 <NumberInteractionsSection profile={profile} />
               </div>
-            </CollapsibleCard>
+            </ContentGate>
+          )}
 
-            {/* Birthday Grid — ELITE PRO MODE */}
-            <div className="flex items-center justify-between mb-2 mt-4">
-              <h3 className="text-sm font-semibold text-text-secondary-light dark:text-text-secondary-dark">Biểu Đồ Ngày Sinh</h3>
-              <ProModeToggle isProMode={isProMode} onToggle={setIsProMode} label="Lưới số" />
-            </div>
-            {isProMode && hasAccess('elite') ? (
-              <CollapsibleCard title="Biểu Đồ Ngày Sinh" defaultOpen={true}>
-                <div className="p-4">
-                  <EnhancedBirthdayGridView profile={profile} />
-                </div>
-              </CollapsibleCard>
-            ) : (
-              <div className="card-surface p-4 text-center text-sm text-text-secondary-light dark:text-text-secondary-dark">
-                <span className="material-icons-round text-3xl text-gold/30 dark:text-gold-dark/30 mb-2 block" aria-hidden="true">grid_on</span>
-                Bật Pro Mode để xem Biểu đồ ngày sinh Pythagoras
-              </div>
-            )}
-
-            {/* Pinnacle & Challenge Timeline */}
-            <CollapsibleCard title="Chu Kỳ Đỉnh Cao & Thử Thách" defaultOpen={defaultOpen('low')}>
-              <div className="p-4">
+          {/* ═══ TAB 3: CYCLES (Chu Kỳ) — PREMIUM ═══ */}
+          {activeTab === 'cycles' && (
+            <ContentGate requiredTier="premium" sectionTitle="Chu Kỳ & Đỉnh Cao" showBlurPreview>
+              <div className="space-y-4">
                 <PinnacleTimelineSection profile={profile} />
-              </div>
-            </CollapsibleCard>
-
-            {/* Personal Cycle */}
-            <CollapsibleCard title="Chu Kỳ Cá Nhân" defaultOpen={defaultOpen('low')}>
-              <div className="p-4">
                 <EnrichedPersonalCycleView profile={profile} />
               </div>
-            </CollapsibleCard>
+            </ContentGate>
+          )}
 
-            {/* Karmic Debts & Master Numbers */}
-            {(profile.karmicDebts.length > 0 || profile.masterNumbers.length > 0) && (
-              <CollapsibleCard title="Nợ Nghiệp & Số Bậc Thầy" defaultOpen={defaultOpen('low')}>
-                <div className="p-4">
+          {/* ═══ TAB 4: ACADEMIC (Học Thuật) — ELITE ═══ */}
+          {activeTab === 'academic' && (
+            <ContentGate requiredTier="elite" sectionTitle="Phân Tích Học Thuật" showBlurPreview>
+              <div className="space-y-4">
+                {/* Birthday Grid — ELITE PRO MODE */}
+                {isProMode && hasAccess('elite') ? (
+                  <EnhancedBirthdayGridView profile={profile} />
+                ) : (
+                  <div className="card-surface p-4 text-center text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                    <span className="material-icons-round text-3xl text-gold/30 dark:text-gold-dark/30 mb-2 block" aria-hidden="true">grid_on</span>
+                    Bật Pro Mode để xem Biểu đồ ngày sinh Pythagoras
+                  </div>
+                )}
+
+                {/* Karmic Debts & Master Numbers */}
+                {(profile.karmicDebts.length > 0 || profile.masterNumbers.length > 0) && (
                   <EnhancedKarmicMasterSection profile={profile} />
-                </div>
-              </CollapsibleCard>
-            )}
-
-          </ContentGate>
+                )}
+              </div>
+            </ContentGate>
+          )}
 
           {/* Footer */}
           <div className="text-center text-[10px] text-text-secondary-light/50 dark:text-text-secondary-dark/30 space-y-0.5">

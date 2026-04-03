@@ -67,6 +67,13 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
   const [birthYear, setBirthYear] = useState<string>('');
   const [selectedIntent, setSelectedIntent] = useState<FAQIntent | null>(null);
 
+  // States for Tang Lễ (Trùng Tang)
+  const [deceasedGender, setDeceasedGender] = useState<'male'|'female'>('male');
+  const [deathYear, setDeathYear] = useState('');
+  const [deathLunarMonth, setDeathLunarMonth] = useState('');
+  const [deathLunarDay, setDeathLunarDay] = useState('');
+  const [deathHourChi, setDeathHourChi] = useState('');
+
   // Active tab state
   const [activeResultTab, setActiveResultTab] = useState('overview');
 
@@ -406,11 +413,58 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
 
           {/* Tang Le panels: Trùng Tang + Grave Direction */}
           {selectedIntent === 'tang-le' && (
-            <TrungTangPanel
-                deceasedBirthYear={personA.birthYear}
-                deceasedGender={personA.gender as 'male' | 'female'}
-                funeralDayChi={data.canChi?.day?.chi || ''}
+            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              {/* Deceased Form */}
+              <div className="rounded-xl border border-border-light dark:border-border-dark overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-border-light/30 dark:border-border-dark/30 flex items-center gap-2">
+                  <span className="material-icons-round text-base text-gold dark:text-gold-dark">person</span>
+                  <span className="text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Thông tin người quá cố (Âm lịch)</span>
+                </div>
+                <div className="p-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-6 gap-2">
+                    <div className="col-span-1">
+                      <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Giới tính</label>
+                      <select value={deceasedGender} onChange={e => setDeceasedGender(e.target.value as any)} className={inputFieldClass}>
+                        <option value="male">Nam</option>
+                        <option value="female">Nữ</option>
+                      </select>
+                    </div>
+                    <div className="col-span-1">
+                      <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Năm sinh</label>
+                      <input type="number" placeholder="--" value={birthYear} onChange={e => setBirthYear(e.target.value)} className={inputFieldClass} />
+                    </div>
+                    <div className="col-span-1">
+                      <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Tháng mất</label>
+                      <input type="number" min={1} max={12} placeholder="--" value={deathLunarMonth} onChange={e => setDeathLunarMonth(e.target.value)} className={inputFieldClass} />
+                    </div>
+                    <div className="col-span-1">
+                      <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Ngày mất</label>
+                      <input type="number" min={1} max={30} placeholder="--" value={deathLunarDay} onChange={e => setDeathLunarDay(e.target.value)} className={inputFieldClass} />
+                    </div>
+                    <div className="col-span-1">
+                      <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Năm mất</label>
+                      <input type="number" min={1900} max={2100} placeholder="--" value={deathYear} onChange={e => setDeathYear(e.target.value)} className={inputFieldClass} />
+                    </div>
+                    <div className="col-span-1">
+                      <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Giờ mất (Chi)</label>
+                      <select value={deathHourChi} onChange={e => setDeathHourChi(e.target.value)} className={inputFieldClass}>
+                        <option value="" disabled>--</option>
+                        {CHI_LIST.map(chi => <option key={chi} value={chi}>{chi}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <TrungTangPanel
+                deceasedBirthYear={birthYear}
+                deceasedGender={deceasedGender}
+                deathYear={parseInt(deathYear) || 0}
+                deathLunarMonth={deathLunarMonth}
+                deathLunarDay={deathLunarDay}
+                deathHourChi={deathHourChi}
               />
+            </div>
           )}
 
           {/* Date & Time Input — compact inline */}
@@ -442,7 +496,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
                   <input type="number" min={0} max={23} placeholder="--" value={inputHour} onChange={e => setInputHour(e.target.value)} className={inputFieldClass} />
                 </div>
                 {/* Birth Year */}
-                {!needsSecondPerson && (
+                {!needsSecondPerson && selectedIntent !== 'tang-le' && (
                   <div>
                     <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Năm sinh</label>
                     <input type="number" min={1900} max={2100} placeholder="--" value={birthYear} onChange={e => setBirthYear(e.target.value)} className={inputFieldClass} />
@@ -596,7 +650,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
             {activeResultTab === 'funeral' && (
               <div className="animate-in fade-in duration-200">
                 <GraveDirectionPanel
-                  deceasedBirthYear={personA.birthYear}
+                  deceasedBirthYear={birthYear}
                   currentYear={selectedDate.getFullYear()}
                 />
               </div>

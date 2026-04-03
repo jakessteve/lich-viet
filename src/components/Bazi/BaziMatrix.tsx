@@ -25,14 +25,14 @@ export default function BaziMatrix({ chart }: BaziMatrixProps) {
     <div className="glass-card p-3 sm:p-4 overflow-x-auto w-full">
       <div className="min-w-[480px]">
         {/* ROW: Labels */}
-        <div className="grid grid-cols-4 gap-2 mb-2">
+        <div className="grid grid-cols-4 gap-2 mb-2 mt-5">
           {pillars.map((pd, i) => (
             <div key={`lbl-${i}`} className="text-center pb-2 border-b border-black/5 dark:border-white/5 relative">
               <p className="text-xs font-bold uppercase tracking-widest text-text-secondary-light/60 dark:text-text-secondary-dark/60">
                 {pd.label}
               </p>
               {pd.isDay && (
-                <span className="absolute -top-1 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-[9px] uppercase font-bold bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400">
+                <span className="absolute -top-5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-[9px] uppercase font-bold bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 whitespace-nowrap z-10 shadow-sm border border-purple-200/50 dark:border-purple-700/50">
                   Nhật Chủ
                 </span>
               )}
