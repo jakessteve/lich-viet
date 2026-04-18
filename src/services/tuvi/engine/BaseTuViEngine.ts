@@ -328,15 +328,24 @@ export abstract class BaseTuViEngine {
         this.addStar(this.ys.tianshiIndex, 'tianshi', 'adjective');
         this.addStar(this.ys.tianshangIndex, 'tianshang', 'adjective');
         this.addStar(this.ys.jieshaAdjIndex, 'jiesha', 'adjective');
-        // ── Stars lost during Strategy refactor (were in nativeEngine.ts) ──
+        // ── Stars from getYearlyStarIndex (guchen/guasu NOT in jiangxing ring) ──
         this.addStar(this.ys.guchenIndex, 'guchen', 'adjective');   // Cô Thần
         this.addStar(this.ys.guasuIndex, 'guasu', 'adjective');     // Quả Tú
+        // ── Traditional Hoa Cái / Hàm Trì (from getHuagaiXianchiIndex) ──
+        // getYearlyStarIndex now places traditional huagai/xianchi AFTER the
+        // jiangxingRing spread (overriding it). this.ys.huagaiIndex and
+        // this.ys.xianchiIndex now hold the CORRECT traditional values.
+        // Use them for placement — NO DUPLICATION since ring's values are different.
         this.addStar(this.ys.xianchiIndex, 'xianchi', 'adjective'); // Hàm Trì
         this.addStar(this.ys.huagaiIndex, 'huagai', 'adjective');   // Hoa Cái
-        
-        // ── Standard Jiangxing Ring components (often used independently as Tạp Diệu) ──
+
+        // ── Standard Jiangxing Ring (Tạp Diệu) ──
+        // Note: jiangxing ring's own huagai/xianchi (at offsets +4/+9) are
+        // intentionally NOT added separately — they would be at DIFFERENT palace
+        // positions than the traditional formula. The traditional placement is correct.
         this.addStar(this.ys.jiangxingIndex, 'jiangxing', 'adjective'); // Tướng Tinh
         this.addStar(this.ys.pananIndex, 'panan', 'adjective');         // Phan Án
+
         this.addStar(this.ys.suiyiIndex, 'suiyi', 'adjective');         // Tuế Dịch
         this.addStar(this.ys.xiishenIndex, 'xiishen', 'adjective');     // Tức Thần
         this.addStar(this.ys.zhaishaIndex, 'zhaisha', 'adjective');     // Tai Sát
@@ -345,7 +354,7 @@ export abstract class BaseTuViEngine {
         this.addStar(this.ys.yueshaIndex, 'yuesha', 'adjective');       // Nguyệt Sát
         this.addStar(this.ys.wangshenIndex, 'wangshen', 'adjective');   // Vong Thần
 
-        // Note: Đại Hao is placed by the Bác Sĩ 12 ring in calcRings() — not added here to avoid duplication
+
 
         const nianjieIdx = getNianjieIndex(this.yearBranchIndex);
         this.addStar(nianjieIdx, 'nianjie', 'helper');

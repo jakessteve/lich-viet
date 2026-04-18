@@ -212,7 +212,7 @@ function runThaiAt(date: Date): MethodSummary {
   try {
     const lunarDate = getLunarDate(date);
     const chart = getThaiAtYearChart(lunarDate.year);
-    const monthOverlay = getThaiAtMonthOverlay(lunarDate.year, lunarDate.month);
+    const monthOverlay = getThaiAtMonthOverlay(lunarDate.year, lunarDate.month, lunarDate.isLeap);
 
     let verdict: MethodSummary['verdict'] = 'trungBinh';
     if (chart.forecastTone === 'optimistic') verdict = 'cat';

@@ -142,16 +142,28 @@
   },
   "monthlyModifiers": {
     "1":  { "shift": 0,  "note": "Tháng Giêng — khí đầu năm, vạn vật chưa động, nên thận trọng quan sát trước khi hành động. Thuận lợi cho lập kế hoạch và thiết lập mục tiêu năm mới." },
+    "1L": { "shift": 0,  "note": "Tháng Giêng Nhuận — năng lượng tương tự tháng Giêng nhưng được kéo dài, cần kiên nhẫn hơn. Tháng nhuận mang tính chất 'chờ đợi' trước khi bước vào giai đoạn mới." },
     "2":  { "shift": 1,  "note": "Tháng Hai — khí xuân bắt đầu, sinh lực hồi phục. Cây cỏ đâm chồi, thuận lợi cho khởi đầu mới, gieo trồng, và bắt đầu dự án. Năng lượng tăng dần." },
+    "2L": { "shift": 1,  "note": "Tháng Hai Nhuận — xuân được kéo dài, sinh trưởng thêm thời gian. Thuận cho gieo trồng, xây dựng nền tảng, nhưng cần kiên nhẫn hơn bình thường trước khi hái quả." },
     "3":  { "shift": 1,  "note": "Tháng Ba — xuân sung mãn, đỉnh điểm sinh trưởng. Mộc khí tràn đầy, mọi sự phát triển mạnh mẽ. Tốt nhất cho khai trương, cưới hỏi, và mở rộng kinh doanh." },
+    "3L": { "shift": 1,  "note": "Tháng Ba Nhuận — xuân sung mãn kéo dài, năng lượng Mộc tăng cường. Tháng nhuận giữ nhịp sinh trưởng, thuận cho phát triển liên tục và mở rộng." },
     "4":  { "shift": 2,  "note": "Tháng Tư — chuyển sang hạ, năng lượng đạt đỉnh. Hành động quyết đoán được tưởng thưởng, nhưng cần cẩn thận không quá nóng vội. Tốt cho quyết định quan trọng." },
+    "4L": { "shift": 2,  "note": "Tháng Tư Nhuận — chuyển giao giữa xuân và hạ được kéo dài. Năng lượng chuyển đổi mạnh, cần quyết đoán nhưng cũng thận trọng. Thuận cho chuẩn bị trước khi bước vào giai đoạn năng lượng cao." },
     "5":  { "shift": 2,  "note": "Tháng Năm — hạ cực thịnh, Hỏa khí mạnh nhất. Đoan Ngọ tiết, cần giữ bình tĩnh và tránh xung đột. Thuận lợi cho thanh lọc, tẩy uế, và làm mới." },
+    "5L": { "shift": 2,  "note": "Tháng Năm Nhuận — hạ nóng bỏng được kéo dài, Hỏa khí duy trì mức cao. Cần giữ bình tĩnh đặc biệt, tránh xung đột. Thuận cho thanh lọc, tẩy uế, và chuẩn bị cho nửa cuối năm." },
     "6":  { "shift": 3,  "note": "Tháng Sáu — giữa hạ nắng gắt, khí nóng gây xung đột. Cần kiên nhẫn đặc biệt, tránh tranh cãi. Thuận cho nghiên cứu, học hành, thu thập kiến thức." },
+    "6L": { "shift": 3,  "note": "Tháng Sáu Nhuận — giai đoạn nắng nóng kéo dài, khí nóng gây xung đột cao hơn. Cần kiên nhẫn tối đa, tránh quyết đầu. Thuận cho nghiên cứu chuyên sâu và thu thập trí tuệ." },
     "7":  { "shift": -1, "note": "Tháng Bảy — chuyển sang thu, bắt đầu mùa thu hoạch. Tháng Vu Lan báo hiếu, tâm linh mạnh. Tốt cho tổng kết, đánh giá, và tri ân quý nhân." },
+    "7L": { "shift": -1, "note": "Tháng Bảy Nhuận — thu hoạch được kéo dài, tâm linh mạnh mẽ. Tháng nhuận thuận cho tổng kết âm thầm, tri ân, và chuẩn bị cho mùa thu chính." },
     "8":  { "shift": -1, "note": "Tháng Tám — thu trung, Trung Thu. Quân bình Âm Dương, năng lượng hài hòa nhất trong năm. Tuyệt vời cho giao lưu, đoàn tụ, và quyết định cân bằng." },
+    "8L": { "shift": -1, "note": "Tháng Tám Nhuận — Trung Thu được kéo dài, cân bằng Âm Dương ở mức cao. Tháng nhuận đặc biệt thuận cho hòa giải, đoàn tụ, và quyết định cân bằng." },
     "9":  { "shift": -2, "note": "Tháng Chín — thu tàn, lá rụng. Trùng Cửu tiết, cần chuẩn bị cho mùa đông. Tốt cho tích lũy, tiết kiệm, và hoàn tất dự án dở dang." },
+    "9L": { "shift": -2, "note": "Tháng Chín Nhuận — thu tàn kéo dài, giai đoạn chuẩn bị được tăng cường. Cần tích lũy và hoàn tất nhiều hơn bình thường trước mùa đông." },
     "10": { "shift": -2, "note": "Tháng Mười — chuyển đông, vạn vật co lại. Năng lượng suy giảm, nên giảm tốc, tránh mạo hiểm. Tốt cho suy ngẫm, thiền định, và kế hoạch dài hạn." },
+    "10L": { "shift": -2, "note": "Tháng Mười Nhuận — chuyển đông kéo dài, năng lượng suy giảm nhưng ổn định. Tháng nhuận thuận cho suy ngẫm sâu, kế hoạch dài hạn, và chuẩn bị nội lực." },
     "11": { "shift": -3, "note": "Tháng Mười Một — đông cực, Thủy khí mạnh nhất, vạn vật ẩn tàng. Thận trọng tối đa, hạn chế hành động lớn. Tốt cho tích lũy trí tuệ và kiên nhẫn chờ thời." },
-    "12": { "shift": 0,  "note": "Tháng Chạp — kết năm, tổng kết toàn diện. Như vòng tròn khép lại, chuẩn bị năng lượng cho năm mới. Tốt cho giải quyết mọi tồn đọng, dọn dẹp, và tri ân." }
+    "11L": { "shift": -3, "note": "Tháng Mười Một Nhuận — đông cực kéo dài, Thủy khí mạnh nhất. Tháng nhuận đòi hỏi thận trọng tối đa, tốt cho trầm tư học hỏi và chờ đợi thời cơ." },
+    "12": { "shift": 0,  "note": "Tháng Chạp — kết năm, tổng kết toàn diện. Như vòng tròn khép lại, chuẩn bị năng lượng cho năm mới. Tốt cho giải quyết mọi tồn đọng, dọn dẹp, và tri ân." },
+    "12L": { "shift": 0,  "note": "Tháng Chạp Nhuận — kết năm được kéo dài, vòng tròn năng lượng chuẩn bị khép lại. Tháng nhuận đặc biệt tốt cho giải quyết tồn đọng và chuẩn bị chu đáo cho năm mới." }
   }
 }

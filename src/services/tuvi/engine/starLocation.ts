@@ -477,13 +477,17 @@ export const getYearlyStarIndex = (heavenlyStemIndex: number, earthlyBranchIndex
     const { tianshiIndex, tianshangIndex } = getTianshiTianshangIndex(destinyIndex);
 
     return {
-        xianchiIndex, huagaiIndex, guchenIndex, guasuIndex,
+        guchenIndex, guasuIndex,
         tiancaiIndex, tianshouIndex, tianchuIndex, posuiIndex, feilianIndex,
         longchiIndex, fenggeIndex, tiankuIndex, tianxuIndex,
         tianguanIndex, tianfuIndex, tiandeIndex, yuedeIndex, tiankongIndex,
         jieluIndex, kongwangIndex, jiekongIndex, xunkongIndex,
         tianshiIndex, tianshangIndex, jieshaAdjIndex, nianjieIndex, dahaoAdjIndex,
-        ...jiangxingRing
+        ...jiangxingRing,
+        // Traditional huagai/xianchi MUST come after spread to override ring's values.
+        // The ring's values are different (jiangxing ring uses its own offsets).
+        // We want the traditional getHuagaiXianchiIndex values used for placement.
+        xianchiIndex, huagaiIndex
     };
 };
 

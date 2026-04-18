@@ -135,10 +135,10 @@ export function getTrueSolarTime(date: Date, longitude: number = 105, timezoneOf
     const standardMeridianDeg = Math.abs(tzOffsetMs / 60) * 15; // 7 * 15 = 105 degrees for UTC+7
     
     // Time shift: Every 1 degree difference is 4 minutes of time (since Earth rotates 360 deg in 1440 mins)
-    const longitudeCorrectionStr = (longitude - standardMeridianDeg) * 4; 
-    
+    const longitudeCorrectionMinutes = (longitude - standardMeridianDeg) * 4;
+
     // True Solar Time = Mean Solar Time + Equation of Time + Longitude Correction
-    const totalCorrectionMinutes = eot + longitudeCorrectionStr;
+    const totalCorrectionMinutes = eot + longitudeCorrectionMinutes;
     
     return new Date(date.getTime() + totalCorrectionMinutes * 60000);
 }

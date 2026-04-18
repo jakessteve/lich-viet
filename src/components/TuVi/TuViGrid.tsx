@@ -107,8 +107,24 @@ export default function TuViGrid({ chart, input, chartRef, onPalaceClick, select
     const [connectionLines, setConnectionLines] = useState<LineCoord[]>([]);
     const [mobileScale, setMobileScale] = useState(1);
     const [gridHeight, setGridHeight] = useState<number | undefined>(undefined);
+    const [hasScrolled, setHasScrolled] = useState(false);
 
-    // Dynamically scale grid to fit container on mobile
+    // Detect scroll to hide scroll hint on mobile
+    useEffect(() => {
+        const wrapper = wrapperRef.current;
+        if (!wrapper) return;
+        
+        const handleScroll = () => {
+            if (wrapper.scrollLeft > 20) {
+                setHasScrolled(true);
+            }
+        };
+        
+        wrapper.addEventListener('scroll', handleScroll, { passive: true });
+        return () => wrapper.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Dynamically scale grid to fit container on mobile (for desktop scaled mode)
     useEffect(() => {
         const wrapper = wrapperRef.current;
         if (!wrapper) return;
@@ -209,10 +225,11 @@ export default function TuViGrid({ chart, input, chartRef, onPalaceClick, select
     }, [mobileScale, calculateLines]);
 
     const needsScale = mobileScale < 1;
+    const wrapperClassName = `tuvi-grid-wrapper${hasScrolled ? ' has-scrolled' : ''}`;
 
     return (
         <div
-            className="tuvi-grid-wrapper"
+            className={wrapperClassName}
             ref={wrapperRef}
             style={needsScale && gridHeight ? { height: gridHeight * mobileScale } : undefined}
         >

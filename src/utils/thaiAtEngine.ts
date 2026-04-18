@@ -306,10 +306,17 @@ export function getThaiAtYearChart(lunarYear: number): ThaiAtChart {
 
 /**
  * Get monthly overlay within the year.
+ * @param lunarYear  - Lunar year from getLunarDate
+ * @param lunarMonth - Lunar month (1–12), distinct from Tiết Khí solar month
+ * @param isLeap     - Whether this is a leap month; leap months use a different
+ *                    modifier key so they get distinct overlays from their parent month
  */
-export function getThaiAtMonthOverlay(lunarYear: number, lunarMonth: number): ThaiAtMonthOverlay {
+export function getThaiAtMonthOverlay(lunarYear: number, lunarMonth: number, isLeap?: boolean): ThaiAtMonthOverlay {
   const yearChart = getThaiAtYearChart(lunarYear);
-  const monthMod = MONTHLY_MODS[lunarMonth.toString()];
+  // Leap months are keyed with a "L" suffix so they remain distinct from
+  // their regular counterpart in MONTHLY_MODS (e.g. "5L" for leap month 5).
+  const monthKey = isLeap ? `${lunarMonth}L` : lunarMonth.toString();
+  const monthMod = MONTHLY_MODS[monthKey] ?? MONTHLY_MODS[lunarMonth.toString()];
 
   const adjustedPalace = Math.max(
     1,
