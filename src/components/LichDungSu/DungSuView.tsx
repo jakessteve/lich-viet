@@ -424,7 +424,11 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
                   <div className="grid grid-cols-2 sm:grid-cols-6 gap-2">
                     <div className="col-span-1">
                       <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Giới tính</label>
-                      <select value={deceasedGender} onChange={e => setDeceasedGender(e.target.value as any)} className={inputFieldClass}>
+                      <select
+                        value={deceasedGender}
+                        onChange={e => setDeceasedGender(e.target.value === 'female' ? 'female' : 'male')}
+                        className={inputFieldClass}
+                      >
                         <option value="male">Nam</option>
                         <option value="female">Nữ</option>
                       </select>

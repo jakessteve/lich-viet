@@ -119,8 +119,8 @@ describe('generateBaziChart', () => {
     const male = generateBaziChart(new Date(1990, 0, 15), 10, true);
     const female = generateBaziChart(new Date(1990, 0, 15), 10, false);
     // Luck cycles may differ in direction (can/chi sequence)
-    const maleCans = male.luckCycles.map((c: any) => c.can);
-    const femaleCans = female.luckCycles.map((c: any) => c.can);
+    const maleCans = male.luckCycles.map(c => c.can);
+    const femaleCans = female.luckCycles.map(c => c.can);
     // At least some should differ for different genders
     expect(maleCans).not.toEqual(femaleCans);
   });

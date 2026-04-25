@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { generateBaziChart } from '../src/utils/baziEngine';
-// @ts-ignore
 import { Solar } from 'lunar-javascript';
 
 // Translation maps: lunar-javascript (Chinese) -> Native Engine (Vietnamese)

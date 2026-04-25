@@ -56,7 +56,7 @@ const getDaysInMonth = (year: number, month: number) => new Date(year, month, 0)
 describe('Fuzz Testing: Native Engine vs iztro across 100 random dates', () => {
     // Increase timeout since it does 100 runs
     it('generates completely matching tree of stars and palaces', () => {
-        let mismatches: string[] = [];
+        const mismatches: string[] = [];
         let totalChecked = 0;
         let passChecked = 0;
         
@@ -75,7 +75,7 @@ describe('Fuzz Testing: Native Engine vs iztro across 100 random dates', () => {
             
             let iztroChart;
             try {
-                iztroChart = astro.bySolar(dob, timeIndex, gender as any, false, 'zh-CN');
+                iztroChart = astro.bySolar(dob, timeIndex, gender, false, 'zh-CN');
             } catch (e) {
                 // Ignore if iztro crashes on random dates (sometimes happens for complex solar inputs)
                 continue;
@@ -103,7 +103,7 @@ describe('Fuzz Testing: Native Engine vs iztro across 100 random dates', () => {
             }
 
             // Map native to branches
-            const nativeByBranch: Record<string, any> = {};
+            const nativeByBranch: Record<string, typeof nativeChart.palaces[number]> = {};
             nativeChart.palaces.forEach(p => { nativeByBranch[p.earthlyBranch] = p; });
 
             // Evaluate all branches
@@ -140,13 +140,13 @@ describe('Fuzz Testing: Native Engine vs iztro across 100 random dates', () => {
                 }
 
                 // Check all stars. Extract all star names from iztro and map to local names.
-                const nativeStarsAndBrightness = nP.majorStars.map((s: any) => s.name)
-                    .concat(nP.minorStars.map((s: any) => s.name))
-                    .concat(nP.adjectiveStars.map((s: any) => s.name));
+                const nativeStarsAndBrightness = nP.majorStars.map(s => s.name)
+                    .concat(nP.minorStars.map(s => s.name))
+                    .concat(nP.adjectiveStars.map(s => s.name));
                     
-                const iztroStarsAndBrightness = iP.majorStars.map((s: any) => STAR_MAP[s.name] || s.name)
-                    .concat(iP.minorStars.map((s: any) => STAR_MAP[s.name] || s.name))
-                    .concat(iP.adjectiveStars.map((s: any) => STAR_MAP[s.name] || s.name));
+                const iztroStarsAndBrightness = iP.majorStars.map(s => STAR_MAP[s.name] || s.name)
+                    .concat(iP.minorStars.map(s => STAR_MAP[s.name] || s.name))
+                    .concat(iP.adjectiveStars.map(s => STAR_MAP[s.name] || s.name));
                 
                 // For comparison, ignore Truong Sinh 12 stars unless we want to test them. They are included in adjectiveStars.
                 // We'll keep them for now.
@@ -161,13 +161,13 @@ describe('Fuzz Testing: Native Engine vs iztro across 100 random dates', () => {
                 if (iztroStr !== nativeStr) {
                     // Ignore Iztro stars that calculate differently in Vietnamese schools
                     const ignoreMissingKeys = ['Triệt Lộ', 'Tuần Không', 'Không Vong', 'Thiên Quý', 'Ân Quang'];
-                    const missingInNative = allIztroStars.filter((s: any) => !allNativeStars.includes(s) && !ignoreMissingKeys.includes(s as string));
+                    const missingInNative = allIztroStars.filter(s => !allNativeStars.includes(s) && !ignoreMissingKeys.includes(s));
                     // Native includes extended stars and rings (Bác Sĩ, Thái Tuế, Tướng Tinh) which Iztro keeps as palace props
                     const ignoreExtraKeys = ['Bác Sỹ', 'Lực Sỹ', 'Thanh Long', 'Tiểu Hao', 'Tướng Quân', 'Tấu Thư', 'Phi Liêm', 'Hỷ Thần', 'Bệnh Phù', 'Đại Hao', 'Phục Binh', 'Quan Phủ',
                                              'Thái Tuế', 'Thiếu Dương', 'Tang Môn', 'Thiếu Âm', 'Quan Phù', 'Tử Phù', 'Tuế Phá', 'Long Đức', 'Bạch Hổ', 'Phúc Đức', 'Điếu Khách', 'Trực Phù',
                                              'Tướng Tinh', 'Phan Án', 'Tuế Dịch', 'Tức Thần', 'Tai Sát', 'Thiên Sát', 'Chỉ Bối', 'Nguyệt Sát', 'Vong Thần',
                                              'Đường Phù', 'Quốc Ấn', 'Đào Hoa', 'Thiên La', 'Địa Võng', 'Thiên Giải', 'Thiên Đức Q.N', 'Nguyệt Đức Q.N', 'Lưu Hà', 'Hối Khí', 'Quán Sách', 'Kiếp Sát', 'Thiên Quý', 'Ân Quang', 'Triệt Lộ', 'Tuần Không', 'Không Vong'];
-                    const extraInNative = allNativeStars.filter((s: any) => !allIztroStars.includes(s) && !ignoreExtraKeys.includes(s as string));
+                    const extraInNative = allNativeStars.filter(s => !allIztroStars.includes(s) && !ignoreExtraKeys.includes(s));
                     
                     totalMissingInChart += missingInNative.length;
                     

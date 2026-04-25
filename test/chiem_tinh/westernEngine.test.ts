@@ -4,6 +4,7 @@ import { calculateTransits } from '../../src/utils/transitCalculator';
 import { calculateSynastry } from '../../src/utils/synastryCalculator';
 import { computeSynastryP1 } from '../../src/services/crossValidation/synastryEngine';
 import type { BirthData } from '../../src/types/westernAstro';
+import type { BasicProfile, SecondPersonProfile } from '../../src/types/auth';
 
 describe('Western Astrology Engine (Chiêm Tinh)', () => {
     
@@ -92,10 +93,16 @@ describe('Western Astrology Engine (Chiêm Tinh)', () => {
     });
     it('should integrate with the high-level computeSynastryP1 service without throwing', () => {
         // Mock profiles for the high-level wrapper
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const profileA: any = { name: 'A', birthYear: 1990, birthMonth: 5, birthDay: 15, gender: 'male' as const };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const profileB: any = { name: 'B', birthYear: 1992, birthMonth: 11, birthDay: 20, gender: 'female' as const, relationship: 'partner' as const };
+        const profileA: BasicProfile = { birthYear: 1990, birthMonth: 5, birthDay: 15, gender: 'male' };
+        const profileB: SecondPersonProfile = {
+            birthYear: 1992,
+            birthMonth: 11,
+            birthDay: 20,
+            gender: 'female',
+            name: 'B',
+            relationship: 'partner',
+            computationTier: 'basic',
+        };
         
         const result = computeSynastryP1(profileA, profileB);
         expect(result).toBeDefined();

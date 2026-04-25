@@ -39,6 +39,7 @@ import {
     getThienDucQuyNhanIndex,
     getNguyetDucQuyNhanIndex
 } from './starLocation';
+import type { Can, Chi } from '../../../types/calendar';
 
 import { STAR_NAMES, STARS_INFO } from './starCatalog';
 
@@ -415,10 +416,9 @@ export abstract class BaseTuViEngine {
         const targetYear = this.input.targetYear || currentYear;
 
         const dayCanChiStr = getCanChiDay(this.solarDateObj);
-        const dayCan = dayCanChiStr.split(' ')[0] as never; // getHourCanChi strictly expects never or specific template types if it's external, actually we can just use // eslint-disable-next-line
-        const dayChi = dayCanChiStr.split(' ')[1] as never;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const hourCanChiObj = getHourCanChi(dayCan as any, VI_CHI[this.timeIndex] as any);
+        const dayCan = dayCanChiStr.split(' ')[0] as Can;
+        const dayChi = dayCanChiStr.split(' ')[1] as Chi;
+        const hourCanChiObj = getHourCanChi(dayCan, VI_CHI[this.timeIndex] as Chi);
         const hourCanChiStr = `${hourCanChiObj.can} ${hourCanChiObj.chi}`;
         
         const tigerStemStartRule = [2, 4, 6, 8, 0];

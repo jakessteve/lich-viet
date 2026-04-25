@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { calculateSihuaFlows } from '../../src/services/tuvi/sihuaEngine';
-import { TuViPalace } from '../../src/services/tuvi/tuviTypes';
+import type { StageInfo, TuViPalace, TuViStar } from '../../src/services/tuvi/tuviTypes';
 
 const createMockPalace = (
     earthlyBranch: string,
@@ -10,13 +10,11 @@ const createMockPalace = (
     name: 'Mệnh',
     earthlyBranch,
     heavenlyStem,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    majorStars: starNames.map(name => ({ name, type: 'major', brightness: 'V', schoolSource: 'vi' } as any)),
+    majorStars: starNames.map(name => ({ name, type: 'major', scope: 'origin', brightness: 'V', schoolSource: 'vi' } as TuViStar)),
     minorStars: [],
     adjectiveStars: [],
     isBodyPalace: false,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    stage: 'Trường Sinh' as any,
+    stage: { range: [1, 10], heavenlyStem } as StageInfo,
 });
 
 describe('sihuaEngine', () => {

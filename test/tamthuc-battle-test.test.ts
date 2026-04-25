@@ -59,7 +59,8 @@ describe('Kỳ Môn Độn Giáp - Battle Testing & Fuzz Oracle', () => {
             if (!palace.star) throw new Error(`Missing Star in palace ${palace.number} for ${date.toISOString()} hour ${hourChi}`);
             if (!palace.heavenlyStem) throw new Error(`Missing Heavenly Stem in palace ${palace.number} for ${date.toISOString()} hour ${hourChi}`);
             if (!palace.earthStem) throw new Error(`Missing Earth Stem in palace ${palace.number} for ${date.toISOString()} hour ${hourChi}`);
-          } catch (e: any) {
+          } catch (error) {
+            const e = error instanceof Error ? error : new Error(String(error));
             console.error(e.message);
             throw e;
           }

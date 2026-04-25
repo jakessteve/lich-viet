@@ -64,8 +64,8 @@ describe('iztro vs Native Engine Accuracy', () => {
         nativeChart.palaces.forEach(p => { nativeByBranch[p.earthlyBranch] = p; });
 
         // iztro: keyed by branch Vietnamese name
-        const iztroByBranch: Record<string, any> = {};
-        iztroChart.palaces.forEach((p: any) => {
+        const iztroByBranch: Record<string, typeof iztroChart.palaces[number]> = {};
+        iztroChart.palaces.forEach(p => {
             const branchKey = BRANCH_MAP[p.earthlyBranch] || p.earthlyBranch;
             iztroByBranch[branchKey] = p;
         });
@@ -116,7 +116,7 @@ describe('iztro vs Native Engine Accuracy', () => {
             if (!iP || !nP) return;
 
             const iztroMajor = (iP.majorStars || [])
-                .map((s: any) => {
+                .map(s => {
                     const vn = STAR_MAP[s.name] || s.name;
                     const br = BRIGHTNESS_MAP[s.brightness] || s.brightness || '';
                     return `${vn}${br ? '('+br+')' : ''}`;
@@ -125,7 +125,7 @@ describe('iztro vs Native Engine Accuracy', () => {
             const nativeMajor = nP.majorStars
                 .map(s => `${s.name}${s.brightness ? '('+s.brightness+')' : ''}`).sort().join(', ');
 
-            const nameOnly_i = (iP.majorStars || []).map((s: any) => STAR_MAP[s.name] || s.name).sort().join(',');
+            const nameOnly_i = (iP.majorStars || []).map(s => STAR_MAP[s.name] || s.name).sort().join(',');
             const nameOnly_n = nP.majorStars.map(s => s.name).sort().join(',');
             const starMatch = nameOnly_i === nameOnly_n;
             totalChecks++; if (starMatch) matchCount++;

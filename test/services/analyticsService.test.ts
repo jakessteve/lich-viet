@@ -1,13 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { analytics } from '../../src/services/analyticsService';
 
+type WindowWithGtag = Window & {
+  gtag?: (...args: unknown[]) => unknown;
+};
+
 describe('AnalyticsService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset global window.gtag if it was set
     if (typeof window !== 'undefined') {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (window as any).gtag;
+      delete (window as WindowWithGtag).gtag;
     }
   });
 
@@ -35,8 +38,7 @@ describe('AnalyticsService', () => {
 
   it('should call window.gtag if it exists', () => {
     const gtagMock = vi.fn();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).gtag = gtagMock;
+    (window as WindowWithGtag).gtag = gtagMock;
 
     analytics.trackEvent({
       name: 'form_submit',
@@ -48,8 +50,7 @@ describe('AnalyticsService', () => {
 
   it('should track page views', () => {
     const gtagMock = vi.fn();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).gtag = gtagMock;
+    (window as WindowWithGtag).gtag = gtagMock;
 
     analytics.trackPageView('/test-path', 'Test Title');
 
@@ -67,8 +68,7 @@ describe('AnalyticsService', () => {
   it('should track errors', () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const gtagMock = vi.fn();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).gtag = gtagMock;
+    (window as WindowWithGtag).gtag = gtagMock;
 
     analytics.trackError({
       message: 'Test error',

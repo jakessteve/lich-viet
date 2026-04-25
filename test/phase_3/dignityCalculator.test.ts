@@ -28,8 +28,7 @@ describe('Dignity Calculator', () => {
         });
 
         it('returns peregrine for unknown planet', () => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            expect(calculateDignity('nonexistent' as any, 'aries')).toBe('peregrine');
+            expect(calculateDignity('nonexistent' as never, 'aries')).toBe('peregrine');
         });
 
         // Mars dignities

@@ -36,9 +36,8 @@ describe('personalDungSu', () => {
     const ext: ExtendedProfile = {
       birthYear: 1990, birthMonth: 1, birthDay: 1,
       birthTime: '10:00',
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      tuanKhong: ['Thìn', 'Tỵ'] as any
-    } as ExtendedProfile;
+      tuanKhong: ['Thìn', 'Tỵ']
+    };
 
     const result = getPersonalDungSu(basicProfile, ext, 'Thìn', activities);
     expect(result.voidDayWarning).toBeDefined();
