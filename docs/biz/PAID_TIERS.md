@@ -1,53 +1,37 @@
-# Paid-Tier Feature Matrix — Lịch Việt v2
+# Paid-Tier Feature Matrix - Lich Viet v3
 
-This document defines the feature distribution across different user tiers for the Lịch Việt v2 platform.
+> **Version:** 3.0.0 | **Updated:** May 2026
 
-## 1. User Tiers Definition
+Lich Viet v3 does not ship any active paid tier. There is no credit system, premium gate, or subscription wall in the current app.
 
-| Tier | Status | Access Level | Description |
-| :--- | :--- | :--- | :--- |
-| **Guest** | Not Logged In | Level 0 | Basic calendar and day viewing only. No data persistence. |
-| **Free** | Registered | Level 1 | Standard features, basic charts, limited interpretations. |
-| **Trial** | Partial Premium | Level 2 | 14-day full access (via promo code) with medium-length PDF reports. |
-| **Premium** | Paid / Admin | Level 3 | Full access to all engines, professional interpretations, and full PDF reports. |
+## Current Features
 
-## 2. Feature Comparison Matrix
+| Feature                |           Status            |
+| :--------------------- | :-------------------------: |
+| **Landing page**       |           Active            |
+| **Am Lich**            |           Active            |
+| **Dung Su**            |           Active            |
+| **Mai Hoa**            |           Active            |
+| **Tam Thuc**           |           Active            |
+| **Personalization**    |           Active            |
+| **Flying Star engine** | Present as a utility engine |
 
-| Feature | Free (Registered) | Trial (14-day) | Premium (Paid) |
-| :--- | :---: | :---: | :---: |
-| **Core Calendar** | ✅ | ✅ | ✅ |
-| **Auspicious Hours** | ✅ | ✅ | ✅ |
-| **Activity Selection (Dụng Sự)** | ✅ (64+ activities) | ✅ | ✅ |
-| **Mai Hoa / Luc Nham / Gieo Que** | ✅ | ✅ | ✅ |
-| **Bazi (Bát Tự)** | Basic Chart | Full Interpretation | Full + Pillars Analysis |
-| **Tử Vi (Eastern Astrology)** | Basic Chart | Full Interpretation | Full + Advanced (Tứ Hóa) |
-| **Chiêm Tinh (Western Astrology)** | Basic Chart | Full Chart + Aspects | Full + Detailed Transits |
-| **Numerology (Thần Số Học)** | Basic (20+ indicators) | Full Analysis | Full Analysis |
-| **Advanced Interpretations** | ❌ | ✅ (All tabs) | ✅ (All tabs) |
-| **Luck Cycles (Đại Hạn/Lưu Niên)** | ❌ | ✅ | ✅ |
-| **PDF Report Download** | ❌ | ✅ (~30 pages) | ✅ (60-70 pages) |
-| **Access Duration** | Unlimited | 14 Days | Permanent |
+## Future Monetization
 
-## 3. Domain Engine Specifics
+Any future paid tier work should be treated as a new product decision, not a carry-over from the removed v2 feature set. The current v3 codebase and docs should continue to describe the app as free unless a new plan is approved.
 
-### 3.1 Tử Vi (Eastern Astrology)
-- **Free:** Chart generation with palace names and stars. Basic self-character analysis (Mệnh/Thân).
-- **Trial/Premium:** Detailed analysis of all 12 palaces. Decennial (Đại Hạn) and Yearly (Lưu Niên) luck analysis. Star combination interpretations (Cơ Cự, Đồng Lương, etc.).
+## Historical Modules
 
-### 3.2 Chiêm Tinh (Western Astrology)
-- **Free:** Wheel chart with planets and signs. Basic Sun/Moon/Rising analysis.
-- **Trial/Premium:** Full aspect table (Conjunction, Trine, Square, etc.). House ruler analysis. Current transits and progressions.
+The following removed modules are kept out of the active product scope and are not currently offered as premium features:
 
-### 3.3 PDF Generation
-- **Trial (Medium):** Aggregated text-dense output focusing on core identity and immediate luck. Approximately 30 pages.
-- **Premium (Full):** Comprehensive academic-grade report (~60-70 pages) including all domain engines (Bazi, TuVi, Astrology, Numerology) in a single unified dossier.
-
-## 4. Business Rationale (@biz perspective)
-
-1. **Curiosity Gap:** We provide the chart (the "What") for free but gate the deep interpretation (the "Why" and "How") to drive conversions.
-2. **Loss Aversion:** The 14-day trial (Partial-Premium) allows users to experience the full depth of the platform. Once the trial expires, the "Locked" indicators in the UI create a sense of loss, encouraging upgrades.
-3. **Professional Value:** PDF reports are positioned as a "Professional Dossier," suitable for serious practitioners or users wanting a permanent physical record of their life path.
-4. **Permanent Access:** Unlike many SaaS models, Lịch Việt v2 focuses on a "Unlock Once, Own Forever" model for specific natal charts, aligning with the traditional "casting a chart" service model.
+| Module          | Status  |
+| :-------------- | :-----: |
+| **Tử Vi**       | Removed |
+| **Chiêm Tinh**  | Removed |
+| **Hợp Lá**      | Removed |
+| **Hàng Ngày**   | Removed |
+| **Thần Số Học** | Removed |
 
 ---
-*Last Updated: March 2026*
+
+_Last Updated: May 2026_

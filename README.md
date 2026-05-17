@@ -1,185 +1,184 @@
-# 🌙 Lịch Việt v2
+# Lich Viet v3
 
-**Vietnamese Lunar Calendar & Metaphysical Analysis Platform**
+Vietnamese lunar calendar, auspicious-day analysis, and divination tools in a focused client-side web app.
 
-A comprehensive web application for Vietnamese lunar calendar lookup, auspicious day analysis, and multiple Eastern/Western divination systems — built with React 19, TypeScript, and Vite 7.
+Lich Viet v3 is a reset from the broader v2 suite. The app now centers on three surfaces: the landing page, Am Lich for calendar and Dung Su workflows, and Gieo Que for Mai Hoa and Tam Thuc divination. Removed v2-era modules such as Tu Vi, Chiem Tinh, Than So Hoc, Hop La, Bat Tu, admin, premium gating, credits, 2FA, PDF export, onboarding, and widgets are intentionally outside the current v3 scope.
 
-## 🏗 Architecture
+## What v3 Includes
+
+| Area            | Current scope                                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------------ |
+| Landing         | Product intro, birthday entry, cosmic weather card, testimonials, pricing placeholder                  |
+| Am Lich         | Solar-lunar lookup, month calendar, day detail, Vietnamese holidays, good/bad hours, travel directions |
+| Dung Su         | Activity selection, date scoring, factor breakdowns, best-time guidance, QMDJ cross-reference          |
+| Gieo Que        | Mai Hoa hexagrams, Tam Thuc synthesis, QMDJ, Thai At, Luc Nham                                         |
+| Personalization | Authenticated birthday-based day, activity, and hour scoring without premium gating                    |
+| Core packages   | `@lich-viet/core/*` and `@lich-viet/types` aliases for portable engine exports                         |
+
+## Architecture
+
+Lich Viet v3 is a browser-only React SPA. There is no backend server in this repo; calculation work runs in TypeScript engines, static JSON datasets, and lightweight client state.
 
 ```mermaid
 graph TB
-    subgraph Client["Browser (SPA)"]
-        UI["React 19 UI Layer"]
+    subgraph Browser["Browser SPA"]
+        UI["React 19 UI"]
         Router["React Router v7"]
-        Store["Zustand State"]
+        Store["Zustand stores"]
+        PWA["Vite PWA"]
     end
 
-    subgraph Pages["Route Pages"]
-        P1["📅 Âm Lịch"]
-        P2["🔮 Gieo Quẻ"]
-        P3["⭐ Tử Vi"]
-        P4["🌟 Chiêm Tinh"]
-        P5["🔢 Thần Số Học"]
+    subgraph Pages["Active pages"]
+        Landing["Landing"]
+        AmLich["/app/am-lich"]
+        GieoQue["/app/gieo-que"]
     end
 
-    subgraph Engines["Calculation Engines (src/utils)"]
-        E1["calendarEngine"]
-        E2["maiHoaEngine + tamThucSynthesis"]
-        E3["tuViEngine (iztro)"]
-        E4["natalChartCalculator"]
-        E5["numerologyEngine"]
-        E6["baziCalculator"]
-        E7["fengShuiEngine"]
+    subgraph Engines["Pure TypeScript engines"]
+        Calendar["calendarEngine"]
+        DungSu["activityScorer + dungSuEngine"]
+        MaiHoa["maiHoaEngine"]
+        TamThuc["tamThucSynthesis"]
+        QMDJ["qmdjEngine"]
+        ThaiAt["thaiAtEngine"]
+        LucNham["lucNhamEngine"]
+        FlyingStar["flyingStarEngine"]
+        Personal["personalization services"]
     end
 
-    subgraph Data["Static Data (src/data)"]
-        D1["Star Catalogs"]
-        D2["Interpretation JSONs"]
-        D3["Palace Meanings"]
+    subgraph Data["Static data"]
+        Phase1["phase_1 calendar data"]
+        Phase2["phase_2 hexagram data"]
+        QmdjData["qmdj JSON"]
+        LucNhamData["lucNham JSON"]
+        ThaiAtData["thaiAt JSON"]
     end
 
     UI --> Router --> Pages
     UI --> Store
-    P1 --> E1
-    P2 --> E2
-    P3 --> E3
-    P4 --> E4
-    P5 --> E5
+    UI --> PWA
+    Pages --> Engines
     Engines --> Data
-
-    style Client fill:#1a1a2e,stroke:#16213e,color:#e94560
-    style Engines fill:#0f3460,stroke:#16213e,color:#e9e9e9
-    style Data fill:#533483,stroke:#16213e,color:#e9e9e9
 ```
 
-## ✨ Features
+## Tech Stack
 
-### 📅 Lunar Calendar
-- Solar ↔ Lunar date conversion with Vietnamese month/year naming
-- Auspicious activity scoring (8 factors: Ngọc Hạp, Hiệp Kỷ, Ngũ Hành, and more)
-- Giờ tốt/xấu (auspicious hours) and hướng xuất hành (travel direction)
+| Layer       | Technology                                                           |
+| ----------- | -------------------------------------------------------------------- |
+| Framework   | React 19 + TypeScript 5.9                                            |
+| Build       | Vite 7                                                               |
+| Styling     | Tailwind CSS v4, vanilla CSS, self-hosted Noto Sans/Noto Serif fonts |
+| Routing     | React Router DOM v7                                                  |
+| State       | Zustand v5                                                           |
+| Validation  | Zod v4                                                               |
+| PWA         | vite-plugin-pwa                                                      |
+| Testing     | Vitest, Testing Library, JSDOM, Playwright                           |
+| Lint/format | ESLint 9 flat config, jsx-a11y, Prettier                             |
 
-### 🔮 Divination Engines
-| Engine | Description |
-|---|---|
-| **Tử Vi** (紫微) | Purple Star astrology with 12-palace chart, temporal overlays (Đại Hạn, Lưu Niên), and Tứ Hóa analysis |
-| **Bát Tự** (八字) | Four Pillars of Destiny with Thập Thần, Tàng Can, Branch Interactions, and Trường Sinh |
-| **Chiêm Tinh** | Western Natal Chart with aspect patterns, secondary progressions, and interactive sky map |
-| **Thần Số Học** | Numerology (Pythagorean & Chaldean) with Life Path, Expression, Soul Urge, and life cycles |
-| **Mai Hoa** (梅花) | Plum Blossom Numerology with Thể/Dụng trigrams and Ngũ Hành interpretation |
-| **Kỳ Môn Độn Giáp** | QMDJ multi-layered board (stems, stars, doors, deities) |
-| **Lục Nhâm** | Six Ren divination with Heaven/Earth board rotation |
-| **Thái Ất** | Thai At 16-palace cycle system |
-| **Phi Tinh** | Flying Star Feng Shui with Luo Shu grid and 24-mountain compass |
+## Getting Started
 
-### 🎨 Design
-- Dark mode with glassmorphism and ambient mystery effects
-- Mobile-first responsive design
-- `prefers-reduced-motion` accessibility support across all stylesheets
-- Self-hosted Inter font family with Vietnamese character support
+### Requirements
 
-### ♿ Accessibility
-- WCAG 2.1 AA focus-visible indicators
-- `prefers-reduced-motion` across all animations
-- `jsx-a11y` linting enforced
-- `aria-current` page navigation
-- Semantic HTML with ARIA labels
+- Node.js 20 or newer
+- npm 10 or newer
 
-## 🛠 Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Framework | React 19 + TypeScript 5.8 |
-| Build | Vite 7 |
-| Styling | Tailwind CSS v4 + vanilla CSS |
-| State | Zustand |
-| Routing | React Router v7 |
-| Testing | Vitest + @testing-library/react |
-| Linting | ESLint 9 (flat config) + jsx-a11y + Prettier |
-| CI | GitHub Actions (lint, type-check, test, build, security audit) |
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js ≥ 20
-- npm ≥ 10
-
-### Installation
+### Install and Run
 
 ```bash
-# Clone the repository
-git clone https://github.com/jakessteve/lich-viet-v2.git
-cd lich-viet-v2
-
-# Install dependencies
+git clone git@github.com:jakessteve/lich-viet.git
+cd lich-viet
 npm install
-
-# Start development server
 npm run dev
 ```
 
-### Available Scripts
+The Vite dev server prints the local URL after startup.
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start Vite dev server |
-| `npm run build` | TypeScript check + production build |
-| `npm run preview` | Preview production build |
-| `npm test` | Run Vitest test suite |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run test:coverage` | Run tests with coverage report |
-| `npm run lint` | Lint source files |
-| `npm run lint:fix` | Auto-fix lint issues |
-| `npm run format` | Format with Prettier |
-| `npm run validate:data` | Validate static data files |
+## Scripts
 
-## 📁 Project Structure
+| Command                 | Purpose                                        |
+| ----------------------- | ---------------------------------------------- |
+| `npm run dev`           | Start the local Vite dev server                |
+| `npm run build`         | Run TypeScript and create a production build   |
+| `npm run preview`       | Preview the production build locally           |
+| `npm test`              | Run the Vitest suite once                      |
+| `npm run test:watch`    | Run Vitest in watch mode                       |
+| `npm run test:coverage` | Run Vitest with coverage                       |
+| `npm run test:e2e`      | Run Playwright end-to-end tests                |
+| `npm run typecheck`     | Run TypeScript without emitting files          |
+| `npm run lint`          | Lint `src`, `packages`, and `test`             |
+| `npm run lint:fix`      | Auto-fix lint issues where possible            |
+| `npm run format`        | Format source, package, script, and test files |
+| `npm run format:check`  | Check formatting                               |
+| `npm run validate:data` | Validate static data files                     |
+| `npm run docs:api`      | Generate TypeDoc API docs                      |
 
-```
+## Repository Layout
+
+```text
 src/
-├── components/     # React UI components (calendar, charts, forms)
-├── config/         # Application configuration constants
-├── data/           # Static datasets (star catalogs, interpretation data)
-├── hooks/          # Custom React hooks
-├── i18n/           # Internationalization / Vietnamese translations
-├── router/         # React Router route definitions
-├── schemas/        # Zod validation schemas
-├── services/       # External API integrations (geocoding, holidays)
-├── stores/         # Zustand state management
-├── styles/         # Feature CSS + self-hosted fonts
-├── types/          # TypeScript type definitions
-├── utils/          # Calculation engines (bazi, tuvi, astro, etc.)
-├── workers/        # Web Workers for heavy computation
-└── index.css       # Design system tokens and shared utilities
+├── App.tsx                 # Root routing and app layout
+├── components/             # Feature, page, layout, and shared UI
+├── config/                 # API, scoring, and theme configuration
+├── data/                   # Static calendar and divination datasets
+├── hooks/                  # React hooks used by the app surface
+├── i18n/                   # Vietnamese and English locale files
+├── router/                 # Route constants, lazy pages, redirects
+├── services/               # Analytics and v3 personalization services
+├── stores/                 # Zustand app and auth stores
+├── styles/                 # Self-hosted fonts and feature CSS
+├── types/                  # Shared TypeScript declarations
+└── utils/                  # Pure calculation engines
 
-test/               # Vitest test suite (organized by phase)
-packages/           # Shared core logic & types (monorepo)
-public/             # Static assets, fonts, icons, SEO files
-docs/               # Architecture, PRD, and phase archives
+packages/
+├── core/                   # @lich-viet/core engine barrel exports
+└── types/                  # @lich-viet/types shared type exports
+
+test/
+├── engines/                # Focused engine regression tests
+├── stores/                 # Zustand store tests
+└── utils/                  # Utility tests
+
+docs/
+├── tech/                   # Architecture, function map, UI/UX, user flow
+├── biz/                    # Paid-tier planning
+└── log/                    # Changelog, sprint log, incident log
 ```
 
-## 🧪 Testing
+## Active Routes
 
-```bash
-# Run all tests (712 tests across 43 files)
-npm test
+| Route                            | Notes                               |
+| -------------------------------- | ----------------------------------- |
+| `/`                              | Standalone landing page             |
+| `/app/am-lich`                   | Main calendar and Dung Su workspace |
+| `/app/gieo-que`                  | Mai Hoa and Tam Thuc workspace      |
+| `/app/cai-dat`                   | Settings                            |
+| `/app/dang-nhap`, `/app/dang-ky` | Local auth screens                  |
+| `/app/nang-cap`                  | Coming-soon upgrade/pricing page    |
 
-# Run with coverage
-npm run test:coverage
-```
+Legacy v2 paths redirect into the v3 app instead of exposing removed modules.
 
-**Test suite covers:** Calendar calculations, Bazi engine, Western astrology, activity scoring, numerology, Mai Hoa, Tam Thức synthesis, Feng Shui, component rendering, hooks, stores, i18n, and more.
+## Testing Focus
 
-## 📖 Documentation
+The current test suite emphasizes deterministic engine behavior and small app-state contracts:
 
-- [CONTRIBUTING.md](./CONTRIBUTING.md) — Contribution guidelines
-- [CHANGELOG.md](./CHANGELOG.md) — Version history
-- [SECURITY.md](./SECURITY.md) — Security model and environment variables
-- [PAID_TIERS.md](./PAID_TIERS.md) — Feature tiers and monetization strategy
-- [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) — System architecture overview
-- [docs/PRD.md](./docs/PRD.md) — Product requirements document
-- [docs/ENGINE_DEPENDENCY_GRAPH.md](./docs/ENGINE_DEPENDENCY_GRAPH.md) — Engine dependency visualization
+- Calendar, Can Chi, foundational layers, auspicious hours, and Dung Su scoring
+- Mai Hoa, Tam Thuc, QMDJ, Thai At, Luc Nham, and Flying Star engines
+- Personal day, activity, and hour scoring
+- App, auth, and feature-flag stores
+- Formatting helpers and test setup
 
-## 📄 License
+Run `npm test` for the local regression suite before shipping code changes.
 
-MIT © Lịch Việt Contributors
+## Documentation
+
+- [Changelog](./CHANGELOG.md)
+- [Security](./SECURITY.md)
+- [Technical Architecture](./docs/tech/ARCHITECTURE.md)
+- [Function Map](./docs/tech/FUNCTIONS.md)
+- [UI/UX Notes](./docs/tech/UI_UX.md)
+- [User Flow](./docs/tech/USERFLOW.md)
+- [Paid Tiers](./docs/biz/PAID_TIERS.md)
+
+## License
+
+MIT © Lich Viet contributors

@@ -1,45 +1,53 @@
-# Security Model — Lịch Việt v2
+# Security Model - Lich Viet v3
 
 ## Architecture
 
-Lịch Việt is a **client-side-only SPA** (React + Vite). There is **no backend server**. All computation, data storage, and authentication run entirely in the browser.
+Lich Viet v3 is a client-side SPA. There is no backend server in this repository, so all app logic, state, and persistence run in the browser.
 
 ## Authentication
 
-> ⚠️ **DEMO ONLY** — Authentication is implemented in `localStorage` for demonstration purposes. It is **NOT suitable for production use** with real user data.
+> ⚠️ DEMO ONLY - Authentication is implemented with `localStorage` for local testing and product demos. It is not production-grade authentication.
 
-**Limitations:**
-- User "database" (emails + password hashes) is stored in `localStorage`, accessible via browser DevTools
-- SHA-256 hashing is used without salt (not suitable for real password storage)
-- 2FA accepts any 6-digit code (simulated)
-- Admin authentication uses a client-side hash comparison
+Current behavior:
 
-**For production migration**, implement server-side auth via Firebase Auth, Supabase Auth, or a custom backend with:
-- bcrypt/argon2 password hashing with per-user salts
-- Server-stored session tokens (HttpOnly cookies)
-- Real TOTP 2FA (RFC 6238)
+- User records are stored in `localStorage`
+- Passwords are hashed with salted SHA-256
+- A seeded demo admin account is created on first load for local testing
+- Social login is simulated on the client
+- Session state is also persisted in `localStorage`
+
+Not present in v3:
+
+- Production server-side auth
+- Real TOTP 2FA
+- HttpOnly session cookies
+- Backend role enforcement
+
+For production migration, move auth to a real identity provider or server-backed auth system such as Firebase Auth, Supabase Auth, or a custom backend with:
+
+- bcrypt or argon2 password hashing with per-user salts
+- Server-stored session tokens
+- Real 2FA flows
 
 ## Content Security Policy
 
 CSP is configured via `<meta>` tags in `index.html`:
-- `script-src 'self'` — only same-origin scripts
-- `style-src-elem 'self'` — only same-origin stylesheets (no inline `<style>` tags)
-- `style-src-attr 'unsafe-inline'` — allowed for dynamic React styles (`style` attributes)
-- `frame-src 'none'` + `frame-ancestors 'none'` — anti-clickjacking
-- `object-src 'none'` — blocks plugins
-- `base-uri 'self'` — prevents base tag hijacking
 
-**Note:** `style-src-attr` includes `'unsafe-inline'` due to framework requirements (dynamic progress bars, etc.), but all static `<style>` tags have been moved to external files.
+- `script-src 'self'` - only same-origin scripts
+- `style-src-elem 'self'` - only same-origin stylesheets
+- `style-src-attr 'unsafe-inline'` - required for runtime style attributes
+- `frame-src 'none'` and `frame-ancestors 'none'` - anti-clickjacking
+- `object-src 'none'` - blocks plugins
+- `base-uri 'self'` - prevents base tag hijacking
 
 ## External API Calls
 
-| Service | Purpose | Data Sent |
-|---|---|---|
-| Nominatim (OpenStreetMap) | Geocoding | Location search queries |
-| ipapi.co | Geo-IP detection | User's IP (via browser) |
-| date.nager.at | Public holidays | Country code |
+| Service       | Purpose                                   | Data Sent                    |
+| ------------- | ----------------------------------------- | ---------------------------- |
+| ipapi.co      | Geo-IP detection for holiday localization | User IP, via browser request |
+| date.nager.at | Public holidays for non-Vietnam locales   | Country code and year        |
 
-No authentication tokens or user data are sent to external services.
+No authentication tokens are sent to external services. Holiday lookups are cached locally and default to Vietnam when geo detection fails.
 
 ## Reporting Vulnerabilities
 
