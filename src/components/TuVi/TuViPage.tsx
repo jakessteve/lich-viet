@@ -162,7 +162,7 @@ export const TuViPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid w-full grid-cols-3 gap-1 rounded-lg bg-surface-subtle-light p-1 dark:bg-white/5 sm:w-auto">
+          <div className="grid w-full grid-cols-1 gap-1 rounded-lg bg-surface-subtle-light p-1 dark:bg-white/5 sm:w-auto sm:grid-cols-3">
             {SCHOOL_OPTIONS.map((school) => {
               const active = (input.school ?? 'thien-luong') === school.id;
               return (
@@ -170,7 +170,7 @@ export const TuViPage: React.FC = () => {
                   key={school.id}
                   type="button"
                   onClick={() => setSchool(school.id)}
-                  className={`inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-3 text-xs font-semibold transition-colors ${
+                  className={`inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-md px-3 text-xs font-semibold transition-colors sm:w-auto ${
                     active
                       ? 'bg-white text-gold-light shadow-sm dark:bg-white/15 dark:text-gold-dark'
                       : 'text-text-secondary-light hover:bg-white/70 dark:text-text-secondary-dark dark:hover:bg-white/10'

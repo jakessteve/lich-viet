@@ -1,5 +1,5 @@
 import type { Can } from '../../types/calendar';
-import type { TuHoaType, TuViSchool } from '../../types/tuvi';
+import type { TuHoaType, TuViLeapMonthPolicy, TuViSchool, TuViTimePolicy } from '../../types/tuvi';
 
 export type KinhDaRule = 'fixed' | 'thuan-nghich';
 export type KhoiVietRule = 'vietnamese' | 'standard';
@@ -13,6 +13,8 @@ export interface TuViSchoolProfile {
   kinhDaRule: KinhDaRule;
   khoiVietRule: KhoiVietRule;
   thaiTueRingRule: ThaiTueRingRule;
+  leapMonthPolicy: TuViLeapMonthPolicy;
+  timePolicy: TuViTimePolicy;
   tuHoaTable: Record<Can, Record<TuHoaType, string>>;
 }
 
@@ -41,30 +43,36 @@ export const TU_VI_SCHOOL_PROFILES: Record<TuViSchool, TuViSchoolProfile> = {
     id: 'nam-phai',
     label: 'Nam phái',
     shortLabel: 'Nam',
-    description: 'Cổ truyền Tam Hợp / Toàn Thư, dùng Kình Đà cố định quanh Lộc Tồn.',
+    description: 'Cổ truyền Tam Hợp / Toàn Thư, dùng Kình Đà cố định quanh Lộc Tồn và split-15 cho leap month.',
     kinhDaRule: 'fixed',
     khoiVietRule: 'vietnamese',
     thaiTueRingRule: 'vietnamese',
+    leapMonthPolicy: 'split-15',
+    timePolicy: 'historical-vietnam',
     tuHoaTable: TOAN_THU_TU_HOA,
   },
   'thien-luong': {
     id: 'thien-luong',
     label: 'Thiên Lương',
     shortLabel: 'TL',
-    description: 'Biến thể Thiên Lương hiện tại, đảo Kình Đà theo chiều thuận-nghịch.',
+    description: 'Biến thể Thiên Lương hiện tại, đảo Kình Đà theo chiều thuận-nghịch và split-15 cho leap month.',
     kinhDaRule: 'thuan-nghich',
     khoiVietRule: 'vietnamese',
     thaiTueRingRule: 'vietnamese',
+    leapMonthPolicy: 'split-15',
+    timePolicy: 'historical-vietnam',
     tuHoaTable: TOAN_THU_TU_HOA,
   },
   'bac-phai': {
     id: 'bac-phai',
     label: 'Bắc phái',
     shortLabel: 'Bắc',
-    description: 'Bắc phái / Trung Châu tham chiếu iztro: Khôi Việt chuẩn và Tứ Hóa dị biệt.',
+    description: 'Bắc phái / Trung Châu tham chiếu iztro: Khôi Việt chuẩn, Tứ Hóa dị biệt, dùng leap month nguyên bản.',
     kinhDaRule: 'fixed',
     khoiVietRule: 'standard',
     thaiTueRingRule: 'bac-phai',
+    leapMonthPolicy: 'raw',
+    timePolicy: 'historical-vietnam',
     tuHoaTable: TRUNG_CHAU_TU_HOA,
   },
 };

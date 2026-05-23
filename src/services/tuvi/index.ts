@@ -26,6 +26,7 @@ export {
   BRIGHTNESS_MARKERS,
   getNapAmIndex,
 } from './constants';
+export { getTuViCatalogSummary, getTuViStarLayer } from './catalogLayers';
 
 // ── Time Normalization ────────────────────────────────────────
 export { normalizeBirthTime, getVietnamUtcOffset, getHourBranch, getHourCan, formatCanChi } from './timeNormalization';
@@ -46,6 +47,8 @@ export {
 } from './starPlacement';
 
 export { DEFAULT_TU_VI_SCHOOL, TU_VI_SCHOOL_PROFILES, resolveTuViSchoolProfile } from './schoolProfiles';
+export { buildTuViBirthContext } from './birthContext';
+export { normalizeBirthTimeWithPolicy } from './timeNormalization';
 
 // ── Center Metadata ────────────────────────────────────────────
 export {

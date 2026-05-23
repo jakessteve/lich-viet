@@ -4,6 +4,7 @@
 // including the North/South divergence (1955–1975).
 
 import timezoneData from '../../data/tuvi/vietnamTimezone.json';
+import type { HistoricalVietnamRegion, TuViBirthLocation } from '../../types/tuvi';
 import { CAN_NAMES, CHI_NAMES } from './constants';
 
 // ── Types ───────────────────────────────────────────────────────
@@ -61,6 +62,33 @@ function findPeriod(date: Date): TimezonePeriod | null {
   return null;
 }
 
+/** Policy metadata returned when correcting a birth timestamp. */
+export interface BirthTimeNormalizationResult {
+  correctedDate: Date;
+  offsetHours: number;
+  historicalRegion?: HistoricalVietnamRegion;
+  warnings: string[];
+}
+
+function inferHistoricalRegion(date: Date, birthLocation?: TuViBirthLocation): HistoricalVietnamRegion | undefined {
+  const iso = date.toISOString().split('T')[0];
+  if (iso < '1955-07-01' || iso > '1975-04-30') {
+    return undefined;
+  }
+
+  const hint = birthLocation?.historicalRegion;
+  if (hint) {
+    return hint;
+  }
+
+  if (typeof birthLocation?.lat === 'number') {
+    if (birthLocation.lat >= 17.5) return 'north';
+    if (birthLocation.lat <= 16) return 'south';
+  }
+
+  return undefined;
+}
+
 // ── Public API ──────────────────────────────────────────────────
 
 /**
@@ -76,7 +104,7 @@ function findPeriod(date: Date): TimezonePeriod | null {
  *                  `'north'` → GMT+7, `'south'` → GMT+8 (default).
  * @returns Offset in hours (e.g. 7, 8, 7.1083…).
  */
-export function getVietnamUtcOffset(date: Date, timezone: 'north' | 'south' = 'south'): number {
+export function getVietnamUtcOffset(date: Date, timezone: HistoricalVietnamRegion = 'south'): number {
   const period = findPeriod(date);
   if (!period) {
     // Fallback for uncovered gaps (e.g. 1912–1944 is actually covered
@@ -106,7 +134,7 @@ export function getVietnamUtcOffset(date: Date, timezone: 'north' | 'south' = 's
  * @param timezone  Optional hint: `'north'` or `'south'`.
  * @returns A new `Date` corrected to ICT.
  */
-export function normalizeBirthTime(date: Date, timezone?: 'north' | 'south'): Date {
+export function normalizeBirthTime(date: Date, timezone?: HistoricalVietnamRegion): Date {
   const period = findPeriod(date);
 
   // No period found or unified ICT period → return as-is
@@ -120,6 +148,48 @@ export function normalizeBirthTime(date: Date, timezone?: 'north' | 'south'): Da
   const diffMs = diffHours * 60 * 60 * 1000;
 
   return new Date(date.getTime() + diffMs);
+}
+
+/**
+ * Normalizes a birth date while preserving audit metadata.
+ *
+ * - Applies Vietnam historical time corrections when relevant.
+ * - Keeps modern dates unchanged.
+ * - Emits a warning when the North/South split is ambiguous and no region hint was available.
+ */
+export function normalizeBirthTimeWithPolicy(
+  date: Date,
+  birthLocation?: TuViBirthLocation,
+): BirthTimeNormalizationResult {
+  const period = findPeriod(date);
+  const warnings: string[] = [];
+  const historicalRegion = inferHistoricalRegion(date, birthLocation);
+
+  if (!period || period.to === 'present') {
+    return {
+      correctedDate: new Date(date.getTime()),
+      offsetHours: 7,
+      historicalRegion,
+      warnings,
+    };
+  }
+
+  if (period.utcOffsetNorth && period.utcOffsetSouth && !historicalRegion) {
+    warnings.push('Không xác định được Bắc/Nam Việt Nam cho giai đoạn 1955-1975; mặc định theo miền Nam.');
+  }
+
+  const resolvedRegion = historicalRegion ?? (period.utcOffsetNorth && period.utcOffsetSouth ? 'south' : undefined);
+  const offsetHours = getVietnamUtcOffset(date, resolvedRegion ?? 'south');
+  const targetOffset = 7;
+  const diffHours = targetOffset - offsetHours;
+  const diffMs = diffHours * 60 * 60 * 1000;
+
+  return {
+    correctedDate: new Date(date.getTime() + diffMs),
+    offsetHours,
+    historicalRegion: resolvedRegion,
+    warnings,
+  };
 }
 
 /**

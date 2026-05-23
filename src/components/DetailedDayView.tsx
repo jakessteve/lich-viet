@@ -113,6 +113,40 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
   const formattedNghi = useMemo(() => formatDungSu(data.dungSu.suitable, 'Tốt mọi việc'), [data.dungSu.suitable]);
   const formattedKy = useMemo(() => formatDungSu(data.dungSu.unsuitable, 'Xấu mọi việc'), [data.dungSu.unsuitable]);
 
+  const getSignedModifierTotal = (breakdowns: string[]): number | null => {
+    if (breakdowns.length === 0) return null;
+
+    const total = breakdowns.reduce((sum, entry) => {
+      const match = entry.match(/\(([+-]\d+)%\)/);
+      if (!match) return sum;
+      return sum + Number(match[1]);
+    }, 0);
+
+    return Number.isFinite(total) ? total : null;
+  };
+
+  const getSignedModifierTotalBySign = (breakdowns: string[], sign: '+' | '-'): number | null => {
+    if (breakdowns.length === 0) return null;
+
+    const total = breakdowns.reduce((sum, entry) => {
+      const match = entry.match(/\(([+-]\d+)%\)/);
+      if (!match || !match[1].startsWith(sign)) return sum;
+      return sum + Number(match[1]);
+    }, 0);
+
+    return Number.isFinite(total) ? total : null;
+  };
+
+  const getBreakdownToneClass = (text: string): string => {
+    if (/\(\+\d+%\)/.test(text)) {
+      return 'text-good dark:text-good-dark';
+    }
+    if (/\(-\d+%\)/.test(text)) {
+      return 'text-bad dark:text-bad-dark';
+    }
+    return 'text-text-secondary-light dark:text-text-secondary-dark';
+  };
+
   const handlePersonalizeClick = () => {
     if (!isAuthenticated) {
       navigate('/app/dang-ky');
@@ -134,29 +168,32 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
       >
         <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3">
           <span className="material-icons-round text-gold dark:text-gold-dark text-xl mt-0.5">auto_awesome</span>
-          <div className="text-sm leading-relaxed text-text-primary-light dark:text-text-primary-dark flex-1">
-            <span className="font-bold">
+          <div className="text-sm leading-relaxed text-text-primary-light dark:text-text-primary-dark flex-1 space-y-0.5">
+            <div className="font-bold">
               {dayOfWeekAbbr}, {solarDateStr}
-            </span>
-            <span className="text-text-secondary-light dark:text-text-secondary-dark"> — </span>
-            {formattedNghi.focus ? (
-              <span className="text-good dark:text-good-dark font-semibold">Ngày tốt mọi việc. </span>
-            ) : formattedNghi.rest.length > 0 ? (
-              <span>
-                Tốt cho <span className="font-medium">{formattedNghi.rest.slice(0, 3).join(', ')}</span>.{' '}
-              </span>
-            ) : (
-              <span>Không có việc nghi đặc biệt. </span>
-            )}
-            {formattedKy.focus ? (
-              <span className="text-bad dark:text-bad-dark font-semibold">Kỵ làm mọi việc.</span>
-            ) : formattedKy.rest.length > 0 ? (
-              <span>
-                Kỵ <span className="font-medium">{formattedKy.rest.slice(0, 2).join(', ')}</span>.
-              </span>
-            ) : (
-              <span>Không có việc kỵ đặc biệt.</span>
-            )}
+            </div>
+            <div>
+              {formattedNghi.focus ? (
+                <span className="text-good dark:text-good-dark font-semibold">Ngày tốt mọi việc.</span>
+              ) : formattedNghi.rest.length > 0 ? (
+                <span className="text-good dark:text-good-dark">
+                  Tốt cho <span className="font-medium">{formattedNghi.rest.slice(0, 3).join(', ')}</span>.
+                </span>
+              ) : (
+                <span>Không có việc nghi đặc biệt.</span>
+              )}
+            </div>
+            <div>
+              {formattedKy.focus ? (
+                <span className="text-bad dark:text-bad-dark font-semibold">Kỵ làm mọi việc.</span>
+              ) : formattedKy.rest.length > 0 ? (
+                <span className="text-bad dark:text-bad-dark">
+                  Kỵ <span className="font-medium">{formattedKy.rest.slice(0, 2).join(', ')}</span>.
+                </span>
+              ) : (
+                <span>Không có việc kỵ đặc biệt.</span>
+              )}
+            </div>
           </div>
           <button
             onClick={handlePersonalizeClick}
@@ -493,6 +530,12 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
 
                 // Find personalized breakdowns
                 const personalBreakdowns = advanced.filter((s) => s.startsWith('Cá nhân:'));
+                const positiveBreakdowns = personalBreakdowns.filter(
+                  (s) => s.includes('Tương hợp') && /\(\+\d+%\)/.test(s),
+                );
+                const negativeBreakdowns = personalBreakdowns.filter(
+                  (s) => s.includes('Tương khắc') && /\(-\d+%\)/.test(s),
+                );
 
                 const statusLabel = getStatusLabel(statusInfo);
                 const statusColorClass =
@@ -507,6 +550,23 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
                 const currentScore = h.score;
                 const isWeak = currentScore < 40;
                 const isAuspiciousCurrent = currentScore >= 60;
+                const signedModifierTotal = getSignedModifierTotal(personalBreakdowns);
+                const positiveModifierTotal = getSignedModifierTotalBySign(personalBreakdowns, '+');
+                const negativeModifierTotal = getSignedModifierTotalBySign(personalBreakdowns, '-');
+                const scoreToneClass =
+                  showPersonalized
+                    ? currentScore >= 50
+                      ? 'text-good dark:text-good-dark'
+                      : 'text-bad dark:text-bad-dark'
+                    : signedModifierTotal !== null
+                      ? signedModifierTotal > 0
+                        ? 'text-good dark:text-good-dark'
+                        : signedModifierTotal < 0
+                          ? 'text-bad dark:text-bad-dark'
+                          : 'text-text-primary-light dark:text-text-primary-dark'
+                      : isAuspiciousCurrent
+                        ? 'text-good dark:text-good-dark'
+                        : 'text-text-primary-light dark:text-text-primary-dark';
 
                 return (
                   <tr
@@ -561,7 +621,7 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
                       {showPersonalized && personalBreakdowns.length > 0 && (
                         <div className="space-y-0.5 mt-1">
                           {personalBreakdowns.map((b, i) => (
-                            <div key={i} className="text-xs text-purple-600 dark:text-purple-400">
+                            <div key={i} className={`text-xs font-normal ${getBreakdownToneClass(b)}`}>
                               {b.replace('Cá nhân:', '').trim()}
                             </div>
                           ))}
@@ -569,12 +629,21 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
                       )}
                     </td>
                     <td
-                      className={`px-2 sm:px-6 py-3 sm:py-4 text-right font-bold text-sm align-top flex flex-col items-end space-y-0.5 ${isAuspiciousCurrent ? 'text-good dark:text-good-dark' : 'text-text-primary-light dark:text-text-primary-dark'}`}
+                      className="px-2 sm:px-6 py-3 sm:py-4 text-right font-bold text-sm align-top flex flex-col items-end space-y-0.5 text-text-primary-light dark:text-text-primary-dark"
                     >
-                      <div>{currentScore}%</div>
-                      {showPersonalized && personalBreakdowns.length > 0 && (
-                        <div className="text-xs font-normal text-purple-600 dark:text-purple-400">
-                          {personalBreakdowns[0].replace('Cá nhân:', '').trim()}
+                      <div className={scoreToneClass}>{currentScore}%</div>
+                      {showPersonalized && (positiveBreakdowns.length > 0 || negativeBreakdowns.length > 0) && (
+                        <div className="space-y-0.5 mt-1">
+                          {positiveModifierTotal !== null && positiveModifierTotal > 0 && (
+                            <div className="text-xs font-normal text-good dark:text-good-dark">
+                              Tương hợp +{positiveModifierTotal}%
+                            </div>
+                          )}
+                          {negativeModifierTotal !== null && negativeModifierTotal < 0 && (
+                            <div className="text-xs font-normal text-bad dark:text-bad-dark">
+                              Tương khắc {negativeModifierTotal}%
+                            </div>
+                          )}
                         </div>
                       )}
                     </td>

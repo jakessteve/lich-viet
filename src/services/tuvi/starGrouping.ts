@@ -8,6 +8,8 @@ import type { TuViStar, TuViPalace } from '../../types/tuvi';
 import { STAR_COLORS, BRIGHTNESS_MARKERS, CHINH_TINH_LIST, PHU_TINH_LIST } from './constants';
 
 const SAT_TINH_NAMES = ['Kình Dương', 'Đà La', 'Hỏa Tinh', 'Linh Tinh', 'Địa Không', 'Địa Kiếp'];
+const CHINH_TINH_BY_NAME = new Map(CHINH_TINH_LIST.map((star) => [star.name, star] as const));
+const PHU_TINH_BY_NAME = new Map(PHU_TINH_LIST.map((star) => [star.name, star] as const));
 
 /**
  * Groups an array of stars by their type.
@@ -83,9 +85,9 @@ export function getStarBrightnessMarker(star: TuViStar): string {
  * Looks up the Ngũ Hành string for a star by name.
  */
 function findStarNguHanh(starName: string): string {
-  const chinh = CHINH_TINH_LIST.find((s) => s.name === starName);
+  const chinh = CHINH_TINH_BY_NAME.get(starName);
   if (chinh) return chinh.nguHanh;
-  const phu = PHU_TINH_LIST.find((s) => s.name === starName);
+  const phu = PHU_TINH_BY_NAME.get(starName);
   if (phu) return phu.nguHanh;
   return 'Âm Thổ';
 }

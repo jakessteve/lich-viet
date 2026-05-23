@@ -1,10 +1,11 @@
 import React from 'react';
-import type { TuViCenterInfo, TuViHanContext, TuViHuyenKhi } from '../../types/tuvi';
+import type { TuViCenterInfo, TuViHanContext, TuViHuyenKhi, TuViEngineMeta } from '../../types/tuvi';
 
 interface TuViCenterPanelProps {
   centerInfo: TuViCenterInfo;
   huyenKhi: TuViHuyenKhi;
   hanContext?: TuViHanContext;
+  engineMeta?: TuViEngineMeta;
 }
 
 const FieldRow: React.FC<{ label: string; value: string }> = ({ label, value }) => (
@@ -18,13 +19,14 @@ const FieldRow: React.FC<{ label: string; value: string }> = ({ label, value }) 
   </div>
 );
 
-export const TuViCenterPanel: React.FC<TuViCenterPanelProps> = ({ centerInfo, huyenKhi, hanContext }) => {
+export const TuViCenterPanel: React.FC<TuViCenterPanelProps> = ({ centerInfo, huyenKhi, hanContext, engineMeta }) => {
   const hanLabel =
     hanContext?.daiHanPalaceName && hanContext.daiHanAgeRange
       ? `${hanContext.daiHanPalaceName} · ${hanContext.daiHanAgeRange}`
       : '—';
 
   const centerRows = [
+    { label: 'Trường phái', value: centerInfo.schoolLabel },
     { label: 'Âm dương', value: centerInfo.amDuongLabel },
     { label: 'Mệnh', value: centerInfo.menhNapAm },
     { label: 'Cục', value: centerInfo.cuc },
@@ -36,6 +38,7 @@ export const TuViCenterPanel: React.FC<TuViCenterPanelProps> = ({ centerInfo, hu
     { label: 'Mệnh cung', value: centerInfo.menhCung },
     { label: 'Thân cung', value: centerInfo.thanCungLabel },
     { label: 'Đại hạn', value: hanLabel },
+    { label: 'Điểm huyền khí', value: `${huyenKhi.totalScore} · ${huyenKhi.grade}` },
   ];
 
   return (
@@ -43,11 +46,6 @@ export const TuViCenterPanel: React.FC<TuViCenterPanelProps> = ({ centerInfo, hu
       <div className="tuvi-center-title">
         <h3>{centerInfo.hoTen || 'Lá số Tử Vi'}</h3>
         <p>{centerInfo.amDuongLabel}</p>
-        <div className="tuvi-center-score" title="Điểm Huyền Khí tổng hợp">
-          <span>Huyền Khí</span>
-          <strong>{huyenKhi.totalScore}</strong>
-          <em>{huyenKhi.grade}</em>
-        </div>
       </div>
 
       <div className="tuvi-center-body">
@@ -57,6 +55,13 @@ export const TuViCenterPanel: React.FC<TuViCenterPanelProps> = ({ centerInfo, hu
           ))}
         </div>
       </div>
+      {engineMeta?.warnings?.length ? (
+        <div className="tuvi-center-warnings">
+          {engineMeta.warnings.map((warning) => (
+            <p key={warning}>{warning}</p>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 };

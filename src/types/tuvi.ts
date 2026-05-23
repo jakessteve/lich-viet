@@ -21,6 +21,65 @@ export type TuViGender = 'nam' | 'nữ';
 /** Calculation school / phái used for star placement variants */
 export type TuViSchool = 'nam-phai' | 'thien-luong' | 'bac-phai';
 
+/** Supported engine generation for compatibility and audit metadata */
+export type TuViEngineVersion = 'legacy-v3' | 'accuracy-v4';
+
+/** Date input mode for chart construction */
+export type TuViDateType = 'solar' | 'lunar';
+
+/** Time handling policy used during birth normalization */
+export type TuViTimePolicy = 'civil' | 'historical-vietnam' | 'true-solar';
+
+/** Leap-month handling policy used by the school profile */
+export type TuViLeapMonthPolicy = 'raw' | 'split-15';
+
+/** Historical Vietnam timezone region hint */
+export type HistoricalVietnamRegion = 'north' | 'south';
+
+/** Engine audit metadata attached to a generated chart */
+export interface TuViEngineMeta {
+  /** Engine generation used to create the chart */
+  version: TuViEngineVersion;
+  /** Calculation school label */
+  schoolLabel: string;
+  /** Leap month policy applied */
+  leapMonthPolicy: TuViLeapMonthPolicy;
+  /** Time normalization policy applied */
+  timePolicy: TuViTimePolicy;
+  /** Historical Vietnam region used for pre-1975 normalization, if any */
+  historicalRegion?: HistoricalVietnamRegion;
+  /** Source references used to validate this chart */
+  sources?: string[];
+  /** Layered catalog summary used by the current engine */
+  catalog?: TuViCatalogSummary;
+  /** Non-fatal audit warnings captured during generation */
+  warnings: string[];
+}
+
+/** One layer within the Tử Vi star catalog. */
+export interface TuViCatalogLayerSummary {
+  /** Stable layer identifier */
+  id: 'core' | 'classical' | 'extended';
+  /** Human-readable layer label */
+  label: string;
+  /** Number of modeled stars in this layer */
+  count: number;
+}
+
+/** Summary of the layered star catalog. */
+export interface TuViCatalogSummary {
+  /** Total modeled stars in the current engine */
+  total: number;
+  /** Layer breakdown */
+  layers: TuViCatalogLayerSummary[];
+  /** Academic reference target derived from scholary sources */
+  academicTargetTotal: number;
+  /** Gap between the current catalog and the academic target */
+  academicGap: number;
+  /** Short note describing the reference basis */
+  academicBasis: string;
+}
+
 /** Âm/Dương nature of the birth year (determined by year Can) */
 export type AmDuong = 'Dương' | 'Âm';
 
@@ -82,6 +141,8 @@ export interface TuViBirthLocation {
   lng: number;
   /** Estimated UTC offset for the birth location */
   timezone: number;
+  /** Optional historical region hint for Vietnam pre-1975 charts */
+  historicalRegion?: HistoricalVietnamRegion;
 }
 
 /**
@@ -93,6 +154,10 @@ export interface TuViBirthLocation {
 export interface TuViInput {
   /** Optional name of the person */
   name?: string;
+  /** Optional engine generation requested by the caller */
+  engineVersion?: TuViEngineVersion;
+  /** Input date mode used by a future lunar-input flow */
+  dateType?: TuViDateType;
   /** Solar (Gregorian) birth date */
   solarDate: Date;
   /** Birth hour index: 0–11 (Tý through Hợi) */
@@ -107,6 +172,12 @@ export interface TuViInput {
   timezone: string;
   /** Optional birthplace used for display/export and later true-solar-time correction */
   birthLocation?: TuViBirthLocation;
+  /** Leap month flag for lunar-input flows */
+  isLeapMonth?: boolean;
+  /** Time handling policy override */
+  timePolicy?: TuViTimePolicy;
+  /** Leap month handling policy override */
+  leapMonthPolicy?: TuViLeapMonthPolicy;
   /** Calculation school variant for disputed placement and Tứ Hóa rules */
   school?: TuViSchool;
 }
@@ -333,6 +404,8 @@ export interface TuViCenterInfo {
 export interface TuViChart {
   /** Original input data */
   input: TuViInput;
+  /** Audit metadata describing the engine and policies used */
+  engineMeta?: TuViEngineMeta;
   /** Solar date after timezone normalization */
   correctedDate: Date;
   /** Lunar date breakdown */
@@ -363,6 +436,8 @@ export interface TuViChart {
   huyenKhi: TuViHuyenKhi;
   /** Mệnh-Cục elemental relation */
   menhCucRelation: MenhCucRelation;
+  /** Non-fatal generation warnings */
+  auditWarnings?: string[];
   /** Active year/month hạn view */
   hanContext?: TuViHanContext;
 }

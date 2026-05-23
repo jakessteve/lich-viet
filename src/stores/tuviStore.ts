@@ -63,6 +63,7 @@ const defaultInput: TuViInput = {
   birthMinute: 0,
   gender: 'nam',
   timezone: 'Asia/Ho_Chi_Minh',
+  timePolicy: 'historical-vietnam',
   school: 'thien-luong',
   birthLocation: {
     locationName: 'Hà Nội, Việt Nam',

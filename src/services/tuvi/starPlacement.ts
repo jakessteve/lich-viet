@@ -24,7 +24,6 @@ import type {
 import type { Can, Chi } from '../../types/calendar';
 
 import { CAN, CHI } from '../../utils/constants';
-import { getLunarDate, getCanChiDay } from '../../utils/calendarEngine';
 
 import {
   PALACE_NAMES,
@@ -33,12 +32,13 @@ import {
   NGU_HANH_CUC,
   CHINH_TINH_LIST,
   PHU_TINH_LIST,
-  CAN_AM_DUONG,
   getNapAmIndex,
   NAP_AM_NAMES,
   NAP_AM_HANH,
 } from './constants';
 import { calculateLaiNhanCung } from './centerMetadata';
+import { getTuViCatalogSummary } from './catalogLayers';
+import { buildTuViBirthContext } from './birthContext';
 import starBrightnessData from '../../data/tuvi/starBrightness.json';
 import cucSaoTableData from '../../data/tuvi/cucSaoTable.json';
 import menhChuTableData from '../../data/tuvi/menhChuTable.json';
@@ -49,6 +49,9 @@ import { DEFAULT_TU_VI_SCHOOL, resolveTuViSchoolProfile } from './schoolProfiles
 // ────────────────────────────────────────────────────────────────
 // Lookup Tables
 // ────────────────────────────────────────────────────────────────
+
+const CHINH_TINH_BY_NAME = new Map(CHINH_TINH_LIST.map((star) => [star.name, star] as const));
+const PHU_TINH_BY_NAME = new Map(PHU_TINH_LIST.map((star) => [star.name, star] as const));
 
 /** Văn Xương position by hour branch (0=Tý .. 11=Hợi). */
 const VAN_XUONG_TABLE = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 11];
@@ -185,24 +188,6 @@ const TRUONG_SINH_12 = [
 // ────────────────────────────────────────────────────────────────
 // Private Helpers
 // ────────────────────────────────────────────────────────────────
-
-/**
- * Normalise a Date to a given IANA timezone, producing a new Date whose
- * wall-clock fields match the local time in that timezone.
- */
-function normalizeTimezone(date: Date, timezone: string): Date {
-  const str = date.toLocaleString('en-US', {
-    timeZone: timezone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  });
-  return new Date(str);
-}
 
 /** Wrap an index into the 0–11 range (circular). */
 function mod12(n: number): number {
@@ -681,69 +666,50 @@ export function calculatePalaceCans(yearCanIndex: number): number[] {
  */
 export function generateChart(input: TuViInput): TuViChart {
   const schoolProfile = resolveTuViSchoolProfile(input.school);
-  // ── 1. Timezone normalisation ───────────────────────────────
-  const correctedDate = normalizeTimezone(input.solarDate, input.timezone);
+  const birthContext = buildTuViBirthContext(input, schoolProfile);
+  const correctedDate = birthContext.correctedDate;
+  const lunar = birthContext.lunarDate;
+  const yearCanIndex = birthContext.yearCanIndex;
+  const yearChiIndex = birthContext.yearChiIndex;
+  const yearCan = birthContext.canChi.year.can;
+  const yearChi = birthContext.canChi.year.chi;
+  const monthCan = birthContext.canChi.month.can;
+  const monthChi = birthContext.canChi.month.chi;
+  const dayCan = birthContext.canChi.day.can;
+  const dayChi = birthContext.canChi.day.chi;
+  const hourChiIndex = birthContext.hourBranchIndex;
+  const hourChi = birthContext.canChi.hour.chi;
+  const hourCan = birthContext.canChi.hour.can;
+  const logicalMonth = birthContext.logicalMonth;
+  const amDuong: AmDuong = birthContext.amDuong;
+  const thuanNghich: ThuanNghich = birthContext.thuanNghich;
 
-  // ── 2. Lunar conversion ─────────────────────────────────────
-  const lunar = getLunarDate(correctedDate);
-
-  // ── 3. Can-Chi calculations ──────────────────────────────────
-  const yearCanIndex = mod10(lunar.year - 4);
-  const yearChiIndex = mod12(lunar.year - 4);
-  const yearCan = CAN[yearCanIndex];
-  const yearChi = CHI[yearChiIndex];
-
-  // Month Can/Chi: month 1 is always Dần (index 2)
-  const monthCanIndex = mod10(yearCanIndex * 2 + lunar.month + 1);
-  const monthChiIndex = mod12(2 + lunar.month - 1);
-  const monthCan = CAN[monthCanIndex];
-  const monthChi = CHI[monthChiIndex];
-
-  // Day Can/Chi from the shared calendar engine
-  const dayCanChiStr = getCanChiDay(correctedDate);
-  const [dayCan, dayChi] = dayCanChiStr.split(' ') as [Can, Chi];
-  const dayCanIndex = CAN.indexOf(dayCan);
-
-  // Hour Can/Chi
-  const hourChiIndex = mod12(input.birthHour);
-  const hourChi = CHI[hourChiIndex];
-  const hourCanIndex = mod10(dayCanIndex * 2 + hourChiIndex);
-  const hourCan = CAN[hourCanIndex];
-
-  // ── 4. Âm / Dương ────────────────────────────────────────────
-  const amDuong: AmDuong = CAN_AM_DUONG[yearCan] ?? 'Dương';
-
-  // ── 5. Thuận / Nghịch ────────────────────────────────────────
-  const isDuong = amDuong === 'Dương';
-  const isMale = input.gender === 'nam';
-  const thuanNghich: ThuanNghich = (isDuong && isMale) || (!isDuong && !isMale) ? 'Thuận' : 'Nghịch';
-
-  // ── 6. Mệnh palace ───────────────────────────────────────────
-  const menhPosition = calculateMenhCungPosition(lunar.month, hourChiIndex);
+  // ── 1. Mệnh palace ───────────────────────────────────────────
+  const menhPosition = calculateMenhCungPosition(logicalMonth, hourChiIndex);
   const menhChiName = CHI[menhPosition] as Chi;
   const menhChiIdx = menhPosition;
 
-  // ── 7. Mệnh Can ──────────────────────────────────────────────
+  // ── 2. Mệnh Can ──────────────────────────────────────────────
   const menhCanIndex = calculateMenhCan(yearCanIndex, menhChiIdx);
   const _menhCanName = CAN[menhCanIndex];
 
-  // ── 8. Thân palace ───────────────────────────────────────────
-  const thanPosition = calculateThanCungPosition(menhPosition, lunar.month, hourChiIndex);
+  // ── 3. Thân palace ───────────────────────────────────────────
+  const thanPosition = calculateThanCungPosition(menhPosition, logicalMonth, hourChiIndex);
 
-  // ── 9. Ngũ Hành Cục ──────────────────────────────────────────
+  // ── 4. Ngũ Hành Cục ──────────────────────────────────────────
   const cuc = calculateCuc(menhCanIndex, menhChiIdx);
 
-  // ── 10. Tử Vi position ───────────────────────────────────────
+  // ── 5. Tử Vi position ───────────────────────────────────────
   const tuViPosition = placeTuViStar(cuc.number, lunar.day);
 
-  // ── 11. Chính Tinh ───────────────────────────────────────────
+  // ── 6. Chính Tinh ───────────────────────────────────────────
   const chinhTinhMap = placeChinhTinh(tuViPosition);
 
-  // ── 12. Phụ Tinh ─────────────────────────────────────────────
+  // ── 7. Phụ Tinh ─────────────────────────────────────────────
   const phuTinhMap = placePhuTinh(
     yearCanIndex,
     yearChiIndex,
-    lunar.month,
+    logicalMonth,
     lunar.day,
     hourChiIndex,
     menhPosition,
@@ -763,10 +729,10 @@ export function generateChart(input: TuViInput): TuViChart {
     tuongTinh: createRingLookup(TUONG_TINH_12, getTuongTinhStart(yearChiIndex)),
   };
 
-  // ── 13. Palace Cans ──────────────────────────────────────────
+  // ── 8. Palace Cans ──────────────────────────────────────────
   const palaceCans = calculatePalaceCans(yearCanIndex);
 
-  // ── 14. Tứ Hóa ───────────────────────────────────────────────
+  // ── 9. Tứ Hóa ───────────────────────────────────────────────
   const tuHoaRaw = calculateTuHoa(yearCanIndex, schoolProfile.id);
   const allStarPositions: Record<string, number> = {};
   for (const [name, positions] of Object.entries(chinhTinhMap)) {
@@ -782,12 +748,12 @@ export function generateChart(input: TuViInput): TuViChart {
     };
   }
 
-  // ── 15. Tuần / Triệt Không ───────────────────────────────────
+  // ── 10. Tuần / Triệt Không ───────────────────────────────────
   const sexagenaryYearIndex = mod60(lunar.year - 4);
   const tuanKhong = TUAN_KHONG_TABLE[Math.floor(sexagenaryYearIndex / 10)] ?? [0, 1];
   const trietKhong = TRIET_KHONG_TABLE[yearCanIndex] ?? [0, 1];
 
-  // ── 16. Build 12 palaces ─────────────────────────────────────
+  // ── 11. Build 12 palaces ─────────────────────────────────────
   const palaces: TuViPalace[] = [];
   for (let chiIdx = 0; chiIdx < 12; chiIdx++) {
     const palaceNameIndex = mod12(menhPosition - chiIdx);
@@ -803,7 +769,7 @@ export function generateChart(input: TuViInput): TuViChart {
     // Chính Tinh in this palace
     for (const [starName, positions] of Object.entries(chinhTinhMap)) {
       if (positions.includes(chiIdx)) {
-        const info = CHINH_TINH_LIST.find((s) => s.name === starName);
+        const info = CHINH_TINH_BY_NAME.get(starName);
         if (info) {
           const b = getBrightness(starName, chiIdx);
           chinhTinh.push({
@@ -820,7 +786,7 @@ export function generateChart(input: TuViInput): TuViChart {
     // Phụ Tinh / Sát Tinh in this palace
     for (const [starName, pos] of Object.entries(phuTinhMap)) {
       if (pos === chiIdx) {
-        const info = PHU_TINH_LIST.find((s) => s.name === starName);
+      const info = PHU_TINH_BY_NAME.get(starName);
         const b = getBrightness(starName, chiIdx);
         const star: TuViStar = {
           name: starName,
@@ -883,7 +849,7 @@ export function generateChart(input: TuViInput): TuViChart {
     });
   }
 
-  // ── 17. Centre metadata ──────────────────────────────────────
+  // ── 12. Centre metadata ──────────────────────────────────────
   const napAmIdx = getNapAmIndex(yearCanIndex, yearChiIndex);
   const menhNapAm = NAP_AM_NAMES[napAmIdx] ?? '';
   const menhNapAmHanh = NAP_AM_HANH[menhNapAm] ?? '';
@@ -970,6 +936,16 @@ export function generateChart(input: TuViInput): TuViChart {
       ...input,
       school: schoolProfile.id,
     },
+    engineMeta: {
+      version: input.engineVersion ?? 'legacy-v3',
+      schoolLabel: schoolProfile.label,
+      leapMonthPolicy: birthContext.leapMonthPolicy,
+      timePolicy: birthContext.timePolicy,
+      historicalRegion: birthContext.historicalRegion,
+      catalog: getTuViCatalogSummary(),
+      warnings: birthContext.warnings,
+      sources: ['current-engine', 'iztro', 'fortel-ziweidoushu', 'lunar-javascript', '@dqcai/vn-lunar'],
+    },
     correctedDate,
     lunarDate: {
       day: lunar.day,
@@ -990,6 +966,7 @@ export function generateChart(input: TuViInput): TuViChart {
     combinations,
     huyenKhi,
     menhCucRelation,
+    auditWarnings: birthContext.warnings,
   };
 }
 

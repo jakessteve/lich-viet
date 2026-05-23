@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTuViStore } from '../../stores/tuviStore';
 import { useAuthStore } from '../../stores/authStore';
-import type { TuViGender } from '../../types/tuvi';
+import type { TuViGender, TuViTimePolicy } from '../../types/tuvi';
 import { TuViLocationPicker } from './TuViLocationPicker';
 
 const getTimezoneForLocation = (utcOffset: number) => {
@@ -14,6 +14,12 @@ const clampTimePart = (value: string, max: number) => {
   if (value.trim() === '') return 0;
   return Math.min(max, Math.max(0, Number(value)));
 };
+
+const TIME_POLICY_OPTIONS: Array<{ id: TuViTimePolicy; label: string; icon: string }> = [
+  { id: 'historical-vietnam', label: 'Việt Nam lịch sử', icon: 'schedule' },
+  { id: 'civil', label: 'Giờ đồng hồ', icon: 'access_time' },
+  { id: 'true-solar', label: 'Mặt trời thực', icon: 'wb_sunny' },
+];
 
 export const TuViInputForm: React.FC = () => {
   const { input, setInput, calculateChart, isCalculating } = useTuViStore();
@@ -180,7 +186,7 @@ export const TuViInputForm: React.FC = () => {
 
       <div>
         <label className={labelBase}>Ngày giờ sinh (Dương lịch)</label>
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
           <input
             type="text"
             inputMode="numeric"
@@ -212,7 +218,7 @@ export const TuViInputForm: React.FC = () => {
             value={yearStr}
             onChange={(e) => setYearStr(e.target.value)}
             onBlur={commitDate}
-            className={profileDateControl}
+            className={`${profileDateControl} col-span-2 sm:col-span-1`}
           />
           <input
             type="text"
@@ -283,6 +289,31 @@ export const TuViInputForm: React.FC = () => {
             })
           }
         />
+      </div>
+
+      <div>
+        <label className={labelBase}>Cách tính giờ</label>
+        <div className="grid grid-cols-3 gap-2 rounded-2xl bg-gray-100 p-1 dark:bg-white/5">
+          {TIME_POLICY_OPTIONS.map((policy) => {
+            const active = (input.timePolicy ?? 'historical-vietnam') === policy.id;
+            return (
+              <button
+                key={policy.id}
+                type="button"
+                onClick={() => setInput({ timePolicy: policy.id })}
+                className={`flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-200 ${
+                  active
+                    ? 'bg-white text-gold shadow-sm dark:bg-white/15 dark:text-gold-light'
+                    : 'text-text-secondary-light hover:bg-white/60 dark:text-text-secondary-dark dark:hover:bg-white/10'
+                }`}
+                aria-pressed={active}
+              >
+                <span className="material-icons-round text-sm">{policy.icon}</span>
+                {policy.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {error && (

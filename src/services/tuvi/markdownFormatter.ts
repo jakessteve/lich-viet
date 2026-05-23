@@ -122,6 +122,30 @@ export function formatTuViChartAsMarkdown(chart: TuViChart, options?: Partial<Tu
   parts.push('# Lá Số Tử Vi');
   parts.push(formatCenterInfoAsMarkdown(chart.centerInfo));
 
+  if (chart.engineMeta) {
+    const meta = chart.engineMeta;
+    parts.push(`## Dữ Liệu Engine
+- Phiên bản: ${meta.version}
+- Trường phái: ${meta.schoolLabel}
+- Leap month: ${meta.leapMonthPolicy}
+- Time policy: ${meta.timePolicy}
+- Historical region: ${meta.historicalRegion ?? '—'}
+- Nguồn kiểm chứng: ${meta.sources?.join(', ') || '—'}`);
+    if (meta.catalog) {
+      const layerText = meta.catalog.layers.map((layer) => `${layer.label}: ${layer.count}`).join(' · ');
+      parts.push(`## Phân Tầng Danh Mục
+- Tổng sao đang mô hình hóa: ${meta.catalog.total}
+- Phân tầng: ${layerText}
+- Mốc học thuật tham chiếu: ${meta.catalog.academicTargetTotal}
+- Thiếu so với mốc học thuật: ${meta.catalog.academicGap}
+- Cơ sở tham chiếu: ${meta.catalog.academicBasis}`);
+    }
+    if (meta.warnings.length > 0) {
+      parts.push(`## Cảnh Báo Engine
+${meta.warnings.map((warning) => `- ${warning}`).join('\n')}`);
+    }
+  }
+
   const relation = chart.menhCucRelation;
   parts.push(`## Mệnh - Cục Quan Hệ
 - Mệnh (${relation.menhHanh}) - Cục (${relation.cucHanh}): ${relation.description}`);
@@ -156,7 +180,8 @@ export function formatTuViChartAsMarkdown(chart: TuViChart, options?: Partial<Tu
 
   parts.push(`## Cảnh Báo
 - Kết quả dựa trên trường phái Thiên Lương (天梁). Các trường phái khác có thể cho kết quả khác biệt.
-- Giờ sinh cần được chuyển đổi chính xác theo múi giờ địa phương.`);
+- Giờ sinh cần được chuyển đổi chính xác theo múi giờ địa phương.
+- Leap-month và lịch sử múi giờ Việt Nam được áp theo cấu hình engine khi có dữ liệu.`);
 
   return parts.join('\n\n');
 }
