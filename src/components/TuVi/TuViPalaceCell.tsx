@@ -59,12 +59,7 @@ export const TuViPalaceCell: React.FC<TuViPalaceCellProps> = ({
     const color = getStarColor(star);
     const marker = getStarBrightnessMarker(star);
     return (
-      <span
-        key={star.name}
-        className={className}
-        style={{ color }}
-        title={`${star.name} ${star.nguHanh}`}
-      >
+      <span key={star.name} className={className} style={{ color }} title={`${star.name} ${star.nguHanh}`}>
         {star.name}
         {marker && <small>{marker}</small>}
       </span>
@@ -72,7 +67,7 @@ export const TuViPalaceCell: React.FC<TuViPalaceCellProps> = ({
   };
   const renderTuHoa = (tuHoa: TuViPalace['tuHoa'][number]) => {
     const brightness = palace.brightness[tuHoa.starName];
-    const marker = brightness ? BRIGHTNESS_MARKERS[brightness] ?? '' : '';
+    const marker = brightness ? (BRIGHTNESS_MARKERS[brightness] ?? '') : '';
 
     return (
       <span
@@ -133,17 +128,13 @@ export const TuViPalaceCell: React.FC<TuViPalaceCellProps> = ({
           {visiblePhuTinh.map((star) => renderStar(star))}
           {palace.tuHoa.map((tuHoa) => renderTuHoa(tuHoa))}
         </div>
-        <div>
-          {visibleSatTinh.map((star) => renderStar(star, 'sat'))}
-        </div>
+        <div>{visibleSatTinh.map((star) => renderStar(star, 'sat'))}</div>
       </div>
 
       <div className="tuvi-palace-footer">
         <div className="tuvi-footer-primary">
           <span className="tuvi-branch-label">{palace.chi}</span>
-          {palace.rings?.truongSinh && (
-            <span className="tuvi-truong-sinh-label">{palace.rings.truongSinh}</span>
-          )}
+          {palace.rings?.truongSinh && <span className="tuvi-truong-sinh-label">{palace.rings.truongSinh}</span>}
           {nguyetHanMonth ? (
             <span className={isNguyetHanPalace ? 'tuvi-nguyet-han active' : 'tuvi-nguyet-han'}>
               Tháng {nguyetHanMonth}

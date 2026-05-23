@@ -13,26 +13,34 @@ interface HourPickerGridProps {
   allHours: HourInfo[];
   selectedHour: Chi | null;
   onSelectHour: (chi: Chi | null) => void;
-  hourScores?: HourScoreEntry[];    // Activity-specific scores per hour
+  hourScores?: HourScoreEntry[]; // Activity-specific scores per hour
   activityName?: string;
 }
 
-function getHourColor(score: number | undefined, isAuspicious: boolean): {
-  bg: string; text: string; ring: string; dot: string;
+function getHourColor(
+  score: number | undefined,
+  isAuspicious: boolean,
+): {
+  bg: string;
+  text: string;
+  ring: string;
+  dot: string;
 } {
   if (score !== undefined) {
-    if (score >= 70) return {
-      bg: 'bg-emerald-50/80 dark:bg-emerald-900/15',
-      text: 'text-emerald-600 dark:text-emerald-400',
-      ring: 'ring-emerald-300/40 dark:ring-emerald-600/30',
-      dot: 'bg-emerald-500',
-    };
-    if (score >= 50) return {
-      bg: 'bg-amber-50/60 dark:bg-amber-900/10',
-      text: 'text-amber-600 dark:text-amber-400',
-      ring: 'ring-amber-300/40 dark:ring-amber-600/30',
-      dot: 'bg-amber-500',
-    };
+    if (score >= 70)
+      return {
+        bg: 'bg-emerald-50/80 dark:bg-emerald-900/15',
+        text: 'text-emerald-600 dark:text-emerald-400',
+        ring: 'ring-emerald-300/40 dark:ring-emerald-600/30',
+        dot: 'bg-emerald-500',
+      };
+    if (score >= 50)
+      return {
+        bg: 'bg-amber-50/60 dark:bg-amber-900/10',
+        text: 'text-amber-600 dark:text-amber-400',
+        ring: 'ring-amber-300/40 dark:ring-amber-600/30',
+        dot: 'bg-amber-500',
+      };
     return {
       bg: 'bg-red-50/40 dark:bg-red-900/8',
       text: 'text-red-600 dark:text-red-400',
@@ -40,12 +48,13 @@ function getHourColor(score: number | undefined, isAuspicious: boolean): {
       dot: 'bg-red-400',
     };
   }
-  if (isAuspicious) return {
-    bg: 'bg-emerald-50/80 dark:bg-emerald-900/10',
-    text: 'text-emerald-600 dark:text-emerald-400',
-    ring: 'ring-emerald-300/30',
-    dot: 'bg-emerald-500',
-  };
+  if (isAuspicious)
+    return {
+      bg: 'bg-emerald-50/80 dark:bg-emerald-900/10',
+      text: 'text-emerald-600 dark:text-emerald-400',
+      ring: 'ring-emerald-300/30',
+      dot: 'bg-emerald-500',
+    };
   return {
     bg: 'bg-white dark:bg-transparent',
     text: 'text-text-secondary-light dark:text-text-secondary-dark',
@@ -64,7 +73,7 @@ const HourPickerGrid: React.FC<HourPickerGridProps> = ({
   // Map hour chi to score
   const scoreMap = useMemo(() => {
     if (!hourScores) return new Map<string, number>();
-    return new Map(hourScores.map(hs => [hs.hourInfo.canChi.chi, hs.activityScore]));
+    return new Map(hourScores.map((hs) => [hs.hourInfo.canChi.chi, hs.activityScore]));
   }, [hourScores]);
 
   const [sortByScore, setSortByScore] = React.useState(false);
@@ -109,7 +118,7 @@ const HourPickerGrid: React.FC<HourPickerGridProps> = ({
           return (
             <button
               key={h.name}
-              onClick={() => onSelectHour(isSelected ? null : chi as Chi)}
+              onClick={() => onSelectHour(isSelected ? null : (chi as Chi))}
               className={`flex flex-col items-center py-2.5 px-2 rounded-xl transition-all duration-200 border ${
                 isSelected
                   ? 'bg-gold/15 dark:bg-gold-dark/15 border-gold/40 dark:border-gold-dark/40 ring-1 ring-gold/30 dark:ring-gold-dark/30 shadow-sm scale-[0.97]'
@@ -117,9 +126,7 @@ const HourPickerGrid: React.FC<HourPickerGridProps> = ({
               }`}
             >
               {/* Chi name */}
-              <span className={`text-sm font-bold ${
-                isSelected ? 'text-gold dark:text-gold-dark' : colors.text
-              }`}>
+              <span className={`text-sm font-bold ${isSelected ? 'text-gold dark:text-gold-dark' : colors.text}`}>
                 {chi}
               </span>
 
@@ -130,9 +137,11 @@ const HourPickerGrid: React.FC<HourPickerGridProps> = ({
 
               {/* Score or dot indicator */}
               {score !== undefined ? (
-                <span className={`text-xs font-bold mt-1 tabular-nums ${
-                  isSelected ? 'text-gold dark:text-gold-dark' : colors.text
-                }`}>
+                <span
+                  className={`text-xs font-bold mt-1 tabular-nums ${
+                    isSelected ? 'text-gold dark:text-gold-dark' : colors.text
+                  }`}
+                >
                   {score}%
                 </span>
               ) : (

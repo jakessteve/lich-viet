@@ -66,19 +66,14 @@ function getTriangleLines(activeChiIndex: number): Array<{ x1: number; y1: numbe
   ];
 }
 
-export const TuViChart: React.FC<TuViChartProps> = ({
-  chart,
-  selectedPalaceIndex,
-  onSelectPalace,
-}) => {
+export const TuViChart: React.FC<TuViChartProps> = ({ chart, selectedPalaceIndex, onSelectPalace }) => {
   // Build a map from Chi index → palace for quick lookup
-  const palaceByChi = new Map<number, typeof chart.palaces[number]>();
+  const palaceByChi = new Map<number, (typeof chart.palaces)[number]>();
   for (const palace of chart.palaces) {
     palaceByChi.set(palace.id, palace);
   }
   const defaultPalace = chart.palaces.find((palace) => palace.isMenh);
-  const activePalaceIndex =
-    selectedPalaceIndex ?? chart.hanContext?.daiHanPalaceIndex ?? defaultPalace?.id ?? null;
+  const activePalaceIndex = selectedPalaceIndex ?? chart.hanContext?.daiHanPalaceIndex ?? defaultPalace?.id ?? null;
   const activeTamHop = activePalaceIndex === null ? [] : getTamHopGroup(activePalaceIndex);
   const activeOpposite = activePalaceIndex === null ? null : OPPOSITE_CHI[activePalaceIndex];
   const triangleLines = activePalaceIndex === null ? [] : getTriangleLines(activePalaceIndex);
@@ -96,9 +91,9 @@ export const TuViChart: React.FC<TuViChartProps> = ({
                 y1={line.y1}
                 x2={line.x2}
                 y2={line.y2}
-            />
-          ))}
-        </svg>
+              />
+            ))}
+          </svg>
         )}
         {GRID_MAP.map(({ row, col, chiIndex }) => {
           const palace = palaceByChi.get(chiIndex);
@@ -114,17 +109,13 @@ export const TuViChart: React.FC<TuViChartProps> = ({
 
           return (
             <div key={chiIndex} style={gridStyle}>
-          <TuViPalaceCell
+              <TuViPalaceCell
                 palace={palace}
                 hanContext={chart.hanContext}
                 isSelected={isSelected}
                 isTrine={isTrine}
                 isOpposite={isOpposite}
-                onSelect={() =>
-                  onSelectPalace(
-                    selectedPalaceIndex === palace.id ? null : palace.id,
-                  )
-                }
+                onSelect={() => onSelectPalace(selectedPalaceIndex === palace.id ? null : palace.id)}
               />
             </div>
           );
@@ -137,11 +128,7 @@ export const TuViChart: React.FC<TuViChartProps> = ({
             gridRow: '2 / 4',
           }}
         >
-          <TuViCenterPanel
-            centerInfo={chart.centerInfo}
-            huyenKhi={chart.huyenKhi}
-            hanContext={chart.hanContext}
-          />
+          <TuViCenterPanel centerInfo={chart.centerInfo} huyenKhi={chart.huyenKhi} hanContext={chart.hanContext} />
         </div>
       </div>
       <div className="tuvi-chart-legend" aria-label="Chú giải lá số">

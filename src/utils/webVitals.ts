@@ -31,9 +31,7 @@ interface WebVitalMetric {
 function sendToAnalytics(metric: WebVitalMetric): void {
   // ── Development: console logging ──
   const emoji = metric.rating === 'good' ? '🟢' : metric.rating === 'needs-improvement' ? '🟡' : '🔴';
-  console.debug(
-    `${emoji} [Web Vitals] ${metric.name}: ${Math.round(metric.value)}ms (${metric.rating})`
-  );
+  console.debug(`${emoji} [Web Vitals] ${metric.name}: ${Math.round(metric.value)}ms (${metric.rating})`);
 
   // ── Unified Analytics Service ──
   analytics.trackEvent({
@@ -55,8 +53,10 @@ function sendToAnalytics(metric: WebVitalMetric): void {
 export async function initWebVitals(): Promise<void> {
   try {
     // Dynamic import — no compile-time dependency on web-vitals
-     
-    const vitals = await (Function('return import("web-vitals")')() as Promise<Record<string, (cb: (metric: WebVitalMetric) => void) => void>>);
+
+    const vitals = await (Function('return import("web-vitals")')() as Promise<
+      Record<string, (cb: (metric: WebVitalMetric) => void) => void>
+    >);
 
     vitals.onCLS(sendToAnalytics);
     vitals.onFID(sendToAnalytics);

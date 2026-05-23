@@ -223,7 +223,7 @@ export function generateQmdjChart(date: Date, hourChi: Chi): QmdjChart {
       trigram: meta.trigram,
       element: meta.element,
       earthStem: earthPlate.get(p) || null,
-      heavenlyStem: p === 5 ? (earthPlate.get(5) || null) : (heavenPlate.stems.get(p) || null),
+      heavenlyStem: p === 5 ? earthPlate.get(5) || null : heavenPlate.stems.get(p) || null,
       star: heavenPlate.stars.get(p) || null,
       door: p === 5 ? null : humanPlate.get(p) || null,
       deity: p === 5 ? null : divinePlate.get(p) || null,
@@ -285,7 +285,7 @@ function layHeavenPlate(
   trucPhuStar: (typeof starsList)[0],
   targetPalace: number,
   duongDon: boolean,
-  earthPlate: Map<number, Can>
+  earthPlate: Map<number, Can>,
 ): { stars: Map<number, QmdjStarInfo>; stems: Map<number, Can> } {
   const stars = new Map<number, QmdjStarInfo>();
   const stems = new Map<number, Can>();
@@ -310,7 +310,7 @@ function layHeavenPlate(
     });
 
     // Heaven plate stems follow the stars from their home palace on the earth plate
-    // If the star's home palace is center (5), it usually hosts at 2 (Khôn). 
+    // If the star's home palace is center (5), it usually hosts at 2 (Khôn).
     // Here we strictly carry the homePalace's earth stem.
     const carriedStem = earthPlate.get(star.homePalace === 5 ? 2 : star.homePalace);
     if (carriedStem) {

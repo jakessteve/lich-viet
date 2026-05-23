@@ -23,7 +23,10 @@ function AppLayout() {
   }, [location.pathname, location.search]);
 
   const activeTab: ActiveTab = ROUTE_TO_TAB[location.pathname] || 'am-lich';
-  const isFullPage = location.pathname === '/app/cai-dat' || location.pathname === '/app/dang-nhap' || location.pathname === '/app/dang-ky';
+  const isFullPage =
+    location.pathname === '/app/cai-dat' ||
+    location.pathname === '/app/dang-nhap' ||
+    location.pathname === '/app/dang-ky';
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark font-sans text-text-primary-light dark:text-text-primary-dark transition-colors duration-300 antialiased relative">
@@ -41,18 +44,22 @@ function AppLayout() {
       {/* Mobile slide-out drawer */}
       <MobileDrawer />
 
-      <main id="main-content" className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 w-full relative z-10 scroll-mt-20" aria-label="Nội dung chính">
+      <main
+        id="main-content"
+        className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 w-full relative z-10 scroll-mt-20"
+        aria-label="Nội dung chính"
+      >
         {isFullPage ? (
           /* Full-page routes with back-navigation */
           <div>
             {location.pathname !== '/app/cai-dat' && (
-            <button
-              onClick={() => navigate('/app/am-lich')}
-              className="inline-flex items-center gap-1.5 mb-4 px-3 py-1.5 rounded-xl text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
-            >
-              <span className="material-icons-round text-lg">arrow_back</span>
-              Quay lại ứng dụng
-            </button>
+              <button
+                onClick={() => navigate('/app/am-lich')}
+                className="inline-flex items-center gap-1.5 mb-4 px-3 py-1.5 rounded-xl text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+              >
+                <span className="material-icons-round text-lg">arrow_back</span>
+                Quay lại ứng dụng
+              </button>
             )}
             <Suspense fallback={<LoadingState />}>
               <Outlet />

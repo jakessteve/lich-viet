@@ -23,23 +23,17 @@
  */
 
 import { useCallback, useMemo, useState } from 'react';
-import {
-    translate,
-    translateArray,
-    detectLocale,
-    setLocalePreference,
-    type LocaleCode,
-} from './index';
+import { translate, translateArray, detectLocale, setLocalePreference, type LocaleCode } from './index';
 
 interface UseTranslationReturn {
-    /** Translate a dot-notation key with optional template variables */
-    t: (key: string, vars?: Record<string, string | number>) => string;
-    /** Get an array translation (e.g., weekday names) */
-    tArray: (key: string) => string[];
-    /** Current active locale code */
-    locale: LocaleCode;
-    /** Change the active locale (persists to localStorage) */
-    setLocale: (locale: LocaleCode) => void;
+  /** Translate a dot-notation key with optional template variables */
+  t: (key: string, vars?: Record<string, string | number>) => string;
+  /** Get an array translation (e.g., weekday names) */
+  tArray: (key: string) => string[];
+  /** Current active locale code */
+  locale: LocaleCode;
+  /** Change the active locale (persists to localStorage) */
+  setLocale: (locale: LocaleCode) => void;
 }
 
 /**
@@ -49,27 +43,20 @@ interface UseTranslationReturn {
  * of all components using this hook.
  */
 export function useTranslation(): UseTranslationReturn {
-    const [locale, setLocaleState] = useState<LocaleCode>(detectLocale);
+  const [locale, setLocaleState] = useState<LocaleCode>(detectLocale);
 
-    const setLocale = useCallback((newLocale: LocaleCode) => {
-        setLocalePreference(newLocale);
-        setLocaleState(newLocale);
-        document.documentElement.lang = newLocale;
-    }, []);
+  const setLocale = useCallback((newLocale: LocaleCode) => {
+    setLocalePreference(newLocale);
+    setLocaleState(newLocale);
+    document.documentElement.lang = newLocale;
+  }, []);
 
-    const t = useCallback(
-        (key: string, vars?: Record<string, string | number>) =>
-            translate(key, locale, vars),
-        [locale]
-    );
+  const t = useCallback(
+    (key: string, vars?: Record<string, string | number>) => translate(key, locale, vars),
+    [locale],
+  );
 
-    const tArray = useCallback(
-        (key: string) => translateArray(key, locale),
-        [locale]
-    );
+  const tArray = useCallback((key: string) => translateArray(key, locale), [locale]);
 
-    return useMemo(
-        () => ({ t, tArray, locale, setLocale }),
-        [t, tArray, locale, setLocale]
-    );
+  return useMemo(() => ({ t, tArray, locale, setLocale }), [t, tArray, locale, setLocale]);
 }

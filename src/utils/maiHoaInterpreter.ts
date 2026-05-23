@@ -4,17 +4,17 @@
 // All inputs as parameters, all outputs explicit. No side effects.
 
 import type {
-    NguHanh,
-    NguHanhRelation,
-    ElementStrength,
-    TheDungAssessment,
-    DivinationResult,
-    DivineReadingSummary,
-    Hexagram,
-    NguHanhInteractionData,
-    HaoText,
-    HexagramCategoryPredictions,
-    MovingLinePrediction,
+  NguHanh,
+  NguHanhRelation,
+  ElementStrength,
+  TheDungAssessment,
+  DivinationResult,
+  DivineReadingSummary,
+  Hexagram,
+  NguHanhInteractionData,
+  HaoText,
+  HexagramCategoryPredictions,
+  MovingLinePrediction,
 } from '../types/maiHoa';
 
 import type { Season } from './constants';
@@ -57,17 +57,12 @@ const VALID_ELEMENTS: readonly NguHanh[] = ['Kim', 'Thủy', 'Mộc', 'Hỏa', '
  * @param dungElement - The Ngũ Hành element of the Dụng trigram
  * @returns The NguHanhRelation between the two elements
  */
-export function getElementInteraction(
-    theElement: NguHanh,
-    dungElement: NguHanh,
-): NguHanhRelation {
-    const relation = NGU_HANH_DATA.interactionMatrix[theElement]?.[dungElement];
-    if (!relation) {
-        throw new RangeError(
-            `Invalid element pair: theElement="${theElement}", dungElement="${dungElement}".`
-        );
-    }
-    return relation;
+export function getElementInteraction(theElement: NguHanh, dungElement: NguHanh): NguHanhRelation {
+  const relation = NGU_HANH_DATA.interactionMatrix[theElement]?.[dungElement];
+  if (!relation) {
+    throw new RangeError(`Invalid element pair: theElement="${theElement}", dungElement="${dungElement}".`);
+  }
+  return relation;
 }
 
 /**
@@ -81,11 +76,11 @@ export function getElementInteraction(
  * - Tỷ Hòa: Same element → "Thể Dụng Tỷ Hòa"
  */
 const RELATION_TO_DIRECTION: Readonly<Record<NguHanhRelation, string>> = {
-    'Sinh': 'Thể Sinh Dụng',
-    'Khắc': 'Thể Khắc Dụng',
-    'Bị Sinh': 'Dụng Sinh Thể',
-    'Bị Khắc': 'Dụng Khắc Thể',
-    'Tỷ Hòa': 'Thể Dụng Tỷ Hòa',
+  Sinh: 'Thể Sinh Dụng',
+  Khắc: 'Thể Khắc Dụng',
+  'Bị Sinh': 'Dụng Sinh Thể',
+  'Bị Khắc': 'Dụng Khắc Thể',
+  'Tỷ Hòa': 'Thể Dụng Tỷ Hòa',
 };
 
 /**
@@ -93,11 +88,11 @@ const RELATION_TO_DIRECTION: Readonly<Record<NguHanhRelation, string>> = {
  * Based on SOT.md Section 2.4.
  */
 const RELATION_TO_MEANING: Readonly<Record<NguHanhRelation, string>> = {
-    'Sinh': 'Thể hao tổn năng lượng cho Dụng. Không thuận lợi.',
-    'Khắc': 'Thể chế ngự được Dụng, tuy khó nhọc nhưng thành công.',
-    'Bị Sinh': 'Dụng sinh trợ cho Thể. Được lợi, tốt lành.',
-    'Bị Khắc': 'Dụng khắc chế Thể. Đại hung, bất lợi.',
-    'Tỷ Hòa': 'Thể và Dụng cùng hành. Bình hòa, có quý nhân trợ giúp.',
+  Sinh: 'Thể hao tổn năng lượng cho Dụng. Không thuận lợi.',
+  Khắc: 'Thể chế ngự được Dụng, tuy khó nhọc nhưng thành công.',
+  'Bị Sinh': 'Dụng sinh trợ cho Thể. Được lợi, tốt lành.',
+  'Bị Khắc': 'Dụng khắc chế Thể. Đại hung, bất lợi.',
+  'Tỷ Hòa': 'Thể và Dụng cùng hành. Bình hòa, có quý nhân trợ giúp.',
 };
 
 /**
@@ -105,11 +100,11 @@ const RELATION_TO_MEANING: Readonly<Record<NguHanhRelation, string>> = {
  * Based on SOT.md Section 2.4.
  */
 const RELATION_TO_VERDICT: Readonly<Record<NguHanhRelation, 'Cát' | 'Hung' | 'Bình'>> = {
-    'Sinh': 'Hung',          // Thể Sinh Dụng = subject loses energy
-    'Khắc': 'Bình',          // Thể Khắc Dụng = neutral-to-good
-    'Bị Sinh': 'Cát',        // Dụng Sinh Thể = auspicious
-    'Bị Khắc': 'Hung',       // Dụng Khắc Thể = inauspicious
-    'Tỷ Hòa': 'Cát',         // Same element = auspicious
+  Sinh: 'Hung', // Thể Sinh Dụng = subject loses energy
+  Khắc: 'Bình', // Thể Khắc Dụng = neutral-to-good
+  'Bị Sinh': 'Cát', // Dụng Sinh Thể = auspicious
+  'Bị Khắc': 'Hung', // Dụng Khắc Thể = inauspicious
+  'Tỷ Hòa': 'Cát', // Same element = auspicious
 };
 
 /**
@@ -119,17 +114,14 @@ const RELATION_TO_VERDICT: Readonly<Record<NguHanhRelation, 'Cát' | 'Hung' | 'B
  * @param dungElement - The Ngũ Hành element of the Dụng trigram
  * @returns A TheDungAssessment with relationship direction, meaning, and verdict
  */
-export function assessTheDung(
-    theElement: NguHanh,
-    dungElement: NguHanh,
-): TheDungAssessment {
-    const relationType = getElementInteraction(theElement, dungElement);
-    return {
-        relationship: RELATION_TO_DIRECTION[relationType],
-        relationType,
-        meaning: RELATION_TO_MEANING[relationType],
-        verdict: RELATION_TO_VERDICT[relationType],
-    };
+export function assessTheDung(theElement: NguHanh, dungElement: NguHanh): TheDungAssessment {
+  const relationType = getElementInteraction(theElement, dungElement);
+  return {
+    relationship: RELATION_TO_DIRECTION[relationType],
+    relationType,
+    meaning: RELATION_TO_MEANING[relationType],
+    verdict: RELATION_TO_VERDICT[relationType],
+  };
 }
 
 // ── US_MH_07: Temporal Influence ──────────────────────────────
@@ -146,11 +138,11 @@ export function assessTheDung(
  * @returns The Vietnamese season name
  */
 export function getSeasonFromLunarMonth(lunarMonth: number): Season {
-    if (lunarMonth < 1 || lunarMonth > 12) {
-        throw new RangeError(`Invalid lunar month: ${lunarMonth}. Must be 1–12.`);
-    }
-    const index = getSeasonIndex(lunarMonth);
-    return SEASONS[index];
+  if (lunarMonth < 1 || lunarMonth > 12) {
+    throw new RangeError(`Invalid lunar month: ${lunarMonth}. Must be 1–12.`);
+  }
+  const index = getSeasonIndex(lunarMonth);
+  return SEASONS[index];
 }
 
 /**
@@ -162,29 +154,24 @@ export function getSeasonFromLunarMonth(lunarMonth: number): Season {
  * @param lunarMonth - The lunar month (1–12)
  * @returns The ElementStrength for this element in this season
  */
-export function getElementStrength(
-    element: NguHanh,
-    lunarMonth: number,
-): ElementStrength {
-    const season = getSeasonFromLunarMonth(lunarMonth);
-    const strength = NGU_HANH_DATA.seasonalStrength[element]?.[season];
-    if (!strength) {
-        throw new RangeError(
-            `No seasonal strength data for element="${element}", season="${season}".`
-        );
-    }
-    return strength;
+export function getElementStrength(element: NguHanh, lunarMonth: number): ElementStrength {
+  const season = getSeasonFromLunarMonth(lunarMonth);
+  const strength = NGU_HANH_DATA.seasonalStrength[element]?.[season];
+  if (!strength) {
+    throw new RangeError(`No seasonal strength data for element="${element}", season="${season}".`);
+  }
+  return strength;
 }
 
 /**
  * Mapping from ElementStrength to a descriptive Vietnamese sentence.
  */
 const STRENGTH_DESCRIPTIONS: Readonly<Record<ElementStrength, string>> = {
-    'Vượng': 'đang Vượng (cực thịnh), rất mạnh trong mùa này.',
-    'Tướng': 'đang Tướng (vượng phụ), có sức mạnh tốt.',
-    'Hưu': 'đang Hưu (nghỉ ngơi), sức lực trung bình.',
-    'Tù': 'đang Tù (bị giam), sức lực yếu, cần thận trọng.',
-    'Tử': 'đang Tử (suy kiệt), rất yếu, nên tránh khởi sự lớn.',
+  Vượng: 'đang Vượng (cực thịnh), rất mạnh trong mùa này.',
+  Tướng: 'đang Tướng (vượng phụ), có sức mạnh tốt.',
+  Hưu: 'đang Hưu (nghỉ ngơi), sức lực trung bình.',
+  Tù: 'đang Tù (bị giam), sức lực yếu, cần thận trọng.',
+  Tử: 'đang Tử (suy kiệt), rất yếu, nên tránh khởi sự lớn.',
 };
 
 /**
@@ -194,13 +181,10 @@ const STRENGTH_DESCRIPTIONS: Readonly<Record<ElementStrength, string>> = {
  * @param lunarMonth - The lunar month (1–12)
  * @returns A human-readable Vietnamese description of the temporal influence
  */
-export function describeTemporalInfluence(
-    element: NguHanh,
-    lunarMonth: number,
-): string {
-    const season = getSeasonFromLunarMonth(lunarMonth);
-    const strength = getElementStrength(element, lunarMonth);
-    return `Hành ${element} trong mùa ${season} ${STRENGTH_DESCRIPTIONS[strength]}`;
+export function describeTemporalInfluence(element: NguHanh, lunarMonth: number): string {
+  const season = getSeasonFromLunarMonth(lunarMonth);
+  const strength = getElementStrength(element, lunarMonth);
+  return `Hành ${element} trong mùa ${season} ${STRENGTH_DESCRIPTIONS[strength]}`;
 }
 
 // ── US_MH_08: Hexagram Meaning Lookup ─────────────────────────
@@ -212,15 +196,15 @@ export function describeTemporalInfluence(
  * @returns An object with name, image, and meaning fields
  */
 export function getHexagramMeaning(hexagram: Hexagram): {
-    readonly name: string;
-    readonly image: string;
-    readonly meaning: string;
+  readonly name: string;
+  readonly image: string;
+  readonly meaning: string;
 } {
-    return {
-        name: hexagram.name,
-        image: hexagram.image,
-        meaning: hexagram.meaning,
-    };
+  return {
+    name: hexagram.name,
+    image: hexagram.image,
+    meaning: hexagram.meaning,
+  };
 }
 
 // ── Dụng Thần System (Inquiry-Based Target) ───────────────
@@ -230,12 +214,24 @@ export type InquiryType = 'tai_loc' | 'su_nghiep' | 'hoc_hanh' | 'hoi_con' | 'nh
 
 /** Maps inquiry type to the target Lục Thân (Dụng Thần) */
 const INQUIRY_TO_DUNG_THAN: Record<InquiryType, { target: string; description: string }> = {
-  'tai_loc': { target: 'Thê Tài', description: 'Xem tài lộc — Dụng Thần là Thê Tài (vợ/chồng, tiền bạc). Tìm hào Thê Tài trong quẻ.' },
-  'su_nghiep': { target: 'Quan Quỷ', description: 'Xem sự nghiệp — Dụng Thần là Quan Quỷ (quan chức, quyền lực). Tìm hào Quan Quỷ trong quẻ.' },
-  'hoc_hanh': { target: 'Phụ Mẫu', description: 'Xem học hành — Dụng Thần là Phụ Mẫu (văn thư, giấy tờ, học vấn). Tìm hào Phụ Mẫu.' },
-  'hoi_con': { target: 'Tử Tôn', description: 'Xem con cái — Dụng Thần là Tử Tôn (con cháu, sáng tạo). Tìm hào Tử Tôn trong quẻ.' },
-  'nhan_duyen': { target: 'Thê Tài', description: 'Xem nhân duyên — Dụng Thần là Thê Tài (vợ/chồng, tình cảm).' },
-  'tong_quat': { target: '', description: 'Xem tổng quát — không cần Dụng Thần cụ thể, phân tích toàn diện Thể-Dụng.' },
+  tai_loc: {
+    target: 'Thê Tài',
+    description: 'Xem tài lộc — Dụng Thần là Thê Tài (vợ/chồng, tiền bạc). Tìm hào Thê Tài trong quẻ.',
+  },
+  su_nghiep: {
+    target: 'Quan Quỷ',
+    description: 'Xem sự nghiệp — Dụng Thần là Quan Quỷ (quan chức, quyền lực). Tìm hào Quan Quỷ trong quẻ.',
+  },
+  hoc_hanh: {
+    target: 'Phụ Mẫu',
+    description: 'Xem học hành — Dụng Thần là Phụ Mẫu (văn thư, giấy tờ, học vấn). Tìm hào Phụ Mẫu.',
+  },
+  hoi_con: {
+    target: 'Tử Tôn',
+    description: 'Xem con cái — Dụng Thần là Tử Tôn (con cháu, sáng tạo). Tìm hào Tử Tôn trong quẻ.',
+  },
+  nhan_duyen: { target: 'Thê Tài', description: 'Xem nhân duyên — Dụng Thần là Thê Tài (vợ/chồng, tình cảm).' },
+  tong_quat: { target: '', description: 'Xem tổng quát — không cần Dụng Thần cụ thể, phân tích toàn diện Thể-Dụng.' },
 };
 
 /**
@@ -243,83 +239,83 @@ const INQUIRY_TO_DUNG_THAN: Record<InquiryType, { target: string; description: s
  * Returns which hao positions contain the target and their overall strength.
  */
 export function analyzeDungThan(
-    inquiryType: InquiryType,
-    haoDetails?: readonly import('../types/maiHoa').HaoDetail[],
+  inquiryType: InquiryType,
+  haoDetails?: readonly import('../types/maiHoa').HaoDetail[],
 ): { target: string; description: string; foundPositions: number[]; assessment: string } {
-    const config = INQUIRY_TO_DUNG_THAN[inquiryType];
-    if (!config.target || !haoDetails || haoDetails.length === 0) {
-        return { ...config, foundPositions: [], assessment: config.description };
-    }
-    const found = haoDetails.filter(h => h.lucThan === config.target);
-    const positions = found.map(h => h.position);
-    
-    let assessment: string;
-    if (found.length === 0) {
-        assessment = `${config.description} Không tìm thấy hào ${config.target} trong quẻ — Dụng Thần ẩn phục, việc khó thành.`;
-    } else if (found.some(h => h.isMoving)) {
-        assessment = `${config.description} Dụng Thần động (hào ${positions.join(', ')}) — việc đang biến chuyển mạnh mẽ.`;
-    } else {
-        assessment = `${config.description} Dụng Thần tĩnh (hào ${positions.join(', ')}) — việc ổn định, chưa có biến chuyển.`;
-    }
-    return { ...config, foundPositions: positions, assessment };
+  const config = INQUIRY_TO_DUNG_THAN[inquiryType];
+  if (!config.target || !haoDetails || haoDetails.length === 0) {
+    return { ...config, foundPositions: [], assessment: config.description };
+  }
+  const found = haoDetails.filter((h) => h.lucThan === config.target);
+  const positions = found.map((h) => h.position);
+
+  let assessment: string;
+  if (found.length === 0) {
+    assessment = `${config.description} Không tìm thấy hào ${config.target} trong quẻ — Dụng Thần ẩn phục, việc khó thành.`;
+  } else if (found.some((h) => h.isMoving)) {
+    assessment = `${config.description} Dụng Thần động (hào ${positions.join(', ')}) — việc đang biến chuyển mạnh mẽ.`;
+  } else {
+    assessment = `${config.description} Dụng Thần tĩnh (hào ${positions.join(', ')}) — việc ổn định, chưa có biến chuyển.`;
+  }
+  return { ...config, foundPositions: positions, assessment };
 }
 
 // ── Hổ Quẻ & Biến Quẻ Deep Analysis ───────────────────
 
 export interface HexagramRelationAnalysis {
-    hexagramName: string;
-    upperElement: NguHanh;
-    lowerElement: NguHanh;
-    relationToThe: NguHanhRelation;
-    verdict: 'Cát' | 'Hung' | 'Bình';
-    interpretation: string;
+  hexagramName: string;
+  upperElement: NguHanh;
+  lowerElement: NguHanh;
+  relationToThe: NguHanhRelation;
+  verdict: 'Cát' | 'Hung' | 'Bình';
+  interpretation: string;
 }
 
 const TRIGRAM_ELEMENT_MAP: Record<number, NguHanh> = {
-    1: 'Kim',   // Càn
-    2: 'Kim',   // Đoài
-    3: 'Hỏa',   // Ly
-    4: 'Mộc',   // Chấn
-    5: 'Mộc',   // Tốn
-    6: 'Thủy',  // Khảm
-    7: 'Thổ',   // Cấn
-    8: 'Thổ',   // Khôn
+  1: 'Kim', // Càn
+  2: 'Kim', // Đoài
+  3: 'Hỏa', // Ly
+  4: 'Mộc', // Chấn
+  5: 'Mộc', // Tốn
+  6: 'Thủy', // Khảm
+  7: 'Thổ', // Cấn
+  8: 'Thổ', // Khôn
 };
 
 /**
  * Analyzes a secondary hexagram (Hổ or Biến) in relation to the Thể element.
  */
 export function analyzeSecondaryHexagram(
-    hexagram: import('../types/maiHoa').Hexagram,
-    theElement: NguHanh,
-    role: 'Hỗ' | 'Biến',
+  hexagram: import('../types/maiHoa').Hexagram,
+  theElement: NguHanh,
+  role: 'Hỗ' | 'Biến',
 ): HexagramRelationAnalysis {
-    const upperEl = TRIGRAM_ELEMENT_MAP[hexagram.upper] || 'Thổ';
-    const lowerEl = TRIGRAM_ELEMENT_MAP[hexagram.lower] || 'Thổ';
+  const upperEl = TRIGRAM_ELEMENT_MAP[hexagram.upper] || 'Thổ';
+  const lowerEl = TRIGRAM_ELEMENT_MAP[hexagram.lower] || 'Thổ';
 
-    // Check the dominant element of this hexagram (use upper as primary)
-    const relationToThe = getElementInteraction(theElement, upperEl);
-    const verdict = RELATION_TO_VERDICT[relationToThe];
+  // Check the dominant element of this hexagram (use upper as primary)
+  const relationToThe = getElementInteraction(theElement, upperEl);
+  const verdict = RELATION_TO_VERDICT[relationToThe];
 
-    const roleLabel = role === 'Hỗ' ? 'Quẻ Hỗ (quá trình ẩn)' : 'Quẻ Biến (kết quả)';
-    const meaning = RELATION_TO_MEANING[relationToThe];
-    const directionText = RELATION_TO_DIRECTION[relationToThe];
+  const roleLabel = role === 'Hỗ' ? 'Quẻ Hỗ (quá trình ẩn)' : 'Quẻ Biến (kết quả)';
+  const meaning = RELATION_TO_MEANING[relationToThe];
+  const directionText = RELATION_TO_DIRECTION[relationToThe];
 
-    let interpretation: string;
-    if (role === 'Hỗ') {
-        interpretation = `${roleLabel}: ${hexagram.name} (${upperEl}/${lowerEl}). ${directionText} — ${meaning} Yếu tố ẩn bên trong ${verdict === 'Cát' ? 'hỗ trợ' : verdict === 'Hung' ? 'cản trở' : 'trung lập với'} Thể.`;
-    } else {
-        interpretation = `${roleLabel}: ${hexagram.name} (${upperEl}/${lowerEl}). ${directionText} — ${meaning} Kết quả cuối cùng ${verdict === 'Cát' ? 'tốt lành' : verdict === 'Hung' ? 'bất lợi' : 'bình thường'}.`;
-    }
+  let interpretation: string;
+  if (role === 'Hỗ') {
+    interpretation = `${roleLabel}: ${hexagram.name} (${upperEl}/${lowerEl}). ${directionText} — ${meaning} Yếu tố ẩn bên trong ${verdict === 'Cát' ? 'hỗ trợ' : verdict === 'Hung' ? 'cản trở' : 'trung lập với'} Thể.`;
+  } else {
+    interpretation = `${roleLabel}: ${hexagram.name} (${upperEl}/${lowerEl}). ${directionText} — ${meaning} Kết quả cuối cùng ${verdict === 'Cát' ? 'tốt lành' : verdict === 'Hung' ? 'bất lợi' : 'bình thường'}.`;
+  }
 
-    return {
-        hexagramName: hexagram.name,
-        upperElement: upperEl,
-        lowerElement: lowerEl,
-        relationToThe: relationToThe,
-        verdict,
-        interpretation,
-    };
+  return {
+    hexagramName: hexagram.name,
+    upperElement: upperEl,
+    lowerElement: lowerEl,
+    relationToThe: relationToThe,
+    verdict,
+    interpretation,
+  };
 }
 
 // ── Orchestrator: Full Interpretation ─────────────────────────
@@ -332,14 +328,11 @@ export function analyzeSecondaryHexagram(
  * @param movingLine - The moving line position (1–6)
  * @returns The HaoText for the moving line, or undefined
  */
-export function getMovingLineText(
-    hexagram: Hexagram,
-    movingLine: number,
-): HaoText | undefined {
-    if (!hexagram.haoTexts || movingLine < 1 || movingLine > 6) {
-        return undefined;
-    }
-    return hexagram.haoTexts.find((h: HaoText) => h.position === movingLine);
+export function getMovingLineText(hexagram: Hexagram, movingLine: number): HaoText | undefined {
+  if (!hexagram.haoTexts || movingLine < 1 || movingLine > 6) {
+    return undefined;
+  }
+  return hexagram.haoTexts.find((h: HaoText) => h.position === movingLine);
 }
 
 /**
@@ -350,14 +343,11 @@ export function getMovingLineText(
  * @param movingLine - The moving line position (1–6)
  * @returns The MovingLinePrediction, or undefined
  */
-export function getMovingLinePrediction(
-    hexagram: Hexagram,
-    movingLine: number,
-): MovingLinePrediction | undefined {
-    if (!hexagram.movingLinePredictions) {
-        return undefined;
-    }
-    return hexagram.movingLinePredictions[movingLine];
+export function getMovingLinePrediction(hexagram: Hexagram, movingLine: number): MovingLinePrediction | undefined {
+  if (!hexagram.movingLinePredictions) {
+    return undefined;
+  }
+  return hexagram.movingLinePredictions[movingLine];
 }
 
 /**
@@ -367,10 +357,8 @@ export function getMovingLinePrediction(
  * @param hexagram - The Hexagram to look up
  * @returns The HexagramCategoryPredictions, or undefined
  */
-export function getCategoryPredictions(
-    hexagram: Hexagram,
-): HexagramCategoryPredictions | undefined {
-    return hexagram.categoryPredictions;
+export function getCategoryPredictions(hexagram: Hexagram): HexagramCategoryPredictions | undefined {
+  return hexagram.categoryPredictions;
 }
 
 // ── Orchestrator: Full Interpretation ─────────────────────────
@@ -379,35 +367,35 @@ export function getCategoryPredictions(
  * Builds a detailed Vietnamese explanation combining all interpretation factors.
  */
 function buildDetailedExplanation(
-    assessment: TheDungAssessment,
-    strength: ElementStrength,
-    theElement: NguHanh,
-    dungElement: NguHanh,
-    season: Season,
-    hexagramName: string,
+  assessment: TheDungAssessment,
+  strength: ElementStrength,
+  theElement: NguHanh,
+  dungElement: NguHanh,
+  season: Season,
+  hexagramName: string,
 ): string {
-    const parts: string[] = [
-        `Quẻ ${hexagramName}:`,
-        `Thể thuộc hành ${theElement}, Dụng thuộc hành ${dungElement}.`,
-        `Mối quan hệ: ${assessment.relationship} — ${assessment.meaning}`,
-        `Ảnh hưởng thời gian: Hành ${theElement} trong mùa ${season} đang ở trạng thái ${strength}.`,
-    ];
+  const parts: string[] = [
+    `Quẻ ${hexagramName}:`,
+    `Thể thuộc hành ${theElement}, Dụng thuộc hành ${dungElement}.`,
+    `Mối quan hệ: ${assessment.relationship} — ${assessment.meaning}`,
+    `Ảnh hưởng thời gian: Hành ${theElement} trong mùa ${season} đang ở trạng thái ${strength}.`,
+  ];
 
-    // Combine strength and relation for overall interpretation
+  // Combine strength and relation for overall interpretation
 
-    if (assessment.verdict === 'Cát' && STRONG_STRENGTHS.includes(strength)) {
-        parts.push('Tổng kết: Rất tốt lành. Thể được sinh trợ và đang vượng khí.');
-    } else if (assessment.verdict === 'Cát' && WEAK_STRENGTHS.includes(strength)) {
-        parts.push('Tổng kết: Tuy quẻ tốt nhưng Thể đang suy yếu, cần thận trọng thời điểm.');
-    } else if (assessment.verdict === 'Hung' && STRONG_STRENGTHS.includes(strength)) {
-        parts.push('Tổng kết: Quẻ không thuận lợi nhưng Thể đang vượng, có thể giảm nhẹ hung khí.');
-    } else if (assessment.verdict === 'Hung' && WEAK_STRENGTHS.includes(strength)) {
-        parts.push('Tổng kết: Rất bất lợi. Quẻ hung và Thể đang suy kiệt, nên hoãn lại.');
-    } else {
-        parts.push('Tổng kết: Trung bình, cần xem xét thêm các yếu tố khác.');
-    }
+  if (assessment.verdict === 'Cát' && STRONG_STRENGTHS.includes(strength)) {
+    parts.push('Tổng kết: Rất tốt lành. Thể được sinh trợ và đang vượng khí.');
+  } else if (assessment.verdict === 'Cát' && WEAK_STRENGTHS.includes(strength)) {
+    parts.push('Tổng kết: Tuy quẻ tốt nhưng Thể đang suy yếu, cần thận trọng thời điểm.');
+  } else if (assessment.verdict === 'Hung' && STRONG_STRENGTHS.includes(strength)) {
+    parts.push('Tổng kết: Quẻ không thuận lợi nhưng Thể đang vượng, có thể giảm nhẹ hung khí.');
+  } else if (assessment.verdict === 'Hung' && WEAK_STRENGTHS.includes(strength)) {
+    parts.push('Tổng kết: Rất bất lợi. Quẻ hung và Thể đang suy kiệt, nên hoãn lại.');
+  } else {
+    parts.push('Tổng kết: Trung bình, cần xem xét thêm các yếu tố khác.');
+  }
 
-    return parts.join(' ');
+  return parts.join(' ');
 }
 
 /**
@@ -419,24 +407,23 @@ function buildDetailedExplanation(
  * - Otherwise Bình (intermediate)
  */
 function determineOverallVerdict(
-    assessmentVerdict: 'Cát' | 'Hung' | 'Bình',
-    strength: ElementStrength,
+  assessmentVerdict: 'Cát' | 'Hung' | 'Bình',
+  strength: ElementStrength,
 ): 'Cát' | 'Hung' | 'Bình' {
-
-    if (assessmentVerdict === 'Hung' && WEAK_STRENGTHS.includes(strength)) {
-        return 'Hung';
-    }
-    if (assessmentVerdict === 'Cát' && STRONG_STRENGTHS.includes(strength)) {
-        return 'Cát';
-    }
-    // Mixed signals or neutral → Bình
-    if (assessmentVerdict === 'Hung' && STRONG_STRENGTHS.includes(strength)) {
-        return 'Bình';
-    }
-    if (assessmentVerdict === 'Cát' && WEAK_STRENGTHS.includes(strength)) {
-        return 'Bình';
-    }
-    return assessmentVerdict;
+  if (assessmentVerdict === 'Hung' && WEAK_STRENGTHS.includes(strength)) {
+    return 'Hung';
+  }
+  if (assessmentVerdict === 'Cát' && STRONG_STRENGTHS.includes(strength)) {
+    return 'Cát';
+  }
+  // Mixed signals or neutral → Bình
+  if (assessmentVerdict === 'Hung' && STRONG_STRENGTHS.includes(strength)) {
+    return 'Bình';
+  }
+  if (assessmentVerdict === 'Cát' && WEAK_STRENGTHS.includes(strength)) {
+    return 'Bình';
+  }
+  return assessmentVerdict;
 }
 
 /**
@@ -444,21 +431,19 @@ function determineOverallVerdict(
  * Throws RangeError if elements are missing or invalid.
  */
 function validateDivinationResult(result: DivinationResult): void {
-    if (!result.elements?.theElement || !result.elements?.dungElement) {
-        throw new RangeError(
-            'DivinationResult must have valid elements.theElement and elements.dungElement.'
-        );
-    }
-    if (!VALID_ELEMENTS.includes(result.elements.theElement)) {
-        throw new RangeError(
-            `Invalid Thể element: "${result.elements.theElement}". Must be one of: ${VALID_ELEMENTS.join(', ')}.`
-        );
-    }
-    if (!VALID_ELEMENTS.includes(result.elements.dungElement)) {
-        throw new RangeError(
-            `Invalid Dụng element: "${result.elements.dungElement}". Must be one of: ${VALID_ELEMENTS.join(', ')}.`
-        );
-    }
+  if (!result.elements?.theElement || !result.elements?.dungElement) {
+    throw new RangeError('DivinationResult must have valid elements.theElement and elements.dungElement.');
+  }
+  if (!VALID_ELEMENTS.includes(result.elements.theElement)) {
+    throw new RangeError(
+      `Invalid Thể element: "${result.elements.theElement}". Must be one of: ${VALID_ELEMENTS.join(', ')}.`,
+    );
+  }
+  if (!VALID_ELEMENTS.includes(result.elements.dungElement)) {
+    throw new RangeError(
+      `Invalid Dụng element: "${result.elements.dungElement}". Must be one of: ${VALID_ELEMENTS.join(', ')}.`,
+    );
+  }
 }
 
 /**
@@ -471,75 +456,72 @@ function validateDivinationResult(result: DivinationResult): void {
  * @param lunarMonth - The lunar month (1–12) for temporal influence
  * @returns A complete DivineReadingSummary
  */
-export function interpretDivination(
-    result: DivinationResult,
-    lunarMonth: number,
-): DivineReadingSummary {
-    if (lunarMonth < 1 || lunarMonth > 12) {
-        throw new RangeError(`Invalid lunar month: ${lunarMonth}. Must be 1–12.`);
-    }
-    validateDivinationResult(result);
+export function interpretDivination(result: DivinationResult, lunarMonth: number): DivineReadingSummary {
+  if (lunarMonth < 1 || lunarMonth > 12) {
+    throw new RangeError(`Invalid lunar month: ${lunarMonth}. Must be 1–12.`);
+  }
+  validateDivinationResult(result);
 
-    const theElement = result.elements.theElement;
-    const dungElement = result.elements.dungElement;
+  const theElement = result.elements.theElement;
+  const dungElement = result.elements.dungElement;
 
-    // US_MH_06: Thể-Dụng assessment
-    const theDungAssessment = assessTheDung(theElement, dungElement);
+  // US_MH_06: Thể-Dụng assessment
+  const theDungAssessment = assessTheDung(theElement, dungElement);
 
-    // US_MH_07: Temporal influence (compute season & strength ONCE)
-    const season = getSeasonFromLunarMonth(lunarMonth);
-    const strength = getElementStrength(theElement, lunarMonth);
-    const temporalDescription = `Hành ${theElement} trong mùa ${season} ${STRENGTH_DESCRIPTIONS[strength]}`;
+  // US_MH_07: Temporal influence (compute season & strength ONCE)
+  const season = getSeasonFromLunarMonth(lunarMonth);
+  const strength = getElementStrength(theElement, lunarMonth);
+  const temporalDescription = `Hành ${theElement} trong mùa ${season} ${STRENGTH_DESCRIPTIONS[strength]}`;
 
-    // US_MH_08: Hexagram meaning
-    const hexagramMeaning = getHexagramMeaning(result.mainHexagram);
+  // US_MH_08: Hexagram meaning
+  const hexagramMeaning = getHexagramMeaning(result.mainHexagram);
 
-    // Overall verdict
-    const overallVerdict = determineOverallVerdict(theDungAssessment.verdict, strength);
+  // Overall verdict
+  const overallVerdict = determineOverallVerdict(theDungAssessment.verdict, strength);
 
-    // Build detailed explanation
-    const detailedExplanation = buildDetailedExplanation(
-        theDungAssessment,
-        strength,
-        theElement,
-        dungElement,
-        season,
-        result.mainHexagram.name,
-    );
+  // Build detailed explanation
+  const detailedExplanation = buildDetailedExplanation(
+    theDungAssessment,
+    strength,
+    theElement,
+    dungElement,
+    season,
+    result.mainHexagram.name,
+  );
 
-    // Extended content (optional — only present for hexagrams with rich data)
-    const prophecy = result.mainHexagram.prophecy;
-    const deepMeaning = result.mainHexagram.deepMeaning;
-    const movingLineText = getMovingLineText(result.mainHexagram, result.movingLine);
-    const movingLinePrediction = getMovingLinePrediction(result.mainHexagram, result.movingLine);
-    const categoryPredictions = getCategoryPredictions(result.mainHexagram);
+  // Extended content (optional — only present for hexagrams with rich data)
+  const prophecy = result.mainHexagram.prophecy;
+  const deepMeaning = result.mainHexagram.deepMeaning;
+  const movingLineText = getMovingLineText(result.mainHexagram, result.movingLine);
+  const movingLinePrediction = getMovingLinePrediction(result.mainHexagram, result.movingLine);
+  const categoryPredictions = getCategoryPredictions(result.mainHexagram);
 
-    return {
-        overallVerdict,
-        theDungAssessment,
-        temporalInfluence: {
-            strength,
-            description: temporalDescription,
-        },
-        hexagramMeaning,
-        detailedExplanation,
-        elementBreakdown: {
-            theElement,
-            dungElement,
-            relation: theDungAssessment.relationType,
-        },
-        prophecy,
-        deepMeaning,
-        movingLineText,
-        movingLinePrediction,
-        categoryPredictions,
-        chineseName: result.mainHexagram.chineseName,
-        briefExplanation: result.mainHexagram.briefExplanation,
-        thoanTu: result.mainHexagram.thoanTu,
-        allHaoTexts: result.mainHexagram.haoTexts,
-        commentary: result.mainHexagram.commentary,
-        // ── Enriched Analysis ──
-        hoQueAnalysis: analyzeSecondaryHexagram(result.mutualHexagram, theElement, 'Hỗ'),
-        bienQueAnalysis: analyzeSecondaryHexagram(result.changedHexagram, theElement, 'Biến'),
-    };
+  return {
+    overallVerdict,
+    theDungAssessment,
+    temporalInfluence: {
+      strength,
+      description: temporalDescription,
+    },
+    hexagramMeaning,
+    detailedExplanation,
+    elementBreakdown: {
+      theElement,
+      dungElement,
+      relation: theDungAssessment.relationType,
+    },
+    prophecy,
+    deepMeaning,
+    movingLineText,
+    movingLinePrediction,
+    categoryPredictions,
+    chineseName: result.mainHexagram.chineseName,
+    briefExplanation: result.mainHexagram.briefExplanation,
+    thoanTu: result.mainHexagram.thoanTu,
+    allHaoTexts: result.mainHexagram.haoTexts,
+    commentary: result.mainHexagram.commentary,
+    // ── Enriched Analysis ──
+    hoQueAnalysis: analyzeSecondaryHexagram(result.mutualHexagram, theElement, 'Hỗ'),
+    bienQueAnalysis: analyzeSecondaryHexagram(result.changedHexagram, theElement, 'Biến'),
+  };
 }

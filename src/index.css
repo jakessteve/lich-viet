@@ -1,12 +1,12 @@
-@import "tailwindcss" source(none);
+@import 'tailwindcss' source(none);
 @source "../index.html";
 @source "./";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-primary: #4F46E5;
-  --color-primary-dark: #818CF8;
+  --color-primary: #4f46e5;
+  --color-primary-dark: #818cf8;
   --color-background-light: #fbf9f4;
   --color-background-dark: #0a0a1a;
   --color-surface-light: #ffffff;
@@ -14,35 +14,35 @@
   --color-surface-subtle-light: #f0eee9;
   --color-surface-subtle-dark: #1e1e35;
   --color-text-primary-light: #1b1c19;
-  --color-text-primary-dark: #F5F5F7;
+  --color-text-primary-dark: #f5f5f7;
   --color-text-secondary-light: #4d4635;
-  --color-text-secondary-dark: #BFB0A0;
-  --color-border-light: #E5E5EA;
+  --color-text-secondary-dark: #bfb0a0;
+  --color-border-light: #e5e5ea;
   --color-border-dark: #2a2a4a;
-  --color-calendar-today: #4F46E5;
-  --color-calendar-weekend: #FF3B30;
-  --color-crimson-600: #FF3B30;
-  --color-crimson-400: #FF453A;
+  --color-calendar-today: #4f46e5;
+  --color-calendar-weekend: #ff3b30;
+  --color-crimson-600: #ff3b30;
+  --color-crimson-400: #ff453a;
 
   /* ── Semantic Hexagram Accent Colors ───────────────────── */
-  --color-accent-main: #2563EB;
-  --color-accent-main-dark: #60A5FA;
-  --color-accent-mutual: #7C3AED;
-  --color-accent-mutual-dark: #A78BFA;
-  --color-accent-changed: #0D9488;
-  --color-accent-changed-dark: #2DD4BF;
-  --color-accent-moving: #D97706;
-  --color-accent-moving-dark: #FBBF24;
+  --color-accent-main: #2563eb;
+  --color-accent-main-dark: #60a5fa;
+  --color-accent-mutual: #7c3aed;
+  --color-accent-mutual-dark: #a78bfa;
+  --color-accent-changed: #0d9488;
+  --color-accent-changed-dark: #2dd4bf;
+  --color-accent-moving: #d97706;
+  --color-accent-moving-dark: #fbbf24;
 
   /* ── Semantic Good/Bad ─────────────────────────────────── */
   --color-good: #059669;
-  --color-good-dark: #34D399;
-  --color-bad: #DC2626;
-  --color-bad-dark: #F87171;
+  --color-good-dark: #34d399;
+  --color-bad: #dc2626;
+  --color-bad-dark: #f87171;
 
   /* ── Cultural Gold Accent ──────────────────────────────── */
-  --color-gold: #92400E;
-  --color-gold-light: #D97706;
+  --color-gold: #92400e;
+  --color-gold-light: #d97706;
   --color-gold-dark: #ffdea1;
 
   /* ── Mystery Palette ───────────────────────────────────── */
@@ -56,19 +56,21 @@
   --color-mystery-glow-gold: rgba(212, 168, 67, 0.12);
 
   /* ── Semantic Purple (Tam Hợp / Compatibility) ──────── */
-  --color-purple: #7C3AED;
-  --color-purple-dark: #A78BFA;
+  --color-purple: #7c3aed;
+  --color-purple-dark: #a78bfa;
 
   /* ── Semantic Orange (Lục Xung / Caution) ────────────── */
-  --color-orange: #EA580C;
-  --color-orange-dark: #FB923C;
+  --color-orange: #ea580c;
+  --color-orange-dark: #fb923c;
 
   /* ── Semantic Info (Water Element / Information) ─────── */
-  --color-info: #2563EB;
-  --color-info-dark: #60A5FA;
+  --color-info: #2563eb;
+  --color-info-dark: #60a5fa;
 
-  --font-display: "Noto Serif", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-sans: "Noto Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-display: 'Noto Serif', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-sans:
+    'Noto Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 @layer base {
@@ -80,7 +82,9 @@
 
   /* Noto Sans font-feature-settings for improved readability */
   body {
-    font-feature-settings: 'kern' 1, 'liga' 1;
+    font-feature-settings:
+      'kern' 1,
+      'liga' 1;
   }
 
   /* Mystery ambient background for dark mode */
@@ -100,13 +104,14 @@
 }
 
 @layer components {
-
   /* ── Glassmorphism Card Surfaces ────────────────────────── */
   .glass-card {
     @apply rounded-2xl overflow-hidden transition-all duration-300;
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(229, 229, 234, 0.5);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 14px rgba(0, 0, 0, 0.03);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.08),
+      0 2px 14px rgba(0, 0, 0, 0.03);
   }
 
   .dark .glass-card {
@@ -114,7 +119,7 @@
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    border-top-color: rgba(255, 255, 255, 0.10);
+    border-top-color: rgba(255, 255, 255, 0.1);
     border-left-color: rgba(255, 255, 255, 0.08);
     box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.3),
@@ -124,7 +129,7 @@
   }
 
   .dark .glass-card:hover {
-    border-color: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.1);
     border-top-color: rgba(255, 255, 255, 0.14);
     box-shadow:
       0 12px 40px rgba(0, 0, 0, 0.35),
@@ -138,7 +143,9 @@
     @apply rounded-2xl overflow-hidden transition-all duration-300;
     background: rgba(255, 255, 255, 0.98);
     border: 1px solid rgba(229, 229, 234, 0.6);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      0 2px 8px rgba(0, 0, 0, 0.04);
   }
 
   .dark .glass-card-strong {
@@ -186,8 +193,12 @@
     border-radius: inherit;
     padding: 1px;
     background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(212, 168, 67, 0.15), rgba(37, 99, 235, 0.2));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
@@ -202,14 +213,18 @@
   /* ── Shared Card Surface (legacy compat) ────────────────── */
   .card-surface {
     @apply bg-surface-light dark:bg-surface-dark rounded-2xl border border-border-light/50 dark:border-border-dark/50 overflow-hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), 0 2px 14px rgba(0, 0, 0, 0.02);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.04),
+      0 2px 14px rgba(0, 0, 0, 0.02);
   }
 
   .dark .card-surface {
     background: rgba(26, 26, 46, 0.6);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 14px rgba(0, 0, 0, 0.15);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 2px 14px rgba(0, 0, 0, 0.15);
     border-color: rgba(124, 58, 237, 0.1);
   }
 
@@ -272,19 +287,27 @@
 
   /* ── Shadows ─────────────────────────────────────────────── */
   .shadow-apple {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), 0 2px 14px rgba(0, 0, 0, 0.02);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.04),
+      0 2px 14px rgba(0, 0, 0, 0.02);
   }
 
   .dark .shadow-apple {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 14px rgba(0, 0, 0, 0.15);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 2px 14px rgba(0, 0, 0, 0.15);
   }
 
   .shadow-apple-hover {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.08),
+      0 4px 16px rgba(0, 0, 0, 0.04);
   }
 
   .dark .shadow-apple-hover {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.25);
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      0 4px 16px rgba(0, 0, 0, 0.25);
   }
 
   /* ── Day cell border indicators ──────────────────────────── */
@@ -296,18 +319,20 @@
     content: '';
     position: absolute;
     inset: 2px;
-    border: 2px solid var(--color-gold, #92400E);
+    border: 2px solid var(--color-gold, #92400e);
     border-radius: 4px;
     pointer-events: none;
     z-index: 1;
   }
 
   .dark .day-cell-today {
-    box-shadow: 0 0 16px rgba(184, 134, 11, 0.15), 0 0 4px rgba(184, 134, 11, 0.08);
+    box-shadow:
+      0 0 16px rgba(184, 134, 11, 0.15),
+      0 0 4px rgba(184, 134, 11, 0.08);
   }
 
   .dark .day-cell-today::after {
-    border-color: var(--color-gold-dark, #D4A843);
+    border-color: var(--color-gold-dark, #d4a843);
   }
 
   /* Selected day uses same ::after approach as today for consistent sizing */
@@ -341,7 +366,8 @@
   }
 
   @keyframes glowPulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0.15;
     }
     50% {
@@ -376,7 +402,8 @@
   }
 
   @keyframes mysteryFloat {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0);
     }
     50% {
@@ -503,15 +530,17 @@
 
   .collapse-grid {
     display: grid;
-    transition: grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+    transition:
+      grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.25s ease;
   }
 
-  .collapse-grid[data-open="true"] {
+  .collapse-grid[data-open='true'] {
     grid-template-rows: 1fr;
     opacity: 1;
   }
 
-  .collapse-grid[data-open="false"] {
+  .collapse-grid[data-open='false'] {
     grid-template-rows: 0fr;
     opacity: 0;
   }
@@ -519,7 +548,6 @@
   .collapse-grid > * {
     overflow: hidden;
   }
-
 
   /* ── Loading shimmer for divination ──────────────────────── */
   .loading-shimmer {
@@ -543,7 +571,8 @@
 
   /* ── Moon Breathe Glow — hero hook animation ─────────── */
   @keyframes moonBreathe {
-    0%, 100% {
+    0%,
+    100% {
       box-shadow:
         0 0 30px rgba(212, 168, 67, 0.15),
         0 0 60px rgba(212, 168, 67, 0.06),
@@ -552,7 +581,7 @@
     50% {
       box-shadow:
         0 0 45px rgba(212, 168, 67, 0.25),
-        0 0 90px rgba(212, 168, 67, 0.10),
+        0 0 90px rgba(212, 168, 67, 0.1),
         0 0 140px rgba(124, 58, 237, 0.06);
     }
   }
@@ -562,7 +591,9 @@
   }
 
   .moon-glow.animate-float {
-    animation: moonBreathe 4s ease-in-out infinite, mysteryFloat 4.8s ease-in-out infinite;
+    animation:
+      moonBreathe 4s ease-in-out infinite,
+      mysteryFloat 4.8s ease-in-out infinite;
   }
 
   .mystery-text-glow {
@@ -591,7 +622,10 @@
       radial-gradient(circle at 12% 18%, rgba(212, 168, 67, 0.14) 0 1px, transparent 1px),
       radial-gradient(circle at 72% 36%, rgba(124, 58, 237, 0.12) 0 1px, transparent 1px),
       radial-gradient(circle at 40% 78%, rgba(59, 130, 246, 0.1) 0 1px, transparent 1px);
-    background-size: 28px 28px, 42px 42px, 54px 54px;
+    background-size:
+      28px 28px,
+      42px 42px,
+      54px 54px;
     mix-blend-mode: soft-light;
   }
 
@@ -621,7 +655,7 @@
       transparent,
       rgba(124, 58, 237, 0.12) 30%,
       rgba(212, 168, 67, 0.08) 50%,
-      rgba(37, 99, 235, 0.10) 70%,
+      rgba(37, 99, 235, 0.1) 70%,
       transparent
     );
   }
@@ -659,7 +693,6 @@
   .hide-scrollbar::-webkit-scrollbar {
     display: none; /* Chrome, Safari and Opera */
   }
-
 }
 
 /* ═══════════════════════════════════════════════════════════

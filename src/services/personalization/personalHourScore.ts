@@ -19,60 +19,95 @@ export interface PersonalHourModifier {
 
 const isLucXung = (c1: Chi, c2: Chi): boolean => {
   const groups: [Chi, Chi][] = [
-    ['Tý', 'Ngọ'], ['Sửu', 'Mùi'], ['Dần', 'Thân'],
-    ['Mão', 'Dậu'], ['Thìn', 'Tuất'], ['Tỵ', 'Hợi']
+    ['Tý', 'Ngọ'],
+    ['Sửu', 'Mùi'],
+    ['Dần', 'Thân'],
+    ['Mão', 'Dậu'],
+    ['Thìn', 'Tuất'],
+    ['Tỵ', 'Hợi'],
   ];
   return groups.some(([a, b]) => (c1 === a && c2 === b) || (c1 === b && c2 === a));
 };
 
 const isTuongXungCan = (can1: Can, can2: Can): boolean => {
   const groups: [Can, Can][] = [
-    ['Giáp', 'Canh'], ['Ất', 'Tân'], ['Nhâm', 'Bính'], ['Quý', 'Đinh']
+    ['Giáp', 'Canh'],
+    ['Ất', 'Tân'],
+    ['Nhâm', 'Bính'],
+    ['Quý', 'Đinh'],
   ];
   return groups.some(([a, b]) => (can1 === a && can2 === b) || (can1 === b && can2 === a));
 };
 
 const isLucHop = (c1: Chi, c2: Chi): boolean => {
   const groups: [Chi, Chi][] = [
-    ['Tý', 'Sửu'], ['Dần', 'Hợi'], ['Mão', 'Tuất'],
-    ['Thìn', 'Dậu'], ['Tỵ', 'Thân'], ['Ngọ', 'Mùi']
+    ['Tý', 'Sửu'],
+    ['Dần', 'Hợi'],
+    ['Mão', 'Tuất'],
+    ['Thìn', 'Dậu'],
+    ['Tỵ', 'Thân'],
+    ['Ngọ', 'Mùi'],
   ];
   return groups.some(([a, b]) => (c1 === a && c2 === b) || (c1 === b && c2 === a));
 };
 
 const isTamHop = (c1: Chi, c2: Chi): boolean => {
   const groups: Chi[][] = [
-    ['Dần', 'Ngọ', 'Tuất'], ['Hợi', 'Mão', 'Mùi'],
-    ['Thân', 'Tý', 'Thìn'], ['Tỵ', 'Dậu', 'Sửu']
+    ['Dần', 'Ngọ', 'Tuất'],
+    ['Hợi', 'Mão', 'Mùi'],
+    ['Thân', 'Tý', 'Thìn'],
+    ['Tỵ', 'Dậu', 'Sửu'],
   ];
-  return groups.some(group => group.includes(c1) && group.includes(c2));
+  return groups.some((group) => group.includes(c1) && group.includes(c2));
 };
 
 // Trạch Cát (Personal Stars)
 const getQuyNhan = (can: Can): Chi[] => {
   const qn: Record<Can, Chi[]> = {
-    'Giáp': ['Sửu', 'Mùi'], 'Ất': ['Tý', 'Thân'], 'Bính': ['Hợi', 'Dậu'],
-    'Đinh': ['Hợi', 'Dậu'], 'Mậu': ['Sửu', 'Mùi'], 'Kỷ': ['Tý', 'Thân'],
-    'Canh': ['Sửu', 'Mùi'], 'Tân': ['Dần', 'Ngọ'], 'Nhâm': ['Mão', 'Tỵ'],
-    'Quý': ['Mão', 'Tỵ'],
+    Giáp: ['Sửu', 'Mùi'],
+    Ất: ['Tý', 'Thân'],
+    Bính: ['Hợi', 'Dậu'],
+    Đinh: ['Hợi', 'Dậu'],
+    Mậu: ['Sửu', 'Mùi'],
+    Kỷ: ['Tý', 'Thân'],
+    Canh: ['Sửu', 'Mùi'],
+    Tân: ['Dần', 'Ngọ'],
+    Nhâm: ['Mão', 'Tỵ'],
+    Quý: ['Mão', 'Tỵ'],
   };
   return qn[can] || [];
 };
 
 const getLocThan = (can: Can): Chi | null => {
   const loc: Record<Can, Chi> = {
-    'Giáp': 'Dần', 'Ất': 'Mão', 'Bính': 'Tỵ', 'Đinh': 'Ngọ', 'Mậu': 'Tỵ',
-    'Kỷ': 'Ngọ', 'Canh': 'Thân', 'Tân': 'Dậu', 'Nhâm': 'Hợi', 'Quý': 'Tý'
+    Giáp: 'Dần',
+    Ất: 'Mão',
+    Bính: 'Tỵ',
+    Đinh: 'Ngọ',
+    Mậu: 'Tỵ',
+    Kỷ: 'Ngọ',
+    Canh: 'Thân',
+    Tân: 'Dậu',
+    Nhâm: 'Hợi',
+    Quý: 'Tý',
   };
   return loc[can] || null;
 };
 
 const getDichMa = (chi: Chi): Chi | null => {
   const ma: Record<Chi, Chi> = {
-    'Dần': 'Thân', 'Ngọ': 'Thân', 'Tuất': 'Thân',
-    'Thân': 'Dần', 'Tý': 'Dần', 'Thìn': 'Dần',
-    'Tỵ': 'Hợi', 'Dậu': 'Hợi', 'Sửu': 'Hợi',
-    'Hợi': 'Tỵ', 'Mão': 'Tỵ', 'Mùi': 'Tỵ',
+    Dần: 'Thân',
+    Ngọ: 'Thân',
+    Tuất: 'Thân',
+    Thân: 'Dần',
+    Tý: 'Dần',
+    Thìn: 'Dần',
+    Tỵ: 'Hợi',
+    Dậu: 'Hợi',
+    Sửu: 'Hợi',
+    Hợi: 'Tỵ',
+    Mão: 'Tỵ',
+    Mùi: 'Tỵ',
   };
   return ma[chi] || null;
 };
@@ -87,7 +122,7 @@ export function calculatePersonalHourModifier(
   birthDay: number | undefined | null,
   hourCanChi: CanChi,
   dayCanChi: CanChi,
-  date: Date
+  date: Date,
 ): PersonalHourModifier | null {
   if (!birthYear) return null;
 
@@ -169,9 +204,9 @@ export function calculatePersonalHourModifier(
   try {
     const qmdjChart = generateQmdjChart(date, hourCanChi.chi);
     const interpretations = interpretQmdjChart(qmdjChart);
-    const menhCung = qmdjChart.palaces.find(p => p.heavenlyStem === userYearCan);
+    const menhCung = qmdjChart.palaces.find((p) => p.heavenlyStem === userYearCan);
     if (menhCung && menhCung.number !== 5) {
-      const qmdjInterp = interpretations.find(i => i.palaceNumber === menhCung.number);
+      const qmdjInterp = interpretations.find((i) => i.palaceNumber === menhCung.number);
       if (qmdjInterp && qmdjInterp.doorStarCombo) {
         if (qmdjInterp.overallAuspiciousness === 'cat') {
           totalModifier += 15;

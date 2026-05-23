@@ -31,36 +31,23 @@ export interface ErrorContext {
  * Report an error to the monitoring service.
  * Currently logs to console.
  */
-export function reportError(
-  error: unknown,
-  context?: ErrorContext,
-  severity: ErrorSeverity = 'error'
-): void {
+export function reportError(error: unknown, context?: ErrorContext, severity: ErrorSeverity = 'error'): void {
   const errorObj = error instanceof Error ? error : new Error(String(error));
 
   // ── Console logging (development) ──
   const prefix = `[${severity.toUpperCase()}]`;
-  const contextStr = context
-    ? ` [${context.component ?? '?'}${context.action ? `:${context.action}` : ''}]`
-    : '';
+  const contextStr = context ? ` [${context.component ?? '?'}${context.action ? `:${context.action}` : ''}]` : '';
 
   console.error(`${prefix}${contextStr}`, errorObj.message, context?.extra ?? '');
-
 }
 
 /**
  * Report a non-error message to the monitoring service.
  * Useful for tracking important events or warnings.
  */
-export function reportMessage(
-  message: string,
-  context?: ErrorContext,
-  severity: ErrorSeverity = 'info'
-): void {
+export function reportMessage(message: string, context?: ErrorContext, severity: ErrorSeverity = 'info'): void {
   const prefix = `[${severity.toUpperCase()}]`;
-  const contextStr = context
-    ? ` [${context.component ?? '?'}${context.action ? `:${context.action}` : ''}]`
-    : '';
+  const contextStr = context ? ` [${context.component ?? '?'}${context.action ? `:${context.action}` : ''}]` : '';
 
   if (severity === 'warning' || severity === 'error') {
     console.warn(`${prefix}${contextStr}`, message, context?.extra ?? '');

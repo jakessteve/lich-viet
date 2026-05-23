@@ -48,7 +48,7 @@ export function useLunarEvents() {
   const [events, setEvents] = useState<LunarEvent[]>(loadEvents);
 
   const addEvent = useCallback((event: Omit<LunarEvent, 'id' | 'createdAt'>) => {
-    setEvents(prev => {
+    setEvents((prev) => {
       const newEvent: LunarEvent = {
         ...event,
         id: generateId(),
@@ -61,28 +61,31 @@ export function useLunarEvents() {
   }, []);
 
   const updateEvent = useCallback((id: string, updates: Partial<Omit<LunarEvent, 'id' | 'createdAt'>>) => {
-    setEvents(prev => {
-      const updated = prev.map(e => e.id === id ? { ...e, ...updates } : e);
+    setEvents((prev) => {
+      const updated = prev.map((e) => (e.id === id ? { ...e, ...updates } : e));
       saveEvents(updated);
       return updated;
     });
   }, []);
 
   const deleteEvent = useCallback((id: string) => {
-    setEvents(prev => {
-      const updated = prev.filter(e => e.id !== id);
+    setEvents((prev) => {
+      const updated = prev.filter((e) => e.id !== id);
       saveEvents(updated);
       return updated;
     });
   }, []);
 
-  const getEventsForDate = useCallback((lunarDay: number, lunarMonth: number, lunarYear?: number) => {
-    return events.filter(e => {
-      if (e.lunarDay !== lunarDay || e.lunarMonth !== lunarMonth) return false;
-      if (e.lunarYear && lunarYear && e.lunarYear !== lunarYear) return false;
-      return true;
-    });
-  }, [events]);
+  const getEventsForDate = useCallback(
+    (lunarDay: number, lunarMonth: number, lunarYear?: number) => {
+      return events.filter((e) => {
+        if (e.lunarDay !== lunarDay || e.lunarMonth !== lunarMonth) return false;
+        if (e.lunarYear && lunarYear && e.lunarYear !== lunarYear) return false;
+        return true;
+      });
+    },
+    [events],
+  );
 
   const upcomingEvents = useMemo(() => {
     // Sort by month/day for display

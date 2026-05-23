@@ -4,15 +4,16 @@ import { useAuthStore } from '../../stores/authStore';
 import type { TuViGender } from '../../types/tuvi';
 import { TuViLocationPicker } from './TuViLocationPicker';
 
-const HOURS = Array.from({ length: 24 }, (_, i) => i);
-const MINUTES = Array.from({ length: 60 }, (_, i) => i);
-
 const getTimezoneForLocation = (utcOffset: number) => {
   if (utcOffset === 7) return 'Asia/Ho_Chi_Minh';
   return `Etc/GMT${utcOffset >= 0 ? '-' : '+'}${Math.abs(utcOffset)}`;
 };
 
 const getChiHourFromClockHour = (hour: number) => (hour === 23 ? 0 : Math.floor((hour + 1) / 2) % 12);
+const clampTimePart = (value: string, max: number) => {
+  if (value.trim() === '') return 0;
+  return Math.min(max, Math.max(0, Number(value)));
+};
 
 export const TuViInputForm: React.FC = () => {
   const { input, setInput, calculateChart, isCalculating } = useTuViStore();
@@ -25,9 +26,8 @@ export const TuViInputForm: React.FC = () => {
   const [dayStr, setDayStr] = useState(String(input.solarDate.getDate()));
   const [monthStr, setMonthStr] = useState(String(input.solarDate.getMonth() + 1));
   const [yearStr, setYearStr] = useState(String(input.solarDate.getFullYear()));
-
-  const birthClockHour = input.birthClockHour ?? 0;
-  const birthMinute = input.birthMinute ?? 0;
+  const [hourStr, setHourStr] = useState(String(input.birthClockHour ?? 0));
+  const [minuteStr, setMinuteStr] = useState(String(input.birthMinute ?? 0));
 
   // Sync local strings when the store date changes externally (e.g. prefill)
   useEffect(() => {
@@ -36,13 +36,20 @@ export const TuViInputForm: React.FC = () => {
     setYearStr(String(input.solarDate.getFullYear()));
   }, [input.solarDate]);
 
+  useEffect(() => {
+    setHourStr(String(input.birthClockHour ?? 0));
+    setMinuteStr(String(input.birthMinute ?? 0));
+  }, [input.birthClockHour, input.birthMinute]);
+
   /** Commit local date strings into a real Date and push to store */
   const commitDate = () => {
     const d = parseInt(dayStr, 10);
     const m = parseInt(monthStr, 10);
     const y = parseInt(yearStr, 10);
     if (!d || !m || !y) return; // incomplete — don't commit
-    const date = new Date(y, m - 1, d, birthClockHour, birthMinute);
+    const normalizedHour = clampTimePart(hourStr, 23);
+    const normalizedMinute = clampTimePart(minuteStr, 59);
+    const date = new Date(y, m - 1, d, normalizedHour, normalizedMinute);
     // If the Date auto-corrected (e.g. Feb 31 → Mar 3), sync back
     const actualDay = date.getDate();
     const actualMonth = date.getMonth() + 1;
@@ -50,11 +57,25 @@ export const TuViInputForm: React.FC = () => {
     setDayStr(String(actualDay));
     setMonthStr(String(actualMonth));
     setYearStr(String(actualYear));
+    setHourStr(String(normalizedHour));
+    setMinuteStr(String(normalizedMinute));
     setInput({
       solarDate: date,
-      birthClockHour,
-      birthMinute,
-      birthHour: getChiHourFromClockHour(birthClockHour),
+      birthClockHour: normalizedHour,
+      birthMinute: normalizedMinute,
+      birthHour: getChiHourFromClockHour(normalizedHour),
+    });
+  };
+
+  const commitTime = () => {
+    const normalizedHour = clampTimePart(hourStr, 23);
+    const normalizedMinute = clampTimePart(minuteStr, 59);
+    setHourStr(String(normalizedHour));
+    setMinuteStr(String(normalizedMinute));
+    setInput({
+      birthClockHour: normalizedHour,
+      birthMinute: normalizedMinute,
+      birthHour: getChiHourFromClockHour(normalizedHour),
     });
   };
 
@@ -72,12 +93,16 @@ export const TuViInputForm: React.FC = () => {
     }
 
     // Commit the date before calculating
-    const date = new Date(y, m - 1, d, birthClockHour, birthMinute);
+    const normalizedHour = clampTimePart(hourStr, 23);
+    const normalizedMinute = clampTimePart(minuteStr, 59);
+    const date = new Date(y, m - 1, d, normalizedHour, normalizedMinute);
+    setHourStr(String(normalizedHour));
+    setMinuteStr(String(normalizedMinute));
     setInput({
       solarDate: date,
-      birthClockHour,
-      birthMinute,
-      birthHour: getChiHourFromClockHour(birthClockHour),
+      birthClockHour: normalizedHour,
+      birthMinute: normalizedMinute,
+      birthHour: getChiHourFromClockHour(normalizedHour),
     });
     calculateChart();
   };
@@ -136,8 +161,6 @@ export const TuViInputForm: React.FC = () => {
     'block text-sm font-semibold text-text-secondary-light dark:text-text-secondary-dark mb-2 tracking-wide';
   const profileDateControl =
     'px-3 py-2.5 rounded-lg border border-border-light dark:border-border-dark bg-surface-subtle-light dark:bg-surface-subtle-dark text-sm text-center text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-gold/30 focus:border-gold outline-none transition-all';
-  const profileSelectControl =
-    'px-3 py-2.5 rounded-lg text-sm bg-surface-subtle-light dark:bg-surface-subtle-dark border border-border-light/30 dark:border-border-dark/25 text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-gold/25 dark:focus:ring-gold-dark/25 outline-none transition-all';
 
   return (
     <form onSubmit={handleSubmit} className="w-full space-y-5">
@@ -156,9 +179,7 @@ export const TuViInputForm: React.FC = () => {
       </div>
 
       <div>
-        <label className={labelBase}>
-          Ngày giờ sinh (Dương lịch)
-        </label>
+        <label className={labelBase}>Ngày giờ sinh (Dương lịch)</label>
         <div className="grid grid-cols-5 gap-2">
           <input
             type="text"
@@ -193,40 +214,32 @@ export const TuViInputForm: React.FC = () => {
             onBlur={commitDate}
             className={profileDateControl}
           />
-          <select
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
             aria-label="Giờ"
-            value={birthClockHour}
+            placeholder="Giờ"
+            value={hourStr}
             onChange={(e) => {
-              const hour = Number(e.target.value);
-              setInput({
-                birthClockHour: hour,
-                birthHour: getChiHourFromClockHour(hour),
-              });
+              setHourStr(e.target.value.replace(/[^\d]/g, '').slice(0, 2));
             }}
-            className={profileSelectControl}
-          >
-            {HOURS.map((hour) => (
-              <option key={hour} value={hour}>
-                {String(hour).padStart(2, '0')}
-              </option>
-            ))}
-          </select>
-          <select
+            onBlur={commitTime}
+            className={profileDateControl}
+          />
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
             aria-label="Phút"
-            value={birthMinute}
+            placeholder="Phút"
+            value={minuteStr}
             onChange={(e) => {
-              setInput({
-                birthMinute: Number(e.target.value),
-              });
+              setMinuteStr(e.target.value.replace(/[^\d]/g, '').slice(0, 2));
             }}
-            className={profileSelectControl}
-          >
-            {MINUTES.map((minute) => (
-              <option key={minute} value={minute}>
-                {String(minute).padStart(2, '0')}
-              </option>
-            ))}
-          </select>
+            onBlur={commitTime}
+            className={profileDateControl}
+          />
         </div>
         <p className="mt-1.5 text-xs text-text-secondary-light/70 dark:text-text-secondary-dark/70">
           Giờ Tử Vi được tự động quy đổi từ giờ đồng hồ.
@@ -234,9 +247,7 @@ export const TuViInputForm: React.FC = () => {
       </div>
 
       <div>
-        <label className={labelBase}>
-          Giới tính
-        </label>
+        <label className={labelBase}>Giới tính</label>
         <div className="grid grid-cols-2 gap-2 rounded-2xl bg-gray-100 p-1 dark:bg-white/5">
           {(['nam', 'nữ'] as TuViGender[]).map((g) => (
             <label
@@ -262,9 +273,7 @@ export const TuViInputForm: React.FC = () => {
       </div>
 
       <div>
-        <label className={labelBase}>
-          Nơi sinh
-        </label>
+        <label className={labelBase}>Nơi sinh</label>
         <TuViLocationPicker
           value={input.birthLocation}
           onChange={(birthLocation) =>

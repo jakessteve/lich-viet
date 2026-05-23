@@ -34,10 +34,7 @@ export const TuViMarkdownExport: React.FC = () => {
   const handleDownloadImage = async () => {
     try {
       setIsDownloadingImage(true);
-      await downloadTuViChartAsImage(
-        '[data-tuvi-chart-export]',
-        buildTuViImageFilename(chart.input.name),
-      );
+      await downloadTuViChartAsImage('[data-tuvi-chart-export]', buildTuViImageFilename(chart.input.name));
     } catch (error) {
       console.error('Failed to export Tử Vi chart as image:', error);
       window.alert('Không thể tải ảnh Tử Vi lúc này. Vui lòng thử lại.');
@@ -58,9 +55,7 @@ export const TuViMarkdownExport: React.FC = () => {
         className={`${btnBase} bg-white/10 dark:bg-white/5 text-text-primary-light dark:text-text-primary-dark hover:bg-white/20 dark:hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60`}
         aria-busy={isDownloadingImage}
       >
-        <span className="material-icons-round text-sm">
-          {isDownloadingImage ? 'hourglass_top' : 'image'}
-        </span>
+        <span className="material-icons-round text-sm">{isDownloadingImage ? 'hourglass_top' : 'image'}</span>
         {isDownloadingImage ? 'Đang tải ảnh...' : 'Tải ảnh'}
       </button>
 
@@ -73,9 +68,7 @@ export const TuViMarkdownExport: React.FC = () => {
             : 'bg-white/10 dark:bg-white/5 text-text-primary-light dark:text-text-primary-dark hover:bg-white/20 dark:hover:bg-white/10'
         }`}
       >
-        <span className="material-icons-round text-sm">
-          {copied ? 'check' : 'content_copy'}
-        </span>
+        <span className="material-icons-round text-sm">{copied ? 'check' : 'content_copy'}</span>
         {copied ? 'Đã chép!' : 'Sao chép Markdown'}
       </button>
 

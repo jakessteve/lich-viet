@@ -5,7 +5,6 @@ import { useIsMobile } from '../hooks/useIsMobile';
 import { useAuthStore } from '../stores/authStore';
 import { calculatePersonalDayScore } from '../services/personalization';
 
-
 interface MonthCalendarProps {
   selectedDate: Date;
   onSelectDate: (date: Date) => void;
@@ -35,7 +34,7 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
   // Overlay personal scores onto days
   const daysWithScore = useMemo(() => {
     if (!birthYear) return days;
-    return days.map(day => {
+    return days.map((day) => {
       if (!day.dayChi) return day;
       const personalScore = calculatePersonalDayScore(birthYear, day.dayChi);
       return personalScore ? { ...day, personalScore } : day;
@@ -68,7 +67,7 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
   // Compute which row index (0-based, 7 days per row) contains the selected date
   const selectedRowIndex = useMemo(() => {
     const selectedStr = selectedDate.toDateString();
-    const idx = daysWithScore.findIndex(d => d.fullDate.toDateString() === selectedStr);
+    const idx = daysWithScore.findIndex((d) => d.fullDate.toDateString() === selectedStr);
     if (idx === -1) return 0; // fallback to first row
     return Math.floor(idx / 7);
   }, [daysWithScore, selectedDate]);
@@ -91,7 +90,8 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
   };
 
   // Shared select styling
-  const selectClass = "appearance-none bg-transparent font-semibold text-sm sm:text-sm text-text-primary-light dark:text-text-primary-dark cursor-pointer hover:text-primary dark:hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-md px-1.5 py-1 text-center";
+  const selectClass =
+    'appearance-none bg-transparent font-semibold text-sm sm:text-sm text-text-primary-light dark:text-text-primary-dark cursor-pointer hover:text-primary dark:hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/30 rounded-md px-1.5 py-1 text-center';
 
   return (
     <div className="space-y-4">
@@ -114,7 +114,9 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
               aria-label="Chọn tháng"
             >
               {Array.from({ length: 12 }, (_, i) => (
-                <option key={i} value={i}>Tháng {i + 1}</option>
+                <option key={i} value={i}>
+                  Tháng {i + 1}
+                </option>
               ))}
             </select>
             <span className="text-gray-300 dark:text-gray-600 select-none">|</span>
@@ -126,7 +128,11 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
             >
               {Array.from({ length: 201 }, (_, i) => {
                 const year = 1900 + i;
-                return <option key={year} value={year}>{year}</option>;
+                return (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                );
               })}
             </select>
           </div>
@@ -158,7 +164,9 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light transition-colors"
             aria-label={isExpanded ? 'Thu gọn lịch' : 'Mở rộng lịch'}
           >
-            <span className={`material-icons-round text-lg transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
+            <span
+              className={`material-icons-round text-lg transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+            >
               expand_more
             </span>
           </button>
@@ -166,7 +174,11 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
       </div>
 
       {/* Grid - Collapsible */}
-      <div className="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-apple border border-border-light dark:border-border-dark p-3 transition-colors flex flex-col" role="grid" aria-label={`Lịch tháng ${currentDate.getMonth() + 1} năm ${currentDate.getFullYear()}`}>
+      <div
+        className="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-apple border border-border-light dark:border-border-dark p-3 transition-colors flex flex-col"
+        role="grid"
+        aria-label={`Lịch tháng ${currentDate.getMonth() + 1} năm ${currentDate.getFullYear()}`}
+      >
         {/* Weekday header — always visible */}
         <div className="grid grid-cols-7 mb-1 pb-1 border-b border-border-light dark:border-border-dark">
           {visualWeekDays.map((day) => (

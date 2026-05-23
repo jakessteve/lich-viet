@@ -33,7 +33,7 @@ export const setUserActivityPrefs = (userId: string, prefs: ActivityPrefs): void
 export const toggleActivityPin = (userId: string, activityName: string): ActivityPrefs => {
   const prefs = getUserActivityPrefs(userId);
   if (prefs.pinned.includes(activityName)) {
-    prefs.pinned = prefs.pinned.filter(a => a !== activityName);
+    prefs.pinned = prefs.pinned.filter((a) => a !== activityName);
   } else {
     prefs.pinned.push(activityName);
   }

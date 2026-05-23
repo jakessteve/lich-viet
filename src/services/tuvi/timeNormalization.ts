@@ -9,17 +9,17 @@ import { CAN_NAMES, CHI_NAMES } from './constants';
 // ── Types ───────────────────────────────────────────────────────
 
 interface TimezonePeriod {
-    from: string;
-    to: string;
-    utcOffset?: string;
-    utcOffsetNorth?: string;
-    utcOffsetSouth?: string;
-    note: string;
+  from: string;
+  to: string;
+  utcOffset?: string;
+  utcOffsetNorth?: string;
+  utcOffsetSouth?: string;
+  note: string;
 }
 
 interface TimezoneData {
-    description: string;
-    periods: TimezonePeriod[];
+  description: string;
+  periods: TimezonePeriod[];
 }
 
 const { periods } = timezoneData as TimezoneData;
@@ -31,20 +31,20 @@ const { periods } = timezoneData as TimezoneData;
  * into a float number of hours.
  */
 function parseOffset(offsetStr: string): number {
-    const sign = offsetStr.startsWith('-') ? -1 : 1;
-    const clean = offsetStr.replace(/^[+-]/, '');
-    const parts = clean.split(':').map(Number);
-    const hours = parts[0];
-    const minutes = parts[1] ?? 0;
-    const seconds = parts[2] ?? 0;
-    return sign * (hours + minutes / 60 + seconds / 3600);
+  const sign = offsetStr.startsWith('-') ? -1 : 1;
+  const clean = offsetStr.replace(/^[+-]/, '');
+  const parts = clean.split(':').map(Number);
+  const hours = parts[0];
+  const minutes = parts[1] ?? 0;
+  const seconds = parts[2] ?? 0;
+  return sign * (hours + minutes / 60 + seconds / 3600);
 }
 
 /**
  * Compare two ISO date strings (YYYY-MM-DD) chronologically.
  */
 function compareIsoDates(a: string, b: string): number {
-    return a.localeCompare(b);
+  return a.localeCompare(b);
 }
 
 /**
@@ -52,16 +52,13 @@ function compareIsoDates(a: string, b: string): number {
  * Returns `null` if no period matches (e.g. gap 1912–1944 is covered).
  */
 function findPeriod(date: Date): TimezonePeriod | null {
-    const iso = date.toISOString().split('T')[0]; // YYYY-MM-DD
-    for (const period of periods) {
-        if (
-            compareIsoDates(iso, period.from) >= 0 &&
-            (period.to === 'present' || compareIsoDates(iso, period.to) <= 0)
-        ) {
-            return period;
-        }
+  const iso = date.toISOString().split('T')[0]; // YYYY-MM-DD
+  for (const period of periods) {
+    if (compareIsoDates(iso, period.from) >= 0 && (period.to === 'present' || compareIsoDates(iso, period.to) <= 0)) {
+      return period;
     }
-    return null;
+  }
+  return null;
 }
 
 // ── Public API ──────────────────────────────────────────────────
@@ -79,23 +76,20 @@ function findPeriod(date: Date): TimezonePeriod | null {
  *                  `'north'` → GMT+7, `'south'` → GMT+8 (default).
  * @returns Offset in hours (e.g. 7, 8, 7.1083…).
  */
-export function getVietnamUtcOffset(
-    date: Date,
-    timezone: 'north' | 'south' = 'south'
-): number {
-    const period = findPeriod(date);
-    if (!period) {
-        // Fallback for uncovered gaps (e.g. 1912–1944 is actually covered
-        // by the 1911-12-01 … 1944-12-31 block, so this is defensive only).
-        return 7;
-    }
+export function getVietnamUtcOffset(date: Date, timezone: 'north' | 'south' = 'south'): number {
+  const period = findPeriod(date);
+  if (!period) {
+    // Fallback for uncovered gaps (e.g. 1912–1944 is actually covered
+    // by the 1911-12-01 … 1944-12-31 block, so this is defensive only).
+    return 7;
+  }
 
-    if (period.utcOffsetNorth && period.utcOffsetSouth) {
-        const offsetStr = timezone === 'north' ? period.utcOffsetNorth : period.utcOffsetSouth;
-        return parseOffset(offsetStr);
-    }
+  if (period.utcOffsetNorth && period.utcOffsetSouth) {
+    const offsetStr = timezone === 'north' ? period.utcOffsetNorth : period.utcOffsetSouth;
+    return parseOffset(offsetStr);
+  }
 
-    return parseOffset(period.utcOffset!);
+  return parseOffset(period.utcOffset!);
 }
 
 /**
@@ -112,23 +106,20 @@ export function getVietnamUtcOffset(
  * @param timezone  Optional hint: `'north'` or `'south'`.
  * @returns A new `Date` corrected to ICT.
  */
-export function normalizeBirthTime(
-    date: Date,
-    timezone?: 'north' | 'south'
-): Date {
-    const period = findPeriod(date);
+export function normalizeBirthTime(date: Date, timezone?: 'north' | 'south'): Date {
+  const period = findPeriod(date);
 
-    // No period found or unified ICT period → return as-is
-    if (!period || period.to === 'present') {
-        return new Date(date.getTime());
-    }
+  // No period found or unified ICT period → return as-is
+  if (!period || period.to === 'present') {
+    return new Date(date.getTime());
+  }
 
-    const historicalOffset = getVietnamUtcOffset(date, timezone);
-    const targetOffset = 7; // ICT
-    const diffHours = targetOffset - historicalOffset;
-    const diffMs = diffHours * 60 * 60 * 1000;
+  const historicalOffset = getVietnamUtcOffset(date, timezone);
+  const targetOffset = 7; // ICT
+  const diffHours = targetOffset - historicalOffset;
+  const diffMs = diffHours * 60 * 60 * 1000;
 
-    return new Date(date.getTime() + diffMs);
+  return new Date(date.getTime() + diffMs);
 }
 
 /**
@@ -154,9 +145,9 @@ export function normalizeBirthTime(
  * @returns Địa Chi index (0=Tý … 11=Hợi).
  */
 export function getHourBranch(hour: number): number {
-    // Wrap hour into 0–23, then map to branch index.
-    const h = ((hour % 24) + 24) % 24;
-    return Math.floor(((h + 1) % 24) / 2);
+  // Wrap hour into 0–23, then map to branch index.
+  const h = ((hour % 24) + 24) % 24;
+  return Math.floor(((h + 1) % 24) / 2);
 }
 
 /**
@@ -179,10 +170,10 @@ export function getHourBranch(hour: number): number {
  * @returns Thiên Can index for the hour.
  */
 export function getHourCan(dayCan: number, hourBranch: number): number {
-    // Determine base Can for Tý based on day Can group.
-    // Groups: (Giáp/Kỷ)=0, (Ất/Canh)=2, (Bính/Tân)=4, (Đinh/Nhâm)=6, (Mậu/Quý)=8
-    const baseCan = (dayCan % 5) * 2;
-    return (baseCan + hourBranch) % 10;
+  // Determine base Can for Tý based on day Can group.
+  // Groups: (Giáp/Kỷ)=0, (Ất/Canh)=2, (Bính/Tân)=4, (Đinh/Nhâm)=6, (Mậu/Quý)=8
+  const baseCan = (dayCan % 5) * 2;
+  return (baseCan + hourBranch) % 10;
 }
 
 /**
@@ -193,12 +184,10 @@ export function getHourCan(dayCan: number, hourBranch: number): number {
  * @returns Formatted string, e.g. `"Giáp Tý"`.
  */
 export function formatCanChi(canIndex: number, chiIndex: number): string {
-    const can = CAN_NAMES[canIndex];
-    const chi = CHI_NAMES[chiIndex];
-    if (!can || !chi) {
-        throw new Error(
-            `Invalid Can-Chi indices: canIndex=${canIndex}, chiIndex=${chiIndex}`
-        );
-    }
-    return `${can} ${chi}`;
+  const can = CAN_NAMES[canIndex];
+  const chi = CHI_NAMES[chiIndex];
+  if (!can || !chi) {
+    throw new Error(`Invalid Can-Chi indices: canIndex=${canIndex}, chiIndex=${chiIndex}`);
+  }
+  return `${can} ${chi}`;
 }

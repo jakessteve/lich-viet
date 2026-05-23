@@ -86,12 +86,13 @@ export default function AppNav() {
             <button
               key={link.id}
               onClick={() => link.enabled && handleTabChange(link.id)}
-              className={`relative flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${activeTab === link.id && !isFullPage
-                ? 'bg-white dark:bg-transparent dark:nav-glass-pill text-text-primary-light dark:text-white shadow-sm dark:shadow-none'
-                : link.enabled
-                  ? 'text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-white hover:bg-white/5'
-                  : 'text-gray-400 dark:text-gray-600 cursor-default'
-                }`}
+              className={`relative flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                activeTab === link.id && !isFullPage
+                  ? 'bg-white dark:bg-transparent dark:nav-glass-pill text-text-primary-light dark:text-white shadow-sm dark:shadow-none'
+                  : link.enabled
+                    ? 'text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-white hover:bg-white/5'
+                    : 'text-gray-400 dark:text-gray-600 cursor-default'
+              }`}
               disabled={!link.enabled}
               aria-current={activeTab === link.id && !isFullPage ? 'page' : undefined}
             >
@@ -164,7 +165,9 @@ export default function AppNav() {
                       </div>
                       {user.provider !== 'email' && (
                         <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-mystery-purple/8 dark:bg-mystery-purple/12 text-mystery-purple dark:text-mystery-purple-light">
-                          <span className="material-icons-round text-xs">{user.provider === 'google' ? 'account_circle' : 'person'}</span>
+                          <span className="material-icons-round text-xs">
+                            {user.provider === 'google' ? 'account_circle' : 'person'}
+                          </span>
                           {user.provider === 'google' ? 'Google' : 'Facebook'}
                         </span>
                       )}
@@ -235,10 +238,11 @@ export default function AppNav() {
                         <button
                           key={loc}
                           onClick={() => setLocale(loc)}
-                          className={`px-2 py-0.5 rounded-md text-xs font-medium transition-all duration-150 ${locale === loc
-                            ? 'bg-gold/15 dark:bg-gold-dark/15 text-gold dark:text-gold-dark'
-                            : 'text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-gray-700'
-                            }`}
+                          className={`px-2 py-0.5 rounded-md text-xs font-medium transition-all duration-150 ${
+                            locale === loc
+                              ? 'bg-gold/15 dark:bg-gold-dark/15 text-gold dark:text-gold-dark'
+                              : 'text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-gray-700'
+                          }`}
                           aria-label={LOCALE_NAMES[loc]}
                         >
                           {LOCALE_LABELS[loc]}
@@ -254,7 +258,7 @@ export default function AppNav() {
                     <>
                       {[
                         { icon: 'settings', label: 'Cài đặt', action: () => navigate('/app/cai-dat') },
-                        { icon: 'help_outline', label: 'Trợ giúp', action: () => { } },
+                        { icon: 'help_outline', label: 'Trợ giúp', action: () => {} },
                         { icon: 'info', label: 'Giới thiệu', action: () => navigate('/') },
                       ].map((item, idx) => (
                         <button

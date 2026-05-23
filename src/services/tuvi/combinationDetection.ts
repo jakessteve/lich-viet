@@ -27,33 +27,24 @@ interface CombinationDefinition {
 const COMBINATIONS: CombinationDefinition[] = combinationsData.combinations as CombinationDefinition[];
 
 /** Major Sát Tinh that break a combination (phá). */
-const MAJOR_SAT_TINH = new Set([
-  'Kình Dương',
-  'Đà La',
-  'Hỏa Tinh',
-  'Linh Tinh',
-]);
+const MAJOR_SAT_TINH = new Set(['Kình Dương', 'Đà La', 'Hỏa Tinh', 'Linh Tinh']);
 
 /** Minor Sát Tinh that dilute a combination (bán). */
-const MINOR_SAT_TINH = new Set([
-  'Địa Không',
-  'Địa Kiếp',
-  'Hóa Kỵ',
-]);
+const MINOR_SAT_TINH = new Set(['Địa Không', 'Địa Kiếp', 'Hóa Kỵ']);
 
 /** All Sát Tinh names for purity checks. */
 const ALL_SAT_TINH = new Set([...MAJOR_SAT_TINH, ...MINOR_SAT_TINH]);
 
 /** Brightness score weights for strength calculation. */
 const BRIGHTNESS_SCORES: Record<string, number> = {
-  'Miếu': 2,
-  'Vượng': 1.5,
-  'Đắc': 1,
-  'Địa': 1,
-  'Lợi': 0.5,
-  'Bình': 0,
-  'Bất': -0.5,
-  'Hãm': -1,
+  Miếu: 2,
+  Vượng: 1.5,
+  Đắc: 1,
+  Địa: 1,
+  Lợi: 0.5,
+  Bình: 0,
+  Bất: -0.5,
+  Hãm: -1,
 };
 
 // ── Geometry Helpers ──────────────────────────────────────────
@@ -119,7 +110,7 @@ export function getStarsInTamHop(palaces: TuViPalace[], palaceIndex: number): st
  */
 export function checkCombinationPurity(
   involvedPalaces: TuViPalace[],
-  satTinhNames: string[] = Array.from(ALL_SAT_TINH)
+  satTinhNames: string[] = Array.from(ALL_SAT_TINH),
 ): CombinationPurity {
   const majorSet = new Set([...MAJOR_SAT_TINH].filter((n) => satTinhNames.includes(n)));
   const minorSet = new Set([...MINOR_SAT_TINH].filter((n) => satTinhNames.includes(n)));
@@ -159,10 +150,7 @@ export function checkCombinationPurity(
  * - Purity (thuần > bán > phá)
  * - Whether any involved palace is the Mệnh palace
  */
-export function calculateCombinationStrength(
-  combination: TuViCombination,
-  palaces: TuViPalace[]
-): number {
+export function calculateCombinationStrength(combination: TuViCombination, palaces: TuViPalace[]): number {
   let score = 5; // base
 
   // Brightness bonus for involved stars in involved palaces
@@ -244,7 +232,7 @@ function detectSameCung(
   palaces: TuViPalace[],
   def: CombinationDefinition,
   results: TuViCombination[],
-  seenKeys: Set<string>
+  seenKeys: Set<string>,
 ): void {
   for (const palace of palaces) {
     const stars = getStarsInPalace(palace);
@@ -279,7 +267,7 @@ function detectTamHop(
   palaces: TuViPalace[],
   def: CombinationDefinition,
   results: TuViCombination[],
-  seenKeys: Set<string>
+  seenKeys: Set<string>,
 ): void {
   // For requiresTuHoa (Tam Kỳ): check Hóa Lộc, Hóa Quyền, Hóa Khoa in Tam Phương Tứ Chính
   if (def.requiresTuHoa) {
@@ -329,7 +317,7 @@ function detectSameCungOrTamHop(
   palaces: TuViPalace[],
   def: CombinationDefinition,
   results: TuViCombination[],
-  seenKeys: Set<string>
+  seenKeys: Set<string>,
 ): void {
   for (const palace of palaces) {
     const stars = getStarsInPalace(palace);
@@ -398,7 +386,7 @@ function detectGiap(
   palaces: TuViPalace[],
   def: CombinationDefinition,
   results: TuViCombination[],
-  seenKeys: Set<string>
+  seenKeys: Set<string>,
 ): void {
   for (const palace of palaces) {
     const leftIdx = (palace.id - 1 + 12) % 12;
@@ -417,10 +405,7 @@ function detectGiap(
       const involvedPalaces = [palace, leftPalace, rightPalace];
       const purity = checkCombinationPurity(involvedPalaces);
 
-      const satStarNames = [
-        ...leftPalace.satTinh.map((s) => s.name),
-        ...rightPalace.satTinh.map((s) => s.name),
-      ];
+      const satStarNames = [...leftPalace.satTinh.map((s) => s.name), ...rightPalace.satTinh.map((s) => s.name)];
 
       const combo: TuViCombination = {
         name: def.name,
@@ -443,7 +428,7 @@ function detectTuHoaCombinations(
   palaces: TuViPalace[],
   def: CombinationDefinition,
   results: TuViCombination[],
-  seenKeys: Set<string>
+  seenKeys: Set<string>,
 ): void {
   const requiredTypes = new Set(['Lộc', 'Quyền', 'Khoa']);
 

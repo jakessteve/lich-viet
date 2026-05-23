@@ -107,46 +107,52 @@ export default function TamThucView({ selectedDate }: TamThucViewProps) {
   /**
    * Time-based divination — uses current hour + selectedDate.
    */
-  const handleDivineByTime = useCallback((_mode: CalendarMode, _query: string) => {
-    setErrorMsg('');
-    try {
-      const now = new Date();
-      const currentHour = now.getHours();
-      const adjustedDate = adjustDateForTyBoundary(selectedDate, currentHour);
-      const hourIndex = getHourIndex(currentHour);
+  const handleDivineByTime = useCallback(
+    (_mode: CalendarMode, _query: string) => {
+      setErrorMsg('');
+      try {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const adjustedDate = adjustDateForTyBoundary(selectedDate, currentHour);
+        const hourIndex = getHourIndex(currentHour);
 
-      setIsLoading(true);
-      setTimeout(() => {
-        const result = synthesizeTamThuc(adjustedDate, hourIndex);
-        setSynthesis(result);
-        setIsLoading(false);
-      }, 1000);
-    } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Lỗi không xác định khi bốc quẻ.');
-    }
-  }, [selectedDate, getHourIndex]);
+        setIsLoading(true);
+        setTimeout(() => {
+          const result = synthesizeTamThuc(adjustedDate, hourIndex);
+          setSynthesis(result);
+          setIsLoading(false);
+        }, 1000);
+      } catch (err) {
+        setErrorMsg(err instanceof Error ? err.message : 'Lỗi không xác định khi bốc quẻ.');
+      }
+    },
+    [selectedDate, getHourIndex],
+  );
 
   /**
    * Number-based divination — derives hour index from (num1 + num2) % 12.
    */
-  const handleDivineByNumbers = useCallback((num1: number, num2: number, _mode: CalendarMode, _query: string) => {
-    setErrorMsg('');
-    try {
-      const now = new Date();
-      const currentHour = now.getHours();
-      const adjustedDate = adjustDateForTyBoundary(selectedDate, currentHour);
-      const hourIndex = (num1 + num2) % 12;
+  const handleDivineByNumbers = useCallback(
+    (num1: number, num2: number, _mode: CalendarMode, _query: string) => {
+      setErrorMsg('');
+      try {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const adjustedDate = adjustDateForTyBoundary(selectedDate, currentHour);
+        const hourIndex = (num1 + num2) % 12;
 
-      setIsLoading(true);
-      setTimeout(() => {
-        const result = synthesizeTamThuc(adjustedDate, hourIndex);
-        setSynthesis(result);
-        setIsLoading(false);
-      }, 1000);
-    } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Lỗi không xác định khi bốc quẻ.');
-    }
-  }, [selectedDate]);
+        setIsLoading(true);
+        setTimeout(() => {
+          const result = synthesizeTamThuc(adjustedDate, hourIndex);
+          setSynthesis(result);
+          setIsLoading(false);
+        }, 1000);
+      } catch (err) {
+        setErrorMsg(err instanceof Error ? err.message : 'Lỗi không xác định khi bốc quẻ.');
+      }
+    },
+    [selectedDate],
+  );
 
   return (
     <div className="space-y-6">
@@ -169,8 +175,15 @@ export default function TamThucView({ selectedDate }: TamThucViewProps) {
           <div className="mb-4 text-sm text-text-secondary-light dark:text-text-secondary-dark flex items-center gap-2">
             <span className="material-icons-round text-base">calendar_today</span>
             <span>
-              Âm lịch: ngày <span className="font-bold text-text-primary-light dark:text-text-primary-dark">{lunarDate.day}</span> tháng <span className="font-bold text-text-primary-light dark:text-text-primary-dark">{lunarDate.month}</span> năm <span className="font-bold text-text-primary-light dark:text-text-primary-dark">{lunarDate.year}</span>
-              {lunarDate.isLeap && <span className="text-accent-moving dark:text-accent-moving-dark ml-1">(nhuận)</span>}
+              Âm lịch: ngày{' '}
+              <span className="font-bold text-text-primary-light dark:text-text-primary-dark">{lunarDate.day}</span>{' '}
+              tháng{' '}
+              <span className="font-bold text-text-primary-light dark:text-text-primary-dark">{lunarDate.month}</span>{' '}
+              năm{' '}
+              <span className="font-bold text-text-primary-light dark:text-text-primary-dark">{lunarDate.year}</span>
+              {lunarDate.isLeap && (
+                <span className="text-accent-moving dark:text-accent-moving-dark ml-1">(nhuận)</span>
+              )}
             </span>
           </div>
 

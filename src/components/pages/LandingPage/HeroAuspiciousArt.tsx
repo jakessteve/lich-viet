@@ -24,13 +24,12 @@ export default function HeroAuspiciousArt() {
 
   return (
     <div className="w-full h-full relative flex items-center justify-center pointer-events-none select-none">
-      
       {/* Main Celestial Board with native WebkitMaskImage for seamless fading */}
       <svg
         className="absolute inset-0 w-full h-full"
-        style={{ 
+        style={{
           maskImage: 'radial-gradient(circle, black 40%, transparent 68%)',
-          WebkitMaskImage: 'radial-gradient(circle, black 40%, transparent 68%)'
+          WebkitMaskImage: 'radial-gradient(circle, black 40%, transparent 68%)',
         }}
         viewBox="0 0 800 800"
         fill="none"
@@ -38,14 +37,14 @@ export default function HeroAuspiciousArt() {
       >
         <defs>
           <linearGradient id="goldGradient" x1="0" y1="0" x2="800" y2="800" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#d4a843" stopOpacity="0.9"/>
-            <stop offset="0.5" stopColor="#8c6a1d" stopOpacity="0.4"/>
-            <stop offset="1" stopColor="#d4a843" stopOpacity="0.9"/>
+            <stop stopColor="#d4a843" stopOpacity="0.9" />
+            <stop offset="0.5" stopColor="#8c6a1d" stopOpacity="0.4" />
+            <stop offset="1" stopColor="#d4a843" stopOpacity="0.9" />
           </linearGradient>
 
           <linearGradient id="softGold" x1="0" y1="800" x2="800" y2="0" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#d4a843" stopOpacity="0.5"/>
-            <stop offset="1" stopColor="#d4a843" stopOpacity="0.1"/>
+            <stop stopColor="#d4a843" stopOpacity="0.5" />
+            <stop offset="1" stopColor="#d4a843" stopOpacity="0.1" />
           </linearGradient>
 
           {/* Individual Yao (Line) Definitions for the Trigrams */}
@@ -59,7 +58,12 @@ export default function HeroAuspiciousArt() {
 
           {/* Reusable Constellation Element */}
           <g id="constellationGroup1">
-            <path d="M0 0 L30 -20 L70 -10 L100 20 L140 -10 L170 10 L210 -30" stroke="#d4a843" strokeWidth="1" opacity="0.22" />
+            <path
+              d="M0 0 L30 -20 L70 -10 L100 20 L140 -10 L170 10 L210 -30"
+              stroke="#d4a843"
+              strokeWidth="1"
+              opacity="0.22"
+            />
             <circle cx="0" cy="0" r="4" fill="#d4a843" opacity="0.9" />
             <circle cx="30" cy="-20" r="2" fill="#d4a843" opacity="0.7" />
             <circle cx="70" cy="-10" r="5" fill="#d4a843" opacity="1" />
@@ -81,7 +85,15 @@ export default function HeroAuspiciousArt() {
 
         {/* Outer ceremonial framing rings */}
         <circle cx="400" cy="400" r="370" stroke="url(#goldGradient)" strokeWidth="1" opacity="0.12" />
-        <circle cx="400" cy="400" r="348" stroke="url(#goldGradient)" strokeWidth="0.5" strokeDasharray="12 14" opacity="0.14" />
+        <circle
+          cx="400"
+          cy="400"
+          r="348"
+          stroke="url(#goldGradient)"
+          strokeWidth="0.5"
+          strokeDasharray="12 14"
+          opacity="0.14"
+        />
         <circle cx="400" cy="400" r="315" stroke="url(#softGold)" strokeWidth="1" opacity="0.12" />
 
         {/* 2. BIG BOLD BÁT QUÁI RING */}
@@ -114,78 +126,85 @@ export default function HeroAuspiciousArt() {
               </g>
             );
           })}
-          
+
           {/* Inner constraint ring for Bát Quái */}
           <circle cx="400" cy="400" r="228" stroke="url(#goldGradient)" strokeWidth="1" opacity="0.2" />
-          <circle cx="400" cy="400" r="224" stroke="url(#goldGradient)" strokeWidth="0.5" strokeDasharray="6 6" opacity="0.15" />
+          <circle
+            cx="400"
+            cy="400"
+            r="224"
+            stroke="url(#goldGradient)"
+            strokeWidth="0.5"
+            strokeDasharray="6 6"
+            opacity="0.15"
+          />
         </g>
 
         {/* 3. CHÒM SAO (Constellations Void Filler) */}
         <g style={{ transform: 'scale(1)', transformOrigin: 'center' }}>
           <g style={{ animation: 'spin 105s linear infinite reverse', transformOrigin: 'center' }}>
-          {[0, 72, 144, 216, 288].map(angle => (
-            <use 
-              key={`c1-${angle}`} 
-              href="#constellationGroup1" 
-              x="300" 
-              y="240" 
-              transform={`rotate(${angle} 400 400)`} 
-            />
-          ))}
-          {[36, 108, 180, 252, 324].map(angle => (
-            <use 
-              key={`c2-${angle}`} 
-              href="#constellationGroup2" 
-              x="520" 
-              y="260" 
-              transform={`rotate(${angle} 400 400)`} 
-            />
-          ))}
-          {/* Dense Background starry dust filling the gap */}
-          {[...Array(80)].map((_, i) => {
-            // Pseudorandom distribution prioritizing the R=90 to R=230 band
-            const r = 90 + (i * 17) % 140; 
-            const angle = (i * 137.5) % 360; 
-            const size = (i % 3 === 0) ? 2 : (i % 5 === 0) ? 2.5 : 1;
-            const op = 0.2 + (i % 7) * 0.1;
-            return (
-              <circle 
-                key={`star-${i}`} 
-                cx={400 + r * Math.cos(angle * Math.PI / 180)} 
-                cy={400 + r * Math.sin(angle * Math.PI / 180)} 
-                r={size} 
-                fill="#d4a843" 
-                opacity={op} 
+            {[0, 72, 144, 216, 288].map((angle) => (
+              <use
+                key={`c1-${angle}`}
+                href="#constellationGroup1"
+                x="300"
+                y="240"
+                transform={`rotate(${angle} 400 400)`}
               />
-            );
-          })}
+            ))}
+            {[36, 108, 180, 252, 324].map((angle) => (
+              <use
+                key={`c2-${angle}`}
+                href="#constellationGroup2"
+                x="520"
+                y="260"
+                transform={`rotate(${angle} 400 400)`}
+              />
+            ))}
+            {/* Dense Background starry dust filling the gap */}
+            {[...Array(80)].map((_, i) => {
+              // Pseudorandom distribution prioritizing the R=90 to R=230 band
+              const r = 90 + ((i * 17) % 140);
+              const angle = (i * 137.5) % 360;
+              const size = i % 3 === 0 ? 2 : i % 5 === 0 ? 2.5 : 1;
+              const op = 0.2 + (i % 7) * 0.1;
+              return (
+                <circle
+                  key={`star-${i}`}
+                  cx={400 + r * Math.cos((angle * Math.PI) / 180)}
+                  cy={400 + r * Math.sin((angle * Math.PI) / 180)}
+                  r={size}
+                  fill="#d4a843"
+                  opacity={op}
+                />
+              );
+            })}
           </g>
         </g>
 
         {/* 4. TAIJI / ÂM DƯƠNG (Centerpiece) */}
         {/* Core background aura */}
         <circle cx="400" cy="400" r="72" fill="url(#goldGradient)" opacity="0.08" />
-        
+
         {/* Rotating Taiji Symbol */}
         <g style={{ animation: 'spin 120s linear infinite', transformOrigin: 'center' }}>
           <circle cx="400" cy="400" r="54" stroke="url(#goldGradient)" strokeWidth="3" fill="none" opacity="0.9" />
           <circle cx="400" cy="400" r="59" stroke="url(#softGold)" strokeWidth="1" strokeDasharray="2 4" />
-          
+
           {/* S-curve path representing the Yin/Yang split (Arcs scaled exactly 10% down to R=54) */}
-          <path 
+          <path
             d="M 400,346 
                A 27,27 0 0,0 400,400 
                A 27,27 0 0,1 400,454 
-               A 54,54 0 0,1 400,346 Z" 
-            fill="url(#goldGradient)" 
-            opacity="0.8" 
+               A 54,54 0 0,1 400,346 Z"
+            fill="url(#goldGradient)"
+            opacity="0.8"
           />
-          
+
           {/* The two 'eyes' */}
           <circle cx="400" cy="373" r="7" fill="none" stroke="url(#goldGradient)" strokeWidth="2" opacity="0.9" />
           <circle cx="400" cy="427" r="7" fill="url(#goldGradient)" opacity="0.8" />
         </g>
-
       </svg>
     </div>
   );

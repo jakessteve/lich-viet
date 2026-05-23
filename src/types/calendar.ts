@@ -190,4 +190,3 @@ export interface PersonalDayScore {
   isTuongHinh: boolean;
   isTuongPha: boolean;
 }
-

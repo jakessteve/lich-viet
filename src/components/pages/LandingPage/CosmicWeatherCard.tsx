@@ -28,17 +28,18 @@ const CosmicWeatherCard: React.FC<CosmicWeatherCardProps> = ({ navigate, today }
 
   if (!forecast) return <div className="glass-card glass-noise p-5" />;
 
-  const toneColor = forecast.tone === 'optimistic'
-    ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/8 dark:bg-emerald-400/8'
-    : forecast.tone === 'cautious'
-      ? 'text-blue-600 dark:text-blue-400 bg-blue-500/8 dark:bg-blue-400/8'
-      : 'text-amber-600 dark:text-amber-400 bg-amber-500/8 dark:bg-amber-400/8';
+  const toneColor =
+    forecast.tone === 'optimistic'
+      ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/8 dark:bg-emerald-400/8'
+      : forecast.tone === 'cautious'
+        ? 'text-blue-600 dark:text-blue-400 bg-blue-500/8 dark:bg-blue-400/8'
+        : 'text-amber-600 dark:text-amber-400 bg-amber-500/8 dark:bg-amber-400/8';
 
-  const toneLabel = forecast.tone === 'optimistic' ? 'Thuận lợi'
-    : forecast.tone === 'cautious' ? 'Bình thường' : 'Cần lưu ý';
+  const toneLabel =
+    forecast.tone === 'optimistic' ? 'Thuận lợi' : forecast.tone === 'cautious' ? 'Bình thường' : 'Cần lưu ý';
 
-  const toneIcon = forecast.tone === 'optimistic' ? 'trending_up'
-    : forecast.tone === 'cautious' ? 'trending_flat' : 'trending_down';
+  const toneIcon =
+    forecast.tone === 'optimistic' ? 'trending_up' : forecast.tone === 'cautious' ? 'trending_flat' : 'trending_down';
 
   return (
     <button
@@ -64,9 +65,7 @@ const CosmicWeatherCard: React.FC<CosmicWeatherCardProps> = ({ navigate, today }
       <p className="text-lg font-bold tracking-tight leading-snug bg-clip-text text-transparent bg-gradient-to-r from-text-primary-light to-text-secondary-light dark:from-white dark:to-gray-400">
         {today.canChiYear}
       </p>
-      <p className="text-sm font-semibold text-gold dark:text-gold-dark mb-1">
-        {forecast.palaceName}
-      </p>
+      <p className="text-sm font-semibold text-gold dark:text-gold-dark mb-1">{forecast.palaceName}</p>
 
       {/* Details — centered rows */}
       <div className="mt-auto w-full space-y-1.5 pt-3 border-t border-border-light/15 dark:border-white/[0.04]">
@@ -80,9 +79,7 @@ const CosmicWeatherCard: React.FC<CosmicWeatherCardProps> = ({ navigate, today }
         </div>
         <div className="flex items-center justify-center gap-1.5 text-xs">
           <span className={`material-icons-round text-xs`}>{toneIcon}</span>
-          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${toneColor}`}>
-            {toneLabel}
-          </span>
+          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${toneColor}`}>{toneLabel}</span>
         </div>
       </div>
     </button>

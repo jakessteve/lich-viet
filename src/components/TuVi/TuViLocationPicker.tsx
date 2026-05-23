@@ -212,7 +212,10 @@ export const TuViLocationPicker: React.FC<TuViLocationPickerProps> = ({ value, o
                 <span className="font-medium text-text-primary-light dark:text-text-primary-dark">
                   {location.locationName}
                 </span>
-                <span className="shrink-0 opacity-70">UTC{location.timezone >= 0 ? '+' : ''}{location.timezone}</span>
+                <span className="shrink-0 opacity-70">
+                  UTC{location.timezone >= 0 ? '+' : ''}
+                  {location.timezone}
+                </span>
               </button>
             ))}
         </div>

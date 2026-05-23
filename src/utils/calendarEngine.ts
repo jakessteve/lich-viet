@@ -9,7 +9,12 @@ import { DayCellData, DayQuality, DayDetailsData, CanChi, HourInfo, Can, Chi } f
 import { getJDN, getSolarTerm, calculateFoundationalLayer, findSolarTermStart } from './foundationalLayer';
 import { calculateModifyingLayer } from './modifyingLayer';
 import { generateDungSu } from './dungSuEngine';
-import { getHourCanChi, getAllHours as _getAllHours, getAuspiciousHours as _getAuspiciousHours, getInauspiciousHours as _getInauspiciousHours } from './hourEngine';
+import {
+  getHourCanChi,
+  getAllHours as _getAllHours,
+  getAuspiciousHours as _getAuspiciousHours,
+  getInauspiciousHours as _getInauspiciousHours,
+} from './hourEngine';
 import { StarData } from '../types/calendar';
 
 // Data imports
@@ -73,10 +78,7 @@ function dateCacheKey(value: Date) {
   return `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`;
 }
 
-function rememberLunarDate(
-  key: string,
-  value: { day: number; month: number; year: number; isLeap: boolean },
-) {
+function rememberLunarDate(key: string, value: { day: number; month: number; year: number; isLeap: boolean }) {
   if (lunarDateCache.size >= LUNAR_DATE_CACHE_LIMIT) {
     const oldestKey = lunarDateCache.keys().next().value;
     if (oldestKey) {
@@ -102,13 +104,14 @@ function sunLongitudeRadians(jdn: number, timeZone: number) {
   let L0 = 280.46645 + 36000.76983 * T + 0.0003032 * T2;
   L0 = ((L0 % 360) + 360) % 360;
 
-  let M = 357.52910 + 35999.05030 * T - 0.0001559 * T2 - 0.00000048 * T3;
+  let M = 357.5291 + 35999.0503 * T - 0.0001559 * T2 - 0.00000048 * T3;
   M = ((M % 360) + 360) % 360;
 
   const Mr = M * DR;
-  const DL = (1.914600 - 0.004817 * T - 0.000014 * T2) * Math.sin(Mr)
-    + (0.019993 - 0.000101 * T) * Math.sin(2 * Mr)
-    + 0.000290 * Math.sin(3 * Mr);
+  const DL =
+    (1.9146 - 0.004817 * T - 0.000014 * T2) * Math.sin(Mr) +
+    (0.019993 - 0.000101 * T) * Math.sin(2 * Mr) +
+    0.00029 * Math.sin(3 * Mr);
 
   const omega = (125.04 - 1934.136 * T) * DR;
   const lambda = (L0 + DL - 0.00569 - 0.00478 * Math.sin(omega)) * DR;
@@ -148,17 +151,12 @@ function newMoon(k: number) {
     0.0004 * Math.sin(2 * Fr + Mr) +
     -0.0004 * Math.sin(2 * Fr - Mr) +
     -0.0006 * Math.sin(2 * Fr + Mprr) +
-    0.0010 * Math.sin(2 * Fr - Mprr) +
+    0.001 * Math.sin(2 * Fr - Mprr) +
     0.0005 * Math.sin(Mr + 2 * Mprr);
 
   let deltaT: number;
   if (T < -11) {
-    deltaT =
-      0.001 +
-      0.000839 * T +
-      0.0002261 * T2 -
-      0.00000845 * T3 -
-      0.000000081 * T * T3;
+    deltaT = 0.001 + 0.000839 * T + 0.0002261 * T2 - 0.00000845 * T3 - 0.000000081 * T * T3;
   } else {
     deltaT = -0.000278 + 0.000265 * T + 0.000262 * T2;
   }
@@ -209,7 +207,7 @@ function dayBranchIndex(jd: number) {
 function getKiTuoi(dayCan: Can, dayChi: Chi): string[] {
   const chiKhac = CHI_XUNG[dayChi];
   if (!CAN_KHAC_MAP[dayCan] || !chiKhac) return [];
-  return CAN_KHAC_MAP[dayCan].map(c => `${c} ${chiKhac}`);
+  return CAN_KHAC_MAP[dayCan].map((c) => `${c} ${chiKhac}`);
 }
 
 // ── Core Calendar Functions ───────────────────────────────────
@@ -245,7 +243,7 @@ export function getLunarDate(date: Date): { day: number; month: number; year: nu
   }
 
   const lunarDay = dayNumber - monthStart + 1;
-  let diff = int((monthStart - a11) / 29);
+  const diff = int((monthStart - a11) / 29);
   let lunarLeap = 0;
   let lunarMonth = diff + 11;
 
@@ -271,14 +269,18 @@ export function getLunarDate(date: Date): { day: number; month: number; year: nu
     day: lunarDay,
     month: lunarMonth,
     year: lunarYear,
-    isLeap: lunarLeap === 1
+    isLeap: lunarLeap === 1,
   });
 }
 
 export function getDayQuality(date: Date): DayQuality {
   const detailed = getDetailedDayData(date);
 
-  if (detailed.nguHanhGrade === 'Chuyên nhật' || detailed.nguHanhGrade === 'Nghĩa nhật' || detailed.nguHanhGrade === 'Bảo nhật') {
+  if (
+    detailed.nguHanhGrade === 'Chuyên nhật' ||
+    detailed.nguHanhGrade === 'Nghĩa nhật' ||
+    detailed.nguHanhGrade === 'Bảo nhật'
+  ) {
     return 'Good';
   }
   if (detailed.nguHanhGrade === 'Phạt nhật') {
@@ -288,9 +290,7 @@ export function getDayQuality(date: Date): DayQuality {
 }
 
 function isSameDay(d1: Date, d2: Date): boolean {
-  return d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate();
+  return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
 }
 
 export function getMonthDays(year: number, month: number): DayCellData[] {
@@ -313,7 +313,7 @@ export function getMonthDays(year: number, month: number): DayCellData[] {
       fullDate: d,
       isCurrentMonth: false,
       isToday: isSameDay(d, new Date()),
-      dayChi: getCanChiDay(d).split(' ')[1] as Chi
+      dayChi: getCanChiDay(d).split(' ')[1] as Chi,
     });
   }
 
@@ -327,7 +327,7 @@ export function getMonthDays(year: number, month: number): DayCellData[] {
       fullDate: d,
       isCurrentMonth: true,
       isToday: isSameDay(d, new Date()),
-      dayChi: getCanChiDay(d).split(' ')[1] as Chi
+      dayChi: getCanChiDay(d).split(' ')[1] as Chi,
     });
   }
 
@@ -342,7 +342,7 @@ export function getMonthDays(year: number, month: number): DayCellData[] {
       fullDate: d,
       isCurrentMonth: false,
       isToday: isSameDay(d, new Date()),
-      dayChi: getCanChiDay(d).split(' ')[1] as Chi
+      dayChi: getCanChiDay(d).split(' ')[1] as Chi,
     });
   }
 
@@ -375,7 +375,7 @@ export function parseCanChi(canChiStr: string): CanChi {
   const parts = canChiStr.split(' ');
   return {
     can: parts[0] as Can,
-    chi: parts[1] as Chi
+    chi: parts[1] as Chi,
   };
 }
 
@@ -416,9 +416,9 @@ interface ExtraStarIntegrationParams {
 export function integrateExtraStars(params: ExtraStarIntegrationParams): StarData[] {
   const { modifyingStars, extraGoodStars, extraBadStars, masterCat, masterHung } = params;
   const result = [...modifyingStars];
-  const existingNames = new Set(modifyingStars.map(s => s.name));
+  const existingNames = new Set(modifyingStars.map((s) => s.name));
 
-  extraGoodStars.forEach(sName => {
+  extraGoodStars.forEach((sName) => {
     if (existingNames.has(sName)) return;
     const master = masterCat.find((m) => m.name === sName);
     result.push({
@@ -427,12 +427,12 @@ export function integrateExtraStars(params: ExtraStarIntegrationParams): StarDat
       weight: SCORING.DEFAULT_GOOD_STAR_WEIGHT,
       description: master?.description || '',
       suitable: master?.suitable || [],
-      unsuitable: master?.unsuitable || []
+      unsuitable: master?.unsuitable || [],
     });
     existingNames.add(sName);
   });
 
-  extraBadStars.forEach(sName => {
+  extraBadStars.forEach((sName) => {
     if (existingNames.has(sName)) return;
     const master = masterHung.find((m) => m.name === sName);
     result.push({
@@ -441,7 +441,7 @@ export function integrateExtraStars(params: ExtraStarIntegrationParams): StarDat
       weight: SCORING.DEFAULT_BAD_STAR_WEIGHT,
       description: master?.description || '',
       suitable: master?.suitable || [],
-      unsuitable: master?.unsuitable || (sName === 'Cửu Khổ Bát Cùng' ? [BACH_SU_HUNG_FALLBACK] : [])
+      unsuitable: master?.unsuitable || (sName === 'Cửu Khổ Bát Cùng' ? [BACH_SU_HUNG_FALLBACK] : []),
     });
     existingNames.add(sName);
   });
@@ -514,10 +514,10 @@ export function calculateFinalScore(
   stars: StarData[],
   trucQuality: string,
   tuQuality: string,
-  nguHanhScore: number
+  nguHanhScore: number,
 ): FinalScoreResult {
   let finalScore = baseScore;
-  stars.forEach((s) => finalScore += (s.weight || 0));
+  stars.forEach((s) => (finalScore += s.weight || 0));
 
   if (trucQuality === 'Good') finalScore += SCORING.TRUC_TU_QUALITY_DELTA;
   if (trucQuality === 'Bad') finalScore -= SCORING.TRUC_TU_QUALITY_DELTA;
@@ -582,29 +582,25 @@ export function collectStarLists(
   thanSat: StarData[],
   modifyingStars: StarData[],
   trucDetail: { name: string; quality: string },
-  tuDetail: { name: string; quality: string }
+  tuDetail: { name: string; quality: string },
 ): StarLists {
   const goodList = [
-    ...thanSat
-      .filter((s) => s.type === 'Good' && !s.criteria?.day_hour_chi)
-      .map((s) => s.name),
+    ...thanSat.filter((s) => s.type === 'Good' && !s.criteria?.day_hour_chi).map((s) => s.name),
     ...modifyingStars.filter((s) => s.type === 'Good').map((s) => s.name),
     ...(trucDetail.quality === 'Good' ? [`Trực ${trucDetail.name}`] : []),
-    ...(tuDetail.quality === 'Good' ? [`Sao ${tuDetail.name}`] : [])
+    ...(tuDetail.quality === 'Good' ? [`Sao ${tuDetail.name}`] : []),
   ];
 
   const badList = [
-    ...thanSat
-      .filter((s) => s.type === 'Bad' && !s.criteria?.day_hour_chi)
-      .map((s) => s.name),
+    ...thanSat.filter((s) => s.type === 'Bad' && !s.criteria?.day_hour_chi).map((s) => s.name),
     ...modifyingStars.filter((s) => s.type === 'Bad').map((s) => s.name),
     ...(trucDetail.quality === 'Bad' ? [`Trực ${trucDetail.name}`] : []),
-    ...(tuDetail.quality === 'Bad' ? [`Sao ${tuDetail.name}`] : [])
+    ...(tuDetail.quality === 'Bad' ? [`Sao ${tuDetail.name}`] : []),
   ];
 
   return {
     goodStars: Array.from(new Set(goodList)).sort(),
-    badStars: Array.from(new Set(badList)).sort()
+    badStars: Array.from(new Set(badList)).sort(),
   };
 }
 
@@ -629,15 +625,23 @@ export function getDetailedDayData(date: Date): DayDetailsData {
 
   // 4. Modifying Layer + Extra Stars integration
   const modifying = calculateModifyingLayer(date, lunar, dayCanChi, foundational.solarMonth);
-  const extra = getExtraStars(lunar.month, lunar.day, dayCanChi.can, dayCanChi.chi, modifying.trucDetail.name, isDu, yearCanChi.can);
-  const masterCat = ((catThanData as unknown) as { stars: StarData[] }).stars || [];
-  const masterHung = ((hungThanData as unknown) as { stars: StarData[] }).stars || [];
+  const extra = getExtraStars(
+    lunar.month,
+    lunar.day,
+    dayCanChi.can,
+    dayCanChi.chi,
+    modifying.trucDetail.name,
+    isDu,
+    yearCanChi.can,
+  );
+  const masterCat = (catThanData as unknown as { stars: StarData[] }).stars || [];
+  const masterHung = (hungThanData as unknown as { stars: StarData[] }).stars || [];
   modifying.stars = integrateExtraStars({
     modifyingStars: modifying.stars,
     extraGoodStars: extra.goodStars,
     extraBadStars: extra.badStars,
     masterCat,
-    masterHung
+    masterHung,
   });
 
   // 5. Dụng Sự
@@ -653,7 +657,7 @@ export function getDetailedDayData(date: Date): DayDetailsData {
     modifying.stars,
     modifying.trucDetail.quality,
     modifying.tuDetail.quality,
-    nguHanh.nguHanhScore
+    nguHanh.nguHanhScore,
   );
 
   // 8. Formatting helpers
@@ -692,13 +696,13 @@ export function getDetailedDayData(date: Date): DayDetailsData {
       day: lunar.day,
       month: lunar.month,
       year: lunar.year,
-      isLeapMonth: lunar.isLeap
+      isLeapMonth: lunar.isLeap,
     },
     buddhistYear,
     canChi: {
       year: yearCanChi,
       month: monthCanChi,
-      day: dayCanChi
+      day: dayCanChi,
     },
     startHour: getHourCanChi(dayCanChi.can, 'Tý'),
     solarTerm: getSolarTerm(jd),
@@ -706,7 +710,7 @@ export function getDetailedDayData(date: Date): DayDetailsData {
       napAm: NAP_AM_MAPPING[`${dayCanChi.can} ${dayCanChi.chi}`] || '',
       napAmMonth: NAP_AM_MAPPING[`${monthCanChi.can} ${monthCanChi.chi}`] || '',
       napAmYear: NAP_AM_MAPPING[`${yearCanChi.can} ${yearCanChi.chi}`] || '',
-      nguHanh: dayCanNguHanh
+      nguHanh: dayCanNguHanh,
     },
     truc: `${modifying.trucDetail.name} (${modifying.trucDetail.description})`,
     tu: `${modifying.tuDetail.name} (${modifying.tuDetail.description})`,
@@ -717,7 +721,7 @@ export function getDetailedDayData(date: Date): DayDetailsData {
     goodStars: starLists.goodStars,
     badStars: starLists.badStars,
     dayGrade,
-    deityStatus: foundational.isAuspiciousDay ? "Ngày Hoàng Đạo" : "Ngày Hắc Đạo",
+    deityStatus: foundational.isAuspiciousDay ? 'Ngày Hoàng Đạo' : 'Ngày Hắc Đạo',
     nguHanhGrade: nguHanh.nguHanhGrade || undefined,
     dayScore: finalScore,
     fengShuiDirections: foundational.auspiciousDirections,
@@ -731,13 +735,13 @@ export function getDetailedDayData(date: Date): DayDetailsData {
     foundationalLayer: {
       baseScore: foundational.baseScore,
       thanSat: foundational.thanSat,
-      auspiciousDirections: foundational.auspiciousDirections
+      auspiciousDirections: foundational.auspiciousDirections,
     },
     modifyingLayer: modifying,
     dungSu,
     banhTo: {
       can: (banhToData.can as Record<string, string>)[dayCanChi.can] || '',
-      chi: (banhToData.chi as Record<string, string>)[dayCanChi.chi] || ''
+      chi: (banhToData.chi as Record<string, string>)[dayCanChi.chi] || '',
     },
     yearlyStars: getYearlyStars(yearCanChi.chi, lunar.year),
     napAmCompatibility: (() => {

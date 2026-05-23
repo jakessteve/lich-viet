@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  calculateMenhCucRelation,
-  getMenhHanh,
-  getCucHanh,
-} from '@/services/tuvi/menhCucRelation';
+import { calculateMenhCucRelation, getMenhHanh, getCucHanh } from '@/services/tuvi/menhCucRelation';
 
 describe('calculateMenhCucRelation', () => {
   it('returns bình hòa when elements are the same', () => {

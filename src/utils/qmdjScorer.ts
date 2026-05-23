@@ -21,23 +21,23 @@ const activityMap = doorMap as Record<string, DoorActivityMapEntry>;
 // ── Auspiciousness Scores ──────────────────────────────────────
 
 const DOOR_SCORES: Record<string, number> = {
-  'dai_cat': 10,
-  'cat': 7,
-  'trung_binh': 3,
-  'hung': -5,
-  'dai_hung': -10,
+  dai_cat: 10,
+  cat: 7,
+  trung_binh: 3,
+  hung: -5,
+  dai_hung: -10,
 };
 
 const STAR_SCORES: Record<string, number> = {
-  'cat': 3,
-  'trung_binh': 1,
-  'hung': -2,
+  cat: 3,
+  trung_binh: 1,
+  hung: -2,
 };
 
 const DEITY_SCORES: Record<string, number> = {
-  'dai_cat': 3,
-  'cat': 2,
-  'hung': -2,
+  dai_cat: 3,
+  cat: 2,
+  hung: -2,
 };
 
 // ── Main Scoring Function ──────────────────────────────────────
@@ -52,10 +52,7 @@ const DEITY_SCORES: Record<string, number> = {
  * 4. Check for any formations affecting the score
  * 5. Return weighted score + explanation
  */
-export function scoreActivityByQmdj(
-  activityId: string,
-  chart: QmdjChart,
-): QmdjActivityScore {
+export function scoreActivityByQmdj(activityId: string, chart: QmdjChart): QmdjActivityScore {
   // 1. Find governing door(s) for this activity
   let bestDoorId: string | null = null;
   let bestDoorScore = -Infinity;
@@ -147,9 +144,14 @@ export function scoreActivityByQmdj(
 
   // Build detail string
   const doorLabel = getAuspiciousnessLabel(door.auspiciousness);
-  const starLabel = doorPalace.star ? ` + ${doorPalace.star.nameVi} (${getAuspiciousnessLabel(doorPalace.star.auspiciousness)})` : '';
+  const starLabel = doorPalace.star
+    ? ` + ${doorPalace.star.nameVi} (${getAuspiciousnessLabel(doorPalace.star.auspiciousness)})`
+    : '';
   const deityLabel = doorPalace.deity ? ` + ${doorPalace.deity.nameVi}` : '';
-  const formationLabel = chart.formations.filter(f => f.palaceNumber === doorPalace.number).map(f => f.nameVi).join(', ');
+  const formationLabel = chart.formations
+    .filter((f) => f.palaceNumber === doorPalace.number)
+    .map((f) => f.nameVi)
+    .join(', ');
   const formationText = formationLabel ? ` 🐉 ${formationLabel}` : '';
 
   const detail = `${door.nameVi} (${doorLabel}) tại ${doorPalace.direction}${starLabel}${deityLabel}${formationText}`;
@@ -169,17 +171,23 @@ export function scoreActivityByQmdj(
 // ── Helpers ────────────────────────────────────────────────────
 
 function findDoorPalace(chart: QmdjChart, doorId: string) {
-  return chart.palaces.find(p => p.door?.id === doorId) || null;
+  return chart.palaces.find((p) => p.door?.id === doorId) || null;
 }
 
 function getAuspiciousnessLabel(a: string): string {
   switch (a) {
-    case 'dai_cat': return '✅ Đại Cát';
-    case 'cat': return '✅ Cát';
-    case 'trung_binh': return '⚠️ Trung Bình';
-    case 'hung': return '❌ Hung';
-    case 'dai_hung': return '❌ Đại Hung';
-    default: return a;
+    case 'dai_cat':
+      return '✅ Đại Cát';
+    case 'cat':
+      return '✅ Cát';
+    case 'trung_binh':
+      return '⚠️ Trung Bình';
+    case 'hung':
+      return '❌ Hung';
+    case 'dai_hung':
+      return '❌ Đại Hung';
+    default:
+      return a;
   }
 }
 
@@ -192,8 +200,8 @@ export function getQmdjHourSummary(chart: QmdjChart): {
   formations: Array<{ nameVi: string; effect: string }>;
 } {
   const doors = chart.palaces
-    .filter(p => p.door !== null)
-    .map(p => ({
+    .filter((p) => p.door !== null)
+    .map((p) => ({
       doorName: p.door!.nameVi,
       direction: p.direction,
       auspiciousness: p.door!.auspiciousness,
@@ -202,12 +210,12 @@ export function getQmdjHourSummary(chart: QmdjChart): {
     .sort((a, b) => b.score - a.score);
 
   return {
-    topDoors: doors.slice(0, 3).map(d => ({
+    topDoors: doors.slice(0, 3).map((d) => ({
       doorName: d.doorName,
       direction: d.direction,
       auspiciousness: d.auspiciousness,
     })),
-    formations: chart.formations.map(f => ({
+    formations: chart.formations.map((f) => ({
       nameVi: f.nameVi,
       effect: f.effect,
     })),

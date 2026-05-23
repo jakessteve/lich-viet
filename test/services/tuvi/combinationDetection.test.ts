@@ -34,7 +34,11 @@ function makePalace(overrides: Partial<TuViPalace> & { id: number }): TuViPalace
   };
 }
 
-function makeStar(name: string, type: TuViPalace['chinhTinh'][number]['type'] = 'chinhTinh', brightness = 'Bình' as const) {
+function makeStar(
+  name: string,
+  type: TuViPalace['chinhTinh'][number]['type'] = 'chinhTinh',
+  brightness = 'Bình' as const,
+) {
   return { name, type, nguHanh: 'Âm Thổ', brightness };
 }
 
@@ -91,9 +95,7 @@ describe('getStarsInPalace', () => {
 
 describe('getStarsInTamHop', () => {
   it('collects stars from palace + 2 tam hợp + đối cung', () => {
-    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i })
-    );
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i }));
     palaces[0] = makePalace({ id: 0, chinhTinh: [makeStar('Tử Vi')] });
     palaces[4] = makePalace({ id: 4, chinhTinh: [makeStar('Thiên Cơ')] });
     palaces[8] = makePalace({ id: 8, chinhTinh: [makeStar('Thái Dương')] });
@@ -150,10 +152,7 @@ describe('checkCombinationPurity', () => {
   it('returns phá when both major and minor Sát Tinh are present', () => {
     const palace = makePalace({
       id: 0,
-      satTinh: [
-        makeStar('Hỏa Tinh', 'satTinh'),
-        makeStar('Địa Kiếp', 'satTinh'),
-      ],
+      satTinh: [makeStar('Hỏa Tinh', 'satTinh'), makeStar('Địa Kiếp', 'satTinh')],
     });
     expect(checkCombinationPurity([palace])).toBe('phá');
   });
@@ -179,9 +178,7 @@ describe('calculateCombinationStrength', () => {
   });
 
   it('increases strength for Miếu brightness', () => {
-    const palaces = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, brightness: { 'Tử Vi': 'Miếu' } })
-    );
+    const palaces = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, brightness: { 'Tử Vi': 'Miếu' } }));
     const combo: TuViCombination = {
       name: 'Test',
       nameHanViet: '測試',
@@ -197,9 +194,7 @@ describe('calculateCombinationStrength', () => {
   });
 
   it('decreases strength for Hãm brightness', () => {
-    const palaces = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, brightness: { 'Tử Vi': 'Hãm' } })
-    );
+    const palaces = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, brightness: { 'Tử Vi': 'Hãm' } }));
     const combo: TuViCombination = {
       name: 'Test',
       nameHanViet: '測試',
@@ -220,7 +215,7 @@ describe('calculateCombinationStrength', () => {
         id: i,
         brightness: { 'Tử Vi': 'Miếu', 'Thiên Cơ': 'Vượng' },
         isMenh: i === 0,
-      })
+      }),
     );
     const combo: TuViCombination = {
       name: 'Test',
@@ -241,7 +236,7 @@ describe('calculateCombinationStrength', () => {
       makePalace({
         id: i,
         brightness: { 'Tử Vi': 'Hãm' },
-      })
+      }),
     );
     const combo: TuViCombination = {
       name: 'Test',
@@ -262,16 +257,11 @@ describe('calculateCombinationStrength', () => {
 
 describe('detectCombinations', () => {
   it('detects sameCung combination (Tử Phủ)', () => {
-    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, name: `Cung ${i}` })
-    );
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
     palaces[0] = makePalace({
       id: 0,
       name: 'Cung 0',
-      chinhTinh: [
-        makeStar('Tử Vi'),
-        makeStar('Thiên Phủ'),
-      ],
+      chinhTinh: [makeStar('Tử Vi'), makeStar('Thiên Phủ')],
     });
 
     const results = detectCombinations(palaces);
@@ -282,9 +272,7 @@ describe('detectCombinations', () => {
   });
 
   it('detects tamHop combination (Sát Phá Lang)', () => {
-    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, name: `Cung ${i}` })
-    );
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
     // TAM_HOP group for 0 is [0, 4, 8]
     palaces[0] = makePalace({ id: 0, name: 'Cung 0', chinhTinh: [makeStar('Thất Sát')] });
     palaces[4] = makePalace({ id: 4, name: 'Cung 4', chinhTinh: [makeStar('Phá Quân')] });
@@ -297,9 +285,7 @@ describe('detectCombinations', () => {
   });
 
   it('detects sameCungOrTamHop as sameCung when stars are in one palace', () => {
-    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, name: `Cung ${i}` })
-    );
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
     palaces[0] = makePalace({
       id: 0,
       name: 'Cung 0',
@@ -314,9 +300,7 @@ describe('detectCombinations', () => {
   });
 
   it('detects sameCungOrTamHop as tamHop when stars are spread', () => {
-    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, name: `Cung ${i}` })
-    );
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
     // TAM_HOP group for 0 is [0, 4, 8]
     palaces[0] = makePalace({ id: 0, name: 'Cung 0', phuTinh: [makeStar('Văn Xương', 'phuTinh')] });
     palaces[4] = makePalace({ id: 4, name: 'Cung 4', phuTinh: [makeStar('Văn Khúc', 'phuTinh')] });
@@ -330,9 +314,7 @@ describe('detectCombinations', () => {
   });
 
   it('detects giap combination (Giáp Sát)', () => {
-    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, name: `Cung ${i}` })
-    );
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
     // Palace 1 flanked by palace 0 and palace 2
     palaces[0] = makePalace({ id: 0, name: 'Cung 0', satTinh: [makeStar('Kình Dương', 'satTinh')] });
     palaces[2] = makePalace({ id: 2, name: 'Cung 2', satTinh: [makeStar('Đà La', 'satTinh')] });
@@ -346,9 +328,7 @@ describe('detectCombinations', () => {
   });
 
   it('detects requiresTuHoa combination (Tam Kỳ)', () => {
-    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, name: `Cung ${i}` })
-    );
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
     // TAM_HOP group for 0 is [0, 4, 8]
     palaces[0] = makePalace({
       id: 0,
@@ -373,9 +353,7 @@ describe('detectCombinations', () => {
   });
 
   it('does not detect Tam Kỳ when only two Tứ Hóa are present', () => {
-    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, name: `Cung ${i}` })
-    );
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
     palaces[0] = makePalace({
       id: 0,
       name: 'Cung 0',
@@ -393,18 +371,12 @@ describe('detectCombinations', () => {
   });
 
   it('deduplicates tamHop detections', () => {
-    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, name: `Cung ${i}` })
-    );
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
     // All three Sát Phá Lang stars in one palace of the tam hợp group
     palaces[0] = makePalace({
       id: 0,
       name: 'Cung 0',
-      chinhTinh: [
-        makeStar('Thất Sát'),
-        makeStar('Phá Quân'),
-        makeStar('Tham Lang'),
-      ],
+      chinhTinh: [makeStar('Thất Sát'), makeStar('Phá Quân'), makeStar('Tham Lang')],
     });
 
     const results = detectCombinations(palaces);
@@ -414,9 +386,7 @@ describe('detectCombinations', () => {
   });
 
   it('marks purity correctly for combinations with Sát Tinh', () => {
-    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, name: `Cung ${i}` })
-    );
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
     palaces[0] = makePalace({
       id: 0,
       name: 'Cung 0',
@@ -431,9 +401,7 @@ describe('detectCombinations', () => {
   });
 
   it('returns empty array when no combinations match', () => {
-    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, name: `Cung ${i}` })
-    );
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
     const results = detectCombinations(palaces);
     expect(results).toEqual([]);
   });

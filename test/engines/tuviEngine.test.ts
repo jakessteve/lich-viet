@@ -1,8 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  generateChart,
-  calculateMenhCungPosition,
-} from '../../src/services/tuvi';
+import { generateChart, calculateMenhCungPosition } from '../../src/services/tuvi';
 import type { TuViInput } from '../../src/types/tuvi';
 
 describe('TuVi Engine - Golden Fixtures', () => {

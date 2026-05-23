@@ -30,8 +30,7 @@ export default function GieoQueView() {
   const selectedDate = useAppStore((s) => s.selectedDate);
 
   // URL is the single source of truth — no local state, no sync loops
-  const activeMethod: DivinationMethod =
-    searchParams.get('method') === 'tam-thuc' ? 'tam-thuc' : 'mai-hoa';
+  const activeMethod: DivinationMethod = searchParams.get('method') === 'tam-thuc' ? 'tam-thuc' : 'mai-hoa';
 
   const handleMethodChange = (method: DivinationMethod) => {
     if (method === 'tam-thuc') {
@@ -49,15 +48,14 @@ export default function GieoQueView() {
           <button
             key={method.id}
             onClick={() => handleMethodChange(method.id)}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${activeMethod === method.id
-              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20'
-              : 'text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark hover:bg-gray-100 dark:hover:bg-white/5'
-              }`}
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+              activeMethod === method.id
+                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20'
+                : 'text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark hover:bg-gray-100 dark:hover:bg-white/5'
+            }`}
           >
             <span className="material-icons-round text-base">{method.icon}</span>
-            <span className="hidden sm:inline">
-              {method.label}
-            </span>
+            <span className="hidden sm:inline">{method.label}</span>
             <span className="sm:hidden text-xs">{method.id === 'mai-hoa' ? 'Mai Hoa' : 'Tam Thức'}</span>
           </button>
         ))}

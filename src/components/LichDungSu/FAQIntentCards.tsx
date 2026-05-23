@@ -5,13 +5,7 @@
 
 import React from 'react';
 
-export type FAQIntent =
-  | 'chon-ngay-cuoi'
-  | 'tang-le'
-  | 'nha-cua'
-  | 'tai-chinh'
-  | 'cong-viec'
-  | 'xem-ngay';
+export type FAQIntent = 'chon-ngay-cuoi' | 'tang-le' | 'nha-cua' | 'tai-chinh' | 'cong-viec' | 'xem-ngay';
 
 interface FAQCard {
   id: FAQIntent;
@@ -27,7 +21,13 @@ const FAQ_CARDS: FAQCard[] = [
   { id: 'nha-cua', icon: '🏘️', title: 'Nhà cửa', desc: 'Động thổ, nhập trạch, sửa chữa', needsSecondPerson: false },
   { id: 'tai-chinh', icon: '💰', title: 'Tài chính', desc: 'Ký hợp đồng, giao dịch', needsSecondPerson: false },
   { id: 'cong-viec', icon: '💼', title: 'Công việc', desc: 'Khai trương, nhậm chức', needsSecondPerson: false },
-  { id: 'xem-ngay', icon: '📅', title: 'Xem ngày tổng hợp', desc: 'Chọn ngày cho mọi hoạt động', needsSecondPerson: false },
+  {
+    id: 'xem-ngay',
+    icon: '📅',
+    title: 'Xem ngày tổng hợp',
+    desc: 'Chọn ngày cho mọi hoạt động',
+    needsSecondPerson: false,
+  },
 ];
 
 interface FAQIntentCardsProps {
@@ -54,11 +54,11 @@ const FAQIntentCards: React.FC<FAQIntentCardsProps> = ({ selectedIntent, onSelec
               <span className="text-2xl mb-1.5 transition-transform duration-200 group-hover:scale-110">
                 {card.icon}
               </span>
-              <span className={`text-xs font-semibold leading-tight ${
-                isActive
-                  ? 'text-gold dark:text-gold-dark'
-                  : 'text-text-primary-light dark:text-text-primary-dark'
-              }`}>
+              <span
+                className={`text-xs font-semibold leading-tight ${
+                  isActive ? 'text-gold dark:text-gold-dark' : 'text-text-primary-light dark:text-text-primary-dark'
+                }`}
+              >
                 {card.title}
               </span>
               <span className="text-[10px] text-text-secondary-light dark:text-text-secondary-dark mt-1 leading-tight">

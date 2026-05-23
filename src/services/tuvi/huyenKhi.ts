@@ -79,10 +79,7 @@ export function calculatePalaceScore(palace: TuViPalace): number {
  * @param combinations — detected named combinations
  * @returns `TuViHuyenKhi` with totalScore, palaceScores, and grade
  */
-export function calculateHuyenKhi(
-  palaces: TuViPalace[],
-  combinations: TuViCombination[],
-): TuViHuyenKhi {
+export function calculateHuyenKhi(palaces: TuViPalace[], combinations: TuViCombination[]): TuViHuyenKhi {
   const palaceScores: Record<string, number> = {};
   let rawTotal = 0;
 
@@ -96,9 +93,7 @@ export function calculateHuyenKhi(
   for (const combo of combinations) {
     combinationScore += scoring.combinationBonus[combo.category] ?? 0;
   }
-  const totalScore = roundToSingleDecimal(
-    (rawTotal + combinationScore) / HUYEN_KHI_REFERENCE_DIVISOR,
-  );
+  const totalScore = roundToSingleDecimal((rawTotal + combinationScore) / HUYEN_KHI_REFERENCE_DIVISOR);
 
   // Grade determination
   let grade: string;

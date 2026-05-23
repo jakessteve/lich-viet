@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  castHoaMai,
-  getGieoQueFixturesCount,
-  TRIGRAMS,
-  HEXAGRAMS,
-} from '@lich-viet/core';
+import { castHoaMai, getGieoQueFixturesCount, TRIGRAMS, HEXAGRAMS } from '@lich-viet/core';
 
 describe('gieoQueEngine', () => {
   it('keeps the v2 fixture surface intact', () => {
@@ -30,7 +25,9 @@ describe('gieoQueEngine', () => {
     expect(first.methodLabel).toBe('Time-based');
     expect(first.haoDetails).toHaveLength(6);
     expect(first.sourceRefs.length).toBeGreaterThan(0);
-    expect(new Set(first.sourceRefs.map((ref) => `${ref.sourceId}:${ref.note ?? ''}`)).size).toBe(first.sourceRefs.length);
+    expect(new Set(first.sourceRefs.map((ref) => `${ref.sourceId}:${ref.note ?? ''}`)).size).toBe(
+      first.sourceRefs.length,
+    );
     expect(first.movingLine).toBeGreaterThanOrEqual(1);
     expect(first.movingLine).toBeLessThanOrEqual(6);
     expect(first.summary).toContain('Thể');

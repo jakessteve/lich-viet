@@ -8,14 +8,7 @@
  */
 
 import type { MenhCucRelation } from '../../types/tuvi';
-import {
-  NGU_HANH_SINH,
-  NGU_HANH_KHAC,
-  getNapAmIndex,
-  NAP_AM_NAMES,
-  NAP_AM_HANH,
-  NGU_HANH_CUC,
-} from './constants';
+import { NGU_HANH_SINH, NGU_HANH_KHAC, getNapAmIndex, NAP_AM_NAMES, NAP_AM_HANH, NGU_HANH_CUC } from './constants';
 
 // ── Public API ──────────────────────────────────────────────────
 
@@ -29,10 +22,7 @@ import {
  * @param cucHanh  — Ngũ Hành element of Cục
  * @returns `MenhCucRelation` with relation type and description
  */
-export function calculateMenhCucRelation(
-  menhHanh: string,
-  cucHanh: string,
-): MenhCucRelation {
+export function calculateMenhCucRelation(menhHanh: string, cucHanh: string): MenhCucRelation {
   if (menhHanh === cucHanh) {
     return {
       relation: 'bình hòa',

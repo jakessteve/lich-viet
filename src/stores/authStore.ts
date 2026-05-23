@@ -20,7 +20,9 @@ const ADMIN_SEED_CREATED_AT = '2026-05-16T00:00:00.000Z';
 function generateSalt(): string {
   const bytes = new Uint8Array(16);
   crypto.getRandomValues(bytes);
-  return Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('');
+  return Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 async function hashPassword(password: string, salt: string = ''): Promise<string> {
@@ -101,7 +103,14 @@ interface AuthActions {
   /** Logout */
   logout: () => void;
   /** Update user profile fields (displayName, avatarUrl, birthday, birthHour, birthMinute, birthLocation) */
-  updateProfile: (updates: { displayName?: string; avatarUrl?: string; birthday?: string; birthHour?: number | null; birthMinute?: number | null; birthLocation?: { lat: number; lng: number; city: string } | null; }) => Promise<{ success: boolean; error?: string }>;
+  updateProfile: (updates: {
+    displayName?: string;
+    avatarUrl?: string;
+    birthday?: string;
+    birthHour?: number | null;
+    birthMinute?: number | null;
+    birthLocation?: { lat: number; lng: number; city: string } | null;
+  }) => Promise<{ success: boolean; error?: string }>;
   /** Change password (requires current password verification) */
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
 }
@@ -153,12 +162,15 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
     const identifier = credentials.email.toLowerCase();
     // Find user first, then hash with their salt
     const candidates = users.filter(
-      (u) => u.user.email.toLowerCase() === identifier || u.user.displayName?.toLowerCase() === identifier
+      (u) => u.user.email.toLowerCase() === identifier || u.user.displayName?.toLowerCase() === identifier,
     );
     let found: StoredUser | undefined;
     for (const c of candidates) {
       const hash = await hashPassword(credentials.password, c.salt || '');
-      if (c.passwordHash === hash) { found = c; break; }
+      if (c.passwordHash === hash) {
+        found = c;
+        break;
+      }
     }
 
     if (!found) {
@@ -228,9 +240,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
 
     // Check if social user already exists
     const users = getStoredUsers();
-    const existing = users.find(
-      (u) => u.user.provider === provider && u.user.email === mockUser.email
-    );
+    const existing = users.find((u) => u.user.provider === provider && u.user.email === mockUser.email);
 
     if (existing) {
       localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(existing.user));
@@ -262,9 +272,9 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
 
     const updated: User = {
       ...user,
-      ...((displayName !== undefined) && { displayName: displayName.trim() }),
-      ...((avatarUrl !== undefined) && { avatarUrl }),
-      ...((birthday !== undefined) && { birthday }),
+      ...(displayName !== undefined && { displayName: displayName.trim() }),
+      ...(avatarUrl !== undefined && { avatarUrl }),
+      ...(birthday !== undefined && { birthday }),
     };
 
     if (birthHour !== undefined || birthMinute !== undefined || birthday !== undefined) {
@@ -273,7 +283,7 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         ...(birthHour !== undefined && { birthHour: birthHour === null ? undefined : birthHour }),
         ...(birthMinute !== undefined && { birthMinute: birthMinute === null ? undefined : birthMinute }),
       };
-      
+
       // Auto-extract year/month/day if birthday string was updated
       if (birthday) {
         const [y, m, d] = birthday.split('-').map(Number);
@@ -295,7 +305,6 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
         updated.extendedProfile.birthLocation = birthLocation;
       }
     }
-
 
     const users = getStoredUsers();
     const idx = users.findIndex((u) => u.user.id === user.id);
@@ -329,5 +338,4 @@ export const useAuthStore = create<AuthStore>()((set, get) => ({
     saveStoredUsers(users);
     return { success: true };
   },
-
 }));

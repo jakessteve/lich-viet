@@ -121,7 +121,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
     if (!result) return null;
     const bd = result.breakdown;
     const sum = (factors: string[]) => {
-      const items = bd.filter(b => factors.includes(b.factor));
+      const items = bd.filter((b) => factors.includes(b.factor));
       if (items.length === 0) return 50;
       const total = items.reduce((s, i) => s + i.value, 0);
       const max = items.reduce((s, i) => s + Math.abs(i.maxValue), 0);
@@ -139,7 +139,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
   // Compute all-hours scores for HourPickerGrid
   const allHourScores = useMemo(() => {
     if (!selectedActivity) return undefined;
-    return data.allHours.map(h => {
+    return data.allHours.map((h) => {
       const hResult = scoreActivity(selectedActivity, data, h.canChi.chi as Chi, birthYearChi);
       return { hourInfo: h, activityScore: hResult.percentage };
     });
@@ -158,7 +158,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
   }, []);
 
   const handleSelectIntent = useCallback((intent: FAQIntent) => {
-    setSelectedIntent(prev => prev === intent ? null : intent);
+    setSelectedIntent((prev) => (prev === intent ? null : intent));
     // Auto-select a relevant activity for certain intents
     if (intent === 'chon-ngay-cuoi') setSelectedActivity('cuoi-hoi');
     else if (intent === 'tang-le') setSelectedActivity('chon-cat');
@@ -169,7 +169,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
     setSelectedHour(chi);
     if (chi) {
       const idx = CHI_LIST.indexOf(chi);
-      setInputHour((idx * 2 + 23) % 24 + ''); // approximate start hour
+      setInputHour(((idx * 2 + 23) % 24) + ''); // approximate start hour
     } else {
       setInputHour('');
     }
@@ -178,7 +178,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
   // Determine Hoàng/Hắc Đạo
   const dayType = useMemo(() => {
     // Check from hour data — if more auspicious hours than not, it's likely Hoàng Đạo
-    const auspicious = data.allHours.filter(h => h.isAuspicious).length;
+    const auspicious = data.allHours.filter((h) => h.isAuspicious).length;
     return auspicious >= 6 ? 'Hoàng Đạo' : 'Hắc Đạo';
   }, [data.allHours]);
 
@@ -208,12 +208,12 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
     <div className="w-full space-y-4 animate-fade-scale" data-testid="dung-su-view">
       {/* ══════════ Unified Input Section ══════════ */}
       <div className="space-y-4 transition-all duration-300">
-        
         {/* ══════════ Combined Intent & Activity Selector ══════════ */}
         <div className="rounded-xl border border-border-light dark:border-border-dark overflow-hidden shadow-sm bg-white dark:bg-black/20 transition-all duration-500">
-          
           {/* Top Half: FAQ Intent Cards */}
-          <div className={`p-4 sm:p-5 ${selectedIntent === 'xem-ngay' ? 'border-b border-border-light/30 dark:border-border-dark/30' : ''} bg-surface-subtle-light/30 dark:bg-white/5 transition-all duration-300`}>
+          <div
+            className={`p-4 sm:p-5 ${selectedIntent === 'xem-ngay' ? 'border-b border-border-light/30 dark:border-border-dark/30' : ''} bg-surface-subtle-light/30 dark:bg-white/5 transition-all duration-300`}
+          >
             <div className="flex items-center gap-2 mb-4">
               <span className="material-icons-round text-base text-gold dark:text-gold-dark">explore</span>
               <p className="text-sm font-bold text-text-primary-light dark:text-text-primary-dark uppercase tracking-wider">
@@ -229,7 +229,9 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="material-icons-round text-base text-gold dark:text-gold-dark">checklist</span>
-                  <span className="text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Chọn việc cần làm cụ thể</span>
+                  <span className="text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">
+                    Chọn việc cần làm cụ thể
+                  </span>
                 </div>
                 {activityData && (
                   <span className="text-xs font-medium text-gold dark:text-gold-dark bg-gold/10 dark:bg-gold-dark/10 px-2 py-0.5 rounded-full">
@@ -248,54 +250,115 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
           )}
         </div>
 
-          {/* Date & Time Input — compact inline */}
-          <div className="rounded-xl border border-border-light dark:border-border-dark overflow-hidden">
-            <div className="px-4 py-2.5 border-b border-border-light/30 dark:border-border-dark/30 flex items-center gap-2">
-              <span className="material-icons-round text-base text-gold dark:text-gold-dark">event</span>
-              <span className="text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Chọn ngày giờ dự kiến</span>
+        {/* Date & Time Input — compact inline */}
+        <div className="rounded-xl border border-border-light dark:border-border-dark overflow-hidden">
+          <div className="px-4 py-2.5 border-b border-border-light/30 dark:border-border-dark/30 flex items-center gap-2">
+            <span className="material-icons-round text-base text-gold dark:text-gold-dark">event</span>
+            <span className="text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">
+              Chọn ngày giờ dự kiến
+            </span>
+          </div>
+          <div className="p-3 space-y-3">
+            <div className="grid grid-cols-5 gap-2 items-end">
+              {/* Day */}
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">
+                  Ngày
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={31}
+                  value={inputDay}
+                  onChange={(e) => setInputDay(e.target.value)}
+                  className={inputFieldClass}
+                />
+              </div>
+              {/* Month */}
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">
+                  Tháng
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={12}
+                  value={inputMonth}
+                  onChange={(e) => setInputMonth(e.target.value)}
+                  className={inputFieldClass}
+                />
+              </div>
+              {/* Year */}
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">
+                  Năm
+                </label>
+                <input
+                  type="number"
+                  min={1900}
+                  max={2100}
+                  value={inputYear}
+                  onChange={(e) => setInputYear(e.target.value)}
+                  className={inputFieldClass}
+                />
+              </div>
+              {/* Hour */}
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">
+                  Giờ
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  max={23}
+                  placeholder="--"
+                  value={inputHour}
+                  onChange={(e) => setInputHour(e.target.value)}
+                  className={inputFieldClass}
+                />
+              </div>
+              {/* Birth Year */}
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">
+                  Năm sinh
+                </label>
+                <input
+                  type="number"
+                  min={1900}
+                  max={2100}
+                  placeholder="--"
+                  value={birthYear}
+                  onChange={(e) => setBirthYear(e.target.value)}
+                  className={inputFieldClass}
+                />
+              </div>
             </div>
-            <div className="p-3 space-y-3">
-              <div className="grid grid-cols-5 gap-2 items-end">
-                {/* Day */}
-                <div>
-                  <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Ngày</label>
-                  <input type="number" min={1} max={31} value={inputDay} onChange={e => setInputDay(e.target.value)} className={inputFieldClass} />
-                </div>
-                {/* Month */}
-                <div>
-                  <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Tháng</label>
-                  <input type="number" min={1} max={12} value={inputMonth} onChange={e => setInputMonth(e.target.value)} className={inputFieldClass} />
-                </div>
-                {/* Year */}
-                <div>
-                  <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Năm</label>
-                  <input type="number" min={1900} max={2100} value={inputYear} onChange={e => setInputYear(e.target.value)} className={inputFieldClass} />
-                </div>
-                {/* Hour */}
-                <div>
-                  <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Giờ</label>
-                  <input type="number" min={0} max={23} placeholder="--" value={inputHour} onChange={e => setInputHour(e.target.value)} className={inputFieldClass} />
-                </div>
-                {/* Birth Year */}
-                <div>
-                  <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Năm sinh</label>
-                  <input type="number" min={1900} max={2100} placeholder="--" value={birthYear} onChange={e => setBirthYear(e.target.value)} className={inputFieldClass} />
-                </div>
-              </div>
 
-              {/* Lunar date summary — compact */}
-              <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-surface-subtle-light dark:bg-white/5 text-xs text-text-secondary-light dark:text-text-secondary-dark">
-                <span className="material-icons-round text-sm text-gold dark:text-gold-dark">today</span>
-                <span className="capitalize">{solarDateStr}</span>
-                <span className="text-gray-300 dark:text-gray-600">|</span>
-                <span>Âm: {data.lunarDate.day}/{data.lunarDate.month} — {data.canChi.day.can} {data.canChi.day.chi}</span>
-                {selectedHour && <><span className="text-gray-300 dark:text-gray-600">|</span><span>Giờ {selectedHour}</span></>}
-                {birthYearChi && <><span className="text-gray-300 dark:text-gray-600">|</span><span>Tuổi {birthYearChi}</span></>}
-              </div>
+            {/* Lunar date summary — compact */}
+            <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-surface-subtle-light dark:bg-white/5 text-xs text-text-secondary-light dark:text-text-secondary-dark">
+              <span className="material-icons-round text-sm text-gold dark:text-gold-dark">today</span>
+              <span className="capitalize">{solarDateStr}</span>
+              <span className="text-gray-300 dark:text-gray-600">|</span>
+              <span>
+                Âm: {data.lunarDate.day}/{data.lunarDate.month} — {data.canChi.day.can} {data.canChi.day.chi}
+              </span>
+              {selectedHour && (
+                <>
+                  <span className="text-gray-300 dark:text-gray-600">|</span>
+                  <span>Giờ {selectedHour}</span>
+                </>
+              )}
+              {birthYearChi && (
+                <>
+                  <span className="text-gray-300 dark:text-gray-600">|</span>
+                  <span>Tuổi {birthYearChi}</span>
+                </>
+              )}
             </div>
           </div>
+        </div>
 
-          {/* (Activity Picker moved to Top section) */}
+        {/* (Activity Picker moved to Top section) */}
       </div>
 
       {/* ══════════ Results Dashboard ══════════ */}
@@ -325,13 +388,11 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
 
           {/* Tab Content */}
           <div className="min-h-[200px]">
-
             {/* === TAB: Tổng quan === */}
             {activeResultTab === 'overview' && (
               <div className="space-y-4 animate-fade-scale">
                 {/* Unified Overview Card */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-3xl bg-surface-subtle-light dark:bg-black/20 border border-border-light/60 dark:border-white/5 relative overflow-hidden shadow-sm">
-                  
                   {/* Background ambient decoration */}
                   <div className="absolute -top-12 -right-12 w-48 h-48 bg-gold/5 dark:bg-gold-dark/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -343,15 +404,21 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
                         <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                           {result.bestHours[0].hourInfo.canChi.chi}
                         </p>
-                        <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider font-bold mt-1">Giờ tốt nhất</p>
-                        <p className="text-xs font-medium text-emerald-600/70 dark:text-emerald-400/70 mt-0.5">{result.bestHours[0].activityScore}%</p>
+                        <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider font-bold mt-1">
+                          Giờ tốt nhất
+                        </p>
+                        <p className="text-xs font-medium text-emerald-600/70 dark:text-emerald-400/70 mt-0.5">
+                          {result.bestHours[0].activityScore}%
+                        </p>
                       </div>
                     )}
-                    
+
                     {/* Day type mini-card */}
                     <div className="flex flex-col items-center justify-center p-3 sm:py-4 rounded-2xl bg-white/80 dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-sm w-full transition-transform hover:scale-[1.02]">
                       <p className="text-2xl font-bold">{dayType === 'Hoàng Đạo' ? '🌟' : '🌑'}</p>
-                      <p className="text-xs uppercase tracking-wider font-bold mt-1 text-text-secondary-light dark:text-text-secondary-dark">{dayType}</p>
+                      <p className="text-xs uppercase tracking-wider font-bold mt-1 text-text-secondary-light dark:text-text-secondary-dark">
+                        {dayType}
+                      </p>
                     </div>
                   </div>
 

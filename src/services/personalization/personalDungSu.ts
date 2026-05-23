@@ -29,29 +29,29 @@ export interface PersonalDungSuResult {
 export function getPersonalDungSu(
   birthYear: number | undefined | null,
   dayChi: Chi,
-  suitableActivities: string[]
+  suitableActivities: string[],
 ): PersonalDungSuResult {
   const result: PersonalDungSuResult = {
     recommended: [],
     warned: [],
-    regular: []
+    regular: [],
   };
 
   if (!suitableActivities || suitableActivities.length === 0 || !birthYear) {
     return result;
   }
 
-  const scoredActivities: ScoredActivity[] = suitableActivities.map(name => ({
+  const scoredActivities: ScoredActivity[] = suitableActivities.map((name) => ({
     name,
     score: 10,
     isBoosted: false,
-    isWarned: false
+    isWarned: false,
   }));
 
   // Personal Day Score Overlay
   const dayScore = calculatePersonalDayScore(birthYear, dayChi);
   if (dayScore) {
-    scoredActivities.forEach(act => {
+    scoredActivities.forEach((act) => {
       if (dayScore.actionScore >= 3) {
         act.score += 10;
         act.isBoosted = true;
@@ -67,7 +67,7 @@ export function getPersonalDungSu(
   // Sort and categorize
   scoredActivities.sort((a, b) => b.score - a.score);
 
-  scoredActivities.forEach(act => {
+  scoredActivities.forEach((act) => {
     if (act.score >= 15) {
       result.recommended.push(act);
     } else if (act.score < 5) {

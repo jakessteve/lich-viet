@@ -145,10 +145,7 @@ function createPngBlobFromElement(element: HTMLElement, backgroundColor: string)
   });
 }
 
-export async function downloadTuViChartAsImage(
-  selector: string,
-  filename: string,
-): Promise<void> {
+export async function downloadTuViChartAsImage(selector: string, filename: string): Promise<void> {
   const element = document.querySelector<HTMLElement>(selector);
   if (!element) {
     throw new Error('Không tìm thấy bảng Tử Vi để xuất ảnh.');
@@ -156,8 +153,7 @@ export async function downloadTuViChartAsImage(
 
   await waitForFonts();
 
-  const backgroundColor =
-    window.getComputedStyle(element).backgroundColor || 'rgb(255, 255, 255)';
+  const backgroundColor = window.getComputedStyle(element).backgroundColor || 'rgb(255, 255, 255)';
   const blob = await createPngBlobFromElement(element, backgroundColor);
   downloadBlob(blob, filename);
 }

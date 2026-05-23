@@ -31,21 +31,18 @@ export default function AmLichPage() {
   return (
     <div className="space-y-4">
       {/* Sub-tab navigation — Segmented Control */}
-      <nav
-        className="glass-card p-1.5 flex gap-1 flex-1"
-        role="tablist"
-        aria-label="Chức năng Âm Lịch"
-      >
+      <nav className="glass-card p-1.5 flex gap-1 flex-1" role="tablist" aria-label="Chức năng Âm Lịch">
         {SUB_TABS.map((tab) => (
           <button
             key={tab.id}
             role="tab"
             aria-selected={activeTab === tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === tab.id
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+              activeTab === tab.id
                 ? 'bg-gradient-to-r from-gold via-gold-light to-amber-500 text-white shadow-md shadow-gold/20'
                 : 'text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark hover:bg-gray-100 dark:hover:bg-white/5'
-              }`}
+            }`}
           >
             <span className="material-icons-round text-base">{tab.icon}</span>
             <span className="hidden sm:inline">{tab.label}</span>
@@ -56,16 +53,10 @@ export default function AmLichPage() {
 
       {/* Tab content */}
       <div className="animate-fade-scale">
-        {activeTab === 'am-lich' && (
-          <DetailedDayView date={selectedDate} data={data} />
-        )}
+        {activeTab === 'am-lich' && <DetailedDayView date={selectedDate} data={data} />}
         {activeTab === 'dung-su' && (
           <Suspense fallback={<LoadingState />}>
-            <DungSuView
-              selectedDate={selectedDate}
-              data={data}
-              onSelectDate={setSelectedDate}
-            />
+            <DungSuView selectedDate={selectedDate} data={data} onSelectDate={setSelectedDate} />
           </Suspense>
         )}
       </div>

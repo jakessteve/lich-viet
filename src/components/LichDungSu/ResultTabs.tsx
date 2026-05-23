@@ -40,12 +40,7 @@ function getTabsForIntent(intent: FAQIntent | null | undefined, hasResult: boole
   return base;
 }
 
-const ResultTabs: React.FC<ResultTabsProps> = ({
-  activeTab,
-  onTabChange,
-  intent,
-  hasResult,
-}) => {
+const ResultTabs: React.FC<ResultTabsProps> = ({ activeTab, onTabChange, intent, hasResult }) => {
   const tabs = getTabsForIntent(intent, hasResult);
 
   return (
@@ -62,7 +57,9 @@ const ResultTabs: React.FC<ResultTabsProps> = ({
                 : 'text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-white/5 hover:text-text-primary-light dark:hover:text-text-primary-dark'
             }`}
           >
-            <span className="material-icons-round" style={{ fontSize: '16px' }}>{tab.icon}</span>
+            <span className="material-icons-round" style={{ fontSize: '16px' }}>
+              {tab.icon}
+            </span>
             {tab.label}
           </button>
         );

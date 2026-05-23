@@ -214,14 +214,7 @@ function combineTrigramLines(upper: GieoQueTrigram, lower: GieoQueTrigram) {
 }
 
 function deriveMutualHexagram(
-  lines: [
-    GieoQueLineValue,
-    GieoQueLineValue,
-    GieoQueLineValue,
-    GieoQueLineValue,
-    GieoQueLineValue,
-    GieoQueLineValue,
-  ],
+  lines: [GieoQueLineValue, GieoQueLineValue, GieoQueLineValue, GieoQueLineValue, GieoQueLineValue, GieoQueLineValue],
 ) {
   const lower = getTrigramByLines([lines[1], lines[2], lines[3]]);
   const upper = getTrigramByLines([lines[2], lines[3], lines[4]]);
@@ -229,27 +222,13 @@ function deriveMutualHexagram(
 }
 
 function deriveChangedHexagram(
-  lines: [
-    GieoQueLineValue,
-    GieoQueLineValue,
-    GieoQueLineValue,
-    GieoQueLineValue,
-    GieoQueLineValue,
-    GieoQueLineValue,
-  ],
+  lines: [GieoQueLineValue, GieoQueLineValue, GieoQueLineValue, GieoQueLineValue, GieoQueLineValue, GieoQueLineValue],
   movingLine: number,
 ) {
   const changedLines = lines.map((lineValue, index) => {
     const position = index + 1;
     return position === movingLine ? ((lineValue === 1 ? 0 : 1) as GieoQueLineValue) : lineValue;
-  }) as [
-    GieoQueLineValue,
-    GieoQueLineValue,
-    GieoQueLineValue,
-    GieoQueLineValue,
-    GieoQueLineValue,
-    GieoQueLineValue,
-  ];
+  }) as [GieoQueLineValue, GieoQueLineValue, GieoQueLineValue, GieoQueLineValue, GieoQueLineValue, GieoQueLineValue];
 
   const lower = getTrigramByLines([changedLines[0], changedLines[1], changedLines[2]]);
   const upper = getTrigramByLines([changedLines[3], changedLines[4], changedLines[5]]);

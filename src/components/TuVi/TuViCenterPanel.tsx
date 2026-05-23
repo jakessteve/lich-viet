@@ -18,11 +18,7 @@ const FieldRow: React.FC<{ label: string; value: string }> = ({ label, value }) 
   </div>
 );
 
-export const TuViCenterPanel: React.FC<TuViCenterPanelProps> = ({
-  centerInfo,
-  huyenKhi,
-  hanContext,
-}) => {
+export const TuViCenterPanel: React.FC<TuViCenterPanelProps> = ({ centerInfo, huyenKhi, hanContext }) => {
   const hanLabel =
     hanContext?.daiHanPalaceName && hanContext.daiHanAgeRange
       ? `${hanContext.daiHanPalaceName} · ${hanContext.daiHanAgeRange}`

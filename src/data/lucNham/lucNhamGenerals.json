@@ -160,17 +160,17 @@
   ],
   "branchOrder": ["ti", "suu", "dan", "mao", "thin", "ty", "ngo", "mui", "than", "dau", "tuat", "hoi"],
   "branchNames": {
-    "ti":   { "vi": "Tý",   "cn": "子" },
-    "suu":  { "vi": "Sửu",  "cn": "丑" },
-    "dan":  { "vi": "Dần",  "cn": "寅" },
-    "mao":  { "vi": "Mão",  "cn": "卯" },
+    "ti": { "vi": "Tý", "cn": "子" },
+    "suu": { "vi": "Sửu", "cn": "丑" },
+    "dan": { "vi": "Dần", "cn": "寅" },
+    "mao": { "vi": "Mão", "cn": "卯" },
     "thin": { "vi": "Thìn", "cn": "辰" },
-    "ty":   { "vi": "Tỵ",   "cn": "巳" },
-    "ngo":  { "vi": "Ngọ",  "cn": "午" },
-    "mui":  { "vi": "Mùi",  "cn": "未" },
+    "ty": { "vi": "Tỵ", "cn": "巳" },
+    "ngo": { "vi": "Ngọ", "cn": "午" },
+    "mui": { "vi": "Mùi", "cn": "未" },
     "than": { "vi": "Thân", "cn": "申" },
-    "dau":  { "vi": "Dậu",  "cn": "酉" },
+    "dau": { "vi": "Dậu", "cn": "酉" },
     "tuat": { "vi": "Tuất", "cn": "戌" },
-    "hoi":  { "vi": "Hợi",  "cn": "亥" }
+    "hoi": { "vi": "Hợi", "cn": "亥" }
   }
 }

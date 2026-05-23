@@ -15,12 +15,12 @@
 export type FlyingStar = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export interface PalaceInfo {
-  position: string;      // N, NE, E, SE, S, SW, W, NW, Center
+  position: string; // N, NE, E, SE, S, SW, W, NW, Center
   positionVi: string;
   periodStar: FlyingStar;
   mountainStar: FlyingStar;
   waterStar: FlyingStar;
-  combination: string;   // e.g. "Double 8", "Reversed"
+  combination: string; // e.g. "Double 8", "Reversed"
   nature: 'cat' | 'hung' | 'trung';
   interpretation: string;
   remedy: string;
@@ -66,8 +66,6 @@ export const COMPASS_DIRECTIONS = [
   { id: 'NW3', vi: 'Hợi', degrees: '322.5°–337.5°', group: 'Tây Bắc' },
 ];
 
-
-
 /** Period determination from construction year */
 function getPeriod(constructionYear: number): { period: number; range: string } {
   if (constructionYear >= 2044) return { period: 1, range: '2044-2063' };
@@ -82,11 +80,9 @@ function getPeriod(constructionYear: number): { period: number; range: string } 
   return { period: 1, range: '1864-1883' };
 }
 
-
-
 /**
  * Flying star path through 9 palaces (Luo Shu flight path)
- * standard 1-9 Luo Shu indices: 
+ * standard 1-9 Luo Shu indices:
  * 5=Center, 6=NW, 7=W, 8=NE, 9=S, 1=N, 2=SW, 3=E, 4=SE
  */
 const FLIGHT_PATH = [5, 6, 7, 8, 9, 1, 2, 3, 4];
@@ -110,8 +106,14 @@ const LUOSHU_TO_GRID: Record<number, [number, number]> = {
 
 /** Map Direction groups to Luoshu Palace Numbers */
 const DIR_TO_LUOSHU: Record<string, number> = {
-  'Bắc': 1, 'Đông Bắc': 8, 'Đông': 3, 'Đông Nam': 4,
-  'Nam': 9, 'Tây Nam': 2, 'Tây': 7, 'Tây Bắc': 6,
+  Bắc: 1,
+  'Đông Bắc': 8,
+  Đông: 3,
+  'Đông Nam': 4,
+  Nam: 9,
+  'Tây Nam': 2,
+  Tây: 7,
+  'Tây Bắc': 6,
   'Trung Tâm': 5,
 };
 
@@ -121,14 +123,14 @@ const DIR_TO_LUOSHU: Record<string, number> = {
  */
 function generateStarGrid(centerStar: FlyingStar, reverse = false): FlyingStar[][] {
   const grid: FlyingStar[][] = Array.from({ length: 3 }, () => [1, 1, 1] as FlyingStar[]);
-  
+
   for (let i = 0; i < 9; i++) {
     const luoshuBase = FLIGHT_PATH[i]; // 5, 6, 7...
     let star: number;
     if (reverse) {
-      star = ((centerStar - 1) - i + 9) % 9 + 1;
+      star = ((centerStar - 1 - i + 9) % 9) + 1;
     } else {
-      star = ((centerStar - 1) + i) % 9 + 1;
+      star = ((centerStar - 1 + i) % 9) + 1;
     }
     const [row, col] = LUOSHU_TO_GRID[luoshuBase];
     grid[row][col] = star as FlyingStar;
@@ -142,21 +144,21 @@ function generateStarGrid(centerStar: FlyingStar, reverse = false): FlyingStar[]
  * Trigrams and their 3 mountains (Thiên, Địa, Nhân).
  * Determines polarity for forward/reverse flight.
  */
-const LUOSHU_MOUNTAIN_POLARITIES: Record<number, { mountains: string[], polarities: ('yang'|'yin')[] }> = {
-  1: { mountains: ['Nhâm', 'Tý', 'Quý'],   polarities: ['yang', 'yin', 'yin'] },
+const LUOSHU_MOUNTAIN_POLARITIES: Record<number, { mountains: string[]; polarities: ('yang' | 'yin')[] }> = {
+  1: { mountains: ['Nhâm', 'Tý', 'Quý'], polarities: ['yang', 'yin', 'yin'] },
   2: { mountains: ['Mùi', 'Khôn', 'Thân'], polarities: ['yin', 'yang', 'yang'] },
-  3: { mountains: ['Giáp', 'Mão', 'Ất'],   polarities: ['yang', 'yin', 'yin'] },
-  4: { mountains: ['Thìn', 'Tốn', 'Tỵ'],   polarities: ['yin', 'yang', 'yang'] },
-  6: { mountains: ['Tuất', 'Càn', 'Hợi'],  polarities: ['yin', 'yang', 'yang'] },
-  7: { mountains: ['Canh', 'Dậu', 'Tân'],  polarities: ['yang', 'yin', 'yin'] },
-  8: { mountains: ['Sửu', 'Cấn', 'Dần'],   polarities: ['yin', 'yang', 'yang'] },
+  3: { mountains: ['Giáp', 'Mão', 'Ất'], polarities: ['yang', 'yin', 'yin'] },
+  4: { mountains: ['Thìn', 'Tốn', 'Tỵ'], polarities: ['yin', 'yang', 'yang'] },
+  6: { mountains: ['Tuất', 'Càn', 'Hợi'], polarities: ['yin', 'yang', 'yang'] },
+  7: { mountains: ['Canh', 'Dậu', 'Tân'], polarities: ['yang', 'yin', 'yin'] },
+  8: { mountains: ['Sửu', 'Cấn', 'Dần'], polarities: ['yin', 'yang', 'yang'] },
   9: { mountains: ['Bính', 'Ngọ', 'Đinh'], polarities: ['yang', 'yin', 'yin'] },
 };
 
 /**
  * Determine if stars should fly forward or reverse.
- * 
- * Rule: 
+ *
+ * Rule:
  * 1. The original house sits/faces a specific mountain (e.g., Mùi).
  * 2. This mountain is one of 3 types: Địa (0), Thiên (1), or Nhân (2) Nguyên Long.
  * 3. Find the same Nguyên Long type on the Trigram of the `centerStar` entering the center.
@@ -165,19 +167,19 @@ const LUOSHU_MOUNTAIN_POLARITIES: Record<number, { mountains: string[], polariti
  */
 function shouldFlyReverse(centerStar: FlyingStar, originalHouseLuoshu: number, subDirection: string): boolean {
   if (!subDirection) return false;
-  
+
   // Find which Yuan (Earth=0, Heaven=1, Man=2) the house belongs to
   const originalHouseData = LUOSHU_MOUNTAIN_POLARITIES[originalHouseLuoshu];
   if (!originalHouseData) return false;
-  
+
   const yuanIndex = originalHouseData.mountains.indexOf(subDirection);
   if (yuanIndex === -1) return false; // Shouldn't happen
-  
+
   // Star 5 has no trigram, it borrows the original house's polarity
   const targetLuoshu = centerStar === 5 ? originalHouseLuoshu : centerStar;
   const targetData = LUOSHU_MOUNTAIN_POLARITIES[targetLuoshu];
   if (!targetData) return false;
-  
+
   const polarity = targetData.polarities[yuanIndex];
   return polarity === 'yin'; // Yin = Reverse (Nghịch), Yang = Forward (Thuận)
 }
@@ -189,7 +191,12 @@ function getGridStarForDirection(grid: FlyingStar[][], directionGroup: string): 
   return grid[row][col];
 }
 
-function getStarInterpretation(periodStar: FlyingStar, mountainStar: FlyingStar, waterStar: FlyingStar, period: number): {
+function getStarInterpretation(
+  periodStar: FlyingStar,
+  mountainStar: FlyingStar,
+  waterStar: FlyingStar,
+  period: number,
+): {
   combination: string;
   nature: PalaceInfo['nature'];
   interpretation: string;
@@ -255,15 +262,27 @@ function getStarInterpretation(periodStar: FlyingStar, mountainStar: FlyingStar,
 // ── Palace grid positions mapping ──────────────────────────────
 
 const GRID_TO_PALACE: string[] = [
-  'SE', 'S', 'SW',     // row 0: [0,0]=SE, [0,1]=S, [0,2]=SW
-  'E', 'Center', 'W',  // row 1
-  'NE', 'N', 'NW',     // row 2
+  'SE',
+  'S',
+  'SW', // row 0: [0,0]=SE, [0,1]=S, [0,2]=SW
+  'E',
+  'Center',
+  'W', // row 1
+  'NE',
+  'N',
+  'NW', // row 2
 ];
 
 const PALACE_VI: Record<string, string> = {
-  'N': 'Bắc', 'NE': 'Đông Bắc', 'E': 'Đông', 'SE': 'Đông Nam',
-  'S': 'Nam', 'SW': 'Tây Nam', 'W': 'Tây', 'NW': 'Tây Bắc',
-  'Center': 'Trung Tâm',
+  N: 'Bắc',
+  NE: 'Đông Bắc',
+  E: 'Đông',
+  SE: 'Đông Nam',
+  S: 'Nam',
+  SW: 'Tây Nam',
+  W: 'Tây',
+  NW: 'Tây Bắc',
+  Center: 'Trung Tâm',
 };
 
 // ── Main Public API ────────────────────────────────────────────
@@ -287,12 +306,17 @@ export function generateFlyingStarChart(
 
   // Generate star grids — Step 1: Period Grid
   const periodGrid = generateStarGrid(period as FlyingStar);
-  
+
   // Step 2: Determine Facing (Water) and Sitting (Mountain) Center Stars
   const opposites: Record<string, string> = {
-    'Bắc': 'Nam', 'Nam': 'Bắc', 'Đông': 'Tây', 'Tây': 'Đông',
-    'Đông Bắc': 'Tây Nam', 'Tây Nam': 'Đông Bắc',
-    'Đông Nam': 'Tây Bắc', 'Tây Bắc': 'Đông Nam',
+    Bắc: 'Nam',
+    Nam: 'Bắc',
+    Đông: 'Tây',
+    Tây: 'Đông',
+    'Đông Bắc': 'Tây Nam',
+    'Tây Nam': 'Đông Bắc',
+    'Đông Nam': 'Tây Bắc',
+    'Tây Bắc': 'Đông Nam',
   };
   const sittingDirection = opposites[facingDirection] || 'Nam';
 
@@ -300,8 +324,8 @@ export function generateFlyingStarChart(
   const mountainCenter = getGridStarForDirection(periodGrid, sittingDirection);
 
   // Determine facing/sitting sub-directions (for reverse check)
-  const facingSubDir = subDirection || COMPASS_DIRECTIONS.find(d => d.group === facingDirection)?.vi;
-  const sittingSubDir = COMPASS_DIRECTIONS.find(d => d.group === sittingDirection)?.vi;
+  const facingSubDir = subDirection || COMPASS_DIRECTIONS.find((d) => d.group === facingDirection)?.vi;
+  const sittingSubDir = COMPASS_DIRECTIONS.find((d) => d.group === sittingDirection)?.vi;
 
   const originalFacingLuoshu = DIR_TO_LUOSHU[facingDirection] || 9;
   const originalSittingLuoshu = DIR_TO_LUOSHU[sittingDirection] || 1;
@@ -337,8 +361,8 @@ export function generateFlyingStarChart(
   }
 
   // Overall assessment
-  const catCount = palaces.filter(p => p.nature === 'cat').length;
-  const hungCount = palaces.filter(p => p.nature === 'hung').length;
+  const catCount = palaces.filter((p) => p.nature === 'cat').length;
+  const hungCount = palaces.filter((p) => p.nature === 'hung').length;
 
   let overallAssessment: string;
   if (catCount >= 5) {
@@ -351,20 +375,20 @@ export function generateFlyingStarChart(
 
   // Main remedies
   const mainRemedies: string[] = [];
-  const hungPalaces = palaces.filter(p => p.nature === 'hung');
+  const hungPalaces = palaces.filter((p) => p.nature === 'hung');
   if (hungPalaces.length > 0) {
-    mainRemedies.push(`Hóa giải ${hungPalaces.length} cung hung: ${hungPalaces.map(p => p.positionVi).join(', ')}`);
+    mainRemedies.push(`Hóa giải ${hungPalaces.length} cung hung: ${hungPalaces.map((p) => p.positionVi).join(', ')}`);
   }
-  const star5Palaces = palaces.filter(p => p.mountainStar === 5 || p.waterStar === 5);
+  const star5Palaces = palaces.filter((p) => p.mountainStar === 5 || p.waterStar === 5);
   if (star5Palaces.length > 0) {
     mainRemedies.push('Đặt chuông gió kim loại 6 ống ở các cung có sao 5 Hoàng');
   }
-  const catPalaces = palaces.filter(p => p.nature === 'cat');
+  const catPalaces = palaces.filter((p) => p.nature === 'cat');
   if (catPalaces.length > 0) {
-    mainRemedies.push(`Kích hoạt ${catPalaces.length} cung cát: ${catPalaces.map(p => p.positionVi).join(', ')}`);
+    mainRemedies.push(`Kích hoạt ${catPalaces.length} cung cát: ${catPalaces.map((p) => p.positionVi).join(', ')}`);
   }
 
-  const facingDir = COMPASS_DIRECTIONS.find(d => d.group === facingDirection);
+  const facingDir = COMPASS_DIRECTIONS.find((d) => d.group === facingDirection);
 
   return {
     period,
@@ -391,7 +415,7 @@ export function calculateAnnualStar(year: number): {
   interpretation: string;
 } {
   // Standard formula: reverse Lạc Thư cycle, anchored to known reference
-  const raw = ((11 - (year - 1864) % 9) % 9) || 9;
+  const raw = (11 - ((year - 1864) % 9)) % 9 || 9;
   const centerStar = raw > 0 ? raw : 9;
 
   // Generate the 3x3 grid from the center star using Lạc Thư ordering
@@ -401,24 +425,31 @@ export function calculateAnnualStar(year: number): {
     [8, 1, 6],
   ];
   const offset = centerStar - 5;
-  const starGrid = lacThuOrder.map(row =>
-    row.map(cell => ((cell + offset - 1 + 9) % 9) + 1)
-  );
+  const starGrid = lacThuOrder.map((row) => row.map((cell) => ((cell + offset - 1 + 9) % 9) + 1));
 
   const starNames: Record<number, string> = {
-    1: 'Nhất Bạch (Thủy)', 2: 'Nhị Hắc (Thổ)', 3: 'Tam Bích (Mộc)',
-    4: 'Tứ Lục (Mộc)', 5: 'Ngũ Hoàng (Thổ)', 6: 'Lục Bạch (Kim)',
-    7: 'Thất Xích (Kim)', 8: 'Bát Bạch (Thổ)', 9: 'Cửu Tử (Hỏa)',
+    1: 'Nhất Bạch (Thủy)',
+    2: 'Nhị Hắc (Thổ)',
+    3: 'Tam Bích (Mộc)',
+    4: 'Tứ Lục (Mộc)',
+    5: 'Ngũ Hoàng (Thổ)',
+    6: 'Lục Bạch (Kim)',
+    7: 'Thất Xích (Kim)',
+    8: 'Bát Bạch (Thổ)',
+    9: 'Cửu Tử (Hỏa)',
   };
 
   return {
     centerStar,
     starGrid,
     interpretation: `Năm ${centerStar}: Sao ${starNames[centerStar] || ''} nhập trung cung. ${
-      [1, 6, 8].includes(centerStar) ? 'Năm tài lộc, may mắn.' :
-      [2, 5].includes(centerStar) ? 'Năm cần cẩn trọng sức khỏe, đặt hóa giải tại trung cung.' :
-      centerStar === 9 ? 'Năm phát triển, danh tiếng.' :
-      'Năm bình thường, giữ ổn định.'
+      [1, 6, 8].includes(centerStar)
+        ? 'Năm tài lộc, may mắn.'
+        : [2, 5].includes(centerStar)
+          ? 'Năm cần cẩn trọng sức khỏe, đặt hóa giải tại trung cung.'
+          : centerStar === 9
+            ? 'Năm phát triển, danh tiếng.'
+            : 'Năm bình thường, giữ ổn định.'
     }`,
   };
 }
@@ -427,27 +458,38 @@ export function calculateAnnualStar(year: number): {
  * P2.7: Calculate monthly Flying Star center number.
  * Each month shifts the annual center star by a fixed offset.
  */
-export function calculateMonthlyStar(year: number, lunarMonth: number): {
+export function calculateMonthlyStar(
+  year: number,
+  lunarMonth: number,
+): {
   centerStar: number;
   interpretation: string;
 } {
-
   // Monthly offset: based on which "group" the year belongs to
   const yearGroup = (year - 1864) % 3; // 0, 1, 2
   const monthBase = [2, 5, 8][yearGroup]; // Starting month center for each group
   const centerStar = ((monthBase + lunarMonth - 1 - 1 + 9) % 9) + 1;
 
   const starNames: Record<number, string> = {
-    1: 'Nhất Bạch', 2: 'Nhị Hắc', 3: 'Tam Bích',
-    4: 'Tứ Lục', 5: 'Ngũ Hoàng', 6: 'Lục Bạch',
-    7: 'Thất Xích', 8: 'Bát Bạch', 9: 'Cửu Tử',
+    1: 'Nhất Bạch',
+    2: 'Nhị Hắc',
+    3: 'Tam Bích',
+    4: 'Tứ Lục',
+    5: 'Ngũ Hoàng',
+    6: 'Lục Bạch',
+    7: 'Thất Xích',
+    8: 'Bát Bạch',
+    9: 'Cửu Tử',
   };
 
   return {
     centerStar,
     interpretation: `Tháng ${lunarMonth}: Sao ${starNames[centerStar] || ''} nhập trung. ${
-      [2, 5].includes(centerStar) ? 'Tháng cần hóa giải.' :
-      [1, 6, 8].includes(centerStar) ? 'Tháng thuận lợi.' : 'Tháng bình thường.'
+      [2, 5].includes(centerStar)
+        ? 'Tháng cần hóa giải.'
+        : [1, 6, 8].includes(centerStar)
+          ? 'Tháng thuận lợi.'
+          : 'Tháng bình thường.'
     }`,
   };
 }

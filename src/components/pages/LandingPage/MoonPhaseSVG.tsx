@@ -22,7 +22,11 @@ export default function MoonPhaseSVG({ lunarDay }: { lunarDay: number }) {
   const terminatorX = cx + (isWaxing ? -1 : 1) * r * (1 - illumination * 2);
 
   return (
-    <svg viewBox="0 0 80 80" className="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-lg" aria-label={`Pha trăng ngày ${lunarDay}`}>
+    <svg
+      viewBox="0 0 80 80"
+      className="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-lg"
+      aria-label={`Pha trăng ngày ${lunarDay}`}
+    >
       <defs>
         {/* Ambient glow */}
         <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">

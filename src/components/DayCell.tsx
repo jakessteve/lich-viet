@@ -19,9 +19,12 @@ const DayCellInner: React.FC<DayCellProps> = ({ data, isSelected, onClick, round
 
   const getDotColor = () => {
     switch (dayQuality) {
-      case 'Good': return 'bg-emerald-500';
-      case 'Bad': return 'bg-red-500 dark:bg-red-400';
-      default: return null;
+      case 'Good':
+        return 'bg-emerald-500';
+      case 'Bad':
+        return 'bg-red-500 dark:bg-red-400';
+      default:
+        return null;
     }
   };
 
@@ -56,18 +59,28 @@ const DayCellInner: React.FC<DayCellProps> = ({ data, isSelected, onClick, round
         active:scale-95
         ${isToday ? 'bg-amber-50/60 dark:bg-amber-900/20 day-cell-today' : 'bg-surface-light dark:bg-surface-dark'}
         ${roundedClass}
-        ${isSelected && !isToday
-          ? 'day-cell-selected bg-gray-50 dark:bg-gray-800/60'
-          : !isToday ? 'hover:bg-gray-50 dark:hover:bg-white/5' : ''}
-        ${isSelected && !isToday
-          ? ''
-          : isToday ? 'focus:outline-none' : 'focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-inset'}
+        ${
+          isSelected && !isToday
+            ? 'day-cell-selected bg-gray-50 dark:bg-gray-800/60'
+            : !isToday
+              ? 'hover:bg-gray-50 dark:hover:bg-white/5'
+              : ''
+        }
+        ${
+          isSelected && !isToday
+            ? ''
+            : isToday
+              ? 'focus:outline-none'
+              : 'focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-inset'
+        }
       `}
     >
-      <span className={`
+      <span
+        className={`
         text-xs sm:text-sm font-medium mb-0.5 relative z-10
         ${isToday ? 'text-primary' : isWeekend ? 'text-calendar-weekend' : 'text-text-primary-light dark:text-text-primary-dark'}
-      `}>
+      `}
+      >
         {solarDate}
       </span>
       <span className="text-xs leading-none text-text-secondary-light dark:text-text-secondary-dark font-semibold relative z-10">
@@ -80,20 +93,31 @@ const DayCellInner: React.FC<DayCellProps> = ({ data, isSelected, onClick, round
           dayQuality === 'Good' ? (
             <div className={`w-1.5 h-1.5 rounded-full ${dotColor}`} title="Hoàng Đạo (ngày tốt)" aria-hidden="true" />
           ) : (
-            <div className="w-1.5 h-1.5 bg-red-500 dark:bg-red-400 rotate-45" title="Hắc Đạo (ngày xấu)" aria-hidden="true" />
+            <div
+              className="w-1.5 h-1.5 bg-red-500 dark:bg-red-400 rotate-45"
+              title="Hắc Đạo (ngày xấu)"
+              aria-hidden="true"
+            />
           )
         ) : (
           <div className="w-1.5 h-1.5 bg-transparent" aria-hidden="true" />
         )}
-        
+
         {/* WCAG compliant Personal Score Badge */}
-        {personalScore && (
-          personalScore.actionScore >= 3 ? (
-            <div className="w-1.5 h-1.5 rounded-sm bg-purple-500" title={`Cát theo tuổi: ${personalScore.label}`} aria-hidden="true" /> // Square for personal good
+        {personalScore &&
+          (personalScore.actionScore >= 3 ? (
+            <div
+              className="w-1.5 h-1.5 rounded-sm bg-purple-500"
+              title={`Cát theo tuổi: ${personalScore.label}`}
+              aria-hidden="true"
+            /> // Square for personal good
           ) : personalScore.actionScore < 0 ? (
-            <div className="w-1.5 h-1.5 bg-orange-500 rotate-45" title={`Hung theo tuổi: ${personalScore.label}`} aria-hidden="true" /> // Diamond for personal bad
-          ) : null
-        )}
+            <div
+              className="w-1.5 h-1.5 bg-orange-500 rotate-45"
+              title={`Hung theo tuổi: ${personalScore.label}`}
+              aria-hidden="true"
+            /> // Diamond for personal bad
+          ) : null)}
       </div>
     </div>
   );

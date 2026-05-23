@@ -42,9 +42,7 @@ describe('dungSuEngine', () => {
 
     it('handles Sát Sư Nhật', () => {
       const mockModifying: ModifyingLayerResult = {
-        stars: [
-          { name: 'Sát Sư Nhật', type: 'Bad', weight: -5, description: 'Sát sư' },
-        ],
+        stars: [{ name: 'Sát Sư Nhật', type: 'Bad', weight: -5, description: 'Sát sư' }],
         trucDetail: { name: 'Mãn', quality: 'Good', description: 'Ngày Mãn' },
         tuDetail: { name: 'Sao 4', quality: 'Good', description: 'Tú 4' },
       };

@@ -65,9 +65,7 @@ describe('calculatePalaceScore', () => {
 
   it('adds Tứ Hóa bonuses', () => {
     const palace = makePalace({
-      chinhTinh: [
-        { name: 'Tử Vi', type: 'chinhTinh', nguHanh: 'Âm Thổ', brightness: 'Bình' },
-      ],
+      chinhTinh: [{ name: 'Tử Vi', type: 'chinhTinh', nguHanh: 'Âm Thổ', brightness: 'Bình' }],
       tuHoa: [
         { type: 'Lộc', starName: 'Tử Vi', sourceCan: 'Giáp' },
         { type: 'Kỵ', starName: 'Thiên Cơ', sourceCan: 'Giáp' },
@@ -79,18 +77,10 @@ describe('calculatePalaceScore', () => {
 
   it('combines all star types and Tứ Hóa', () => {
     const palace = makePalace({
-      chinhTinh: [
-        { name: 'Tử Vi', type: 'chinhTinh', nguHanh: 'Âm Thổ', brightness: 'Miếu' },
-      ],
-      phuTinh: [
-        { name: 'Văn Xương', type: 'phuTinh', nguHanh: 'Âm Kim', brightness: 'Vượng' },
-      ],
-      satTinh: [
-        { name: 'Kình Dương', type: 'satTinh', nguHanh: 'Dương Kim', brightness: 'Bình' },
-      ],
-      tuHoa: [
-        { type: 'Quyền', starName: 'Vũ Khúc', sourceCan: 'Giáp' },
-      ],
+      chinhTinh: [{ name: 'Tử Vi', type: 'chinhTinh', nguHanh: 'Âm Thổ', brightness: 'Miếu' }],
+      phuTinh: [{ name: 'Văn Xương', type: 'phuTinh', nguHanh: 'Âm Kim', brightness: 'Vượng' }],
+      satTinh: [{ name: 'Kình Dương', type: 'satTinh', nguHanh: 'Dương Kim', brightness: 'Bình' }],
+      tuHoa: [{ type: 'Quyền', starName: 'Vũ Khúc', sourceCan: 'Giáp' }],
     });
     // Miếu chính = 10, Vượng phụ = 5, Bình sát = 0, Quyền +4
     expect(calculatePalaceScore(palace)).toBe(19);
@@ -99,9 +89,7 @@ describe('calculatePalaceScore', () => {
 
 describe('calculateHuyenKhi', () => {
   it('returns 0 total for empty palaces and no combinations', () => {
-    const palaces = Array.from({ length: 12 }, (_, i) =>
-      makePalace({ id: i, name: `Cung ${i}` }),
-    );
+    const palaces = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
     const result = calculateHuyenKhi(palaces, []);
     expect(result.totalScore).toBe(0);
     expect(result.grade).toBe('Hạ Cách');
@@ -112,9 +100,7 @@ describe('calculateHuyenKhi', () => {
       makePalace({
         id: i,
         name: `Cung ${i}`,
-        chinhTinh: [
-          { name: 'Tử Vi', type: 'chinhTinh', nguHanh: 'Âm Thổ', brightness: 'Bình' },
-        ],
+        chinhTinh: [{ name: 'Tử Vi', type: 'chinhTinh', nguHanh: 'Âm Thổ', brightness: 'Bình' }],
       }),
     );
     const result = calculateHuyenKhi(palaces, []);
@@ -156,17 +142,18 @@ describe('calculateHuyenKhi', () => {
   it('assigns correct grades by threshold', () => {
     const emptyPalaces = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
 
-    const makeCatCombos = (length: number): TuViCombination[] => Array.from({ length }, () => ({
-      name: 'Test',
-      nameHanViet: '測',
-      involvedStars: [],
-      involvedCung: [],
-      detectionReason: 'Test',
-      purity: 'thuần',
-      strength: 5,
-      note: '',
-      category: 'cat',
-    }));
+    const makeCatCombos = (length: number): TuViCombination[] =>
+      Array.from({ length }, () => ({
+        name: 'Test',
+        nameHanViet: '測',
+        involvedStars: [],
+        involvedCung: [],
+        detectionReason: 'Test',
+        purity: 'thuần',
+        strength: 5,
+        note: '',
+        category: 'cat',
+      }));
 
     // >=25 → Thượng Cách
     expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(65)).totalScore).toBe(25.3);

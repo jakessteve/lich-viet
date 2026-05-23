@@ -40,7 +40,15 @@ function jdFromDate(day: number, month: number, year: number): number {
   const a = Math.floor((14 - month) / 12);
   const y = year + 4800 - a;
   const m = month + 12 * a - 3;
-  return day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+  return (
+    day +
+    Math.floor((153 * m + 2) / 5) +
+    365 * y +
+    Math.floor(y / 4) -
+    Math.floor(y / 100) +
+    Math.floor(y / 400) -
+    32045
+  );
 }
 
 function getNewMoonDay(swe: SwissEphemerisInstance, k: number, timeZone: number): number {
@@ -164,9 +172,17 @@ export function getSwissTrueSolarTime(swe: SwissEphemerisInstance, utcDate: Date
   const jd = swe.dateToJulianDay(utcDate);
   const T = (jd - 2451545.0) / 36525;
   const meanLongitude = normalizeDegrees(280.46607 + 36000.7698 * T + 0.0003032 * T * T);
-  const sun = swe.calculatePosition(jd, Planet.Sun, CalculationFlag.MoshierEphemeris | CalculationFlag.Equatorial | CalculationFlag.Speed);
+  const sun = swe.calculatePosition(
+    jd,
+    Planet.Sun,
+    CalculationFlag.MoshierEphemeris | CalculationFlag.Equatorial | CalculationFlag.Speed,
+  );
   const equationOfTimeHours = signedLongitudeDelta(meanLongitude, sun.longitude) / 15;
-  const utcHours = utcDate.getUTCHours() + utcDate.getUTCMinutes() / 60 + utcDate.getUTCSeconds() / 3600 + utcDate.getUTCMilliseconds() / 3600000;
+  const utcHours =
+    utcDate.getUTCHours() +
+    utcDate.getUTCMinutes() / 60 +
+    utcDate.getUTCSeconds() / 3600 +
+    utcDate.getUTCMilliseconds() / 3600000;
   const trueSolarHours = utcHours + longitude / 15 + equationOfTimeHours;
   const result = new Date(utcDate.getTime());
   result.setUTCHours(0, 0, 0, 0);
@@ -179,7 +195,7 @@ export async function getSwissLunarDate(
   region: 'north' | 'south' = 'south',
   swe?: SwissEphemerisInstance,
 ): Promise<SwissLunarDate> {
-  const engine = swe ?? await initSwissEphemeris();
+  const engine = swe ?? (await initSwissEphemeris());
   const timeZone = getVietnamUtcOffset(date, region);
   const dayNumber = jdFromDate(date.getDate(), date.getMonth() + 1, date.getFullYear());
   const k = Math.floor((dayNumber - NEW_MOON_EPOCH) / SYNODIC_MONTH);
@@ -228,9 +244,12 @@ export async function getSwissLunarDate(
   const nearestTermLongitude = normalizeDegrees(Math.round(sunLongitude / 15) * 15);
   const boundaryJd = findSwissSolarTermBoundary(engine, jd, nearestTermLongitude);
   const boundaryDiffSeconds = Math.abs(jd - boundaryJd) * 86400;
-  const boundaryWarnings = boundaryDiffSeconds <= BOUNDARY_WARNING_SECONDS
-    ? [`Thời điểm cách ranh giới Tiết Khí ${TIET_KHI_NAMES[Math.round(nearestTermLongitude / 15) % 24]} khoảng ${Math.round(boundaryDiffSeconds)} giây.`]
-    : [];
+  const boundaryWarnings =
+    boundaryDiffSeconds <= BOUNDARY_WARNING_SECONDS
+      ? [
+          `Thời điểm cách ranh giới Tiết Khí ${TIET_KHI_NAMES[Math.round(nearestTermLongitude / 15) % 24]} khoảng ${Math.round(boundaryDiffSeconds)} giây.`,
+        ]
+      : [];
 
   return {
     day: lunarDay,

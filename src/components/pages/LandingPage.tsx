@@ -1,7 +1,16 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useNavigate } from 'react-router-dom';
-import { getLunarDate, getCanChiDay, getCanChiYear, getCanChiMonth, getDayQuality, getSolarTerm, getAuspiciousHours, parseCanChi } from '@lich-viet/core/calendar';
+import {
+  getLunarDate,
+  getCanChiDay,
+  getCanChiYear,
+  getCanChiMonth,
+  getDayQuality,
+  getSolarTerm,
+  getAuspiciousHours,
+  parseCanChi,
+} from '@lich-viet/core/calendar';
 import { getJDN } from '@lich-viet/core/calendar';
 import { NAP_AM_MAPPING } from '@lich-viet/core';
 import CosmicWeatherCard from './LandingPage/CosmicWeatherCard';
@@ -46,7 +55,7 @@ export default function LandingPage() {
     const dayOfWeek = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'][now.getDay()];
 
     const canChiDayParsed = parseCanChi(canChiDay);
-    const napAm = canChiDayParsed ? (NAP_AM_MAPPING[`${canChiDayParsed.can} ${canChiDayParsed.chi}`] || '') : '';
+    const napAm = canChiDayParsed ? NAP_AM_MAPPING[`${canChiDayParsed.can} ${canChiDayParsed.chi}`] || '' : '';
     const auspiciousHoursCount = getAuspiciousHours(now).length;
 
     return {
@@ -79,14 +88,16 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen transition-colors duration-300 overflow-x-hidden relative">
-
       {/* ──── Base Global Background ──── */}
       <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
         <div className="hidden dark:block absolute inset-0 bg-gradient-to-b from-mystery-deep via-[#0f0a24] to-mystery-deep" />
       </div>
 
       {/* ──── Subtle hero texture from the legacy landing page ──── */}
-      <div className="absolute top-0 left-0 right-0 h-[1180px] pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+      <div
+        className="absolute top-0 left-0 right-0 h-[1180px] pointer-events-none z-0 overflow-hidden"
+        aria-hidden="true"
+      >
         <div
           className="absolute inset-0 opacity-[0.35] dark:opacity-[0.16]"
           style={{
@@ -114,7 +125,6 @@ export default function LandingPage() {
           ))}
         </div>
       </div>
-
 
       {/* ──── Floating Nav ──── */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-nav">
@@ -157,13 +167,14 @@ export default function LandingPage() {
         </div>
 
         <div className="max-w-5xl mx-auto relative z-10">
-
           {/* ── Asymmetric headline block ── */}
           <div className="text-left max-w-3xl mb-16 relative z-10">
             {/* Authority badge */}
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container-low dark:bg-gold-dark/6 mb-5 backdrop-blur-sm animate-fade-in-up">
               <span className="material-icons-round text-xs text-gold dark:text-gold-dark">science</span>
-              <span className="text-xs sm:text-xs font-medium text-gold dark:text-gold-dark tracking-wide">Tính toán thiên văn chính xác</span>
+              <span className="text-xs sm:text-xs font-medium text-gold dark:text-gold-dark tracking-wide">
+                Tính toán thiên văn chính xác
+              </span>
             </div>
 
             {/* Hook headline — benefit-driven, more breathing room */}
@@ -181,7 +192,9 @@ export default function LandingPage() {
               4 công cụ âm lịch & phong thủy trong một ứng dụng.
               <br className="hidden sm:block" />
               Lịch âm, Dụng Sự, Gieo Quẻ, Tử Vi —{' '}
-              <span className="font-semibold text-text-primary-light dark:text-text-primary-dark">chính xác theo chuẩn học thuật.</span>
+              <span className="font-semibold text-text-primary-light dark:text-text-primary-dark">
+                chính xác theo chuẩn học thuật.
+              </span>
             </p>
 
             {/* Benefit pills */}
@@ -191,7 +204,10 @@ export default function LandingPage() {
                 { icon: 'wifi_off', text: 'Hoạt động offline' },
                 { icon: 'shield', text: 'Bảo mật ưu tiên' },
               ].map((t) => (
-                <span key={t.text} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-low dark:bg-white/5 text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark backdrop-blur-sm">
+                <span
+                  key={t.text}
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-low dark:bg-white/5 text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark backdrop-blur-sm"
+                >
                   <span className="material-icons-round text-xs text-gold dark:text-gold-dark">{t.icon}</span>
                   {t.text}
                 </span>
@@ -205,7 +221,9 @@ export default function LandingPage() {
                 className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-mystery-deep to-indigo-950 text-gold-light dark:from-gold dark:to-amber-500 dark:text-indigo-950 font-bold transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-mystery-deep/20 dark:hover:shadow-gold-dark/30 ring-1 ring-gold/20 dark:ring-0"
               >
                 Trải nghiệm ngay
-                <span className="material-icons-round text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                <span className="material-icons-round text-lg group-hover:translate-x-0.5 transition-transform">
+                  arrow_forward
+                </span>
               </button>
               <button
                 onClick={() => navigate('/app/nang-cap')}
@@ -221,7 +239,6 @@ export default function LandingPage() {
                Symmetric 3-card grid: Today | Birthday | Cosmic
              ══════════════════════════════════════════════════════ */}
           <div id="cosmic-section" className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-in-up animate-delay-5">
-
             {/* ── Card 1: Today's Details ── */}
             <button
               onClick={() => navigate('/app/am-lich')}
@@ -230,8 +247,12 @@ export default function LandingPage() {
               {/* Card header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-[0.15em] text-text-secondary-light/60 dark:text-text-secondary-dark/60">Hôm nay</span>
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border ${qualityColor}`}>
+                  <span className="text-xs font-bold uppercase tracking-[0.15em] text-text-secondary-light/60 dark:text-text-secondary-dark/60">
+                    Hôm nay
+                  </span>
+                  <span
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border ${qualityColor}`}
+                  >
                     <span className="material-icons-round text-xs">{qualityIcon}</span>
                     {qualityLabel}
                   </span>
@@ -247,7 +268,9 @@ export default function LandingPage() {
                   <MoonPhaseSVG lunarDay={today.lunar.day} />
                 </div>
                 <div>
-                  <p className="text-sm font-bold leading-snug">{today.dayOfWeek}, {today.solarDate}</p>
+                  <p className="text-sm font-bold leading-snug">
+                    {today.dayOfWeek}, {today.solarDate}
+                  </p>
                   <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark">
                     Âm lịch {today.lunar.day}/{today.lunar.month} · {today.moonPhase}
                   </p>
@@ -257,19 +280,29 @@ export default function LandingPage() {
               {/* Details grid */}
               <div className="mt-auto space-y-2 pt-3 border-t border-border-light/15 dark:border-white/[0.04]">
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="material-icons-round text-xs text-gold/50 dark:text-gold-dark/40">calendar_today</span>
+                  <span className="material-icons-round text-xs text-gold/50 dark:text-gold-dark/40">
+                    calendar_today
+                  </span>
                   <span className="text-text-secondary-light dark:text-text-secondary-dark">
                     {today.canChiDay}
-                    {today.napAm && <span className="text-text-secondary-light/60 dark:text-text-secondary-dark/60 ml-1">({today.napAm})</span>}
+                    {today.napAm && (
+                      <span className="text-text-secondary-light/60 dark:text-text-secondary-dark/60 ml-1">
+                        ({today.napAm})
+                      </span>
+                    )}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <span className="material-icons-round text-xs text-gold/50 dark:text-gold-dark/40">schedule</span>
-                  <span className="text-text-secondary-light dark:text-text-secondary-dark">{today.auspiciousHoursCount} giờ hoàng đạo</span>
+                  <span className="text-text-secondary-light dark:text-text-secondary-dark">
+                    {today.auspiciousHoursCount} giờ hoàng đạo
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <span className="material-icons-round text-xs text-gold/50 dark:text-gold-dark/40">wb_sunny</span>
-                  <span className="text-text-secondary-light dark:text-text-secondary-dark">{today.solarTerm || 'Tiết khí đang cập nhật'}</span>
+                  <span className="text-text-secondary-light dark:text-text-secondary-dark">
+                    {today.solarTerm || 'Tiết khí đang cập nhật'}
+                  </span>
                 </div>
               </div>
             </button>
@@ -304,16 +337,40 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
-              { value: lookupCount.toLocaleString('vi-VN'), suffix: '+', label: 'Lượt tra cứu', icon: 'search', iconTint: 'text-blue-500/60 dark:text-blue-400/50', accentColor: 'text-blue-500 dark:text-blue-400' },
-              { value: dataCount.toLocaleString('vi-VN'), suffix: '+', label: 'Dữ liệu thiên văn', icon: 'database', iconTint: 'text-teal-500/60 dark:text-teal-400/50', accentColor: 'text-teal-500 dark:text-teal-400' },
-              { value: toolsCount.toLocaleString('vi-VN'), suffix: ' công cụ', label: 'Đang hoạt động', icon: 'auto_awesome', iconTint: 'text-purple-500/60 dark:text-purple-400/50', accentColor: 'text-purple-500 dark:text-purple-400' },
+              {
+                value: lookupCount.toLocaleString('vi-VN'),
+                suffix: '+',
+                label: 'Lượt tra cứu',
+                icon: 'search',
+                iconTint: 'text-blue-500/60 dark:text-blue-400/50',
+                accentColor: 'text-blue-500 dark:text-blue-400',
+              },
+              {
+                value: dataCount.toLocaleString('vi-VN'),
+                suffix: '+',
+                label: 'Dữ liệu thiên văn',
+                icon: 'database',
+                iconTint: 'text-teal-500/60 dark:text-teal-400/50',
+                accentColor: 'text-teal-500 dark:text-teal-400',
+              },
+              {
+                value: toolsCount.toLocaleString('vi-VN'),
+                suffix: ' công cụ',
+                label: 'Đang hoạt động',
+                icon: 'auto_awesome',
+                iconTint: 'text-purple-500/60 dark:text-purple-400/50',
+                accentColor: 'text-purple-500 dark:text-purple-400',
+              },
             ].map((s) => (
               <div key={s.label} className="text-center py-6 px-4 glass-card glass-noise">
                 <span className={`material-icons-round text-lg ${s.iconTint} mb-1.5 block`}>{s.icon}</span>
                 <p className="text-2xl sm:text-3xl font-bold tabular-nums">
-                  {s.value}<span className={s.accentColor}>{s.suffix}</span>
+                  {s.value}
+                  <span className={s.accentColor}>{s.suffix}</span>
                 </p>
-                <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark font-medium uppercase tracking-wider mt-1">{s.label}</p>
+                <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark font-medium uppercase tracking-wider mt-1">
+                  {s.label}
+                </p>
               </div>
             ))}
           </div>
@@ -330,7 +387,9 @@ export default function LandingPage() {
         </div>
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="text-center mb-12">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold dark:text-gold-dark mb-2">Tính năng</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold dark:text-gold-dark mb-2">
+              Tính năng
+            </p>
             <h3 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3 mystery-text-glow">
               4 công cụ trong một ứng dụng
             </h3>
@@ -348,15 +407,19 @@ export default function LandingPage() {
               <div className="flex-1 h-px bg-border-light/20 dark:bg-border-dark/20" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {FEATURES.filter(f => f.tier === 'Cơ bản').map((f) => (
+              {FEATURES.filter((f) => f.tier === 'Cơ bản').map((f) => (
                 <button
                   key={f.id}
                   onClick={() => navigate(`/app/${f.id}`)}
                   className="group relative w-full h-full flex flex-col justify-start items-start text-left p-6 rounded-2xl bg-surface-container-lowest dark:bg-surface-dark hover:bg-surface-bright transition-colors duration-500"
                 >
-                  <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${f.glowColor} dark:opacity-100 opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none`} />
+                  <div
+                    className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${f.glowColor} dark:opacity-100 opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none`}
+                  />
                   <div className="relative flex items-start gap-3">
-                    <div className={`w-10 h-10 rounded-xl ${f.iconBg} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                    <div
+                      className={`w-10 h-10 rounded-xl ${f.iconBg} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300`}
+                    >
                       <span className={`material-icons-round text-lg ${f.iconColor}`}>{f.icon}</span>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -396,10 +459,10 @@ export default function LandingPage() {
         </div>
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold dark:text-gold-dark mb-2">Tại sao chọn Lịch Việt</p>
-            <h3 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">
-              Được xây dựng vì người dùng
-            </h3>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold dark:text-gold-dark mb-2">
+              Tại sao chọn Lịch Việt
+            </p>
+            <h3 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">Được xây dựng vì người dùng</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -426,12 +489,19 @@ export default function LandingPage() {
                 iconColor: 'text-purple-500 dark:text-purple-400',
               },
             ].map((v) => (
-              <div key={v.title} className="group p-6 rounded-2xl bg-surface-container-lowest dark:bg-surface-dark hover:bg-surface-bright transition-colors duration-500">
-                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${v.accent} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500`}>
+              <div
+                key={v.title}
+                className="group p-6 rounded-2xl bg-surface-container-lowest dark:bg-surface-dark hover:bg-surface-bright transition-colors duration-500"
+              >
+                <div
+                  className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${v.accent} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500`}
+                >
                   <span className={`material-icons-round text-xl ${v.iconColor}`}>{v.icon}</span>
                 </div>
                 <h4 className="text-sm font-bold mb-1.5">{v.title}</h4>
-                <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark leading-relaxed">{v.desc}</p>
+                <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark leading-relaxed">
+                  {v.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -444,20 +514,21 @@ export default function LandingPage() {
       <section className="py-14 sm:py-20 px-5 relative z-10 overflow-hidden">
         <div className="max-w-2xl mx-auto relative z-10">
           <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold dark:text-gold-dark mb-2">Gói nâng cao</p>
-            <h3 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">
-              Sắp ra mắt
-            </h3>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold dark:text-gold-dark mb-2">
+              Gói nâng cao
+            </p>
+            <h3 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">Sắp ra mắt</h3>
             <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark max-w-md mx-auto mb-8">
-              Các tiện ích nâng cao đang được phát triển.
-              Hãy dùng thử các công cụ cơ bản ngay hôm nay.
+              Các tiện ích nâng cao đang được phát triển. Hãy dùng thử các công cụ cơ bản ngay hôm nay.
             </p>
             <button
               onClick={() => navigate('/app/am-lich')}
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-mystery-deep to-indigo-950 text-gold-light dark:from-gold dark:to-amber-500 dark:text-indigo-950 font-bold transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-mystery-deep/20 dark:hover:shadow-gold-dark/30 ring-1 ring-gold/20 dark:ring-0"
             >
               Khám phá ngay
-              <span className="material-icons-round text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+              <span className="material-icons-round text-lg group-hover:translate-x-0.5 transition-transform">
+                arrow_forward
+              </span>
             </button>
           </div>
         </div>
@@ -475,9 +546,7 @@ export default function LandingPage() {
               <div className="w-12 h-12 rounded-2xl bg-gold/10 dark:bg-gold-dark/8 flex items-center justify-center mx-auto mb-4">
                 <span className="material-icons-round text-2xl text-gold dark:text-gold-dark">explore</span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold tracking-tight mb-2">
-                Sẵn sàng khám phá vận mệnh?
-              </h3>
+              <h3 className="text-xl sm:text-2xl font-bold tracking-tight mb-2">Sẵn sàng khám phá vận mệnh?</h3>
               <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark mb-1">
                 Trải nghiệm lịch âm, gieo quẻ và nhiều công cụ ngay. Nâng cấp để mở khóa toàn bộ.
               </p>
@@ -497,7 +566,9 @@ export default function LandingPage() {
                 className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-mystery-deep to-indigo-950 text-gold-light dark:from-gold dark:to-amber-500 dark:text-indigo-950 font-bold transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-mystery-deep/20 dark:hover:shadow-gold-dark/30 ring-1 ring-gold/20 dark:ring-0"
               >
                 Mở Lịch Việt
-                <span className="material-icons-round text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                <span className="material-icons-round text-lg group-hover:translate-x-0.5 transition-transform">
+                  arrow_forward
+                </span>
               </button>
             </div>
           </div>
@@ -510,7 +581,9 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-8">
             {/* Brand */}
             <div className="col-span-2 sm:col-span-1">
-              <span className="text-sm font-bold bg-clip-text text-transparent bg-gradient-to-r from-gold to-amber-600 dark:from-gold-dark dark:to-amber-400">LỊCH VIỆT</span>
+              <span className="text-sm font-bold bg-clip-text text-transparent bg-gradient-to-r from-gold to-amber-600 dark:from-gold-dark dark:to-amber-400">
+                LỊCH VIỆT
+              </span>
               <p className="text-xs text-text-secondary-light/60 dark:text-text-secondary-dark/60 mt-1.5 leading-relaxed">
                 Ứng dụng tra cứu âm lịch, phong thủy và âm lịch toàn diện nhất.
               </p>
@@ -518,7 +591,9 @@ export default function LandingPage() {
 
             {/* Features */}
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-text-secondary-light dark:text-text-secondary-dark mb-3">Tính năng</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-text-secondary-light dark:text-text-secondary-dark mb-3">
+                Tính năng
+              </p>
               <ul className="space-y-1.5">
                 {[
                   { label: 'Âm Lịch', path: '/app/am-lich' },
@@ -539,7 +614,9 @@ export default function LandingPage() {
 
             {/* More */}
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-text-secondary-light dark:text-text-secondary-dark mb-3">Thêm</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-text-secondary-light dark:text-text-secondary-dark mb-3">
+                Thêm
+              </p>
               <ul className="space-y-1.5">
                 {[
                   { label: 'Nâng cấp', path: '/app/nang-cap' },
@@ -559,7 +636,9 @@ export default function LandingPage() {
 
             {/* Support */}
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-text-secondary-light dark:text-text-secondary-dark mb-3">Hỗ trợ</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-text-secondary-light dark:text-text-secondary-dark mb-3">
+                Hỗ trợ
+              </p>
               <ul className="space-y-1.5">
                 <li>
                   <button
@@ -583,7 +662,9 @@ export default function LandingPage() {
             <span className="text-xs text-text-secondary-light/60 dark:text-text-secondary-dark/60">
               © {new Date().getFullYear()} Lịch Việt. Tất cả tính toán chạy trên trình duyệt — dữ liệu riêng tư của bạn.
             </span>
-            <span className="text-text-secondary-light/60 dark:text-text-secondary-dark/60 text-xs font-medium">v3.0</span>
+            <span className="text-text-secondary-light/60 dark:text-text-secondary-dark/60 text-xs font-medium">
+              v3.0
+            </span>
           </div>
         </div>
       </footer>

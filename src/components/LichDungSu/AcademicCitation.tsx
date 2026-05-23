@@ -1,6 +1,6 @@
 /**
  * AcademicCitation — Per-factor source attribution toggle
- * 
+ *
  * Shows collapsible 📖 citations per scoring group,
  * attributing each factor to its classical academic source.
  */
@@ -28,15 +28,16 @@ const AcademicCitation: React.FC<AcademicCitationProps> = ({ groupLabel, sources
       >
         <span>📖</span>
         <span className="underline decoration-dotted">Nguồn tham khảo</span>
-        <span className={`transition-transform duration-150 ${expanded ? 'rotate-180' : ''}`}>
-          ▾
-        </span>
+        <span className={`transition-transform duration-150 ${expanded ? 'rotate-180' : ''}`}>▾</span>
       </button>
 
       {expanded && (
         <div className="mt-1 pl-4 space-y-0.5 animate-fade-scale">
           {sources.map((src, i) => (
-            <p key={i} className="text-[10px] text-text-secondary-light/60 dark:text-text-secondary-dark/60 leading-relaxed">
+            <p
+              key={i}
+              className="text-[10px] text-text-secondary-light/60 dark:text-text-secondary-dark/60 leading-relaxed"
+            >
               • {src}
             </p>
           ))}
@@ -48,7 +49,7 @@ const AcademicCitation: React.FC<AcademicCitationProps> = ({ groupLabel, sources
 
 export default AcademicCitation;
 
-/** 
+/**
  * Pre-defined citation data for each scoring group.
  */
 export const GROUP_CITATIONS: Record<string, string[]> = {

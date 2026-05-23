@@ -36,7 +36,9 @@ describe('featureFlags', () => {
     it('returns flags from localStorage when present', () => {
       localStorage.setItem(
         'admin_feature_flags',
-        JSON.stringify([{ id: 'am-lich', name: 'Test', enabled: false, premium: false, module: 'Core', description: '' }])
+        JSON.stringify([
+          { id: 'am-lich', name: 'Test', enabled: false, premium: false, module: 'Core', description: '' },
+        ]),
       );
       const flags = getFeatureFlags();
       expect(flags.length).toBeGreaterThanOrEqual(1);
@@ -50,7 +52,9 @@ describe('featureFlags', () => {
     it('merges stored flags with new defaults', () => {
       localStorage.setItem(
         'admin_feature_flags',
-        JSON.stringify([{ id: 'am-lich', name: 'Test', enabled: false, premium: false, module: 'Core', description: '' }])
+        JSON.stringify([
+          { id: 'am-lich', name: 'Test', enabled: false, premium: false, module: 'Core', description: '' },
+        ]),
       );
       const flags = getFeatureFlags();
       // Should include both stored flag and any new defaults not stored

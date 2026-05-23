@@ -342,7 +342,6 @@ const ActivityPicker: React.FC<ActivityPickerProps> = ({
                 </div>
               );
             })()}
-
         </>
       )}
     </div>

@@ -7,14 +7,7 @@
 import type { TuViStar, TuViPalace } from '../../types/tuvi';
 import { STAR_COLORS, BRIGHTNESS_MARKERS, CHINH_TINH_LIST, PHU_TINH_LIST } from './constants';
 
-const SAT_TINH_NAMES = [
-  'Kình Dương',
-  'Đà La',
-  'Hỏa Tinh',
-  'Linh Tinh',
-  'Địa Không',
-  'Địa Kiếp',
-];
+const SAT_TINH_NAMES = ['Kình Dương', 'Đà La', 'Hỏa Tinh', 'Linh Tinh', 'Địa Không', 'Địa Kiếp'];
 
 /**
  * Groups an array of stars by their type.

@@ -37,16 +37,20 @@ export const isTamHop = (chi1: Chi, chi2: Chi): boolean => {
     ['Dần', 'Ngọ', 'Tuất'],
     ['Hợi', 'Mão', 'Mùi'],
     ['Thân', 'Tý', 'Thìn'],
-    ['Tỵ', 'Dậu', 'Sửu']
+    ['Tỵ', 'Dậu', 'Sửu'],
   ];
-  return tamHopGroups.some(group => group.includes(chi1) && group.includes(chi2));
+  return tamHopGroups.some((group) => group.includes(chi1) && group.includes(chi2));
 };
 
 /** Check Lục Hợp (Six Harmonies) */
 const isLucHop = (chi1: Chi, chi2: Chi): boolean => {
   const hopGroups: [Chi, Chi][] = [
-    ['Tý', 'Sửu'], ['Dần', 'Hợi'], ['Mão', 'Tuất'],
-    ['Thìn', 'Dậu'], ['Tỵ', 'Thân'], ['Ngọ', 'Mùi']
+    ['Tý', 'Sửu'],
+    ['Dần', 'Hợi'],
+    ['Mão', 'Tuất'],
+    ['Thìn', 'Dậu'],
+    ['Tỵ', 'Thân'],
+    ['Ngọ', 'Mùi'],
   ];
   return hopGroups.some(([a, b]) => (chi1 === a && chi2 === b) || (chi1 === b && chi2 === a));
 };
@@ -54,8 +58,12 @@ const isLucHop = (chi1: Chi, chi2: Chi): boolean => {
 /** Check Lục Xung (Six Clashes) */
 const isTuongXung = (chi1: Chi, chi2: Chi): boolean => {
   const xungGroups: [Chi, Chi][] = [
-    ['Tý', 'Ngọ'], ['Sửu', 'Mùi'], ['Dần', 'Thân'],
-    ['Mão', 'Dậu'], ['Thìn', 'Tuất'], ['Tỵ', 'Hợi']
+    ['Tý', 'Ngọ'],
+    ['Sửu', 'Mùi'],
+    ['Dần', 'Thân'],
+    ['Mão', 'Dậu'],
+    ['Thìn', 'Tuất'],
+    ['Tỵ', 'Hợi'],
   ];
   return xungGroups.some(([a, b]) => (chi1 === a && chi2 === b) || (chi1 === b && chi2 === a));
 };
@@ -63,8 +71,12 @@ const isTuongXung = (chi1: Chi, chi2: Chi): boolean => {
 /** Check Lục Hại (Six Harms) */
 const isTuongHai = (chi1: Chi, chi2: Chi): boolean => {
   const haiGroups: [Chi, Chi][] = [
-    ['Tý', 'Mùi'], ['Sửu', 'Ngọ'], ['Dần', 'Tỵ'],
-    ['Mão', 'Thìn'], ['Thân', 'Hợi'], ['Dậu', 'Tuất']
+    ['Tý', 'Mùi'],
+    ['Sửu', 'Ngọ'],
+    ['Dần', 'Tỵ'],
+    ['Mão', 'Thìn'],
+    ['Thân', 'Hợi'],
+    ['Dậu', 'Tuất'],
   ];
   return haiGroups.some(([a, b]) => (chi1 === a && chi2 === b) || (chi1 === b && chi2 === a));
 };
@@ -72,18 +84,26 @@ const isTuongHai = (chi1: Chi, chi2: Chi): boolean => {
 /** Check Tương Hình (Mutual Punishment) */
 const isTuongHinh = (chi1: Chi, chi2: Chi): boolean => {
   const hinhGroups: Chi[][] = [
-    ['Dần', 'Tỵ', 'Thân'], ['Sửu', 'Tuất', 'Mùi'],
-    ['Tý', 'Mão'], ['Thìn', 'Thìn'], ['Ngọ', 'Ngọ'],
-    ['Dậu', 'Dậu'], ['Hợi', 'Hợi']
+    ['Dần', 'Tỵ', 'Thân'],
+    ['Sửu', 'Tuất', 'Mùi'],
+    ['Tý', 'Mão'],
+    ['Thìn', 'Thìn'],
+    ['Ngọ', 'Ngọ'],
+    ['Dậu', 'Dậu'],
+    ['Hợi', 'Hợi'],
   ];
-  return hinhGroups.some(group => group.includes(chi1) && group.includes(chi2));
+  return hinhGroups.some((group) => group.includes(chi1) && group.includes(chi2));
 };
 
 /** Check Tương Phá (Mutual Destruction) */
 const isTuongPha = (chi1: Chi, chi2: Chi): boolean => {
   const phaGroups: [Chi, Chi][] = [
-    ['Tý', 'Dậu'], ['Sửu', 'Thìn'], ['Dần', 'Hợi'],
-    ['Mão', 'Ngọ'], ['Tỵ', 'Thân'], ['Mùi', 'Tuất']
+    ['Tý', 'Dậu'],
+    ['Sửu', 'Thìn'],
+    ['Dần', 'Hợi'],
+    ['Mão', 'Ngọ'],
+    ['Tỵ', 'Thân'],
+    ['Mùi', 'Tuất'],
   ];
   return phaGroups.some(([a, b]) => (chi1 === a && chi2 === b) || (chi1 === b && chi2 === a));
 };

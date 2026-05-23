@@ -132,7 +132,7 @@ export const useAppStore = create<AppStore>()((set) => ({
     });
     set({
       selectedDate: clamped,
-      dayData: getDetailedDayData(clamped)
+      dayData: getDetailedDayData(clamped),
     });
   },
 

@@ -19,10 +19,38 @@ const LEGACY_STORAGE_KEY = 'admin_feature_flags';
 
 /** Default flag definitions — source of truth for first-run */
 export const DEFAULT_FEATURE_FLAGS: FeatureFlag[] = [
-  { id: 'am-lich',    name: 'Âm Lịch',              description: 'Tra cứu ngày âm lịch, can chi, tiết khí',             module: 'Core',           enabled: true,  premium: false },
-  { id: 'dung-su',   name: 'Lịch Dụng Sự',          description: 'Tìm ngày tốt cho các việc quan trọng',               module: 'Core',           enabled: true,  premium: false },
-  { id: 'gieo-que',  name: 'Gieo Quẻ',               description: 'Mai Hoa Dịch Số & Tam Thức',                        module: 'Divination',     enabled: true,  premium: false },
-  { id: 'tu-vi',     name: 'Tử Vi',                  description: 'Lập lá số Tử Vi Đẩu Số theo phái Thiên Lương',       module: 'Divination',     enabled: true,  premium: false },
+  {
+    id: 'am-lich',
+    name: 'Âm Lịch',
+    description: 'Tra cứu ngày âm lịch, can chi, tiết khí',
+    module: 'Core',
+    enabled: true,
+    premium: false,
+  },
+  {
+    id: 'dung-su',
+    name: 'Lịch Dụng Sự',
+    description: 'Tìm ngày tốt cho các việc quan trọng',
+    module: 'Core',
+    enabled: true,
+    premium: false,
+  },
+  {
+    id: 'gieo-que',
+    name: 'Gieo Quẻ',
+    description: 'Mai Hoa Dịch Số & Tam Thức',
+    module: 'Divination',
+    enabled: true,
+    premium: false,
+  },
+  {
+    id: 'tu-vi',
+    name: 'Tử Vi',
+    description: 'Lập lá số Tử Vi Đẩu Số theo phái Thiên Lương',
+    module: 'Divination',
+    enabled: true,
+    premium: false,
+  },
 ];
 
 // ─────────────────────────────────────────────────
@@ -41,10 +69,7 @@ export function getFeatureFlags(): FeatureFlag[] {
     const stored: FeatureFlag[] = JSON.parse(raw);
     // Merge: keep any stored flag, add any new defaults not yet stored
     const storedIds = new Set(stored.map((f) => f.id));
-    const merged = [
-      ...stored,
-      ...DEFAULT_FEATURE_FLAGS.filter((f) => !storedIds.has(f.id)),
-    ];
+    const merged = [...stored, ...DEFAULT_FEATURE_FLAGS.filter((f) => !storedIds.has(f.id))];
     return merged;
   } catch {
     return [...DEFAULT_FEATURE_FLAGS];
@@ -62,9 +87,7 @@ export function saveFeatureFlags(flags: FeatureFlag[]): void {
  * Returns the full updated flag list.
  */
 export function toggleFeatureFlagEnabled(id: string): FeatureFlag[] {
-  const flags = getFeatureFlags().map((f) =>
-    f.id === id ? { ...f, enabled: !f.enabled } : f
-  );
+  const flags = getFeatureFlags().map((f) => (f.id === id ? { ...f, enabled: !f.enabled } : f));
   saveFeatureFlags(flags);
   return flags;
 }
@@ -74,9 +97,7 @@ export function toggleFeatureFlagEnabled(id: string): FeatureFlag[] {
  * Returns the full updated flag list.
  */
 export function toggleFeatureFlagPremium(id: string): FeatureFlag[] {
-  const flags = getFeatureFlags().map((f) =>
-    f.id === id ? { ...f, premium: !f.premium } : f
-  );
+  const flags = getFeatureFlags().map((f) => (f.id === id ? { ...f, premium: !f.premium } : f));
   saveFeatureFlags(flags);
   return flags;
 }
