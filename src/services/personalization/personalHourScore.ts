@@ -1,5 +1,13 @@
-import { BasicProfile } from '../../types/auth';
-import { Chi, Can, CanChi } from '../../types/calendar';
+/**
+ * personalHourScore.ts — Personalized hour auspiciousness modifier
+ *
+ * Combines 3 schools:
+ * 1. Bát Tự (Nhật Chủ & Thái Tuế interactions)
+ * 2. Trạch Cát (Quý Nhân, Lộc, Mã)
+ * 3. QMDJ (Mệnh Cung in current Board)
+ */
+
+import type { Chi, Can, CanChi } from '../../types/calendar';
 import { getCanChiYear, getCanChiDay, parseCanChi } from '../../utils/calendarEngine';
 import { generateQmdjChart, interpretQmdjChart } from '../../utils/qmdjEngine';
 
@@ -9,34 +17,38 @@ export interface PersonalHourModifier {
   breakdowns: string[];
 }
 
-const CAN_LIST: Can[] = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
-const CHI_LIST: Chi[] = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
-
-// --- Helper interaction logic ---
-const isLucXung = (c1: Chi, c2: Chi) => {
-  const groups = [['Tý', 'Ngọ'], ['Sửu', 'Mùi'], ['Dần', 'Thân'], ['Mão', 'Dậu'], ['Thìn', 'Tuất'], ['Tỵ', 'Hợi']];
-  return groups.some(g => g.includes(c1) && g.includes(c2));
+const isLucXung = (c1: Chi, c2: Chi): boolean => {
+  const groups: [Chi, Chi][] = [
+    ['Tý', 'Ngọ'], ['Sửu', 'Mùi'], ['Dần', 'Thân'],
+    ['Mão', 'Dậu'], ['Thìn', 'Tuất'], ['Tỵ', 'Hợi']
+  ];
+  return groups.some(([a, b]) => (c1 === a && c2 === b) || (c1 === b && c2 === a));
 };
 
-const isTuongXungCan = (can1: Can, can2: Can) => {
-  const groups = [['Giáp', 'Canh'], ['Ất', 'Tân'], ['Nhâm', 'Bính'], ['Quý', 'Đinh']];
-  return groups.some(g => g.includes(can1) && g.includes(can2));
+const isTuongXungCan = (can1: Can, can2: Can): boolean => {
+  const groups: [Can, Can][] = [
+    ['Giáp', 'Canh'], ['Ất', 'Tân'], ['Nhâm', 'Bính'], ['Quý', 'Đinh']
+  ];
+  return groups.some(([a, b]) => (can1 === a && can2 === b) || (can1 === b && can2 === a));
 };
 
-const isLucHop = (c1: Chi, c2: Chi) => {
-  const groups = [['Tý', 'Sửu'], ['Dần', 'Hợi'], ['Mão', 'Tuất'], ['Thìn', 'Dậu'], ['Tỵ', 'Thân'], ['Ngọ', 'Mùi']];
-  return groups.some(g => g.includes(c1) && g.includes(c2));
+const isLucHop = (c1: Chi, c2: Chi): boolean => {
+  const groups: [Chi, Chi][] = [
+    ['Tý', 'Sửu'], ['Dần', 'Hợi'], ['Mão', 'Tuất'],
+    ['Thìn', 'Dậu'], ['Tỵ', 'Thân'], ['Ngọ', 'Mùi']
+  ];
+  return groups.some(([a, b]) => (c1 === a && c2 === b) || (c1 === b && c2 === a));
 };
 
-const isTamHop = (c1: Chi, c2: Chi) => {
-  const groups = [
+const isTamHop = (c1: Chi, c2: Chi): boolean => {
+  const groups: Chi[][] = [
     ['Dần', 'Ngọ', 'Tuất'], ['Hợi', 'Mão', 'Mùi'],
     ['Thân', 'Tý', 'Thìn'], ['Tỵ', 'Dậu', 'Sửu']
   ];
-  return groups.some(g => g.includes(c1) && g.includes(c2));
+  return groups.some(group => group.includes(c1) && group.includes(c2));
 };
 
-// --- Trạch Cát (Personal Stars) ---
+// Trạch Cát (Personal Stars)
 const getQuyNhan = (can: Can): Chi[] => {
   const qn: Record<Can, Chi[]> = {
     'Giáp': ['Sửu', 'Mùi'], 'Ất': ['Tý', 'Thân'], 'Bính': ['Hợi', 'Dậu'],
@@ -66,121 +78,115 @@ const getDichMa = (chi: Chi): Chi | null => {
 };
 
 /**
- * Main engine combining 3 schools:
- * 1. Bát Tự (Nhật Chủ & Thái Tuế interactions)
- * 2. Trạch Cát (Quý Nhân, Lộc, Mã)
- * 3. QMDJ (Mệnh Cung in current Board)
+ * Calculate personalized hour modifier.
+ * No premium gating — available to all authenticated users with birthday details.
  */
 export function calculatePersonalHourModifier(
-  profile: BasicProfile | undefined | null,
+  birthYear: number | undefined | null,
+  birthMonth: number | undefined | null,
+  birthDay: number | undefined | null,
   hourCanChi: CanChi,
   dayCanChi: CanChi,
   date: Date
 ): PersonalHourModifier | null {
-  if (!profile || !profile.birthYear) return null;
+  if (!birthYear) return null;
 
   let totalModifier = 0;
   const flags: string[] = [];
   const breakdowns: string[] = [];
 
-  // --- 1. Base User Bát Tự Derivation (Fallback to Basic Profile) ---
-  // Default to 12:00 PM if time not available
-  const birthDate = new Date(profile.birthYear, (profile.birthMonth || 1) - 1, profile.birthDay || 1, 12, 0);
-  const userYearCanChi = parseCanChi(getCanChiYear(profile.birthYear));
-  const userDayCanChi = profile.birthDay && profile.birthMonth ? parseCanChi(getCanChiDay(birthDate)) : undefined;
-
+  // Derive user's Can Chi from birth year
+  const userYearCanChi = parseCanChi(getCanChiYear(birthYear));
   const userYearCan = userYearCanChi.can;
   const userYearChi = userYearCanChi.chi;
-  const userDayCan = userDayCanChi?.can;
-  const userDayChi = userDayCanChi?.chi;
 
-  // --- 2. Bát Tự (Tử Bình) Interactions ---
-  // A. Nhật Chủ (Day Pillar)
+  // Derive user's day Can Chi if birth month/day available
+  let userDayCan: Can | undefined;
+  let userDayChi: Chi | undefined;
+  if (birthMonth && birthDay) {
+    const birthDate = new Date(birthYear, birthMonth - 1, birthDay, 12, 0);
+    const dayCC = parseCanChi(getCanChiDay(birthDate));
+    userDayCan = dayCC.can;
+    userDayChi = dayCC.chi;
+  }
+
+  // 1. Bát Tự (Tử Bình) Interactions — Nhật Chủ (Day Pillar)
   if (userDayCan && userDayChi) {
     if (isLucXung(userDayChi, hourCanChi.chi)) {
       if (isTuongXungCan(userDayCan, hourCanChi.can)) {
         totalModifier -= 40;
         flags.push('thien_khac_dia_xung');
-        breakdowns.push(`Thiên Khắc Địa Xung với Nhật Chủ (-40%)`);
+        breakdowns.push('Thiên Khắc Địa Xung với Nhật Chủ (-40%)');
       } else {
         totalModifier -= 20;
         flags.push('xung_nhat_chu');
-        breakdowns.push(`Lục Xung với Nhật Chủ (-20%)`);
+        breakdowns.push('Lục Xung với Nhật Chủ (-20%)');
       }
     } else if (isLucHop(userDayChi, hourCanChi.chi) || isTamHop(userDayChi, hourCanChi.chi)) {
       totalModifier += 15;
       flags.push('hop_nhat_chu');
-      breakdowns.push(`Tương hợp với Nhật Chủ (+15%)`);
+      breakdowns.push('Tương hợp với Nhật Chủ (+15%)');
     } else if (userDayChi === hourCanChi.chi) {
       totalModifier -= 5;
-      breakdowns.push(`Trị Nhật Chủ (-5%)`);
+      breakdowns.push('Trị Nhật Chủ (-5%)');
     }
   }
 
-  // B. Thái Tuế (Year Pillar)
+  // 2. Thái Tuế (Year Pillar)
   if (isLucXung(userYearChi, hourCanChi.chi)) {
     totalModifier -= 10;
     flags.push('xung_thai_tue');
-    breakdowns.push(`Xung Thái Tuế (-10%)`);
+    breakdowns.push('Xung Thái Tuế (-10%)');
   } else if (isLucHop(userYearChi, hourCanChi.chi) || isTamHop(userYearChi, hourCanChi.chi)) {
     totalModifier += 10;
     flags.push('hop_thai_tue');
-    breakdowns.push(`Tương hợp với Thái Tuế (+10%)`);
+    breakdowns.push('Tương hợp với Thái Tuế (+10%)');
   }
 
-  // --- 3. Trạch Cát (Thần Sát) ---
-  // Using Year Can/Chi primarily for general luck, Day for specific luck.
+  // 3. Trạch Cát (Thần Sát)
   const targetCan = userDayCan || userYearCan;
   const targetChi = userDayChi || userYearChi;
 
   if (getQuyNhan(targetCan).includes(hourCanChi.chi)) {
     totalModifier += 20;
     flags.push('quy_nhan');
-    breakdowns.push(`Giờ Thiên Ất Quý Nhân (+20%)`);
+    breakdowns.push('Giờ Thiên Ất Quý Nhân (+20%)');
   }
-  
+
   if (getLocThan(targetCan) === hourCanChi.chi) {
     totalModifier += 15;
     flags.push('loc_than');
-    breakdowns.push(`Giờ Lộc Thần (+15%)`);
+    breakdowns.push('Giờ Lộc Thần (+15%)');
   }
 
   if (getDichMa(targetChi) === hourCanChi.chi) {
     totalModifier += 10;
     flags.push('dich_ma');
-    breakdowns.push(`Giờ Dịch Mã (+10%)`);
+    breakdowns.push('Giờ Dịch Mã (+10%)');
   }
 
-  // --- 4. Kỳ Môn Độn Giáp (Tạm Khuyết API Tối Ưu) ---
+  // 4. Kỳ Môn Độn Giáp
   try {
     const qmdjChart = generateQmdjChart(date, hourCanChi.chi);
     const interpretations = interpretQmdjChart(qmdjChart);
-    
-    // Find the palace hosting User's Year Can on the Heaven Plate
     const menhCung = qmdjChart.palaces.find(p => p.heavenlyStem === userYearCan);
-    
-    if (menhCung && menhCung.number !== 5) { // Palace 5 doesn't have a door directly
+    if (menhCung && menhCung.number !== 5) {
       const qmdjInterp = interpretations.find(i => i.palaceNumber === menhCung.number);
       if (qmdjInterp && qmdjInterp.doorStarCombo) {
         if (qmdjInterp.overallAuspiciousness === 'cat') {
           totalModifier += 15;
           flags.push('qmdj_cat');
-          breakdowns.push(`Kỳ Môn Cát Cung (Cửa ${menhCung.door?.nameVi}, Sao ${menhCung.star?.nameVi}) (+15%)`);
+          breakdowns.push(`Kỳ Môn Cát Cung (+15%)`);
         } else if (qmdjInterp.overallAuspiciousness === 'hung') {
           totalModifier -= 15;
           flags.push('qmdj_hung');
-          breakdowns.push(`Kỳ Môn Hung Cung (Cửa ${menhCung.door?.nameVi}, Sao ${menhCung.star?.nameVi}) (-15%)`);
+          breakdowns.push(`Kỳ Môn Hung Cung (-15%)`);
         }
       }
     }
-  } catch (err) {
-    // Graceful fallback if QMDJ fails (e.g., table boundaries)
-    console.warn('QMDJ Engine failed for hour', hourCanChi.chi, err);
+  } catch {
+    // QMDJ engine may fail for some dates — gracefully degrade
   }
 
-  return {
-    totalModifier,
-    flags,
-    breakdowns
-  };
+  return { totalModifier, flags, breakdowns };
 }

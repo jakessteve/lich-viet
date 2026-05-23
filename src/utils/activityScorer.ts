@@ -10,15 +10,10 @@ import { CHI_XUNG, LUC_HOP, TAM_HOP, CHI_HINH, CHI_HAI, CHI_PHA } from './consta
 import type { Chi } from '../types/calendar';
 import {
     TRUC_SCORING, STAR_SCORING, DAY_GRADE_SCORING, HOUR_SCORING,
-    KI_TUOI_SCORING, NAP_AM_SCORING, QMDJ_SCORING, BAZI_SYNASTRY_SCORING,
-    TUVI_SYNASTRY_SCORING, NUMEROLOGY_SYNASTRY_SCORING, WESTERN_SYNASTRY_SCORING,
+    KI_TUOI_SCORING, NAP_AM_SCORING, QMDJ_SCORING,
     NORMALIZATION, OVERRIDES,
     BEST_HOURS_SCORING, FALLBACK_SCORE,
 } from '../config/scoring';
-import type { BaziSynastryResult } from '../services/synastry/baziSynastry';
-import type { TuViSynastryResult } from '../services/synastry/tuviSynastry';
-import type { NumerologySynastryResult } from '../services/synastry/numerologySynastry';
-import type { WesternSynastryResult } from '../services/synastry/westernSynastry';
 import { generateQmdjChart } from './qmdjEngine';
 import { scoreActivityByQmdj } from './qmdjScorer';
 import { getScoreLabelFromConfig, FALLBACK_COLOR_CLASS } from '../config/theme';
@@ -111,10 +106,6 @@ export function scoreActivity(
     dayData: DayDetailsData,
     selectedHourChi?: Chi,
     birthYearChi?: Chi,
-    synastryResult?: BaziSynastryResult,
-    tuviSynastryResult?: TuViSynastryResult,
-    numerologySynastryResult?: NumerologySynastryResult,
-    westernSynastryResult?: WesternSynastryResult,
 ): ActivityScoreResult {
     const activity = getActivityById(activityId);
     if (!activity) {
@@ -359,62 +350,6 @@ export function scoreActivity(
         detail: thaiAtDetail,
     });
     totalScore += thaiAtScore;
-
-    // ── Factor 9: Bát Tự Synastry (if provided) ──
-    if (synastryResult) {
-        const synScore = Math.max(-BAZI_SYNASTRY_SCORING.max, Math.min(BAZI_SYNASTRY_SCORING.max, synastryResult.totalScore));
-        breakdown.push({
-            factor: 'baziSynastry',
-            label: 'Bát Tự Hợp Tuổi',
-            value: synScore,
-            maxValue: BAZI_SYNASTRY_SCORING.max,
-            positive: synScore > 0,
-            detail: synastryResult.detail,
-        });
-        totalScore += synScore;
-    }
-
-    // ── Factor 10: Tử Vi Synastry (if provided) ──
-    if (tuviSynastryResult) {
-        const tvScore = Math.max(-TUVI_SYNASTRY_SCORING.max, Math.min(TUVI_SYNASTRY_SCORING.max, tuviSynastryResult.totalScore));
-        breakdown.push({
-            factor: 'tuviSynastry',
-            label: 'Tử Vi Hợp Tuổi',
-            value: tvScore,
-            maxValue: TUVI_SYNASTRY_SCORING.max,
-            positive: tvScore > 0,
-            detail: tuviSynastryResult.detail,
-        });
-        totalScore += tvScore;
-    }
-
-    // ── Factor 11: Thần Số Synastry (if provided) ──
-    if (numerologySynastryResult) {
-        const numScore = Math.max(-NUMEROLOGY_SYNASTRY_SCORING.max, Math.min(NUMEROLOGY_SYNASTRY_SCORING.max, numerologySynastryResult.totalScore));
-        breakdown.push({
-            factor: 'numerologySynastry',
-            label: 'Thần Số Hợp Tuổi',
-            value: numScore,
-            maxValue: NUMEROLOGY_SYNASTRY_SCORING.max,
-            positive: numScore > 0,
-            detail: numerologySynastryResult.detail,
-        });
-        totalScore += numScore;
-    }
-
-    // ── Factor 13: Western Synastry (if provided) ──
-    if (westernSynastryResult) {
-        const wsScore = Math.max(-WESTERN_SYNASTRY_SCORING.max, Math.min(WESTERN_SYNASTRY_SCORING.max, westernSynastryResult.score));
-        breakdown.push({
-            factor: 'westernSynastry',
-            label: 'Chiêm Tinh Hợp Tuổi',
-            value: wsScore,
-            maxValue: WESTERN_SYNASTRY_SCORING.max,
-            positive: wsScore > 0,
-            detail: westernSynastryResult.compatibility,
-        });
-        totalScore += wsScore;
-    }
 
     // ── Normalize to 0-100% ──
     let percentage = Math.round(((totalScore - NORMALIZATION.minTheoretical) / NORMALIZATION.range) * NORMALIZATION.percentScale);

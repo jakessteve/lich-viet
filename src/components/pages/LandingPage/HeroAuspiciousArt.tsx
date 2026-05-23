@@ -59,7 +59,7 @@ export default function HeroAuspiciousArt() {
 
           {/* Reusable Constellation Element */}
           <g id="constellationGroup1">
-            <path d="M 0,0 L 30,-20 L 70,-10 L 100,20 L 140,-10 L 170,10 L 210,-30" stroke="url(#softGold)" strokeWidth="1.5" strokeDasharray="3 5" fill="none" />
+            <path d="M0 0 L30 -20 L70 -10 L100 20 L140 -10 L170 10 L210 -30" stroke="#d4a843" strokeWidth="1" opacity="0.22" />
             <circle cx="0" cy="0" r="4" fill="#d4a843" opacity="0.9" />
             <circle cx="30" cy="-20" r="2" fill="#d4a843" opacity="0.7" />
             <circle cx="70" cy="-10" r="5" fill="#d4a843" opacity="1" />
@@ -70,7 +70,7 @@ export default function HeroAuspiciousArt() {
           </g>
 
           <g id="constellationGroup2">
-            <path d="M 0,0 L -20,30 L -50,10 L -90,40 L -120,0" stroke="url(#softGold)" strokeWidth="1" strokeDasharray="2 4" fill="none" opacity="0.6" />
+            <path d="M0 0 L-20 30 L-50 10 L-90 40 L-120 0" stroke="#d4a843" strokeWidth="1" opacity="0.2" />
             <circle cx="0" cy="0" r="3" fill="#d4a843" opacity="0.8" />
             <circle cx="-20" cy="30" r="1.5" fill="#d4a843" opacity="0.6" />
             <circle cx="-50" cy="10" r="4" fill="#d4a843" opacity="0.9" />
@@ -79,11 +79,12 @@ export default function HeroAuspiciousArt() {
           </g>
         </defs>
 
-        {/* 1. Outer Border Framing */}
-        <circle cx="400" cy="400" r="380" stroke="url(#goldGradient)" strokeWidth="1" strokeDasharray="3 15" opacity="0.5" />
-        <circle cx="400" cy="400" r="375" stroke="url(#goldGradient)" strokeWidth="3" opacity="0.3" />
+        {/* Outer ceremonial framing rings */}
+        <circle cx="400" cy="400" r="370" stroke="url(#goldGradient)" strokeWidth="1" opacity="0.12" />
+        <circle cx="400" cy="400" r="348" stroke="url(#goldGradient)" strokeWidth="0.5" strokeDasharray="12 14" opacity="0.14" />
+        <circle cx="400" cy="400" r="315" stroke="url(#softGold)" strokeWidth="1" opacity="0.12" />
 
-        {/* 2. BIG BOLD BÁT QUÁI RING (Slow clockwise rotation) */}
+        {/* 2. BIG BOLD BÁT QUÁI RING */}
         <g style={{ animation: 'spin 90s linear infinite', transformOrigin: 'center' }}>
           {trigrams.map((val, i) => {
             // Determine the 3 bits. Top is outer line, bottom is inner line.
@@ -114,12 +115,12 @@ export default function HeroAuspiciousArt() {
             );
           })}
           
-          {/* Inner constraint ring for Bát Quái (Scaled to 95% -> 228 and 224, Border reduced visibility) */}
+          {/* Inner constraint ring for Bát Quái */}
           <circle cx="400" cy="400" r="228" stroke="url(#goldGradient)" strokeWidth="1" opacity="0.2" />
           <circle cx="400" cy="400" r="224" stroke="url(#goldGradient)" strokeWidth="0.5" strokeDasharray="6 6" opacity="0.15" />
         </g>
 
-        {/* 3. CHÒM SAO (Constellations Void Filler) (Counter-clockwise rotation, Scaled to 100%) */}
+        {/* 3. CHÒM SAO (Constellations Void Filler) */}
         <g style={{ transform: 'scale(1)', transformOrigin: 'center' }}>
           <g style={{ animation: 'spin 105s linear infinite reverse', transformOrigin: 'center' }}>
           {[0, 72, 144, 216, 288].map(angle => (
@@ -189,4 +190,3 @@ export default function HeroAuspiciousArt() {
     </div>
   );
 }
-

@@ -3,7 +3,7 @@ import DayCell from './DayCell';
 import { getMonthDays } from '@lich-viet/core/calendar';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useAuthStore } from '../stores/authStore';
-import { calculatePersonalDayScore, getYearThaiTueType } from '../services/personalization/personalDayScore';
+import { calculatePersonalDayScore } from '../services/personalization';
 
 
 interface MonthCalendarProps {
@@ -15,34 +15,38 @@ interface MonthCalendarProps {
 
 const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDate, collapseOnMobile = false }) => {
   const [currentDate, setCurrentDate] = useState(new Date(selectedDate));
+  const { user } = useAuthStore();
 
   const days = useMemo(() => {
     return getMonthDays(currentDate.getFullYear(), currentDate.getMonth());
   }, [currentDate]);
+
+  // Derive birth year from user profile
+  const birthYear = useMemo(() => {
+    if (!user) return undefined;
+    if (user.profile?.birthYear) return user.profile.birthYear;
+    if (user.birthday) {
+      const year = Number(user.birthday.split('-')[0]);
+      if (!isNaN(year)) return year;
+    }
+    return undefined;
+  }, [user]);
+
+  // Overlay personal scores onto days
+  const daysWithScore = useMemo(() => {
+    if (!birthYear) return days;
+    return days.map(day => {
+      if (!day.dayChi) return day;
+      const personalScore = calculatePersonalDayScore(birthYear, day.dayChi);
+      return personalScore ? { ...day, personalScore } : day;
+    });
+  }, [days, birthYear]);
 
   // Labels matching the design order (Starting from Monday/T2)
   const visualWeekDays = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
 
   const isMobile = useIsMobile();
   const [isExpanded, setIsExpanded] = useState(!(collapseOnMobile && isMobile));
-  
-  const user = useAuthStore(s => s.user);
-
-  const _annualThaiTue = useMemo(() => {
-    if (!user?.profile?.birthYear) return null;
-    return getYearThaiTueType(user.profile.birthYear, currentDate.getFullYear());
-  }, [user?.profile, currentDate]);
-
-  const daysWithScore = useMemo(() => {
-    if (!user?.profile?.birthYear) return days;
-    return days.map(d => {
-      if (!d.dayChi) return d;
-      return {
-        ...d,
-        personalScore: calculatePersonalDayScore(user.profile, d.dayChi)
-      };
-    });
-  }, [days, user?.profile]);
 
   // Sync expanded state when navigating between tabs (prop changes)
   useEffect(() => {
@@ -168,7 +172,7 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
           {visualWeekDays.map((day) => (
             <div
               key={day}
-              className={`text-center text-[10px] font-bold py-1 ${day === 'CN' || day === 'T7' ? 'text-calendar-weekend' : 'text-text-secondary-light dark:text-text-secondary-dark'}`}
+              className={`text-center text-xs font-bold py-1 ${day === 'CN' || day === 'T7' ? 'text-calendar-weekend' : 'text-text-secondary-light dark:text-text-secondary-dark'}`}
             >
               {day}
             </div>
@@ -181,7 +185,7 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
             {Array.from({ length: Math.ceil(daysWithScore.length / 7) }).map((_, rowIdx) => {
               const rowDays = daysWithScore.slice(rowIdx * 7, rowIdx * 7 + 7);
               const isFirst = rowIdx === 0;
-              const isLast = rowIdx === Math.ceil(days.length / 7) - 1;
+              const isLast = rowIdx === Math.ceil(daysWithScore.length / 7) - 1;
               return (
                 <div key={rowIdx} className={`grid grid-cols-7 gap-px w-full ${rowIdx > 0 ? 'mt-px' : ''}`}>
                   {rowDays.map((day, colIdx) => {
@@ -229,7 +233,7 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
         )}
 
         {/* Calendar Legend — all color-coded indicators */}
-        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-2 pt-2 border-t border-border-light/50 dark:border-border-dark/50 text-[10px] text-text-secondary-light dark:text-text-secondary-dark select-none">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-2 pt-2 border-t border-border-light/50 dark:border-border-dark/50 text-xs text-text-secondary-light dark:text-text-secondary-dark select-none">
           {/* Day quality indicators */}
           <span className="flex items-center gap-1">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
@@ -254,7 +258,7 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
             Hôm nay
           </span>
           <span className="flex items-center gap-1">
-            <span className="text-calendar-weekend font-bold text-[10px] shrink-0">T7</span>
+            <span className="text-calendar-weekend font-bold text-xs shrink-0">T7</span>
             Cuối tuần
           </span>
         </div>

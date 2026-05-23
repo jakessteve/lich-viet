@@ -1,0 +1,157 @@
+{
+  "description": "Named star combinations (Cách Cục) for detection",
+  "combinations": [
+    {
+      "id": "sat-pha-lang",
+      "name": "Sát Phá Lang",
+      "nameHanViet": "殺破狼",
+      "category": "hung",
+      "stars": ["Thất Sát", "Phá Quân", "Tham Lang"],
+      "palaceConstraint": "tamHop",
+      "description": "Sát Phá Lang tam hợp: Thất Sát, Phá Quân, Tham Lang always form a Tam Hợp triangle across Mệnh, Tài Bạch, Quan Lộc.",
+      "note": "Dynamic, action-oriented. Indicates major life changes and pioneering spirit."
+    },
+    {
+      "id": "co-nguyet-dong-luong",
+      "name": "Cơ Nguyệt Đồng Lương",
+      "nameHanViet": "機月同梁",
+      "category": "cat",
+      "stars": ["Thiên Cơ", "Thái Âm", "Thiên Đồng", "Thiên Lương"],
+      "palaceConstraint": "tamHop",
+      "description": "Cơ Nguyệt Đồng Lương gathered in Mệnh or its Tam Hợp.",
+      "note": "Stability, intellect, planning. Favorable for structured careers."
+    },
+    {
+      "id": "cu-nhat-dong-cung",
+      "name": "Cự Nhật Đồng Cung",
+      "nameHanViet": "巨日同宫",
+      "category": "cat",
+      "stars": ["Cự Môn", "Thái Dương"],
+      "palaceConstraint": "sameCung",
+      "description": "Cự Môn and Thái Dương in the same palace.",
+      "note": "Eloquent, persuasive. Best in Dần or Thân."
+    },
+    {
+      "id": "tu-phu",
+      "name": "Tử Phủ",
+      "nameHanViet": "紫府",
+      "category": "cat",
+      "stars": ["Tử Vi", "Thiên Phủ"],
+      "palaceConstraint": "sameCung",
+      "description": "Tử Vi and Thiên Phủ in the same palace (Dần or Thân).",
+      "note": "Ultimate authority and wealth, though sometimes lonely at the top."
+    },
+    {
+      "id": "phu-tuong",
+      "name": "Phủ Tướng",
+      "nameHanViet": "府相",
+      "category": "cat",
+      "stars": ["Thiên Phủ", "Thiên Tướng"],
+      "palaceConstraint": "tamHop",
+      "description": "Thiên Phủ and Thiên Tướng in Tam Hợp with Mệnh.",
+      "note": "Superior managerial ability, steady wealth."
+    },
+    {
+      "id": "nhat-nguyet",
+      "name": "Nhật Nguyệt",
+      "nameHanViet": "日月",
+      "category": "cat",
+      "stars": ["Thái Dương", "Thái Âm"],
+      "palaceConstraint": "tamHop",
+      "description": "Thái Dương and Thái Âm both in favorable positions within Tam Hợp.",
+      "note": "Brightness and wealth. Best when both are Miếu/Vượng."
+    },
+    {
+      "id": "loc-ma",
+      "name": "Lộc Mã",
+      "nameHanViet": "祿馬",
+      "category": "cat",
+      "stars": ["Lộc Tồn", "Thiên Mã"],
+      "palaceConstraint": "sameCung",
+      "description": "Lộc Tồn and Thiên Mã in the same palace.",
+      "note": "Wealth through movement, travel, and dynamic business."
+    },
+    {
+      "id": "tam-ky",
+      "name": "Tam Kỳ",
+      "nameHanViet": "三奇",
+      "category": "cat",
+      "stars": [],
+      "palaceConstraint": "tamHop",
+      "description": "Hóa Khoa, Hóa Quyền, and Hóa Lộc all present in the Three Harmonies.",
+      "note": "The ultimate protagonist aura — fame, power, and wealth combined.",
+      "requiresTuHoa": true
+    },
+    {
+      "id": "xuong-khuc",
+      "name": "Xương Khúc",
+      "nameHanViet": "昌曲",
+      "category": "cat",
+      "stars": ["Văn Xương", "Văn Khúc"],
+      "palaceConstraint": "sameCungOrTamHop",
+      "description": "Văn Xương and Văn Khúc together in Mệnh or Tam Hợp.",
+      "note": "Literary and artistic talent, academic success."
+    },
+    {
+      "id": "ta-huu",
+      "name": "Tả Hữu",
+      "nameHanViet": "左右",
+      "category": "cat",
+      "stars": ["Tả Phụ", "Hữu Bật"],
+      "palaceConstraint": "sameCungOrTamHop",
+      "description": "Tả Phụ and Hữu Bật together in Mệnh or Tam Hợp.",
+      "note": "Strong support from peers and subordinates."
+    },
+    {
+      "id": "khuyet-viet",
+      "name": "Khôi Việt",
+      "nameHanViet": "魁鉞",
+      "category": "cat",
+      "stars": ["Thiên Khôi", "Thiên Việt"],
+      "palaceConstraint": "sameCungOrTamHop",
+      "description": "Thiên Khôi and Thiên Việt together in Mệnh or Tam Hợp.",
+      "note": "Noble assistance, unexpected help from superiors."
+    },
+    {
+      "id": "kinh-da",
+      "name": "Kình Đà",
+      "nameHanViet": "擎陀",
+      "category": "hung",
+      "stars": ["Kình Dương", "Đà La"],
+      "palaceConstraint": "sameCungOrTamHop",
+      "description": "Kình Dương and Đà La together in Mệnh or Tam Hợp.",
+      "note": "Obstacles, conflict, and physical/mental tension."
+    },
+    {
+      "id": "khong-kiep",
+      "name": "Không Kiếp",
+      "nameHanViet": "空劫",
+      "category": "hung",
+      "stars": ["Địa Không", "Địa Kiếp"],
+      "palaceConstraint": "sameCungOrTamHop",
+      "description": "Địa Không and Địa Kiếp together in Mệnh or Tam Hợp.",
+      "note": "Spiritual loss, emptiness, sudden setbacks."
+    },
+    {
+      "id": "hoa-linh",
+      "name": "Hỏa Linh",
+      "nameHanViet": "火鈴",
+      "category": "hung",
+      "stars": ["Hỏa Tinh", "Linh Tinh"],
+      "palaceConstraint": "sameCungOrTamHop",
+      "description": "Hỏa Tinh and Linh Tinh together in Mệnh or Tam Hợp.",
+      "note": "Explosive energy, sudden events, volatility."
+    },
+    {
+      "id": "giap-sat",
+      "name": "Giáp Sát",
+      "nameHanViet": "夾殺",
+      "category": "hung",
+      "stars": [],
+      "palaceConstraint": "giap",
+      "description": "A palace flanked (giáp) by Sát Tinh on both sides.",
+      "note": "Pressure and constraint from opposing forces.",
+      "requiresGiap": true
+    }
+  ]
+}

@@ -3,10 +3,6 @@
  * Re-exports all public APIs from the decomposed sub-modules.
  */
 
-import {
-  getLunarDate as getVnLunarDate,
-  getDayCanChi
-} from '../packages/vn-lunar';
 import { DayCellData, DayQuality, DayDetailsData, CanChi, HourInfo, Can, Chi } from '../types/calendar';
 
 // Sub-module imports
@@ -55,6 +51,159 @@ import {
 export { getHourCanChi } from './hourEngine';
 export { getJDN, getSolarTerm, getSunLongitude, getSolarMonth, findSolarTermStart } from './foundationalLayer';
 
+// ── Solar / Lunar Conversion Helpers ──────────────────────────
+
+const PI = Math.PI;
+const DR = PI / 180;
+const VIETNAM_TIMEZONE = 7;
+const SYNODIC_MONTH = 29.530588853;
+const NEW_MOON_EPOCH = 2415021.076998695;
+const LUNAR_DATE_CACHE_LIMIT = 512;
+const lunarDateCache = new Map<string, { day: number; month: number; year: number; isLeap: boolean }>();
+
+function int(value: number) {
+  return Math.floor(value);
+}
+
+function normalizeDate(value: Date) {
+  return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+}
+
+function dateCacheKey(value: Date) {
+  return `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`;
+}
+
+function rememberLunarDate(
+  key: string,
+  value: { day: number; month: number; year: number; isLeap: boolean },
+) {
+  if (lunarDateCache.size >= LUNAR_DATE_CACHE_LIMIT) {
+    const oldestKey = lunarDateCache.keys().next().value;
+    if (oldestKey) {
+      lunarDateCache.delete(oldestKey);
+    }
+  }
+  lunarDateCache.set(key, value);
+  return { ...value };
+}
+
+function jdFromDate(dd: number, mm: number, yy: number) {
+  const a = int((14 - mm) / 12);
+  const y = yy + 4800 - a;
+  const m = mm + 12 * a - 3;
+  return dd + int((153 * m + 2) / 5) + 365 * y + int(y / 4) - int(y / 100) + int(y / 400) - 32045;
+}
+
+function sunLongitudeRadians(jdn: number, timeZone: number) {
+  const T = (jdn - 2451545.5 - timeZone / 24) / 36525;
+  const T2 = T * T;
+  const T3 = T2 * T;
+
+  let L0 = 280.46645 + 36000.76983 * T + 0.0003032 * T2;
+  L0 = ((L0 % 360) + 360) % 360;
+
+  let M = 357.52910 + 35999.05030 * T - 0.0001559 * T2 - 0.00000048 * T3;
+  M = ((M % 360) + 360) % 360;
+
+  const Mr = M * DR;
+  const DL = (1.914600 - 0.004817 * T - 0.000014 * T2) * Math.sin(Mr)
+    + (0.019993 - 0.000101 * T) * Math.sin(2 * Mr)
+    + 0.000290 * Math.sin(3 * Mr);
+
+  const omega = (125.04 - 1934.136 * T) * DR;
+  const lambda = (L0 + DL - 0.00569 - 0.00478 * Math.sin(omega)) * DR;
+  return ((lambda % (2 * PI)) + 2 * PI) % (2 * PI);
+}
+
+function sunLongitudeIndex(jdn: number, timeZone: number) {
+  return int((sunLongitudeRadians(jdn, timeZone) / PI) * 6);
+}
+
+function newMoon(k: number) {
+  const T = k / 1236.85;
+  const T2 = T * T;
+  const T3 = T2 * T;
+  const dr = DR;
+
+  let Jd1 = 2415020.75933 + SYNODIC_MONTH * k + 0.0001178 * T2 - 0.000000155 * T3;
+  Jd1 += 0.00033 * Math.sin((166.56 + 132.87 * T - 0.009173 * T2) * dr);
+
+  const M = 359.2242 + 29.10535608 * k - 0.0000333 * T2 - 0.00000347 * T3;
+  const Mpr = 306.0253 + 385.81691806 * k + 0.0107306 * T2 + 0.00001236 * T3;
+  const F = 21.2964 + 390.67050646 * k - 0.0016528 * T2 - 0.00000239 * T3;
+
+  const Mr = M * dr;
+  const Mprr = Mpr * dr;
+  const Fr = F * dr;
+
+  const C1 =
+    (0.1734 - 0.000393 * T) * Math.sin(Mr) +
+    0.0021 * Math.sin(2 * Mr) +
+    -0.4068 * Math.sin(Mprr) +
+    0.0161 * Math.sin(2 * Mprr) +
+    -0.0004 * Math.sin(3 * Mprr) +
+    0.0104 * Math.sin(2 * Fr) +
+    -0.0051 * Math.sin(Mr + Mprr) +
+    -0.0074 * Math.sin(Mr - Mprr) +
+    0.0004 * Math.sin(2 * Fr + Mr) +
+    -0.0004 * Math.sin(2 * Fr - Mr) +
+    -0.0006 * Math.sin(2 * Fr + Mprr) +
+    0.0010 * Math.sin(2 * Fr - Mprr) +
+    0.0005 * Math.sin(Mr + 2 * Mprr);
+
+  let deltaT: number;
+  if (T < -11) {
+    deltaT =
+      0.001 +
+      0.000839 * T +
+      0.0002261 * T2 -
+      0.00000845 * T3 -
+      0.000000081 * T * T3;
+  } else {
+    deltaT = -0.000278 + 0.000265 * T + 0.000262 * T2;
+  }
+
+  return Jd1 + C1 - deltaT;
+}
+
+function getNewMoonDay(k: number, timeZone: number) {
+  return int(newMoon(k) + 0.5 + timeZone / 24);
+}
+
+function getLunarMonth11(year: number, timeZone: number) {
+  const off = jdFromDate(31, 12, year) - 2415021;
+  const k = int(off / SYNODIC_MONTH);
+  let nm = getNewMoonDay(k, timeZone);
+  const sunLong = sunLongitudeIndex(nm, timeZone);
+  if (sunLong >= 9) {
+    nm = getNewMoonDay(k - 1, timeZone);
+  }
+  return nm;
+}
+
+function getLeapMonthOffset(a11: number, timeZone: number) {
+  const k = int(0.5 + (a11 - NEW_MOON_EPOCH) / SYNODIC_MONTH);
+  let last = 0;
+  let i = 1;
+  let arc = sunLongitudeIndex(getNewMoonDay(k + i, timeZone), timeZone);
+
+  do {
+    last = arc;
+    i += 1;
+    arc = sunLongitudeIndex(getNewMoonDay(k + i, timeZone), timeZone);
+  } while (arc !== last && i < 14);
+
+  return i - 1;
+}
+
+function dayStemIndex(jd: number) {
+  return (jd + 9) % 10;
+}
+
+function dayBranchIndex(jd: number) {
+  return (jd + 1) % 12;
+}
+
 // ── Kị Tuổi Helper ────────────────────────────────────────────
 
 function getKiTuoi(dayCan: Can, dayChi: Chi): string[] {
@@ -66,17 +215,64 @@ function getKiTuoi(dayCan: Can, dayChi: Chi): string[] {
 // ── Core Calendar Functions ───────────────────────────────────
 
 export function getLunarDate(date: Date): { day: number; month: number; year: number; isLeap: boolean } {
-  const dd = date.getDate();
-  const mm = date.getMonth() + 1;
-  const yy = date.getFullYear();
+  const normalized = normalizeDate(date);
+  const cacheKey = dateCacheKey(normalized);
+  const cached = lunarDateCache.get(cacheKey);
+  if (cached) {
+    return { ...cached };
+  }
 
-  const lunar = getVnLunarDate(dd, mm, yy);
-  return {
-    day: lunar.day,
-    month: lunar.month,
-    year: lunar.year,
-    isLeap: lunar.leap
-  };
+  const dd = normalized.getDate();
+  const mm = normalized.getMonth() + 1;
+  const yy = normalized.getFullYear();
+  const dayNumber = jdFromDate(dd, mm, yy);
+  const k = int((dayNumber - NEW_MOON_EPOCH) / SYNODIC_MONTH);
+  let monthStart = getNewMoonDay(k + 1, VIETNAM_TIMEZONE);
+  if (monthStart > dayNumber) {
+    monthStart = getNewMoonDay(k, VIETNAM_TIMEZONE);
+  }
+
+  let a11 = getLunarMonth11(yy, VIETNAM_TIMEZONE);
+  let b11 = a11;
+  let lunarYear: number;
+
+  if (a11 >= monthStart) {
+    lunarYear = yy;
+    a11 = getLunarMonth11(yy - 1, VIETNAM_TIMEZONE);
+  } else {
+    lunarYear = yy + 1;
+    b11 = getLunarMonth11(yy + 1, VIETNAM_TIMEZONE);
+  }
+
+  const lunarDay = dayNumber - monthStart + 1;
+  let diff = int((monthStart - a11) / 29);
+  let lunarLeap = 0;
+  let lunarMonth = diff + 11;
+
+  if (b11 - a11 > 365) {
+    const leapMonthDiff = getLeapMonthOffset(a11, VIETNAM_TIMEZONE);
+    if (diff >= leapMonthDiff) {
+      lunarMonth = diff + 10;
+      if (diff === leapMonthDiff) {
+        lunarLeap = 1;
+      }
+    }
+  }
+
+  if (lunarMonth > 12) {
+    lunarMonth -= 12;
+  }
+
+  if (lunarMonth >= 11 && diff < 4) {
+    lunarYear -= 1;
+  }
+
+  return rememberLunarDate(cacheKey, {
+    day: lunarDay,
+    month: lunarMonth,
+    year: lunarYear,
+    isLeap: lunarLeap === 1
+  });
 }
 
 export function getDayQuality(date: Date): DayQuality {
@@ -109,29 +305,21 @@ export function getMonthDays(year: number, month: number): DayCellData[] {
 
   for (let i = firstDayOfWeek - 1; i >= 0; i--) {
     const d = new Date(year, month - 1, prevMonthLastDay - i);
-    const day = d.getDate();
-    const mon = d.getMonth() + 1;
-    const yr = d.getFullYear();
-    const lunar = getVnLunarDate(day, mon, yr);
-    const jd = getJDN(day, mon, yr);
+    const lunar = getLunarDate(d);
     days.push({
-      solarDate: day,
+      solarDate: d.getDate(),
       lunarDate: lunar.day === 1 ? `${lunar.day}/${lunar.month}` : lunar.day,
       dayQuality: getDayQuality(d),
       fullDate: d,
       isCurrentMonth: false,
       isToday: isSameDay(d, new Date()),
-      dayChi: getDayCanChi(jd).split(' ')[1] as Chi
+      dayChi: getCanChiDay(d).split(' ')[1] as Chi
     });
   }
 
   for (let i = 1; i <= lastDayOfMonth.getDate(); i++) {
     const d = new Date(year, month, i);
-    const day = d.getDate();
-    const mon = d.getMonth() + 1;
-    const yr = d.getFullYear();
-    const lunar = getVnLunarDate(day, mon, yr);
-    const jd = getJDN(day, mon, yr);
+    const lunar = getLunarDate(d);
     days.push({
       solarDate: i,
       lunarDate: lunar.day === 1 ? `${lunar.day}/${lunar.month}` : lunar.day,
@@ -139,18 +327,14 @@ export function getMonthDays(year: number, month: number): DayCellData[] {
       fullDate: d,
       isCurrentMonth: true,
       isToday: isSameDay(d, new Date()),
-      dayChi: getDayCanChi(jd).split(' ')[1] as Chi
+      dayChi: getCanChiDay(d).split(' ')[1] as Chi
     });
   }
 
   const remaining = CALENDAR_GRID_CELLS - days.length;
   for (let i = 1; i <= remaining; i++) {
     const d = new Date(year, month + 1, i);
-    const day = d.getDate();
-    const mon = d.getMonth() + 1;
-    const yr = d.getFullYear();
-    const lunar = getVnLunarDate(day, mon, yr);
-    const jd = getJDN(day, mon, yr);
+    const lunar = getLunarDate(d);
     days.push({
       solarDate: i,
       lunarDate: lunar.day === 1 ? `${lunar.day}/${lunar.month}` : lunar.day,
@@ -158,7 +342,7 @@ export function getMonthDays(year: number, month: number): DayCellData[] {
       fullDate: d,
       isCurrentMonth: false,
       isToday: isSameDay(d, new Date()),
-      dayChi: getDayCanChi(jd).split(' ')[1] as Chi
+      dayChi: getCanChiDay(d).split(' ')[1] as Chi
     });
   }
 
@@ -182,8 +366,8 @@ export function getCanChiMonth(lunarMonth: number, lunarYear: number): string {
 
 export function getCanChiDay(date: Date): string {
   const jd = getJDN(date.getDate(), date.getMonth() + 1, date.getFullYear());
-  const canIndex = (jd + 9) % 10;
-  const chiIndex = (jd + 1) % 12;
+  const canIndex = dayStemIndex(jd);
+  const chiIndex = dayBranchIndex(jd);
   return `${CAN[canIndex]} ${CHI[chiIndex]}`;
 }
 
@@ -439,7 +623,7 @@ export function getDetailedDayData(date: Date): DayDetailsData {
   // 3. Moon Phase (Tháng đủ/thiếu)
   const tempDate = new Date(date);
   tempDate.setDate(tempDate.getDate() + (30 - lunar.day));
-  const tempLunar = getVnLunarDate(tempDate.getDate(), tempDate.getMonth() + 1, tempDate.getFullYear());
+  const tempLunar = getLunarDate(tempDate);
   const isDu = tempLunar.day === 30;
   const thangAmThieuDu = `Tháng ${lunar.month} ${isDu ? 'đủ' : 'thiếu'} kiên ${monthCanChi.can} ${monthCanChi.chi}`;
 

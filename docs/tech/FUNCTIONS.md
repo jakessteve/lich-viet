@@ -7,13 +7,14 @@
 
 ## 1. Active Surface
 
-Lich Viet v3 is a client-side React SPA with three primary user surfaces:
+Lich Viet v3 is a client-side React SPA with four primary user surfaces:
 
 | Surface           | Route           | Primary Component                        |
 | ----------------- | --------------- | ---------------------------------------- |
 | Landing           | `/`             | `src/components/pages/LandingPage.tsx`   |
 | Am Lich + Dung Su | `/app/am-lich`  | `src/components/pages/AmLichPage.tsx`    |
 | Gieo Que          | `/app/gieo-que` | `src/components/GieoQue/GieoQueView.tsx` |
+| Tu Vi             | `/app/tu-vi`    | `src/components/TuVi/TuViPage.tsx`       |
 
 Support routes for settings, auth, and upgrade stay inside the same SPA shell. Legacy module routes redirect into the active v3 pages instead of loading removed modules.
 
@@ -34,6 +35,7 @@ All active engines are pure TypeScript and live under `src/utils/`.
 | Luc Nham         | `lucNhamEngine.ts`                        | Heaven/Earth board and verdicts                         |
 | Thai At          | `thaiAtEngine.ts`                         | Year/month overlays and cosmic forecast                 |
 | Flying Star      | `flyingStarEngine.ts`                     | Xuan Kong Flying Star chart                             |
+| Tu Vi            | `services/tuvi/` (starPlacement, etc.)    | Tử Vi Đẩu Số birth chart with Thiên Lương school        |
 
 ---
 
@@ -52,9 +54,10 @@ The active public package facades are in `packages/core/src/`.
 | `@lich-viet/core/thaiAt`   | Thai At chart and forecast helpers                                 |
 | `@lich-viet/core/lucNham`  | Luc Nham chart and interpretation helpers                          |
 | `@lich-viet/core/tamThuc`  | Tam Thuc synthesis helpers                                         |
-| `@lich-viet/types`         | Active shared calendar, Mai Hoa, QMDJ, Thai At, and Luc Nham types |
+| `@lich-viet/core/tuvi`     | Tu Vi chart, star placement, and interpretation helpers            |
+| `@lich-viet/types`         | Active shared calendar, Mai Hoa, QMDJ, Thai At, Luc Nham, Tu Vi types |
 
-Removed v2 modules such as Bazi, Tu Vi, Western Astrology, Numerology, PDF, premium gating, onboarding, admin, and widget exports are intentionally absent.
+Removed v2 modules such as Bazi, Western Astrology, Numerology, PDF, premium gating, onboarding, admin, and widget exports are intentionally absent.
 
 ---
 
@@ -66,6 +69,7 @@ Removed v2 modules such as Bazi, Tu Vi, Western Astrology, Numerology, PDF, prem
 | Auth Store      | `src/stores/authStore.ts`          | Demo-only localStorage auth, seeded admin, and profile persistence |
 | Personalization | `src/services/personalization/`    | Personal day, activity, and hour scoring helpers                   |
 | Holiday Geo     | `src/hooks/useHolidays.ts`         | Geo-IP lookup and holiday caching for the calendar view            |
+| TuVi Store      | `src/stores/tuviStore.ts`          | Zustand store for Tử Vi chart state, birth data, and palace selection |
 
 Security note: auth remains client-side demo auth. It seeds a local admin account for testing and should not be treated as production authentication.
 
@@ -91,7 +95,7 @@ As of the May 2026 audit:
 | TypeScript       | `npm run typecheck` passes                                                            |
 | ESLint           | `npm run lint` passes                                                                 |
 | Unit tests       | `npm test` passes with 151 tests                                                      |
-| Production build | `npm run build` passes                                                                |
+| Production build | `npm run build` passes with the current source tree                                   |
 | Dependency audit | `npm audit --audit-level=moderate` reports 11 advisories requiring dependency updates |
 
 Known build warnings:
@@ -99,4 +103,4 @@ Known build warnings:
 | Warning                                    | Notes                                                                                               |
 | ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
 | `module.register()` deprecation            | Emitted by the current test/build toolchain                                                         |
-| CSS `file:function` / `file:line` warnings | Emitted during CSS minification; no matching source class was found in `src`, `packages`, or `test` |
+| CSS file/function and file/line warnings   | Previously emitted during CSS minification; remove source-like debug tokens from docs before rechecking |

@@ -121,7 +121,7 @@ export default function MysticBackgroundPattern({ variant, className = '' }: Mys
         <circle cx="400" cy="400" r="6" fill="#ffffff" opacity="0.8" />
         <circle cx="400" cy="400" r="30" stroke="#ffffff" strokeWidth="1" strokeDasharray="2 4" opacity="0.3" />
         
-        {/* Big Dipper Constellation (rotating around Pole Star) */}
+        {/* Big Dipper Constellation */}
         <g style={{ animation: 'spin 180s linear infinite', transformOrigin: 'center' }}>
           {/* Thick connecting light beams */}
           <path d="M 240 280 L 320 220 L 380 260 L 410 340 L 490 420 L 570 460 L 650 430" 
@@ -171,7 +171,7 @@ export default function MysticBackgroundPattern({ variant, className = '' }: Mys
           <path d="M 400 320 A 40 40 0 0 0 400 400 A 40 40 0 0 1 400 480 A 80 80 0 0 1 400 320" fill="url(#mysticGold)" opacity="0.1" />
 
           {/* 4 Guardian Crests */}
-          {[0, 90, 180, 270].map((angle, idx) => (
+          {[0, 90, 180, 270].map((angle) => (
             <g key={angle} transform={`rotate(${angle} 400 400)`}>
               {/* Sacred Temple / Crest geometry for each guardian */}
               <path d="M 370 60 L 430 60 L 450 110 L 400 130 L 350 110 Z" fill="none" stroke="url(#mysticGold)" strokeWidth="2" opacity="0.7" />

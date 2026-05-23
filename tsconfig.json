@@ -28,9 +28,7 @@
       "@/*": ["src/*"],
       "@lich-viet/core": ["packages/core/src/index.ts"],
       "@lich-viet/core/*": ["packages/core/src/*/index.ts"],
-      "@lich-viet/types": ["packages/types/src/index.ts"],
-      "circular-natal-horoscope-js": ["src/packages/circular-natal-horoscope/index.js"],
-      "iztro": ["src/packages/iztro/lib/index.d.ts"]
+      "@lich-viet/types": ["packages/types/src/index.ts"]
     }
   },
   "include": [

@@ -11,7 +11,7 @@ Lịch Việt v3 is a **client-side Single Page Application (SPA)** — there is
 
 The app provides solar–lunar date conversion, auspicious day analysis (Dụng Sự), and the active divination engines used by Mai Hoa, Tam Thuc, QMDJ, Thai At, Luc Nham, and Flying Star workflows — all running entirely client-side as a React SPA with Web Worker offloading for heavy computations.
 
-The app surface is **3 pages**: Landing, Âm Lịch (Lunar Calendar + Dụng Sự), and Gieo Quẻ (Mai Hoa + Tam Thuc).
+The app surface is **4 pages**: Landing, Âm Lịch (Lunar Calendar + Dụng Sự), Gieo Quẻ (Mai Hoa + Tam Thuc), and Tử Vi (Purple Star Astrology).
 
 ---
 
@@ -54,6 +54,7 @@ graph TB
     subgraph Pages["📱 Route Pages"]
         P1["📅 Âm Lịch<br/>(Lunar Calendar + Dụng Sự)"]
         P2["🔮 Gieo Quẻ<br/>(Mai Hoa + Tam Thức)"]
+        P3["⭐ Tử Vi<br/>(Tử Vi Đẩu Số)"]
     end
 
     subgraph Engines["🧮 Calculation Engines (Pure TS, Zero React)"]
@@ -118,6 +119,7 @@ Lịch Việt v3/
 │   │   ├── MaiHoa/             # Plum Blossom hexagram
 │   │   ├── TamThuc/            # QMDJ + Thái Ất + Lục Nhâm
 │   │   ├── GieoQue/            # Divination container
+│   │   ├── TuVi/               # Tử Vi Đẩu Số chart
 │   │   └── LichDungSu/         # Activity calendar
 │   ├── config/                 # App-wide configuration
 │   │   ├── api.ts              # API endpoint config
@@ -129,6 +131,7 @@ Lịch Việt v3/
 │   ├── i18n/                   # Vietnamese translations
 │   ├── router/                 # Route definitions + lazy imports
 │   ├── services/               # Business logic services
+│   │   ├── tuvi/               # Tử Vi engine (star placement, chart)
 │   ├── stores/                 # Zustand state (app, auth)
 │   ├── styles/                 # Feature-specific CSS
 │   ├── types/                  # Shared TypeScript definitions
@@ -186,6 +189,7 @@ The engine layer contains pure TypeScript functions with **zero React dependenci
 | 7   | **Luc Nham**        | `lucNhamEngine.ts`                        | Date/time          | Heaven/Earth board and verdicts              |
 | 8   | **Tam Thức**        | `tamThucSynthesis.ts`                     | Date/time          | Thái Ất + QMDJ + Lục Nhâm boards             |
 | 9   | **Phi Tinh**        | `flyingStarEngine.ts`                     | Period + direction | Flying Star 9-palace Luo Shu grid            |
+| 10  | **Tử Vi**           | `services/tuvi/` (starPlacement, etc.)    | Birth data         | Complete Tử Vi chart with Thiên Lương school |
 
 ---
 
@@ -205,6 +209,7 @@ graph TD
         ThaiAtEng["thaiAtEngine"]
         DungSuEng["dungSuEngine"]
         FlyingStarEng["flyingStarEngine"]
+        TuViEng["tuViEngine"]
 
         FoundLayer["foundationalLayer"]
         ModLayer["modifyingLayer"]
@@ -217,7 +222,7 @@ graph TD
         VnLunar["@dqcai/vn-lunar"]
     end
 
-    Core --> CalEngine & DungSuEng & MaiHoaEng & QMDJEng & ThaiAtEng & LucNhamEng & FlyingStarEng
+    Core --> CalEngine & DungSuEng & MaiHoaEng & QMDJEng & ThaiAtEng & LucNhamEng & FlyingStarEng & TuViEng
 
     CalEngine --> FoundLayer & ModLayer & HourEng & CanChi & VnLunar & Constants
     MaiHoaEng --> CalEngine & Constants
@@ -226,6 +231,7 @@ graph TD
     ThaiAtEng --> CalEngine
     DungSuEng --> Constants
     FlyingStarEng --> Constants
+    TuViEng --> CalEngine & FoundLayer & Constants
 
     ModLayer --> FoundLayer & Constants
     FoundLayer --> Constants

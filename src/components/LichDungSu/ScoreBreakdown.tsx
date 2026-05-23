@@ -50,7 +50,7 @@ const ScoreBreakdown: React.FC<ScoreBreakdownProps> = ({ breakdown }) => {
             </button>
 
             {isExpanded && (
-                <div className="divide-y divide-border-light/50 dark:divide-border-dark/50 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="divide-y divide-border-light/50 dark:divide-border-dark/50 animate-fade-scale">
                     {breakdown.map((item) => {
                         const q = quantifyScore(item.value, item.maxValue);
                         return (

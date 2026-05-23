@@ -10,9 +10,6 @@ export default defineConfig({
       { find: '@lich-viet/core/calendar', replacement: path.resolve(__dirname, 'packages/core/src/calendar/index.ts') },
       { find: '@lich-viet/core/dungsu', replacement: path.resolve(__dirname, 'packages/core/src/dungsu/index.ts') },
       { find: '@lich-viet/core/maihoa', replacement: path.resolve(__dirname, 'packages/core/src/maihoa/index.ts') },
-      { find: '@lich-viet/core/chiemtinh', replacement: path.resolve(__dirname, 'packages/core/src/chiemtinh/index.ts') },
-      { find: '@lich-viet/core/bazi', replacement: path.resolve(__dirname, 'packages/core/src/bazi/index.ts') },
-      { find: '@lich-viet/core/numerology', replacement: path.resolve(__dirname, 'packages/core/src/numerology/index.ts') },
       { find: '@lich-viet/core/fengshui', replacement: path.resolve(__dirname, 'packages/core/src/fengshui/index.ts') },
       { find: '@lich-viet/core/qmdj', replacement: path.resolve(__dirname, 'packages/core/src/qmdj/index.ts') },
       { find: '@lich-viet/core/thaiAt', replacement: path.resolve(__dirname, 'packages/core/src/thaiAt/index.ts') },
@@ -22,9 +19,6 @@ export default defineConfig({
       { find: '@lich-viet/core', replacement: path.resolve(__dirname, 'packages/core/src/index.ts') },
       // App-level alias
       { find: '@', replacement: path.resolve(__dirname, 'src') },
-      // Vendored packages
-      { find: 'iztro', replacement: path.resolve(__dirname, 'src/packages/iztro/index.cjs') },
-      { find: 'circular-natal-horoscope-js', replacement: path.resolve(__dirname, 'src/packages/circular-natal-horoscope/index.cjs') },
     ],
   },
   test: {

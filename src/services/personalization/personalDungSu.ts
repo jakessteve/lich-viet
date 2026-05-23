@@ -1,5 +1,10 @@
-import { ExtendedProfile, BasicProfile } from '../../types/auth';
-import { Chi } from '../../types/calendar';
+/**
+ * personalDungSu.ts — Personalized Dụng Sự (auspicious activities)
+ *
+ * Applies personal day score modifiers to the list of suitable activities.
+ */
+
+import type { Chi } from '../../types/calendar';
 import { calculatePersonalDayScore } from './personalDayScore';
 
 export interface ScoredActivity {
@@ -18,12 +23,11 @@ export interface PersonalDungSuResult {
 }
 
 /**
- * Calculates personalized Auspicious Activities (Dụng Sự) based on the user's profile.
- * Applies Tuần Không (Void) penalty and daily clash/harmony modifiers.
+ * Calculates personalized Auspicious Activities based on birth year.
+ * No premium gating — available to all authenticated users.
  */
 export function getPersonalDungSu(
-  basicProfile: BasicProfile | undefined | null,
-  extendedProfile: ExtendedProfile | undefined | null,
+  birthYear: number | undefined | null,
   dayChi: Chi,
   suitableActivities: string[]
 ): PersonalDungSuResult {
@@ -33,30 +37,19 @@ export function getPersonalDungSu(
     regular: []
   };
 
-  if (!suitableActivities || suitableActivities.length === 0) {
+  if (!suitableActivities || suitableActivities.length === 0 || !birthYear) {
     return result;
   }
 
-  // Base score map
   const scoredActivities: ScoredActivity[] = suitableActivities.map(name => ({
     name,
-    score: 10, // Base positive score for being in the "suitable" list
+    score: 10,
     isBoosted: false,
     isWarned: false
   }));
 
-  // 1. Tuần Không (Void Day) Check (from Extended Profile)
-  if (extendedProfile?.tuanKhong && extendedProfile.tuanKhong.includes(dayChi)) {
-    result.voidDayWarning = 'Ngày Không Vong — Nên Tránh Việc Lớn';
-    scoredActivities.forEach(act => {
-      act.score -= 20;
-      act.isWarned = true;
-      act.reason = 'Phạm Tuần Không';
-    });
-  }
-
-  // 2. Personal Day Score Overlay (from Basic Profile)
-  const dayScore = calculatePersonalDayScore(basicProfile, dayChi);
+  // Personal Day Score Overlay
+  const dayScore = calculatePersonalDayScore(birthYear, dayChi);
   if (dayScore) {
     scoredActivities.forEach(act => {
       if (dayScore.actionScore >= 3) {
@@ -71,7 +64,7 @@ export function getPersonalDungSu(
     });
   }
 
-  // 3. Sort and Categorize
+  // Sort and categorize
   scoredActivities.sort((a, b) => b.score - a.score);
 
   scoredActivities.forEach(act => {

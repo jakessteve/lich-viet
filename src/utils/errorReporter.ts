@@ -2,7 +2,7 @@
  * Error Reporter — Centralized error reporting abstraction.
  *
  * Provides a consistent interface for capturing and reporting errors.
- * Currently logs to console; drop-in ready for Sentry, LogRocket, etc.
+ * Currently logs to console.
  *
  * @example
  * ```ts
@@ -11,7 +11,7 @@
  * try {
  *   riskyOperation();
  * } catch (error) {
- *   reportError(error, { component: 'TuViModule', action: 'generateChart' });
+ *   reportError(error, { component: 'CalendarModule', action: 'generateChart' });
  * }
  * ```
  */
@@ -29,8 +29,7 @@ export interface ErrorContext {
 
 /**
  * Report an error to the monitoring service.
- * Currently logs to console; replace the implementation body
- * with Sentry.captureException() or similar when ready.
+ * Currently logs to console.
  */
 export function reportError(
   error: unknown,
@@ -47,14 +46,6 @@ export function reportError(
 
   console.error(`${prefix}${contextStr}`, errorObj.message, context?.extra ?? '');
 
-  // ── Production integration placeholder ──
-  // To enable Sentry:
-  //   import * as Sentry from '@sentry/react';
-  //   Sentry.captureException(errorObj, {
-  //     tags: { component: context?.component, action: context?.action },
-  //     level: severity,
-  //     extra: context?.extra,
-  //   });
 }
 
 /**
@@ -76,7 +67,4 @@ export function reportMessage(
   } else {
     console.debug(`${prefix}${contextStr}`, message, context?.extra ?? '');
   }
-
-  // ── Production integration placeholder ──
-  // Sentry.captureMessage(message, { level: severity, tags: { ... } });
 }

@@ -11,20 +11,20 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#1a1a2e" />
   <meta name="description"
-    content="Lịch Việt - Tra cứu ngày âm lịch, giờ tốt xấu, hướng xuất hành, và phong thủy hàng ngày." />
+    content="Lịch Việt — Tra cứu ngày âm lịch, giờ tốt xấu, hướng xuất hành, Dụng Sự, và Gieo Quẻ." />
 
   <!-- Open Graph / Facebook / Zalo -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://lichviet.app/" />
-  <meta property="og:title" content="Lịch Việt — Tra cứu Âm Lịch & Phong Thủy" />
-  <meta property="og:description" content="Tra cứu ngày âm lịch, giờ tốt xấu, hướng xuất hành, Tử Vi, Bát Tự, Chiêm Tinh, và phong thủy hàng ngày." />
+  <meta property="og:title" content="Lịch Việt — Âm Lịch, Dụng Sự & Gieo Quẻ" />
+  <meta property="og:description" content="Tra cứu ngày âm lịch, giờ tốt xấu, hướng xuất hành, Dụng Sự, và Gieo Quẻ." />
   <meta property="og:image" content="https://lichviet.app/og-image.png" />
   <meta property="og:locale" content="vi_VN" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Lịch Việt — Tra cứu Âm Lịch & Phong Thủy" />
-  <meta name="twitter:description" content="Tra cứu ngày âm lịch, giờ tốt xấu, hướng xuất hành, Tử Vi, Bát Tự, Chiêm Tinh, và phong thủy hàng ngày." />
+  <meta name="twitter:title" content="Lịch Việt — Âm Lịch, Dụng Sự & Gieo Quẻ" />
+  <meta name="twitter:description" content="Tra cứu ngày âm lịch, giờ tốt xấu, hướng xuất hành, Dụng Sự, và Gieo Quẻ." />
   <meta name="twitter:image" content="https://lichviet.app/og-image.png" />
 
   <!-- Canonical URL -->
@@ -34,10 +34,10 @@
   <meta http-equiv="Content-Security-Policy" content="
         default-src 'self';
         script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-        style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        style-src 'self' 'unsafe-inline';
+        style-src-elem 'self' 'unsafe-inline';
         style-src-attr 'unsafe-inline';
-        font-src 'self' data: https://fonts.gstatic.com;
+        font-src 'self' data:;
         img-src 'self' data: blob: https://*.tile.openstreetmap.org https://unpkg.com;
         connect-src 'self' ws: wss: https://date.nager.at https://ipapi.co https://nominatim.openstreetmap.org;
         frame-src 'none';
@@ -57,22 +57,17 @@
   <!-- Restrict unused browser features -->
   <meta http-equiv="Permissions-Policy" content="geolocation=(), camera=(), microphone=(), payment=(), usb=()" />
 
-  <title>Lịch Việt — Tra cứu Âm Lịch &amp; Phong Thủy</title>
+  <title>Lịch Việt — Âm Lịch, Dụng Sự &amp; Gieo Quẻ</title>
 
   <!-- P1-8: Font preloading — preload critical weights -->
-  <link rel="preload" href="/fonts/inter-400.ttf" as="font" type="font/ttf" crossorigin fetchpriority="high" />
-  <link rel="preload" href="/fonts/inter-700.ttf" as="font" type="font/ttf" crossorigin fetchpriority="high" />
+  <link rel="preload" href="/fonts/noto-sans-latin.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
+  <link rel="preload" href="/fonts/noto-sans-vietnamese.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/material-icons-round.woff2" as="font" type="font/woff2" crossorigin />
-
-  <!-- Stitch celestial editorial Google fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
   <!-- P1-6: Critical CSS — inline above-the-fold skeleton to prevent layout shift -->
   <style>
     :root { --gold: #b8860b; }
-    html { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    html { font-family: 'Noto Sans', system-ui, -apple-system, sans-serif; }
     body { margin: 0; background: #F5F5F7; color: #1D1D1F; }
     .dark body { background: #0a0a1a; color: #F5F5F7; }
     #root { min-height: 100vh; }
@@ -85,7 +80,7 @@
     "@type": "WebApplication",
     "name": "Lịch Việt",
     "url": "https://lichviet.app/",
-    "description": "Tra cứu ngày âm lịch, giờ tốt xấu, hướng xuất hành, Tử Vi, Bát Tự, Chiêm Tinh, Thần Số Học, và phong thủy hàng ngày.",
+    "description": "Tra cứu ngày âm lịch, giờ tốt xấu, hướng xuất hành, Dụng Sự, và Gieo Quẻ.",
     "applicationCategory": "LifestyleApplication",
     "operatingSystem": "Web",
     "inLanguage": "vi",
@@ -101,7 +96,7 @@
   <script defer src="/darkModeInit.js"></script>
 </head>
 
-<body class="antialiased font-display">
+<body class="antialiased font-sans">
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
   <!-- Service worker auto-registered by vite-plugin-pwa -->

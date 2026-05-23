@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-05-10
+
+### Major Changes
+- **Refactored** from 9-engine monolith to focused 3-page app (Landing, Âm Lịch, Gieo Quẻ)
+- **Removed** Tử Vi, Chiêm Tinh, Thần Số Học, Hợp Lá, Hàng Ngày features
+- **Stripped** all first-time-visitor animations from Landing Page
+- **Created** `packages/core` barrel exports for `@lich-viet/core/*` aliases
+- **Simplified** navigation from 6 tabs to 2 tabs
+- **Simplified** stores: removed userGoal, isPremium, creditStore
+- **Removed** premium gating, rate limiting, 2FA, admin page
+- **Updated** feature flags to 4 items (am-lich, dung-su, gieo-que, phong-thuy)
+- **Removed** dependencies: iztro, circular-natal-horoscope-js, leaflet, html-to-image
+
+### Removed Features (deferred to future phases)
+- Tử Vi (Purple Star) — Phase 3
+- Chiêm Tinh (Western Astrology) — Phase 4
+- Hợp Lá (Synastry) — Phase 5
+- Hàng Ngày (Personalized Daily) — Phase 6
+- Thần Số Học (Numerology) — removed entirely
+
+### Removed Components
+- 5 component directories (Numerology, TuVi, Bazi, ChiemTinh, CrossValidation)
+- 31 shared/page components (premium gating, onboarding, admin, etc.)
+- 17 utility files (removed engines)
+- 7 service directories
+- 10 data directories/files
+- 6 hook files
+- 4 style files
+- 1 store (creditStore)
+
+### Animation Changes
+- Removed: mystery orbs, starfield, sacred geometry, concentric rings, useCountUp, useInView stagger, animate-float, mystery-text-glow, glass-shimmer, glass-noise, animate-pulse-glow, SVG spin animations, animate-glow-pulse
+- Kept: glass-card backgrounds, hover-lift, dark/light mode, static moon phase, CosmicWeatherCard, HeroBirthdayInput, TestimonialSection, Pricing placeholder
+
 ## [2.3.0] - 2026-03-14
 
 ### Added

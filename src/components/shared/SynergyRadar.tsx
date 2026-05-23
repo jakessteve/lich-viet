@@ -117,7 +117,7 @@ const SynergyRadar: React.FC<SynergyRadarProps> = ({ data, axes = DEFAULT_AXES, 
           fill="url(#radarGradient)"
           stroke="var(--color-gold, #d4a574)"
           strokeWidth={1.5}
-          className="animate-in fade-in zoom-in-50 duration-700"
+          className="animate-fade-scale"
         />
 
         {/* Data points */}
@@ -151,7 +151,7 @@ const SynergyRadar: React.FC<SynergyRadarProps> = ({ data, axes = DEFAULT_AXES, 
               className="text-[10px] fill-gray-600 dark:fill-gray-400 font-medium"
             >
               {l.label}
-              <tspan x={pt.x} dy="11" className="text-[8px] fill-gray-400 dark:fill-gray-500">
+              <tspan x={pt.x} dy="11" className="text-[10px] fill-gray-400 dark:fill-gray-500">
                 {values[i]}%
               </tspan>
             </text>

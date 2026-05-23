@@ -111,7 +111,7 @@ export default function HexagramCard({
             {/* ── Card Body: Centered Content ───────────────── */}
             <div className="flex flex-col items-center gap-1 sm:gap-2 p-1.5 sm:p-4 md:p-5 flex-1">
                 {/* Label badge */}
-                <span className={`text-[7px] sm:text-[10px] uppercase tracking-widest font-bold ${accentClass}`}>
+                <span className={`text-[10px] sm:text-[10px] uppercase tracking-widest font-bold ${accentClass}`}>
                     {label}
                 </span>
 
@@ -131,7 +131,7 @@ export default function HexagramCard({
                 </div>
 
                 {/* Trigram Names */}
-                <div className="flex items-center justify-center gap-1 sm:gap-3 text-[8px] sm:text-xs text-text-secondary-light dark:text-text-secondary-dark flex-wrap">
+                <div className="flex items-center justify-center gap-1 sm:gap-3 text-[10px] sm:text-xs text-text-secondary-light dark:text-text-secondary-dark flex-wrap">
                     <div className="flex items-center gap-0.5 sm:gap-1">
                         <span className="hidden sm:inline font-semibold opacity-50 uppercase text-[10px] tracking-wider">Ngoại</span>
                         <span className="font-medium">{upperTrigram?.name ?? '?'}</span>

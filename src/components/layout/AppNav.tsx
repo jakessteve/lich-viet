@@ -4,7 +4,6 @@ import { useAppStore } from '@/stores/appStore';
 import { useAuthStore } from '@/stores/authStore';
 import { NAV_LINKS, ROUTE_TO_TAB, TAB_TO_ROUTE, type ActiveTab } from '@/router/constants';
 import { LOCALE_NAMES, type LocaleCode, SUPPORTED_LOCALES } from '@/i18n';
-import { useUserTier } from '@/hooks/useUserTier';
 
 export default function AppNav() {
   const isDark = useAppStore((s) => s.isDark);
@@ -19,10 +18,9 @@ export default function AppNav() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAuthenticated, logout } = useAuthStore();
-  const { tier: userTier } = useUserTier();
 
   const activeTab: ActiveTab = ROUTE_TO_TAB[location.pathname] || 'am-lich';
-  const isFullPage = location.pathname === '/app/cai-dat' || location.pathname === '/app/quan-tri';
+  const isFullPage = location.pathname === '/app/cai-dat';
 
   const handleTabChange = (tabId: ActiveTab) => {
     navigate(TAB_TO_ROUTE[tabId]);
@@ -104,7 +102,7 @@ export default function AppNav() {
               </span>
               {link.label}
               {!link.enabled && (
-                <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 leading-none">
+                <span className="text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 leading-none">
                   Soon
                 </span>
               )}
@@ -159,21 +157,14 @@ export default function AppNav() {
                           <p className="text-sm font-semibold text-text-primary-light dark:text-text-primary-dark truncate">
                             {user.displayName}
                           </p>
-                          <p className="text-[10px] text-text-secondary-light dark:text-text-secondary-dark truncate">
+                          <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark truncate">
                             {user.email}
                           </p>
                         </div>
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider leading-none shrink-0 ml-auto ${userTier === 'elite' ? 'bg-amber-100 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400' :
-                          userTier === 'premium' ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' :
-                            'bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400'
-                          }`}>
-                          <span className="material-icons-round text-[10px]">{userTier === 'elite' ? 'star' : userTier === 'premium' ? 'star_half' : 'star_outline'}</span>
-                          {userTier === 'elite' ? 'Đầy đủ' : userTier === 'premium' ? 'Dùng thử' : 'Miễn phí'}
-                        </span>
                       </div>
                       {user.provider !== 'email' && (
-                        <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-mystery-purple/8 dark:bg-mystery-purple/12 text-mystery-purple dark:text-mystery-purple-light">
-                          <span className="material-icons-round text-[10px]">{user.provider === 'google' ? 'account_circle' : 'person'}</span>
+                        <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-mystery-purple/8 dark:bg-mystery-purple/12 text-mystery-purple dark:text-mystery-purple-light">
+                          <span className="material-icons-round text-xs">{user.provider === 'google' ? 'account_circle' : 'person'}</span>
                           {user.provider === 'google' ? 'Google' : 'Facebook'}
                         </span>
                       )}
@@ -263,7 +254,6 @@ export default function AppNav() {
                     <>
                       {[
                         { icon: 'settings', label: 'Cài đặt', action: () => navigate('/app/cai-dat') },
-                        { icon: 'admin_panel_settings', label: 'Quản trị', action: () => navigate('/app/quan-tri') },
                         { icon: 'help_outline', label: 'Trợ giúp', action: () => { } },
                         { icon: 'info', label: 'Giới thiệu', action: () => navigate('/') },
                       ].map((item, idx) => (

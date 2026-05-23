@@ -23,7 +23,7 @@ interface FactorGroup {
 
 const GROUPS: FactorGroup[] = [
   { id: 'day', icon: '📅', label: 'Chất lượng Ngày', factors: ['truc', 'stars', 'dayGrade', 'hour'] },
-  { id: 'compat', icon: '👥', label: 'Hợp Tuổi', factors: ['kiTuoi', 'napAm', 'baziSynastry', 'tuviSynastry', 'numerologySynastry', 'westernSynastry'] },
+  { id: 'compat', icon: '👥', label: 'Hợp Tuổi', factors: ['kiTuoi', 'napAm', 'baziSynastry'] },
   { id: 'cosmic', icon: '🌌', label: 'Vận Khí', factors: ['qmdj', 'thaiAt'] },
 ];
 
@@ -37,9 +37,6 @@ const FACTOR_ICONS: Record<string, string> = {
   qmdj: 'grid_view',
   thaiAt: 'public',
   baziSynastry: 'favorite',
-  tuviSynastry: 'auto_awesome',
-  numerologySynastry: 'tag',
-  westernSynastry: 'brightness_4',
 };
 
 function quantifyScore(value: number, maxValue: number): { text: string; colorClass: string } {
@@ -105,7 +102,7 @@ const GroupedBreakdown: React.FC<GroupedBreakdownProps> = ({ breakdown }) => {
 
             {isExpanded && (
               <>
-              <div className="divide-y divide-border-light/30 dark:divide-border-dark/30 animate-in fade-in slide-in-from-top-1 duration-200 bg-surface-subtle-light/50 dark:bg-white/[0.01]">
+              <div className="divide-y divide-border-light/30 dark:divide-border-dark/30 animate-fade-scale bg-surface-subtle-light/50 dark:bg-white/[0.01]">
                 {groupItems.map((item) => {
                   const iq = quantifyScore(item.value, item.maxValue);
                   return (

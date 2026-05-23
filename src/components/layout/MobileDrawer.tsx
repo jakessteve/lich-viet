@@ -9,7 +9,7 @@ export default function MobileDrawer() {
   const location = useLocation();
 
   const activeTab: ActiveTab = ROUTE_TO_TAB[location.pathname] || 'am-lich';
-  const isFullPage = location.pathname === '/app/cai-dat' || location.pathname === '/app/quan-tri';
+  const isFullPage = location.pathname === '/app/cai-dat';
 
   // Listen for toggle event from AppNav hamburger
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function MobileDrawer() {
     <div className={`fixed inset-0 z-30 sm:hidden ${isClosing ? 'pointer-events-none' : ''}`} role="dialog" aria-modal="true" aria-label="Menu điều hướng">
       {/* Backdrop */}
       <div
-        className={`absolute inset-0 bg-black/50 dark:bg-black/60 backdrop-blur-sm transition-opacity duration-200 ${isClosing ? 'opacity-0' : 'animate-in fade-in duration-200'}`}
+        className={`absolute inset-0 bg-black/50 dark:bg-black/60 backdrop-blur-sm transition-opacity duration-200 ${isClosing ? 'opacity-0' : 'animate-fade-scale'}`}
         onClick={handleClose}
         onKeyDown={e => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -51,7 +51,7 @@ export default function MobileDrawer() {
         aria-hidden="true"
       />
       {/* Drawer panel */}
-      <div className={`absolute top-0 left-0 h-full w-64 bg-white dark:bg-mystery-surface/95 dark:backdrop-blur-xl shadow-2xl dark:shadow-mystery-purple/10 flex flex-col transition-transform duration-300 ${isClosing ? '-translate-x-full' : 'animate-in slide-in-from-left duration-300'}`} style={{ transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)' }}>
+      <div className={`absolute top-0 left-0 h-full w-64 bg-white dark:bg-mystery-surface/95 dark:backdrop-blur-xl shadow-2xl dark:shadow-mystery-purple/10 flex flex-col transition-transform duration-300 ${isClosing ? '-translate-x-full' : 'animate-fade-in-up'}`} style={{ transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)' }}>
         {/* Drawer header */}
         <div className="flex items-center justify-between h-14 px-4 border-b border-border-light dark:border-border-dark">
           <div className="flex items-center gap-2">
@@ -95,10 +95,9 @@ export default function MobileDrawer() {
           {/* Divider */}
           <div className="border-t border-border-light/50 dark:border-border-dark/50 my-2 mx-4" />
 
-          {/* Settings & Admin links */}
+          {/* Settings link */}
           {[
             { id: 'cai-dat', icon: 'settings', label: 'Cài đặt', desc: 'Tùy chỉnh ứng dụng', path: '/app/cai-dat' },
-            { id: 'quan-tri', icon: 'admin_panel_settings', label: 'Quản trị', desc: 'Bảng điều khiển', path: '/app/quan-tri' },
           ].map((link) => (
             <button
               key={link.id}

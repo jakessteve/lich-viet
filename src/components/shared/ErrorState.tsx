@@ -2,7 +2,7 @@
  * ErrorState — Unified error display card.
  *
  * Replaces the 3 different inline error UIs found across
- * TuViModule, ChiemTinhView, and MaiHoaView.
+ * MaiHoaView and other engine views.
  */
 import React from 'react';
 

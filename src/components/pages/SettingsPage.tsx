@@ -1,13 +1,9 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../stores/appStore';
 import { useAuthStore } from '../../stores/authStore';
-import TwoFactorSetup from '../auth/TwoFactorSetup';
-import PromotionCodeInput from '../auth/PromotionCodeInput';
-import { useUserTier } from '@/hooks/useUserTier';
-import { CreditRefreshBanner } from '../shared/CreditRefreshBanner';
-import LocationPicker, { type SelectedLocation } from '../ChiemTinh/LocationPicker';
+
 // ══════════════════════════════════════════════════════════
 // Toggle Switch — Modern pill toggle
 // ══════════════════════════════════════════════════════════
@@ -114,25 +110,20 @@ export default function SettingsPage() {
   const fontSize = useAppStore((s) => s.fontSize);
   const setFontSizeLevel = useAppStore((s) => s.setFontSizeLevel);
   const { user, isAuthenticated, logout, updateProfile, changePassword } = useAuthStore();
-  const tierInfo = useUserTier();
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
   // Active section (sidebar navigation)
   const [activeSection, setActiveSection] = useState('appearance');
 
-  // Sections definition
+  // Sections definition — removed: astrology, security, promo, subscription
   const SECTIONS = [
     { id: 'appearance',    icon: 'palette',          label: 'Giao diện' },
     { id: 'language',      icon: 'translate',         label: 'Ngôn ngữ' },
     { id: 'calendar',      icon: 'calendar_month',    label: 'Âm Lịch' },
     { id: 'notifications', icon: 'notifications',     label: 'Thông báo' },
-    { id: 'astrology',     icon: 'auto_awesome',      label: 'Tử Vi & Chiêm Tinh' },
     { id: 'data',          icon: 'security',          label: 'Dữ liệu' },
-    { id: 'subscription',  icon: 'workspace_premium', label: 'Gói Dịch Vụ' },
     ...(isAuthenticated ? [
       { id: 'profile',     icon: 'manage_accounts',   label: 'Hồ Sơ' },
-      { id: 'security',    icon: 'shield',            label: 'Bảo mật' },
-      { id: 'promo',       icon: 'card_giftcard',     label: 'Khuyến mãi' },
     ] : []),
     { id: 'account',       icon: 'person',            label: 'Tài khoản' },
   ];
@@ -145,9 +136,6 @@ export default function SettingsPage() {
   const [editYear, setEditYear] = useState('');
   const [editBirthHour, setEditBirthHour] = useState('');
   const [editBirthMinute, setEditBirthMinute] = useState('');
-  const [editLat, setEditLat] = useState('');
-  const [editLng, setEditLng] = useState('');
-  const [editLocationName, setEditLocationName] = useState('');
   const [editAvatar, setEditAvatar] = useState('');
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileMsg, setProfileMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
@@ -176,10 +164,6 @@ export default function SettingsPage() {
     setEditBirthHour(user?.profile?.birthHour !== undefined ? String(user.profile.birthHour) : '');
     setEditBirthMinute(user?.profile?.birthMinute !== undefined ? String(user.profile.birthMinute) : '');
 
-    setEditLat(user?.extendedProfile?.birthLocation?.lat != null ? String(user.extendedProfile.birthLocation.lat) : '');
-    setEditLng(user?.extendedProfile?.birthLocation?.lng != null ? String(user.extendedProfile.birthLocation.lng) : '');
-    setEditLocationName(user?.extendedProfile?.birthLocation?.city || '');
-
     setEditAvatar(user?.avatarUrl ?? '');
     setProfileMsg(null);
     setProfileMode('edit');
@@ -190,12 +174,6 @@ export default function SettingsPage() {
     setProfileMsg(null);
   };
 
-  const handleLocationSelect = useCallback((loc: SelectedLocation) => {
-    setEditLat(loc.lat.toString());
-    setEditLng(loc.lng.toString());
-    setEditLocationName(loc.locationName);
-  }, []);
-
   const handleSaveProfile = async () => {
     setProfileSaving(true);
     setProfileMsg(null);
@@ -205,18 +183,12 @@ export default function SettingsPage() {
         birthdayStr = `${editYear}-${String(editMonth).padStart(2, '0')}-${String(editDay).padStart(2, '0')}`;
     }
 
-    let birthLocation = undefined;
-    if (editLat && editLng) {
-        birthLocation = { lat: Number(editLat), lng: Number(editLng), city: editLocationName };
-    }
-
     const result = await updateProfile({
       displayName: editName || undefined,
       birthday: birthdayStr,
       avatarUrl: editAvatar || undefined,
       birthHour: editBirthHour === '' ? null : Number(editBirthHour),
       birthMinute: editBirthMinute === '' ? null : Number(editBirthMinute),
-      birthLocation,
     });
     setProfileSaving(false);
     if (result.success) {
@@ -231,7 +203,7 @@ export default function SettingsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 500 * 1024) {
-      setProfileMsg({ type: 'err', text: 'ảnh quá lớn. Vui lòng chọn ảnh dưới 500 KB.' });
+      setProfileMsg({ type: 'err', text: 'Ảnh quá lớn. Vui lòng chọn ảnh dưới 500 KB.' });
       return;
     }
     const reader = new FileReader();
@@ -264,7 +236,6 @@ export default function SettingsPage() {
   const [dailyHoroscope, setDailyHoroscope] = useState(() => localStorage.getItem('dailyHoroscope') === 'true');
   const [auspiciousReminder, setAuspiciousReminder] = useState(() => localStorage.getItem('auspiciousReminder') === 'true');
   const [lunarEvents, setLunarEvents] = useState(() => localStorage.getItem('lunarEvents') !== 'false');
-  const [analysisDepth, setAnalysisDepth] = useState(() => localStorage.getItem('analysisDepth') || 'detailed');
   const [autoSave, setAutoSave] = useState(() => localStorage.getItem('autoSave') !== 'false');
   const [importMsg, setImportMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
@@ -329,7 +300,7 @@ export default function SettingsPage() {
               }`}
             >
               <span className={`material-icons-round text-[18px] ${
-                activeSection === s.id ? 'text-gold dark:text-gold-dark' : 'text-text-secondary-light/50 dark:text-text-secondary-dark/40'
+                activeSection === s.id ? 'text-gold dark:text-gold-dark' : 'text-text-secondary-light/60 dark:text-text-secondary-dark/60'
               }`}>{s.icon}</span>
               <span>{s.label}</span>
             </button>
@@ -396,11 +367,11 @@ export default function SettingsPage() {
             value={holidayCountry}
             onChange={(v) => { setHolidayCountry(v); save('holidayCountry', v); }}
             options={[
-              { value: 'VN', label: '🇻🇳 Việt Nam' },
-              { value: 'US', label: '🇺🇸 Mỹ' },
-              { value: 'JP', label: '🇯🇵 Nhật Bản' },
-              { value: 'KR', label: '🇰🇷 Hàn Quốc' },
-              { value: 'CN', label: '🇨🇳 Trung Quốc' },
+              { value: 'VN', label: 'Việt Nam' },
+              { value: 'US', label: 'Mỹ' },
+              { value: 'JP', label: 'Nhật Bản' },
+              { value: 'KR', label: 'Hàn Quốc' },
+              { value: 'CN', label: 'Trung Quốc' },
             ]}
           />
         </SettingRow>
@@ -442,24 +413,6 @@ export default function SettingsPage() {
       </SectionCard>
       )}
 
-      {/* Astrology */}
-      {activeSection === 'astrology' && (
-      <SectionCard icon="auto_awesome" title="Tử Vi & Chiêm Tinh">
-        <SettingRow icon="tune" label="Độ sâu phân tích">
-          <Select
-            id="select-analysis-depth"
-            value={analysisDepth}
-            onChange={(v) => { setAnalysisDepth(v); save('analysisDepth', v); }}
-            options={[
-              { value: 'summary', label: 'Tóm tắt' },
-              { value: 'detailed', label: 'Chi tiết' },
-              { value: 'academic', label: 'Học thuật' },
-            ]}
-          />
-        </SettingRow>
-      </SectionCard>
-      )}
-
       {/* Data & Privacy */}
       {activeSection === 'data' && (
       <SectionCard icon="security" title="Dữ liệu & Quyền riêng tư">
@@ -473,7 +426,7 @@ export default function SettingsPage() {
                 const EXPORTABLE_KEYS = [
                   'fontSize', 'lang', 'dateFormat', 'defaultView', 'theme',
                   'showLunarDetails', 'holidayCountry', 'dailyHoroscope',
-                  'auspiciousReminder', 'lunarEvents', 'analysisDepth', 'autoSave',
+                  'auspiciousReminder', 'lunarEvents', 'autoSave',
                 ];
                 const data = Object.fromEntries(
                   EXPORTABLE_KEYS.map(k => [k, localStorage.getItem(k)]).filter(([, v]) => v != null)
@@ -497,7 +450,7 @@ export default function SettingsPage() {
               const reader = new FileReader();
               reader.onload = (ev) => {
                 try {
-                  const IMPORTABLE_KEYS = ['fontSize', 'lang', 'dateFormat', 'defaultView', 'showLunarDetails', 'holidayCountry', 'dailyHoroscope', 'auspiciousReminder', 'lunarEvents', 'analysisDepth', 'autoSave'];
+                  const IMPORTABLE_KEYS = ['fontSize', 'lang', 'dateFormat', 'defaultView', 'showLunarDetails', 'holidayCountry', 'dailyHoroscope', 'auspiciousReminder', 'lunarEvents', 'autoSave'];
                   const parsed = JSON.parse(ev.target?.result as string);
                   let count = 0;
                   IMPORTABLE_KEYS.forEach(k => {
@@ -527,7 +480,7 @@ export default function SettingsPage() {
           <button
             onClick={() => {
               if (confirm('Khôi phục tất cả cài đặt về mặc định?')) {
-                const SETTING_KEYS = ['fontSize', 'lang', 'dateFormat', 'defaultView', 'showLunarDetails', 'holidayCountry', 'dailyHoroscope', 'auspiciousReminder', 'lunarEvents', 'analysisDepth', 'autoSave'];
+                const SETTING_KEYS = ['fontSize', 'lang', 'dateFormat', 'defaultView', 'showLunarDetails', 'holidayCountry', 'dailyHoroscope', 'auspiciousReminder', 'lunarEvents', 'autoSave'];
                 SETTING_KEYS.forEach(k => localStorage.removeItem(k));
                 window.location.reload();
               }
@@ -553,88 +506,6 @@ export default function SettingsPage() {
       </SectionCard>
       )}
 
-      {/* Security — 2FA */}
-      {activeSection === 'security' && isAuthenticated && (
-      <SectionCard icon="shield" title="Bảo mật">
-          <SettingRow
-            icon="verified_user"
-            label="Xác thực 2 bước (2FA)"
-            description="Thêm lớp bảo vệ khi đăng nhập"
-          >
-            <TwoFactorSetup />
-          </SettingRow>
-        </SectionCard>
-      )}
-
-      {/* Promotions */}
-      {activeSection === 'promo' && isAuthenticated && (
-      <SectionCard icon="card_giftcard" title="Khuyến mãi">
-        <div className="py-3">
-          <PromotionCodeInput />
-        </div>
-      </SectionCard>
-      )}
-
-      {/* Subscription Tier */}
-      {activeSection === 'subscription' && (
-      <SectionCard icon="workspace_premium" title="Gói Dịch Vụ">
-        <div className="py-4 space-y-3">
-          {/* Current tier badge */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${tierInfo.tier === 'elite' ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg shadow-amber-500/20' :
-                  tierInfo.tier === 'premium' ? 'bg-gradient-to-br from-blue-400 to-indigo-500 text-white shadow-lg shadow-blue-500/20' :
-                    tierInfo.tier === 'free' ? 'bg-gradient-to-br from-emerald-400 to-teal-500 text-white shadow-lg shadow-emerald-500/20' :
-                      'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
-                }`}>
-                {tierInfo.tier === 'elite' ? '★' : tierInfo.tier === 'premium' ? '✦' : tierInfo.tier === 'free' ? '✓' : 'Δ'}
-              </div>
-              <div>
-                <p className="text-sm font-bold text-text-primary-light dark:text-text-primary-dark">
-                  {tierInfo.tier === 'elite' ? 'Đầy đủ' : tierInfo.tier === 'premium' ? 'Dùng thử' : tierInfo.tier === 'free' ? 'Miễn phí' : 'Khách'}
-                </p>
-                <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark">
-                  {tierInfo.tier === 'elite' ? 'Truy cập toàn bộ nội dung' :
-                    tierInfo.tier === 'premium' ? `Còn ${tierInfo.daysRemaining ?? 0} ngày dùng thử` :
-                      tierInfo.tier === 'free' ? 'Nội dung cơ bản' : 'Chưa đăng nhập'}
-                </p>
-              </div>
-            </div>
-            {tierInfo.tier !== 'elite' && (
-              <button
-                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-gold to-amber-600 dark:from-gold-dark dark:to-amber-500 hover:brightness-110 shadow-md shadow-gold/20 transition-all"
-                onClick={() => navigate('/app/nang-cap')}
-              >
-                ★ Nâng cấp
-              </button>
-            )}
-          </div>
-
-          {/* Tier comparison (compact) */}
-          <div className="grid grid-cols-3 gap-2 text-center">
-            {[
-              { label: 'Free', features: 'Âm Lịch + Tổng quan', active: tierInfo.tier === 'free' || tierInfo.tier === 'guest' },
-              { label: 'Dùng thử', features: 'Phân tích cơ bản', active: tierInfo.tier === 'premium' },
-              { label: 'Premium', features: 'Toàn bộ + PDF', active: tierInfo.tier === 'elite' },
-            ].map((t, i) => (
-              <div key={i} className={`p-2.5 rounded-xl border transition-all ${t.active ? 'border-gold/40 dark:border-gold-dark/40 bg-gold/5 dark:bg-gold-dark/5' :
-                  'border-border-light/20 dark:border-border-dark/15'
-                }`}>
-                <p className={`text-xs font-bold ${t.active ? 'text-gold dark:text-gold-dark' : 'text-text-secondary-light dark:text-text-secondary-dark'}`}>{t.label}</p>
-                <p className="text-[10px] text-text-secondary-light/60 dark:text-text-secondary-dark/50 mt-0.5">{t.features}</p>
-              </div>
-            ))}
-          </div>
-
-          {tierInfo.tier === 'elite' && (
-            <div className="pt-2 border-t border-border-light/20 dark:border-border-dark/15 mt-4">
-              <CreditRefreshBanner />
-            </div>
-          )}
-        </div>
-      </SectionCard>
-      )}
-
       {/* Profile Editing */}
       {activeSection === 'profile' && isAuthenticated && user && (
       <SectionCard icon="manage_accounts" title="Hồ Sơ Cá Nhân">
@@ -652,14 +523,9 @@ export default function SettingsPage() {
                     <p className="text-sm font-semibold">{user.displayName}</p>
                     <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark">{user.email}</p>
                     {(user.birthday || user.profile?.birthHour !== undefined) && (
-                      <p className="text-[10px] text-text-secondary-light/60 dark:text-text-secondary-dark/50 mt-0.5">
-                        🎂 {user.birthday ? user.birthday.split('-').reverse().join('/') : 'Chưa có ngày sinh'} 
+                      <p className="text-xs text-text-secondary-light/60 dark:text-text-secondary-dark/60 mt-0.5">
+                        🎂 {user.birthday ? user.birthday.split('-').reverse().join('/') : 'Chưa có ngày sinh'}
                         {user.profile?.birthHour !== undefined && ` · ${String(user.profile.birthHour).padStart(2, '0')}:${user.profile?.birthMinute !== undefined ? String(user.profile.birthMinute).padStart(2, '0') : '00'}`}
-                      </p>
-                    )}
-                    {user.extendedProfile?.birthLocation && (
-                      <p className="text-[10px] text-text-secondary-light/60 dark:text-text-secondary-dark/50 mt-0.5 flex items-center gap-1">
-                        <span className="material-icons-round text-[10px]">location_on</span> {user.extendedProfile.birthLocation.city}
                       </p>
                     )}
                   </div>
@@ -698,8 +564,8 @@ export default function SettingsPage() {
                   <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarFile} />
                   <div>
                     <p className="text-xs font-medium">Tải ảnh đại diện</p>
-                    <p className="text-[10px] text-text-secondary-light dark:text-text-secondary-dark">Nhấp vào khung ảnh để chọn (tối đa 500 KB)</p>
-                    {editAvatar && <button onClick={() => setEditAvatar('')} className="text-[10px] text-red-500 dark:text-red-400 mt-0.5">Xóa ảnh</button>}
+                    <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark">Nhấp vào khung ảnh để chọn (tối đa 500 KB)</p>
+                    {editAvatar && <button onClick={() => setEditAvatar('')} className="text-xs text-red-500 dark:text-red-400 mt-0.5">Xóa ảnh</button>}
                   </div>
                 </div>
 
@@ -718,16 +584,16 @@ export default function SettingsPage() {
                 {/* Birthday & Time */}
                 <div>
                   <label className="block text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1">
-                    Ngày giờ sinh (Dương lịch) <span className="text-text-secondary-light/50 dark:text-text-secondary-dark/50 font-normal">(dùng cho Tử Vi / Thần Số Học)</span>
+                    Ngày giờ sinh (Dương lịch)
                   </label>
                   <div className="grid grid-cols-5 gap-2">
-                    <input type="number" value={editDay} onChange={e => setEditDay(e.target.value)} placeholder="Ngày" min="1" max="31"
+                    <input type="text" inputMode="numeric" pattern="[0-9]*" value={editDay} onChange={e => setEditDay(e.target.value)} placeholder="Ngày"
                         className="px-3 py-2.5 rounded-lg border border-border-light dark:border-border-dark bg-surface-subtle-light dark:bg-surface-subtle-dark text-sm text-center focus:ring-2 focus:ring-gold/30 focus:border-gold outline-none transition-all" />
-                    <input type="number" value={editMonth} onChange={e => setEditMonth(e.target.value)} placeholder="Tháng" min="1" max="12"
+                    <input type="text" inputMode="numeric" pattern="[0-9]*" value={editMonth} onChange={e => setEditMonth(e.target.value)} placeholder="Tháng"
                         className="px-3 py-2.5 rounded-lg border border-border-light dark:border-border-dark bg-surface-subtle-light dark:bg-surface-subtle-dark text-sm text-center focus:ring-2 focus:ring-gold/30 focus:border-gold outline-none transition-all" />
-                    <input type="number" value={editYear} onChange={e => setEditYear(e.target.value)} placeholder="Năm" min="1900" max="2100"
+                    <input type="text" inputMode="numeric" pattern="[0-9]*" value={editYear} onChange={e => setEditYear(e.target.value)} placeholder="Năm"
                         className="px-3 py-2.5 rounded-lg border border-border-light dark:border-border-dark bg-surface-subtle-light dark:bg-surface-subtle-dark text-sm text-center focus:ring-2 focus:ring-gold/30 focus:border-gold outline-none transition-all" />
-                    
+
                     <select
                       value={editBirthHour}
                       onChange={(e) => setEditBirthHour(e.target.value)}
@@ -750,17 +616,6 @@ export default function SettingsPage() {
                       ))}
                     </select>
                   </div>
-                </div>
-
-                {/* Birth Place */}
-                <div>
-                  <label className="block text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1">Nơi sinh</label>
-                  <LocationPicker 
-                      onSelect={handleLocationSelect}
-                      initialLat={parseFloat(editLat) || undefined}
-                      initialLng={parseFloat(editLng) || undefined}
-                      initialLocationName={editLocationName || undefined}
-                  />
                 </div>
 
                 {profileMsg && (
@@ -837,13 +692,8 @@ export default function SettingsPage() {
               <p className="text-sm font-semibold mb-0.5">{user.displayName}</p>
               <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark">{user.email}</p>
               {user.provider !== 'email' && (
-                <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-mystery-purple/8 dark:bg-mystery-purple/12 text-mystery-purple dark:text-mystery-purple-light">
-                  {user.provider === 'google' ? '🔵 Google' : '🔵 Facebook'}
-                </span>
-              )}
-              {user.twoFactorEnabled && (
-                <span className="inline-flex items-center gap-1 mt-2 ml-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-good/8 dark:bg-good-dark/8 text-good dark:text-good-dark">
-                  🔒 2FA
+                <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-mystery-purple/8 dark:bg-mystery-purple/12 text-mystery-purple dark:text-mystery-purple-light">
+                  {user.provider === 'google' ? 'Google' : 'Facebook'}
                 </span>
               )}
               <div className="mt-4">
@@ -887,15 +737,15 @@ export default function SettingsPage() {
 
       {/* About footer */}
       <div className="flex items-center justify-between px-4 py-3">
-        <p className="text-xs text-text-secondary-light/60 dark:text-text-secondary-dark/50">
-          Lịch Việt v2.2.0 · MIT
+        <p className="text-xs text-text-secondary-light/60 dark:text-text-secondary-dark/60">
+          Lịch Việt v3.0.0 · MIT
         </p>
         <button
           onClick={() => navigate('/')}
           className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
           aria-label="Trang chủ"
         >
-          <span className="material-icons-round text-base text-text-secondary-light/50 dark:text-text-secondary-dark/40">home</span>
+          <span className="material-icons-round text-base text-text-secondary-light/60 dark:text-text-secondary-dark/60">home</span>
         </button>
       </div>
 

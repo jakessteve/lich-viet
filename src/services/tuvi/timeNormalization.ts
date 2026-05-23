@@ -1,0 +1,204 @@
+// ── Time Normalization for Vietnamese Historical Timezones ─────
+// Pure TypeScript — zero React dependencies.
+// Handles birth-time correction for Vietnam's complex timezone history,
+// including the North/South divergence (1955–1975).
+
+import timezoneData from '../../data/tuvi/vietnamTimezone.json';
+import { CAN_NAMES, CHI_NAMES } from './constants';
+
+// ── Types ───────────────────────────────────────────────────────
+
+interface TimezonePeriod {
+    from: string;
+    to: string;
+    utcOffset?: string;
+    utcOffsetNorth?: string;
+    utcOffsetSouth?: string;
+    note: string;
+}
+
+interface TimezoneData {
+    description: string;
+    periods: TimezonePeriod[];
+}
+
+const { periods } = timezoneData as TimezoneData;
+
+// ── Helpers ─────────────────────────────────────────────────────
+
+/**
+ * Parse an offset string like "+07:00", "+08:00", or "+07:06:30"
+ * into a float number of hours.
+ */
+function parseOffset(offsetStr: string): number {
+    const sign = offsetStr.startsWith('-') ? -1 : 1;
+    const clean = offsetStr.replace(/^[+-]/, '');
+    const parts = clean.split(':').map(Number);
+    const hours = parts[0];
+    const minutes = parts[1] ?? 0;
+    const seconds = parts[2] ?? 0;
+    return sign * (hours + minutes / 60 + seconds / 3600);
+}
+
+/**
+ * Compare two ISO date strings (YYYY-MM-DD) chronologically.
+ */
+function compareIsoDates(a: string, b: string): number {
+    return a.localeCompare(b);
+}
+
+/**
+ * Find the timezone period that contains the given date.
+ * Returns `null` if no period matches (e.g. gap 1912–1944 is covered).
+ */
+function findPeriod(date: Date): TimezonePeriod | null {
+    const iso = date.toISOString().split('T')[0]; // YYYY-MM-DD
+    for (const period of periods) {
+        if (
+            compareIsoDates(iso, period.from) >= 0 &&
+            (period.to === 'present' || compareIsoDates(iso, period.to) <= 0)
+        ) {
+            return period;
+        }
+    }
+    return null;
+}
+
+// ── Public API ──────────────────────────────────────────────────
+
+/**
+ * Returns the UTC offset in hours for the given date based on Vietnam's
+ * historical timezone changes.
+ *
+ * - 1975-05-01 onward: +7 (ICT)
+ * - 1955-07-01 … 1975-04-30: defaults to South (+8) unless overridden.
+ * - Earlier periods: follows French Indochina / occupation rules.
+ *
+ * @param date      The local birth date.
+ * @param timezone  Optional hint for the divergence period:
+ *                  `'north'` → GMT+7, `'south'` → GMT+8 (default).
+ * @returns Offset in hours (e.g. 7, 8, 7.1083…).
+ */
+export function getVietnamUtcOffset(
+    date: Date,
+    timezone: 'north' | 'south' = 'south'
+): number {
+    const period = findPeriod(date);
+    if (!period) {
+        // Fallback for uncovered gaps (e.g. 1912–1944 is actually covered
+        // by the 1911-12-01 … 1944-12-31 block, so this is defensive only).
+        return 7;
+    }
+
+    if (period.utcOffsetNorth && period.utcOffsetSouth) {
+        const offsetStr = timezone === 'north' ? period.utcOffsetNorth : period.utcOffsetSouth;
+        return parseOffset(offsetStr);
+    }
+
+    return parseOffset(period.utcOffset!);
+}
+
+/**
+ * Normalizes a birth date to UTC+7 (modern Vietnam time ICT).
+ *
+ * - For births **1975-05-01 onward**: no correction needed.
+ * - For births **before 1975**: applies the historical correction
+ *   based on the period's UTC offset.
+ *
+ * The optional `timezone` parameter lets callers force the North/South
+ * divergence (1955–1975) interpretation.
+ *
+ * @param date      The birth date as recorded (assumed local).
+ * @param timezone  Optional hint: `'north'` or `'south'`.
+ * @returns A new `Date` corrected to ICT.
+ */
+export function normalizeBirthTime(
+    date: Date,
+    timezone?: 'north' | 'south'
+): Date {
+    const period = findPeriod(date);
+
+    // No period found or unified ICT period → return as-is
+    if (!period || period.to === 'present') {
+        return new Date(date.getTime());
+    }
+
+    const historicalOffset = getVietnamUtcOffset(date, timezone);
+    const targetOffset = 7; // ICT
+    const diffHours = targetOffset - historicalOffset;
+    const diffMs = diffHours * 60 * 60 * 1000;
+
+    return new Date(date.getTime() + diffMs);
+}
+
+/**
+ * Converts a 24-hour clock hour to the Địa Chi index.
+ *
+ * Branch boundaries (each branch spans 2 hours):
+ * | Branch | Hours       |
+ * |--------|-------------|
+ * | Tý     | 23, 0       |
+ * | Sửu    | 1, 2        |
+ * | Dần    | 3, 4        |
+ * | Mão    | 5, 6        |
+ * | Thìn   | 7, 8        |
+ * | Tỵ     | 9, 10       |
+ * | Ngọ    | 11, 12      |
+ * | Mùi    | 13, 14      |
+ * | Thân   | 15, 16      |
+ * | Dậu    | 17, 18      |
+ * | Tuất   | 19, 20      |
+ * | Hợi    | 21, 22      |
+ *
+ * @param hour  Hour in 24-hour format (0–23).
+ * @returns Địa Chi index (0=Tý … 11=Hợi).
+ */
+export function getHourBranch(hour: number): number {
+    // Wrap hour into 0–23, then map to branch index.
+    const h = ((hour % 24) + 24) % 24;
+    return Math.floor(((h + 1) % 24) / 2);
+}
+
+/**
+ * Calculates the Thiên Can of the hour based on the day's Thiên Can
+ * and the hour's Địa Chi.
+ *
+ * Rule: the hour Can sequence starts from a different Can depending on
+ * the day Can:
+ *
+ * | Day Can          | Hour Tý starts with |
+ * |------------------|---------------------|
+ * | Giáp (0), Kỷ (5) | Giáp (0)            |
+ * | Ất (1), Canh (6) | Bính (2)            |
+ * | Bính (2), Tân (7)| Mậu (4)             |
+ * | Đinh (3), Nhâm(8)| Canh (6)            |
+ * | Mậu (4), Quý (9) | Nhâm (8)            |
+ *
+ * @param dayCan     The day's Thiên Can index (0=Giáp … 9=Quý).
+ * @param hourBranch The hour's Địa Chi index (0=Tý … 11=Hợi).
+ * @returns Thiên Can index for the hour.
+ */
+export function getHourCan(dayCan: number, hourBranch: number): number {
+    // Determine base Can for Tý based on day Can group.
+    // Groups: (Giáp/Kỷ)=0, (Ất/Canh)=2, (Bính/Tân)=4, (Đinh/Nhâm)=6, (Mậu/Quý)=8
+    const baseCan = (dayCan % 5) * 2;
+    return (baseCan + hourBranch) % 10;
+}
+
+/**
+ * Formats a Can-Chi pair as a human-readable string.
+ *
+ * @param canIndex  Thiên Can index (0=Giáp … 9=Quý).
+ * @param chiIndex  Địa Chi index (0=Tý … 11=Hợi).
+ * @returns Formatted string, e.g. `"Giáp Tý"`.
+ */
+export function formatCanChi(canIndex: number, chiIndex: number): string {
+    const can = CAN_NAMES[canIndex];
+    const chi = CHI_NAMES[chiIndex];
+    if (!can || !chi) {
+        throw new Error(
+            `Invalid Can-Chi indices: canIndex=${canIndex}, chiIndex=${chiIndex}`
+        );
+    }
+    return `${can} ${chi}`;
+}

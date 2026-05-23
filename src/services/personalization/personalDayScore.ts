@@ -1,18 +1,39 @@
-import { BasicProfile } from '../../types/auth';
-import { Chi, PersonalDayScore } from '../../types/calendar';
-import { getYearCanChi } from '../../packages/vn-lunar/core';
+/**
+ * personalDayScore.ts — Personalized day auspiciousness based on birth year
+ *
+ * Calculates how auspicious a day is for a specific person based on
+ * their birth year's Can Chi interacting with the day's Can Chi.
+ * Uses Tam Hợp, Lục Hợp, Lục Xung, Lục Hại, Tương Hình, Tương Phá relationships.
+ */
+
+import { getCanChiYear } from '../../utils/calendarEngine';
+import type { Chi, Can } from '../../types/calendar';
 
 export const CHI_LIST: Chi[] = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
+export const CAN_LIST: Can[] = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
+
+export interface PersonalDayScore {
+  actionScore: number;
+  label: string;
+  description: string;
+  isThaiTue: boolean;
+  isTamHop: boolean;
+  isLucHop: boolean;
+  isTuongXung: boolean;
+  isTuongHai: boolean;
+  isTuongHinh: boolean;
+  isTuongPha: boolean;
+}
 
 /** Get the Earthly Branch (Chi) of a given solar year. */
 export function getYearChi(year: number): Chi {
-  const canChi = getYearCanChi(year);
+  const canChi = getCanChiYear(year);
   return canChi.split(' ')[1] as Chi;
 }
 
-/** Check Tam Hợp */
-export const isTamHop = (chi1: Chi, chi2: Chi) => {
-  const tamHopGroups = [
+/** Check Tam Hợp (Three Harmonies) */
+export const isTamHop = (chi1: Chi, chi2: Chi): boolean => {
+  const tamHopGroups: Chi[][] = [
     ['Dần', 'Ngọ', 'Tuất'],
     ['Hợi', 'Mão', 'Mùi'],
     ['Thân', 'Tý', 'Thìn'],
@@ -21,72 +42,53 @@ export const isTamHop = (chi1: Chi, chi2: Chi) => {
   return tamHopGroups.some(group => group.includes(chi1) && group.includes(chi2));
 };
 
-/** Check Lục Hợp */
-const isLucHop = (chi1: Chi, chi2: Chi) => {
-  const hopGroups = [
-    ['Tý', 'Sửu'],
-    ['Dần', 'Hợi'],
-    ['Mão', 'Tuất'],
-    ['Thìn', 'Dậu'],
-    ['Tỵ', 'Thân'],
-    ['Ngọ', 'Mùi']
+/** Check Lục Hợp (Six Harmonies) */
+const isLucHop = (chi1: Chi, chi2: Chi): boolean => {
+  const hopGroups: [Chi, Chi][] = [
+    ['Tý', 'Sửu'], ['Dần', 'Hợi'], ['Mão', 'Tuất'],
+    ['Thìn', 'Dậu'], ['Tỵ', 'Thân'], ['Ngọ', 'Mùi']
   ];
-  return hopGroups.some(group => group.includes(chi1) && group.includes(chi2));
+  return hopGroups.some(([a, b]) => (chi1 === a && chi2 === b) || (chi1 === b && chi2 === a));
 };
 
-/** Check Lục Xung */
-const isTuongXung = (chi1: Chi, chi2: Chi) => {
-  const xungGroups = [
-    ['Tý', 'Ngọ'],
-    ['Sửu', 'Mùi'],
-    ['Dần', 'Thân'],
-    ['Mão', 'Dậu'],
-    ['Thìn', 'Tuất'],
-    ['Tỵ', 'Hợi']
+/** Check Lục Xung (Six Clashes) */
+const isTuongXung = (chi1: Chi, chi2: Chi): boolean => {
+  const xungGroups: [Chi, Chi][] = [
+    ['Tý', 'Ngọ'], ['Sửu', 'Mùi'], ['Dần', 'Thân'],
+    ['Mão', 'Dậu'], ['Thìn', 'Tuất'], ['Tỵ', 'Hợi']
   ];
-  return xungGroups.some(group => group.includes(chi1) && group.includes(chi2));
+  return xungGroups.some(([a, b]) => (chi1 === a && chi2 === b) || (chi1 === b && chi2 === a));
 };
 
-/** Check Lục Hại */
-const isTuongHai = (chi1: Chi, chi2: Chi) => {
-  const haiGroups = [
-    ['Tý', 'Mùi'],
-    ['Sửu', 'Ngọ'],
-    ['Dần', 'Tỵ'],
-    ['Mão', 'Thìn'],
-    ['Thân', 'Hợi'],
-    ['Dậu', 'Tuất']
+/** Check Lục Hại (Six Harms) */
+const isTuongHai = (chi1: Chi, chi2: Chi): boolean => {
+  const haiGroups: [Chi, Chi][] = [
+    ['Tý', 'Mùi'], ['Sửu', 'Ngọ'], ['Dần', 'Tỵ'],
+    ['Mão', 'Thìn'], ['Thân', 'Hợi'], ['Dậu', 'Tuất']
   ];
-  return haiGroups.some(group => group.includes(chi1) && group.includes(chi2));
+  return haiGroups.some(([a, b]) => (chi1 === a && chi2 === b) || (chi1 === b && chi2 === a));
 };
 
-/** Check Tương Hình (simplified) */
-const isTuongHinh = (chi1: Chi, chi2: Chi) => {
-  const hinhGroups = [
-    ['Dần', 'Tỵ', 'Thân'], // Vô ân chi hình
-    ['Sửu', 'Tuất', 'Mùi'], // Thị thế chi hình
-    ['Tý', 'Mão'],          // Vô lễ chi hình
-    ['Thìn', 'Thìn'],       // Tự hình
-    ['Ngọ', 'Ngọ'],
-    ['Dậu', 'Dậu'],
-    ['Hợi', 'Hợi']
+/** Check Tương Hình (Mutual Punishment) */
+const isTuongHinh = (chi1: Chi, chi2: Chi): boolean => {
+  const hinhGroups: Chi[][] = [
+    ['Dần', 'Tỵ', 'Thân'], ['Sửu', 'Tuất', 'Mùi'],
+    ['Tý', 'Mão'], ['Thìn', 'Thìn'], ['Ngọ', 'Ngọ'],
+    ['Dậu', 'Dậu'], ['Hợi', 'Hợi']
   ];
   return hinhGroups.some(group => group.includes(chi1) && group.includes(chi2));
 };
 
-/** Check Tương Phá */
-const isTuongPha = (chi1: Chi, chi2: Chi) => {
-  const phaGroups = [
-    ['Tý', 'Dậu'],
-    ['Sửu', 'Thìn'],
-    ['Dần', 'Hợi'],
-    ['Mão', 'Ngọ'],
-    ['Tỵ', 'Thân'],
-    ['Mùi', 'Tuất']
+/** Check Tương Phá (Mutual Destruction) */
+const isTuongPha = (chi1: Chi, chi2: Chi): boolean => {
+  const phaGroups: [Chi, Chi][] = [
+    ['Tý', 'Dậu'], ['Sửu', 'Thìn'], ['Dần', 'Hợi'],
+    ['Mão', 'Ngọ'], ['Tỵ', 'Thân'], ['Mùi', 'Tuất']
   ];
-  return phaGroups.some(group => group.includes(chi1) && group.includes(chi2));
+  return phaGroups.some(([a, b]) => (chi1 === a && chi2 === b) || (chi1 === b && chi2 === a));
 };
 
+/** Get Thái Tuế type for a birth year vs target year */
 export function getYearThaiTueType(birthYear: number, targetYear: number): string | null {
   const userChi = getYearChi(birthYear);
   const targetChi = getYearChi(targetYear);
@@ -98,11 +100,11 @@ export function getYearThaiTueType(birthYear: number, targetYear: number): strin
   return null;
 }
 
-/** Calculate the Personal Day Score */
-export function calculatePersonalDayScore(profile: BasicProfile | undefined | null, dayChi: Chi): PersonalDayScore | undefined {
-  if (!profile || !profile.birthYear) return undefined;
+/** Calculate the Personal Day Score based on birth year and day's Chi */
+export function calculatePersonalDayScore(birthYear: number | undefined | null, dayChi: Chi): PersonalDayScore | null {
+  if (!birthYear) return null;
 
-  const userChi = getYearChi(profile.birthYear);
+  const userChi = getYearChi(birthYear);
 
   const scoreData: PersonalDayScore = {
     actionScore: 0,
@@ -118,11 +120,9 @@ export function calculatePersonalDayScore(profile: BasicProfile | undefined | nu
   };
 
   let score = 0;
-  
   if (scoreData.isTamHop) score += 3;
   if (scoreData.isLucHop) score += 2;
-  
-  if (scoreData.isThaiTue) score -= 1; // Trị Thái Tuế / Trực Thái Tuế
+  if (scoreData.isThaiTue) score -= 1;
   if (scoreData.isTuongXung) score -= 3;
   if (scoreData.isTuongHai) score -= 2;
   if (scoreData.isTuongHinh) score -= 2;

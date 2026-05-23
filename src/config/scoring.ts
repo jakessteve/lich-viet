@@ -124,34 +124,13 @@ export const BAZI_SYNASTRY_SCORING = {
     dieuHauBonus: 5,
 } as const;
 
-// ── Factor 10: Tử Vi Synastry (max 15 pts) ───────────────────
-// Academic source: 紫微斗數全書 (Tử Vi Đẩu Số Toàn Thư)
-
-export const TUVI_SYNASTRY_SCORING = {
-    max: 15,
-} as const;
-
-// ── Factor 11: Thần Số Synastry (max 10 pts) ─────────────────
-// Academic source: Pythagorean Numerology
-
-export const NUMEROLOGY_SYNASTRY_SCORING = {
-    max: 10,
-} as const;
-
-// ── Factor 13: Western Synastry (max 12 pts) ─────────────────
-// Academic source: Modern Western Astrology synastry conventions
-
-export const WESTERN_SYNASTRY_SCORING = {
-    max: 12,
-} as const;
-
 // ── Normalization ─────────────────────────────────────────────
 
 export const NORMALIZATION = {
-    /** Minimum theoretical raw score (F1-F8: -100, F9: -20, F10: -15, F11: -10, F13: -12) */
-    minTheoretical: -157,
-    /** Score range (maxTheoretical - minTheoretical = 167 - (-157)) */
-    range: 324,
+    /** Minimum theoretical raw score (F1-F8: -100, F9: -20) */
+    minTheoretical: -120,
+    /** Score range (maxTheoretical - minTheoretical = 120 - (-120)) */
+    range: 240,
     /** Percentage scale */
     percentScale: 100,
     /** Min percentage output */

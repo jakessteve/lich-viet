@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import type { AuthProvider } from '../../types/auth';
-import PromotionCodeInput from '../auth/PromotionCodeInput';
 import SuccessToast from '../shared/SuccessToast';
 
 // ══════════════════════════════════════════════════════════
@@ -133,7 +132,7 @@ export default function RegisterPage() {
               Tên hiển thị
             </label>
             <div className="relative">
-              <span className="material-icons-round text-lg text-text-secondary-light/40 dark:text-text-secondary-dark/30 absolute left-3 top-1/2 -translate-y-1/2">
+              <span className="material-icons-round text-lg text-text-secondary-light/60 dark:text-text-secondary-dark/60 absolute left-3 top-1/2 -translate-y-1/2">
                 badge
               </span>
               <input
@@ -143,7 +142,7 @@ export default function RegisterPage() {
                 onChange={(e) => { setDisplayName(e.target.value); setError(''); }}
                 placeholder="Nguyễn Văn A"
                 autoComplete="name"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-subtle-light dark:bg-surface-subtle-dark border border-border-light/30 dark:border-border-dark/30 text-sm focus:ring-2 focus:ring-mystery-purple/30 dark:focus:ring-mystery-purple-light/30 outline-none transition-all placeholder:text-text-secondary-light/35 dark:placeholder:text-text-secondary-dark/25"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-subtle-light dark:bg-surface-subtle-dark border border-border-light/30 dark:border-border-dark/30 text-sm focus:ring-2 focus:ring-mystery-purple/30 dark:focus:ring-mystery-purple-light/30 outline-none transition-all placeholder:text-text-secondary-light/60 dark:placeholder:text-text-secondary-dark/60"
               />
             </div>
           </div>
@@ -154,7 +153,7 @@ export default function RegisterPage() {
               Email
             </label>
             <div className="relative">
-              <span className="material-icons-round text-lg text-text-secondary-light/40 dark:text-text-secondary-dark/30 absolute left-3 top-1/2 -translate-y-1/2">
+              <span className="material-icons-round text-lg text-text-secondary-light/60 dark:text-text-secondary-dark/60 absolute left-3 top-1/2 -translate-y-1/2">
                 mail
               </span>
               <input
@@ -164,7 +163,7 @@ export default function RegisterPage() {
                 onChange={(e) => { setEmail(e.target.value); setError(''); }}
                 placeholder="email@example.com"
                 autoComplete="email"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-subtle-light dark:bg-surface-subtle-dark border border-border-light/30 dark:border-border-dark/30 text-sm focus:ring-2 focus:ring-mystery-purple/30 dark:focus:ring-mystery-purple-light/30 outline-none transition-all placeholder:text-text-secondary-light/35 dark:placeholder:text-text-secondary-dark/25"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-subtle-light dark:bg-surface-subtle-dark border border-border-light/30 dark:border-border-dark/30 text-sm focus:ring-2 focus:ring-mystery-purple/30 dark:focus:ring-mystery-purple-light/30 outline-none transition-all placeholder:text-text-secondary-light/60 dark:placeholder:text-text-secondary-dark/60"
               />
             </div>
           </div>
@@ -175,7 +174,7 @@ export default function RegisterPage() {
               Mật khẩu
             </label>
             <div className="relative">
-              <span className="material-icons-round text-lg text-text-secondary-light/40 dark:text-text-secondary-dark/30 absolute left-3 top-1/2 -translate-y-1/2">
+              <span className="material-icons-round text-lg text-text-secondary-light/60 dark:text-text-secondary-dark/60 absolute left-3 top-1/2 -translate-y-1/2">
                 lock
               </span>
               <input
@@ -185,12 +184,12 @@ export default function RegisterPage() {
                 onChange={(e) => { setPassword(e.target.value); setError(''); }}
                 placeholder="Ít nhất 6 ký tự"
                 autoComplete="new-password"
-                className="w-full pl-10 pr-12 py-2.5 rounded-xl bg-surface-subtle-light dark:bg-surface-subtle-dark border border-border-light/30 dark:border-border-dark/30 text-sm focus:ring-2 focus:ring-mystery-purple/30 dark:focus:ring-mystery-purple-light/30 outline-none transition-all placeholder:text-text-secondary-light/35 dark:placeholder:text-text-secondary-dark/25"
+                className="w-full pl-10 pr-12 py-2.5 rounded-xl bg-surface-subtle-light dark:bg-surface-subtle-dark border border-border-light/30 dark:border-border-dark/30 text-sm focus:ring-2 focus:ring-mystery-purple/30 dark:focus:ring-mystery-purple-light/30 outline-none transition-all placeholder:text-text-secondary-light/60 dark:placeholder:text-text-secondary-dark/60"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary-light/40 dark:text-text-secondary-dark/30 hover:text-text-primary-light dark:hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary-light/60 dark:text-text-secondary-dark/60 hover:text-text-primary-light dark:hover:text-white transition-colors"
                 aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
               >
                 <span className="material-icons-round text-lg">
@@ -226,7 +225,7 @@ export default function RegisterPage() {
               Xác nhận mật khẩu
             </label>
             <div className="relative">
-              <span className="material-icons-round text-lg text-text-secondary-light/40 dark:text-text-secondary-dark/30 absolute left-3 top-1/2 -translate-y-1/2">
+              <span className="material-icons-round text-lg text-text-secondary-light/60 dark:text-text-secondary-dark/60 absolute left-3 top-1/2 -translate-y-1/2">
                 lock_reset
               </span>
               <input
@@ -236,7 +235,7 @@ export default function RegisterPage() {
                 onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
                 placeholder="Nhập lại mật khẩu"
                 autoComplete="new-password"
-                className={`w-full pl-10 pr-10 py-2.5 rounded-xl bg-surface-subtle-light dark:bg-surface-subtle-dark border text-sm focus:ring-2 outline-none transition-all placeholder:text-text-secondary-light/35 dark:placeholder:text-text-secondary-dark/25 ${confirmPassword && confirmPassword !== password
+                className={`w-full pl-10 pr-10 py-2.5 rounded-xl bg-surface-subtle-light dark:bg-surface-subtle-dark border text-sm focus:ring-2 outline-none transition-all placeholder:text-text-secondary-light/60 dark:placeholder:text-text-secondary-dark/60 ${confirmPassword && confirmPassword !== password
                     ? 'border-red-300 dark:border-red-700/50 focus:ring-red-500/20'
                     : confirmPassword && confirmPassword === password
                       ? 'border-green-300 dark:border-green-700/50 focus:ring-green-500/20'
@@ -274,9 +273,6 @@ export default function RegisterPage() {
             </span>
           </label>
 
-          {/* Promotion Code */}
-          <PromotionCodeInput compact />
-
           {/* Error */}
           {error && (
             <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-900/15 border border-red-200/50 dark:border-red-800/30 animate-scale-in">
@@ -305,7 +301,7 @@ export default function RegisterPage() {
         {/* Divider */}
         <div className="flex items-center gap-3 my-5">
           <div className="flex-1 h-px bg-border-light/40 dark:bg-border-dark/30" />
-          <span className="text-xs uppercase tracking-widest font-bold text-text-secondary-light/50 dark:text-text-secondary-dark/40">
+          <span className="text-xs uppercase tracking-widest font-bold text-text-secondary-light/60 dark:text-text-secondary-dark/60">
             hoặc đăng ký nhanh
           </span>
           <div className="flex-1 h-px bg-border-light/40 dark:bg-border-dark/30" />
@@ -345,7 +341,7 @@ export default function RegisterPage() {
       <div className="text-center mt-4 mb-8">
         <button
           onClick={() => navigate('/app/am-lich')}
-          className="text-sm text-text-secondary-light/60 dark:text-text-secondary-dark/40 hover:text-text-primary-light dark:hover:text-white transition-colors inline-flex items-center gap-1"
+          className="text-sm text-text-secondary-light/60 dark:text-text-secondary-dark/60 hover:text-text-primary-light dark:hover:text-white transition-colors inline-flex items-center gap-1"
         >
           <span className="material-icons-round text-sm">arrow_back</span>
           Quay lại ứng dụng

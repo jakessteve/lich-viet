@@ -30,7 +30,7 @@ const DayCellInner: React.FC<DayCellProps> = ({ data, isSelected, onClick, round
   if (!isCurrentMonth) {
     return (
       <div
-        className={`bg-surface-light dark:bg-surface-dark aspect-square flex flex-col items-center justify-center opacity-30 pointer-events-none ${roundedClass}`}
+        className={`bg-surface-light dark:bg-surface-dark aspect-square flex flex-col items-center justify-center opacity-50 pointer-events-none ${roundedClass}`}
         aria-hidden="true"
       >
         <span className="text-xs font-medium">{solarDate}</span>
@@ -70,7 +70,7 @@ const DayCellInner: React.FC<DayCellProps> = ({ data, isSelected, onClick, round
       `}>
         {solarDate}
       </span>
-      <span className="text-[10px] leading-none text-text-secondary-light dark:text-text-secondary-dark font-semibold relative z-10">
+      <span className="text-xs leading-none text-text-secondary-light dark:text-text-secondary-dark font-semibold relative z-10">
         {lunarDate}
       </span>
 

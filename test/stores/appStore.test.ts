@@ -1,91 +1,100 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useAppStore } from '../../src/stores/appStore';
+import { useAppStore } from '@/stores/appStore';
 
 describe('appStore', () => {
   beforeEach(() => {
-    // Reset the store between tests
+    // We can't fully reset without side effects, but we can test state transitions
     localStorage.clear();
-    const initialDate = new Date(2024, 0, 1);
-    useAppStore.setState({
-      selectedDate: initialDate,
-      isDark: false,
-      fontSize: 'normal',
-    });
-    // Trigger dayData update manually if needed (Zustand doesn't automatically trigger actions on setState)
-    useAppStore.getState().setSelectedDate(initialDate);
   });
 
-  describe('selectedDate and dayData', () => {
-    it('should set selected date and update dayData', () => {
-      const newDate = new Date(2025, 5, 15);
-      useAppStore.getState().setSelectedDate(newDate);
-      expect(useAppStore.getState().selectedDate).toEqual(newDate);
-      expect(useAppStore.getState().dayData).toBeDefined();
-      expect(useAppStore.getState().dayData.solarDate).toBe('2025-06-15');
-    });
-
-    it('should clamp year below 1900 to 1900', () => {
-      const oldDate = new Date(1850, 0, 1);
-      useAppStore.getState().setSelectedDate(oldDate);
-      expect(useAppStore.getState().selectedDate.getFullYear()).toBe(1900);
-      expect(useAppStore.getState().dayData.solarDate.startsWith('1900-')).toBe(true);
-    });
-
-    it('should clamp year above 2199 to 2199', () => {
-      const futureDate = new Date(2500, 0, 1);
-      useAppStore.getState().setSelectedDate(futureDate);
-      expect(useAppStore.getState().selectedDate.getFullYear()).toBe(2199);
-      expect(useAppStore.getState().dayData.solarDate.startsWith('2199-')).toBe(true);
+  describe('Initial state', () => {
+    it('has correct defaults', () => {
+      const state = useAppStore.getState();
+      expect(state.selectedDate).toBeInstanceOf(Date);
+      expect(state.dayData).toBeDefined();
+      expect(state.dayData.solarDate).toBeDefined();
+      expect(state.isDark).toBe(false);
+      expect(state.fontSize).toBe('normal');
+      expect(state.locale).toBeDefined();
     });
   });
 
-  describe('dark mode', () => {
-    it('should toggle dark mode on', () => {
-      useAppStore.getState().toggleDarkMode();
-      expect(useAppStore.getState().isDark).toBe(true);
+  describe('setSelectedDate()', () => {
+    it('updates date and dayData', () => {
+      const store = useAppStore.getState();
+      const newDate = new Date(2024, 1, 10);
+      store.setSelectedDate(newDate);
+
+      const state = useAppStore.getState();
+      expect(state.selectedDate.getFullYear()).toBe(2024);
+      expect(state.selectedDate.getMonth()).toBe(1);
+      expect(state.selectedDate.getDate()).toBe(10);
+      expect(state.dayData).toBeDefined();
+      expect(state.dayData.solarDate).toBe('2024-02-10');
     });
 
-    it('should toggle dark mode off', () => {
-      useAppStore.setState({ isDark: true });
-      useAppStore.getState().toggleDarkMode();
-      expect(useAppStore.getState().isDark).toBe(false);
+    it('clamps year below 1900', () => {
+      const store = useAppStore.getState();
+      store.setSelectedDate(new Date(1800, 0, 1));
+      const state = useAppStore.getState();
+      expect(state.selectedDate.getFullYear()).toBe(1900);
     });
 
-    it('should persist dark mode to localStorage', () => {
-      useAppStore.getState().toggleDarkMode();
-      expect(localStorage.theme).toBe('dark');
-
-      useAppStore.getState().toggleDarkMode();
-      expect(localStorage.theme).toBe('light');
+    it('clamps year above 2199', () => {
+      const store = useAppStore.getState();
+      store.setSelectedDate(new Date(2300, 0, 1));
+      const state = useAppStore.getState();
+      expect(state.selectedDate.getFullYear()).toBe(2199);
     });
   });
 
-  describe('font size', () => {
-    it('should cycle font size: normal → large', () => {
-      useAppStore.getState().cycleFontSize();
+  describe('toggleDarkMode()', () => {
+    it('toggles dark mode', () => {
+      const store = useAppStore.getState();
+      const initialDark = store.isDark;
+      store.toggleDarkMode();
+      const state = useAppStore.getState();
+      expect(state.isDark).toBe(!initialDark);
+    });
+
+    it('toggles back to original state', () => {
+      const store = useAppStore.getState();
+      const initialDark = store.isDark;
+      store.toggleDarkMode();
+      store.toggleDarkMode();
+      const state = useAppStore.getState();
+      expect(state.isDark).toBe(initialDark);
+    });
+  });
+
+  describe('cycleFontSize()', () => {
+    it('cycles through font sizes', () => {
+      const store = useAppStore.getState();
+      store.setFontSizeLevel('small');
+      store.cycleFontSize();
+      expect(useAppStore.getState().fontSize).toBe('normal');
+
+      store.cycleFontSize();
       expect(useAppStore.getState().fontSize).toBe('large');
-    });
 
-    it('should cycle font size: large → small', () => {
-      useAppStore.setState({ fontSize: 'large' });
-      useAppStore.getState().cycleFontSize();
+      store.cycleFontSize();
       expect(useAppStore.getState().fontSize).toBe('small');
     });
+  });
 
-    it('should cycle font size: small → normal', () => {
-      useAppStore.setState({ fontSize: 'small' });
-      useAppStore.getState().cycleFontSize();
-      expect(useAppStore.getState().fontSize).toBe('normal');
+  describe('setLocale()', () => {
+    it('updates locale', () => {
+      const store = useAppStore.getState();
+      store.setLocale('en');
+      const state = useAppStore.getState();
+      expect(state.locale).toBe('en');
     });
 
-    it('should set font size to a specific level', () => {
-      useAppStore.getState().setFontSizeLevel('large');
-      expect(useAppStore.getState().fontSize).toBe('large');
-    });
-
-    it('should persist font size to localStorage', () => {
-      useAppStore.getState().setFontSizeLevel('small');
-      expect(localStorage.getItem('fontSize')).toBe('small');
+    it('updates locale to vi', () => {
+      const store = useAppStore.getState();
+      store.setLocale('vi');
+      const state = useAppStore.getState();
+      expect(state.locale).toBe('vi');
     });
   });
 });

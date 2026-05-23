@@ -5,7 +5,6 @@
  */
 
 import { CanChi, Can, Chi, StarData } from '../types/calendar';
-import { getHighPrecisionSunLongitude } from './astronomyMath';
 import thanSatData from '../data/phase_1/than_sat.json';
 import {
     CAN,
@@ -24,6 +23,38 @@ import {
 
 // ── Astronomical helpers ──────────────────────────────────────
 
+const sunLongitudeCache = new Map<number, number>();
+
+function normalizeDegrees(value: number): number {
+    return ((value % 360) + 360) % 360;
+}
+
+/** Apparent solar longitude with nutation and aberration corrections. */
+function getApparentSunLongitude(jd: number): number {
+    const cached = sunLongitudeCache.get(jd);
+    if (cached !== undefined) {
+        return cached;
+    }
+
+    const T = (jd - 2451545.0) / 36525.0;
+    const T2 = T * T;
+    const T3 = T2 * T;
+
+    const L0 = normalizeDegrees(280.46645 + 36000.76983 * T + 0.0003032 * T2);
+    const M = normalizeDegrees(357.52910 + 35999.05030 * T - 0.0001559 * T2 - 0.00000048 * T3);
+    const Mr = M * Math.PI / 180;
+
+    const center =
+        (1.914600 - 0.004817 * T - 0.000014 * T2) * Math.sin(Mr) +
+        (0.019993 - 0.000101 * T) * Math.sin(2 * Mr) +
+        0.000290 * Math.sin(3 * Mr);
+
+    const omega = (125.04 - 1934.136 * T) * Math.PI / 180;
+    const longitude = normalizeDegrees(L0 + center - 0.00569 - 0.00478 * Math.sin(omega));
+    sunLongitudeCache.set(jd, longitude);
+    return longitude;
+}
+
 export function getJDN(day: number, month: number, year: number): number {
     const a = Math.floor((14 - month) / 12);
     const y = year + 4800 - a;
@@ -36,7 +67,7 @@ export function getJDN(day: number, month: number, year: number): number {
 }
 
 export function getSunLongitude(jd: number): number {
-    return getHighPrecisionSunLongitude(jd);
+    return getApparentSunLongitude(jd);
 }
 
 export function getSolarTerm(jd: number): string {

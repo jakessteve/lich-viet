@@ -249,7 +249,7 @@
 }
 
 .dark .lunar-event-add-btn:hover {
-  border-color: var(--color-primary-dark, #0A84FF);
+  border-color: var(--color-primary-dark, #818CF8);
   color: var(--color-gold-dark, #D4A843);
 }
 

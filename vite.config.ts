@@ -2,12 +2,10 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { compression } from 'vite-plugin-compression2';
 import { VitePWA } from 'vite-plugin-pwa';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import path from 'path';
 
 export default defineConfig({
-  optimizeDeps: {
-    include: ['circular-natal-horoscope-js', 'iztro']
-  },
   plugins: [
     react(),
     compression({
@@ -15,13 +13,22 @@ export default defineConfig({
       threshold: 1024, // Only compress files > 1KB
       deleteOriginalAssets: false,
     }),
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'node_modules/@swisseph/browser/dist/swisseph.wasm',
+          dest: '.',
+          rename: { stripBase: true },
+        },
+      ],
+    }),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'icons/*.png', 'fonts/**/*'],
+      includeAssets: ['favicon.ico', 'icons/*.png', 'fonts/**/*', 'swisseph.wasm'],
       manifest: {
         name: 'Lịch Việt — Âm Lịch & Phong Thủy',
         short_name: 'Lịch Việt',
-        description: 'Tra cứu ngày âm lịch, giờ tốt xấu, hướng xuất hành, và phân tích phong thủy hàng ngày.',
+        description: 'Tra cứu ngày âm lịch, giờ tốt xấu, gieo quẻ, và lập lá số Tử Vi.',
         theme_color: '#1a1a2e',
         background_color: '#0f0f1a',
         display: 'standalone',
@@ -36,17 +43,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts',
-              expiration: { maxEntries: 10, maxAgeSeconds: 365 * 24 * 60 * 60 },
-            },
-          },
-        ],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,wasm}'],
         navigateFallback: '/index.html',
       },
     }),
@@ -57,9 +54,6 @@ export default defineConfig({
       '@lich-viet/core/calendar': path.resolve(__dirname, './packages/core/src/calendar/index.ts'),
       '@lich-viet/core/dungsu': path.resolve(__dirname, './packages/core/src/dungsu/index.ts'),
       '@lich-viet/core/maihoa': path.resolve(__dirname, './packages/core/src/maihoa/index.ts'),
-      '@lich-viet/core/chiemtinh': path.resolve(__dirname, './packages/core/src/chiemtinh/index.ts'),
-      '@lich-viet/core/bazi': path.resolve(__dirname, './packages/core/src/bazi/index.ts'),
-      '@lich-viet/core/numerology': path.resolve(__dirname, './packages/core/src/numerology/index.ts'),
       '@lich-viet/core/fengshui': path.resolve(__dirname, './packages/core/src/fengshui/index.ts'),
       '@lich-viet/core/qmdj': path.resolve(__dirname, './packages/core/src/qmdj/index.ts'),
       '@lich-viet/core/thaiAt': path.resolve(__dirname, './packages/core/src/thaiAt/index.ts'),
@@ -67,13 +61,11 @@ export default defineConfig({
       '@lich-viet/core/tamThuc': path.resolve(__dirname, './packages/core/src/tamThuc/index.ts'),
       '@lich-viet/core': path.resolve(__dirname, './packages/core/src/index.ts'),
       '@lich-viet/types': path.resolve(__dirname, './packages/types/src/index.ts'),
-      'circular-natal-horoscope-js': path.resolve(__dirname, 'src/packages/circular-natal-horoscope/index.cjs'),
-      'iztro': path.resolve(__dirname, 'src/packages/iztro/index.cjs'),
     },
   },
   build: {
     commonjsOptions: {
-      include: [/src\/packages\/circular-natal-horoscope/, /src\/packages\/iztro/, /node_modules/],
+      include: [/node_modules/],
     },
     sourcemap: 'hidden', // Generate source maps for error reporting but don't expose to browser
     rollupOptions: {
@@ -87,30 +79,9 @@ export default defineConfig({
           if (id.includes('node_modules/zod')) {
             return 'vendor-zod';
           }
-          // Third-party heavyweight engines
-          if (id.includes('iztro')) {
-            return 'vendor-iztro';
-          }
-          if (id.includes('circular-natal-horoscope-js')) {
-            return 'vendor-horoscope';
-          }
-          if (id.includes('leaflet')) {
-            return 'vendor-leaflet';
-          }
-          
           // Data & Interpretation Domain Splitting
-          if (id.includes('/src/data/interpretation/numerology/')) return 'data-numerology-advanced';
-          if (id.includes('/src/data/baziInterpretation') || id.includes('/services/bazi/')) return 'data-bazi';
           if (id.includes('/src/data/qmdj/') || id.includes('/services/qmdj/')) return 'data-qmdj';
           if (id.includes('/src/data/lucNham/') || id.includes('/services/lucNham/')) return 'data-lucnham';
-          if (id.includes('/src/data/westernAstro/') || id.includes('/services/chiemtinh/')) return 'data-western-astro';
-          if (id.includes('/services/tuvi/interpretation/') || id.includes('palaceInterpretation.ts')) return 'data-tuvi-palace';
-          
-          // Generic interpretation/synthesis services
-          if (id.includes('/services/interpretation/')) return 'service-synthesis';
-          
-          // PDF Export Services
-          if (id.includes('/services/pdf/')) return 'service-pdf';
         },
       },
     },

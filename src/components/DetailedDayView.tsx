@@ -2,12 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DayDetailsData } from '../types/calendar';
 import { renderWithItalics, formatNapAm, formatXungHop, getStatusLabel, renderStatusParts } from '../utils/formatHelpers';
-import CollapsibleCard from './CollapsibleCard';
 import { useAuthStore } from '../stores/authStore';
-import { calculatePersonalDayScore } from '../services/personalization/personalDayScore';
-import { getPersonalDungSu } from '../services/personalization/personalDungSu';
-import { useUserTier } from '../hooks/useUserTier';
-import { calculatePersonalHourModifier } from '../services/personalization/personalHourScore';
+import { calculatePersonalDayScore, calculatePersonalHourModifier, getPersonalDungSu } from '../services/personalization';
+import CollapsibleCard from './CollapsibleCard';
 
 interface DetailedDayViewProps {
   date: Date;
@@ -15,63 +12,77 @@ interface DetailedDayViewProps {
 }
 
 const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuthStore();
   const [sortByScore, setSortByScore] = useState(false);
   const [showPersonalized, setShowPersonalized] = useState(false);
-  const navigate = useNavigate();
-  const user = useAuthStore(s => s.user);
-  const isAuthenticated = useAuthStore(s => s.isAuthenticated);
-  const { hasAccess, getContentDepth } = useUserTier();
-  const isPremium = hasAccess('premium');
-  const isElite = hasAccess('elite');
-  const contentDepth = getContentDepth(); // 'summary' | 'standard' | 'full'
 
+  // Derive birth details from user profile or birthday string
   const computedProfile = useMemo(() => {
-    if (user?.profile?.birthYear) return user.profile;
-    if (user?.birthday) {
-      const [year, month, day] = user.birthday.split('-').map(Number);
-      if (!isNaN(year)) {
-        return { ...user?.profile, birthYear: year, birthMonth: month, birthDay: day };
+    if (!user) return null;
+    if (user.profile?.birthYear) {
+      return {
+        birthYear: user.profile.birthYear,
+        birthMonth: user.profile.birthMonth,
+        birthDay: user.profile.birthDay,
+      };
+    }
+    if (user.birthday) {
+      const parts = user.birthday.split('-').map(Number);
+      if (parts.length === 3) {
+        return { birthYear: parts[0], birthMonth: parts[1], birthDay: parts[2] };
       }
     }
-    return undefined;
+    return null;
   }, [user]);
 
-  const personalizedHours = useMemo(() => {
-    return data.allHours.map(h => {
-      if (!isElite || !computedProfile) return { ...h, finalScore: h.score, isPersonalized: false, personalData: null };
-      
-      const modifier = calculatePersonalHourModifier(computedProfile, h.canChi, data.canChi.day, date);
-      if (!modifier) return { ...h, finalScore: h.score, isPersonalized: false, personalData: null };
+  const hasBirthday = !!computedProfile?.birthYear;
 
-      // Make sure the total score stays within [0, 100] framework
-      const finalScore = Math.max(0, Math.min(100, h.score + modifier.totalModifier));
-      return { 
-        ...h, 
-        finalScore, 
-        isPersonalized: true, 
-        personalData: modifier 
-      };
-    });
-  }, [data.allHours, data.canChi.day, isPremium, computedProfile, date]);
-
+  // Personal day score
   const personalScore = useMemo(() => {
-    if (!computedProfile?.birthYear) return null;
-    return calculatePersonalDayScore(computedProfile, data.canChi.day.chi);
+    if (!computedProfile?.birthYear || !data.canChi?.day?.chi) return null;
+    return calculatePersonalDayScore(computedProfile.birthYear, data.canChi.day.chi);
   }, [computedProfile, data.canChi.day.chi]);
 
+  // Personalized hours with modifier overlay
+  const personalizedHours = useMemo(() => {
+    if (!showPersonalized || !computedProfile?.birthYear) return data.allHours;
+    return data.allHours.map(h => {
+      const hour = { ...h, advancedInfo: [...(h.advancedInfo || [])] };
+      const modifier = calculatePersonalHourModifier(
+        computedProfile.birthYear,
+        computedProfile.birthMonth,
+        computedProfile.birthDay,
+        h.canChi,
+        data.canChi.day,
+        date
+      );
+      if (modifier) {
+        hour.score = Math.min(100, Math.max(0, hour.score + modifier.totalModifier));
+        modifier.breakdowns.forEach(b => {
+          if (!hour.advancedInfo!.some(info => info.includes(b))) {
+            hour.advancedInfo!.push(`Cá nhân: ${b}`);
+          }
+        });
+      }
+      return hour;
+    });
+  }, [data.allHours, data.canChi.day, date, showPersonalized, computedProfile]);
+
+  // Personalized Dụng Sự
   const personalDungSu = useMemo(() => {
-    if (!user || !computedProfile) return null;
-    return getPersonalDungSu(computedProfile, user.extendedProfile, data.canChi.day.chi, data.dungSu.suitable);
-  }, [user, computedProfile, data.canChi.day.chi, data.dungSu.suitable]);
+    if (!computedProfile?.birthYear || !data.canChi?.day?.chi || !data.dungSu?.suitable) return null;
+    return getPersonalDungSu(computedProfile.birthYear, data.canChi.day.chi, data.dungSu.suitable);
+  }, [computedProfile, data.canChi.day.chi, data.dungSu.suitable]);
 
   const sortedHours = useMemo(() => {
     if (!sortByScore) return personalizedHours;
-    return [...personalizedHours].sort((a, b) => b.finalScore - a.finalScore);
+    return [...personalizedHours].sort((a, b) => b.score - a.score);
   }, [personalizedHours, sortByScore]);
 
   // Identify top 3 best hours for visual highlighting
   const topHourIndices = useMemo(() => {
-    const sorted = [...personalizedHours].map((h, i) => ({ score: h.finalScore, idx: i })).sort((a, b) => b.score - a.score);
+    const sorted = [...personalizedHours].map((h, i) => ({ score: h.score, idx: i })).sort((a, b) => b.score - a.score);
     return new Set(sorted.slice(0, 3).map(h => h.idx));
   }, [personalizedHours]);
 
@@ -79,7 +90,7 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
   const _lunarDateStr = `${data.lunarDate.day}/${data.lunarDate.month}/${data.lunarDate.year}`;
   const dayOfWeekAbbr = data.dayOfWeek === 'Chủ Nhật' ? 'CN' : `T${date.getDay() + 1}`;
 
-  // Helper to deduplicate and clean bracket descriptions 
+  // Helper to deduplicate and clean bracket descriptions
   const formatDungSu = (items: string[], focusWord: string) => {
     if (!items || items.length === 0) return { focus: false, rest: [] };
     const cleanedItems = items.map(item => item.split(' (')[0].trim());
@@ -92,14 +103,26 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
   const formattedNghi = useMemo(() => formatDungSu(data.dungSu.suitable, 'Tốt mọi việc'), [data.dungSu.suitable]);
   const formattedKy = useMemo(() => formatDungSu(data.dungSu.unsuitable, 'Xấu mọi việc'), [data.dungSu.unsuitable]);
 
+  const handlePersonalizeClick = () => {
+    if (!isAuthenticated) {
+      navigate('/app/dang-ky');
+      return;
+    }
+    if (!hasBirthday) {
+      navigate('/app/cai-dat');
+      return;
+    }
+    setShowPersonalized(prev => !prev);
+  };
+
   return (
-    <div className="w-full space-y-4 animate-in fade-in duration-500" data-testid="detailed-day-view">
+    <div className="w-full space-y-4 animate-fade-scale" data-testid="detailed-day-view">
 
       {/* At-a-glance summary (A5) */}
       <div id="tour-day-summary" className="rounded-2xl bg-gradient-to-r from-gold/5 via-amber-50/50 to-gold/5 dark:from-gold-dark/5 dark:via-amber-900/10 dark:to-gold-dark/5 border border-gold/15 dark:border-gold-dark/15 px-5 py-4">
-        <div className="flex items-start gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3">
           <span className="material-icons-round text-gold dark:text-gold-dark text-xl mt-0.5">auto_awesome</span>
-          <div className="text-sm leading-relaxed text-text-primary-light dark:text-text-primary-dark">
+          <div className="text-sm leading-relaxed text-text-primary-light dark:text-text-primary-dark flex-1">
             <span className="font-bold">{dayOfWeekAbbr}, {solarDateStr}</span>
             <span className="text-text-secondary-light dark:text-text-secondary-dark"> — </span>
             {formattedNghi.focus
@@ -115,69 +138,99 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
                 : <span>Không có việc kỵ đặc biệt.</span>
             }
           </div>
+          <button
+            onClick={handlePersonalizeClick}
+            className={`flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-colors shrink-0 w-full sm:w-auto ${
+              showPersonalized
+                ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300'
+                : 'bg-gray-100 dark:bg-white/10 text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-200 dark:hover:bg-white/15'
+            }`}
+            title={!isAuthenticated ? 'Đăng nhập để cá nhân hoá' : !hasBirthday ? 'Cập nhật ngày sinh để cá nhân hoá' : showPersonalized ? 'Tắt cá nhân hoá' : 'Cá nhân hoá theo tuổi'}
+          >
+            <span className="material-icons-round text-sm">{showPersonalized ? 'person_off' : 'person'}</span>
+            {showPersonalized ? 'Tắt CNH' : 'Cá nhân hoá'}
+          </button>
         </div>
       </div>
 
-      {/* Personal Action Score (Ngày theo tuổi bạn) */}
-      {personalScore && (
-        <CollapsibleCard title={`Cát/Hung theo tuổi ${computedProfile?.birthYear || ''}`} defaultOpen={true}>
-          <div className="p-4 sm:p-6 space-y-4">
-            <div className={`p-4 rounded-xl border ${personalScore.actionScore >= 3 ? 'bg-indigo-50/50 dark:bg-indigo-900/20 border-indigo-100 dark:border-indigo-800' : personalScore.actionScore < 0 ? 'bg-orange-50/50 dark:bg-orange-900/20 border-orange-100 dark:border-orange-800' : 'bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-800'}`}>
-              <div className="flex items-center gap-4">
-                <div className={`flex items-center justify-center w-12 h-12 rounded-xl text-lg font-bold shadow-sm shrink-0 ${personalScore.actionScore >= 3 ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white' : personalScore.actionScore < 0 ? 'bg-gradient-to-br from-orange-400 to-red-500 text-white' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700'}`}>
-                  {personalScore.actionScore > 0 ? `+${personalScore.actionScore}` : personalScore.actionScore}
-                </div>
-                <div className="min-w-0">
-                  <h3 className={`text-base font-semibold ${personalScore.actionScore >= 3 ? 'text-indigo-700 dark:text-indigo-400' : personalScore.actionScore < 0 ? 'text-red-600 dark:text-red-400' : 'text-text-primary-light dark:text-text-primary-dark'}`}>
-                    {personalScore.label}
-                  </h3>
-                  <p className="text-sm mt-0.5 text-text-secondary-light dark:text-text-secondary-dark">{personalScore.description}</p>
-                </div>
+      {/* Personal Score Card */}
+      {showPersonalized && personalScore && (
+        <div className={`rounded-2xl border px-5 py-4 ${
+          personalScore.actionScore >= 3
+            ? 'bg-purple-50/50 dark:bg-purple-900/10 border-purple-200 dark:border-purple-800'
+            : personalScore.actionScore < 0
+              ? 'bg-orange-50/50 dark:bg-orange-900/10 border-orange-200 dark:border-orange-800'
+              : 'bg-gray-50/50 dark:bg-gray-800/20 border-gray-200 dark:border-gray-700'
+        }`}>
+        <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3">
+            <span className={`material-icons-round text-xl mt-0.5 ${
+              personalScore.actionScore >= 3
+                ? 'text-purple-600 dark:text-purple-400'
+                : personalScore.actionScore < 0
+                  ? 'text-orange-600 dark:text-orange-400'
+                  : 'text-gray-500 dark:text-gray-400'
+            }`}>
+              {personalScore.actionScore >= 3 ? 'sentiment_very_satisfied' : personalScore.actionScore < 0 ? 'sentiment_very_dissatisfied' : 'sentiment_neutral'}
+            </span>
+            <div className="text-sm leading-relaxed">
+              <div className="font-bold text-text-primary-light dark:text-text-primary-dark">
+                Điểm cá nhân hoá: <span className={
+                  personalScore.actionScore >= 3
+                    ? 'text-purple-700 dark:text-purple-300'
+                    : personalScore.actionScore < 0
+                      ? 'text-orange-700 dark:text-orange-300'
+                      : 'text-text-primary-light dark:text-text-primary-dark'
+                }>{personalScore.label}</span>
+              </div>
+              <div className="text-text-secondary-light dark:text-text-secondary-dark mt-0.5">{personalScore.description}</div>
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {personalScore.isTamHop && <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">Tam Hợp</span>}
+                {personalScore.isLucHop && <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">Lục Hợp</span>}
+                {personalScore.isThaiTue && <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">Trị Thái Tuế</span>}
+                {personalScore.isTuongXung && <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300">Lục Xung</span>}
+                {personalScore.isTuongHai && <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300">Lục Hại</span>}
+                {personalScore.isTuongHinh && <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300">Tương Hình</span>}
+                {personalScore.isTuongPha && <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300">Tương Phá</span>}
               </div>
             </div>
-            
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider font-semibold shrink-0">Mức độ tương tác</span>
-                {personalScore.isThaiTue && <span className="inline-block px-2 py-0.5 bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300 rounded text-xs font-medium">Thái Tuế</span>}
-                {personalScore.isTamHop && <span className="inline-block px-2 py-0.5 bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300 rounded text-xs font-medium">Tam Hợp</span>}
-                {personalScore.isTuongXung && <span className="inline-block px-2 py-0.5 bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300 rounded text-xs font-medium">Lục Xung</span>}
-                {personalScore.isTuongHai && <span className="inline-block px-2 py-0.5 bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300 rounded text-xs font-medium">Lục Hại</span>}
-                {personalScore.isLucHop && <span className="inline-block px-2 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 rounded text-xs font-medium">Lục Hợp</span>}
-                {personalScore.isTuongHinh && <span className="inline-block px-2 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 rounded text-xs font-medium">Tương Hình</span>}
-                {personalScore.isTuongPha && <span className="inline-block px-2 py-0.5 bg-slate-200 text-slate-800 dark:bg-slate-800/40 dark:text-slate-300 rounded text-xs font-medium">Tương Phá</span>}
-                {!personalScore.isThaiTue && !personalScore.isTamHop && !personalScore.isTuongXung && !personalScore.isTuongHai && !personalScore.isLucHop && !personalScore.isTuongHinh && !personalScore.isTuongPha && <span className="inline-block px-2 py-0.5 bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded text-xs font-medium shadow-sm">Bình Hòa</span>}
-              </div>
-            </div>
+          </div>
+        </div>
+      )}
 
-              {personalDungSu && (personalDungSu.recommended.length > 0 || personalDungSu.warned.length > 0) && (
-                <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
-                  <div className="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider font-semibold mb-2">Dụng sự theo tuổi</div>
-                  {personalDungSu.voidDayWarning && (
-                    <div className="mb-2 text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded">
-                      {personalDungSu.voidDayWarning}
-                    </div>
-                  )}
-                  <div className="space-y-2">
-                    {personalDungSu.recommended.length > 0 && (
-                      <div>
-                        <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Rất Hợp: </span>
-                        {personalDungSu.recommended.map((act, i) => (
-                          <span key={i} className="inline-block px-2 py-0.5 text-xs font-medium rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 mr-1 mb-1">{act.name}</span>
-                        ))}
-                      </div>
-                    )}
-                    {personalDungSu.warned.length > 0 && (
-                      <div>
-                        <span className="text-xs font-medium text-orange-600 dark:text-orange-400">Cần Tránh: </span>
-                        {personalDungSu.warned.map((act, i) => (
-                          <span key={i} className="inline-block px-2 py-0.5 text-xs font-medium rounded bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300 mr-1 mb-1" title={act.reason}>{act.name}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+      {/* Personalized Dụng Sự */}
+      {showPersonalized && personalDungSu && (
+        <CollapsibleCard title="Dụng sự theo tuổi" defaultOpen={true} collapseOnMobile={true}>
+          <div className="divide-y divide-border-light dark:divide-border-dark text-sm px-4 sm:px-6 py-3">
+            {personalDungSu.recommended.length > 0 && (
+              <div className="py-2">
+                <div className="text-xs font-semibold uppercase tracking-wider text-purple-600 dark:text-purple-400 mb-1.5">Nên làm</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {personalDungSu.recommended.map((act, i) => (
+                    <span key={i} className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300" title={act.reason}>{act.name}</span>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
+            {personalDungSu.regular.length > 0 && (
+              <div className="py-2">
+                <div className="text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-1.5">Bình thường</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {personalDungSu.regular.map((act, i) => (
+                    <span key={i} className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">{act.name}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {personalDungSu.warned.length > 0 && (
+              <div className="py-2">
+                <div className="text-xs font-semibold uppercase tracking-wider text-orange-600 dark:text-orange-400 mb-1.5">Cẩn thận</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {personalDungSu.warned.map((act, i) => (
+                    <span key={i} className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300" title={act.reason}>{act.name}</span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </CollapsibleCard>
       )}
@@ -255,53 +308,27 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
       {/* Giờ tốt và xấu trong ngày — Collapsible */}
       <CollapsibleCard
         title="Giờ tốt và xấu trong ngày"
-
         defaultOpen={true}
         collapseOnMobile={true}
         headerRight={
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={() => {
-                if (!isAuthenticated) {
-                  navigate('/app/dang-ky');
-                  return;
-                }
-                if (!isPremium) {
-                  alert('Tính năng Cá nhân hoá giờ theo Bát Tự cần tài khoản Premium.');
-                  navigate('/app/nang-cap');
-                  return;
-                }
-                if (!computedProfile) {
-                  alert('Vui lòng vào Cài đặt để cập nhật Lá số (Giờ/Ngày sinh).');
-                  navigate('/app/cai-dat');
-                  return;
-                }
-                setShowPersonalized(!showPersonalized);
-              }}
-              className={`flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full transition-all border whitespace-nowrap ${showPersonalized ? 'bg-gold text-white border-gold dark:bg-gold-dark dark:text-gray-900 dark:border-gold-dark shadow-sm' : 'bg-transparent text-gold border-gold/40 hover:bg-gold/10 dark:text-gold-dark dark:border-gold-dark/40 dark:hover:bg-gold-dark/10'}`}
-            >
-              <span className="material-icons-round text-sm">auto_awesome</span>
-              Cá nhân hoá
-            </button>
-            <button
-              onClick={() => setSortByScore(prev => !prev)}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-white/10 text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-200 dark:hover:bg-white/15 transition-colors"
-            >
-              <span className="material-icons-round text-sm">{sortByScore ? 'schedule' : 'trending_up'}</span>
-              {sortByScore ? 'Theo giờ' : 'Giờ tốt trước'}
-            </button>
-          </div>
+          <button
+            onClick={() => setSortByScore(prev => !prev)}
+            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-white/10 text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-200 dark:hover:bg-white/15 transition-colors"
+          >
+            <span className="material-icons-round text-sm">{sortByScore ? 'schedule' : 'trending_up'}</span>
+            {sortByScore ? 'Theo giờ' : 'Giờ tốt trước'}
+          </button>
         }
       >
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs sm:text-xs font-semibold text-text-secondary-light/80 dark:text-text-secondary-dark/80 uppercase bg-surface-subtle-light dark:bg-surface-subtle-dark tracking-wider">
+            <thead className="text-xs sm:text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase bg-surface-subtle-light dark:bg-surface-subtle-dark tracking-wider">
               <tr>
                 <th className="hidden sm:table-cell px-6 py-3 w-20" scope="col">Giờ</th>
                 <th className="px-2 sm:px-6 py-3 w-[70px] sm:w-28 text-center" scope="col">Can Chi</th>
                 <th className="px-3 sm:px-6 py-3" scope="col">Chi tiết</th>
                 <th className="px-2 sm:px-6 py-3 text-right w-[60px] sm:w-24 align-middle" scope="col">
-                  {contentDepth === 'summary' ? 'CHẤT' : 'ĐIỂM'}{isPremium && <span className="text-[10px] sm:text-xs font-normal text-text-secondary-light/80 dark:text-text-secondary-dark/80 lowercase">*</span>}
+                  ĐIỂM
                 </th>
               </tr>
             </thead>
@@ -314,16 +341,19 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
                   statusInfo = advanced[statusIndex].replace('Trạng thái:', '').trim();
                 }
 
+                // Find personalized breakdowns
+                const personalBreakdowns = advanced.filter(s => s.startsWith('Cá nhân:'));
+
                 const statusLabel = getStatusLabel(statusInfo);
                 const statusColorClass = statusLabel === 'HOÀNG ĐẠO'
                   ? 'text-good dark:text-good-dark'
                   : 'text-text-primary-light dark:text-text-primary-dark';
 
-                // We need to find the original index in `data.allHours`
-                const originalIndex = data.allHours.findIndex(orig => orig.timeRange === h.timeRange);
+                // We need to find the original index in `personalizedHours`
+                const originalIndex = personalizedHours.findIndex(orig => orig.timeRange === h.timeRange);
                 const isTop3 = topHourIndices.has(originalIndex);
-                
-                const currentScore = showPersonalized ? h.finalScore : h.score;
+
+                const currentScore = h.score;
                 const isWeak = currentScore < 40;
                 const isAuspiciousCurrent = currentScore >= 60;
 
@@ -370,37 +400,22 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
                         <span className="font-bold text-crimson-600 dark:text-crimson-400 mr-1">Kỵ:</span>
                         <span>{h.ky && h.ky.length > 0 ? h.ky.join(', ') : 'không có việc gì kỵ đặc biệt'}</span>
                       </div>
-                      {showPersonalized && h.isPersonalized && h.personalData && h.personalData.flags.length > 0 && (
-                        <div className="mt-2 flex flex-wrap gap-1 animate-in fade-in zoom-in-95 duration-200">
-                          {h.personalData.flags.includes('quy_nhan') && <span className="inline-block px-1.5 py-0.5 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300 rounded text-[10px] font-medium" title="Giờ Thiên Ất Quý Nhân">Quý Nhân</span>}
-                          {h.personalData.flags.includes('loc_than') && <span className="inline-block px-1.5 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 rounded text-[10px] font-medium" title="Giờ Lộc Thần">Lộc Thần</span>}
-                          {h.personalData.flags.includes('dich_ma') && <span className="inline-block px-1.5 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 rounded text-[10px] font-medium" title="Giờ Dịch Mã">Dịch Mã</span>}
-                          {h.personalData.flags.includes('hop_nhat_chu') && <span className="inline-block px-1.5 py-0.5 bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300 rounded text-[10px] font-medium">Hợp Nhật Chủ</span>}
-                          {h.personalData.flags.includes('hop_thai_tue') && <span className="inline-block px-1.5 py-0.5 bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300 rounded text-[10px] font-medium">Hợp Thái Tuế</span>}
-                          {h.personalData.flags.includes('qmdj_cat') && <span className="inline-block px-1.5 py-0.5 bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 rounded text-[10px] font-medium">QMDJ Tốt</span>}
-                          
-                          {(h.personalData.flags.includes('xung_nhat_chu') || h.personalData.flags.includes('thien_khac_dia_xung')) && <span className="inline-block px-1.5 py-0.5 bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300 rounded text-[10px] font-medium">Xung Bản Mệnh</span>}
-                          {h.personalData.flags.includes('xung_thai_tue') && <span className="inline-block px-1.5 py-0.5 bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300 rounded text-[10px] font-medium">Xung Thái Tuế</span>}
-                          {h.personalData.flags.includes('qmdj_hung') && <span className="inline-block px-1.5 py-0.5 bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300 rounded text-[10px] font-medium">QMDJ Xấu</span>}
+                      {showPersonalized && personalBreakdowns.length > 0 && (
+                        <div className="space-y-0.5 mt-1">
+                          {personalBreakdowns.map((b, i) => (
+                            <div key={i} className="text-xs text-purple-600 dark:text-purple-400">
+                              {b.replace('Cá nhân:', '').trim()}
+                            </div>
+                          ))}
                         </div>
                       )}
                     </td>
                     <td className={`px-2 sm:px-6 py-3 sm:py-4 text-right font-bold text-sm align-top flex flex-col items-end space-y-0.5 ${isAuspiciousCurrent ? 'text-good dark:text-good-dark' : 'text-text-primary-light dark:text-text-primary-dark'}`}>
-                      {contentDepth === 'summary' ? (
-                        // Free/guest: only show Tốt / Xấu label
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${currentScore >= 60 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : currentScore < 40 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-gray-100 text-gray-500 dark:bg-white/10 dark:text-gray-400'}`}>
-                          {currentScore >= 60 ? 'Tốt ✅' : currentScore < 40 ? 'Xấu ❌' : 'Bình ➖'}
-                        </span>
-                      ) : (
-                        // Premium/Elite: show numeric score
-                        <>
-                          <div>{currentScore}%</div>
-                          {isElite && showPersonalized && h.isPersonalized && h.personalData && h.personalData.totalModifier !== 0 && (
-                            <div className={`flex items-center text-[10px] font-medium px-1 rounded-sm animate-in fade-in zoom-in-95 duration-200 ${h.personalData.totalModifier > 0 ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400'}`} title={h.personalData.breakdowns.join('\n')}>
-                              {h.personalData.totalModifier > 0 ? '+' : ''}{h.personalData.totalModifier}
-                            </div>
-                          )}
-                        </>
+                      <div>{currentScore}%</div>
+                      {showPersonalized && personalBreakdowns.length > 0 && (
+                        <div className="text-xs font-normal text-purple-600 dark:text-purple-400">
+                          {personalBreakdowns[0].replace('Cá nhân:', '').trim()}
+                        </div>
                       )}
                     </td>
 

@@ -139,12 +139,12 @@ const QmdjChartWidget: React.FC<QmdjChartWidgetProps> = ({ date, hourChi }) => {
               `}
             >
               {/* Palace number */}
-              <span className="absolute top-0.5 left-1 text-xs font-bold text-text-secondary-light/40 dark:text-text-secondary-dark/40">
+              <span className="absolute top-0.5 left-1 text-xs font-bold text-text-secondary-light/60 dark:text-text-secondary-dark/60">
                 {palaceNum}
               </span>
 
               {/* Direction */}
-              <span className="absolute top-0.5 right-1 text-xs text-text-secondary-light/50 dark:text-text-secondary-dark/50">
+              <span className="absolute top-0.5 right-1 text-xs text-text-secondary-light/60 dark:text-text-secondary-dark/60">
                 {palace.direction}
               </span>
 
@@ -183,7 +183,7 @@ const QmdjChartWidget: React.FC<QmdjChartWidgetProps> = ({ date, hourChi }) => {
 
       {/* Selected Palace Detail */}
       {selectedP && (
-        <div className="p-3 rounded-xl bg-surface-subtle-light dark:bg-white/5 border border-border-light/50 dark:border-border-dark/50 text-sm space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="p-3 rounded-xl bg-surface-subtle-light dark:bg-white/5 border border-border-light/50 dark:border-border-dark/50 text-sm space-y-1.5 animate-fade-scale">
           <div className="flex items-center gap-2 mb-1">
             <span className="font-bold text-text-primary-light dark:text-text-primary-dark text-sm">
               Cung {selectedP.number} — {selectedP.direction}

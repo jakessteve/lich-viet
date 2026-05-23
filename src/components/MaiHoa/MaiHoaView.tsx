@@ -11,7 +11,6 @@ import SummaryCard from './SummaryCard';
 import TheoryCard from './TheoryCard';
 import { MaiHoaErrorBoundary } from './MaiHoaErrorBoundary';
 import QmdjCrossRef from './QmdjCrossRef';
-import { ContentGate } from '../shared/ContentGate';
 
 
 import type {
@@ -296,36 +295,34 @@ export default function MaiHoaView({ selectedDate }: MaiHoaViewProps): React.Rea
                             </div>
                         )}
 
-                        {/* Interpretation — GATED: Partial Premium+ */}
-                        <ContentGate requiredTier="premium" sectionTitle="Luận Giải Quẻ Chi Tiết" showBlurPreview>
-                            {/* Summary Card (Verdict & Bottom-Line Answer) */}
-                            <SummaryCard
-                                summary={result.summary}
-                                theLabel={theLabel}
-                                dungLabel={dungLabel}
-                                movingLine={result.divination.movingLine}
-                                context={result.divination.context}
-                            />
+                        {/* Interpretation */}
+                        {/* Summary Card (Verdict & Bottom-Line Answer) */}
+                        <SummaryCard
+                            summary={result.summary}
+                            theLabel={theLabel}
+                            dungLabel={dungLabel}
+                            movingLine={result.divination.movingLine}
+                            context={result.divination.context}
+                        />
 
-                            {/* QMDJ Cross-Reference */}
-                            <QmdjCrossRef date={selectedDate} />
+                        {/* QMDJ Cross-Reference */}
+                        <QmdjCrossRef date={selectedDate} />
 
-                            {/* Theory Card — fully visible */}
-                            <TheoryCard
-                                mainHexagram={result.divination.mainHexagram}
-                                mutualHexagram={result.divination.mutualHexagram}
-                                changedHexagram={result.divination.changedHexagram}
-                                movingLine={result.divination.movingLine}
-                                mainHaoDetails={result.divination.mainHaoDetails}
-                                mutualHaoDetails={result.divination.mutualHaoDetails}
-                                changedHaoDetails={result.divination.changedHaoDetails}
-                                trigramDataMap={TRIGRAM_MAP}
-                                context={result.divination.context}
-                                summary={result.summary}
-                                theLabel={theLabel}
-                                dungLabel={dungLabel}
-                            />
-                        </ContentGate>
+                        {/* Theory Card — fully visible */}
+                        <TheoryCard
+                            mainHexagram={result.divination.mainHexagram}
+                            mutualHexagram={result.divination.mutualHexagram}
+                            changedHexagram={result.divination.changedHexagram}
+                            movingLine={result.divination.movingLine}
+                            mainHaoDetails={result.divination.mainHaoDetails}
+                            mutualHaoDetails={result.divination.mutualHaoDetails}
+                            changedHaoDetails={result.divination.changedHaoDetails}
+                            trigramDataMap={TRIGRAM_MAP}
+                            context={result.divination.context}
+                            summary={result.summary}
+                            theLabel={theLabel}
+                            dungLabel={dungLabel}
+                        />
                     </div>
                 )}
             </div>

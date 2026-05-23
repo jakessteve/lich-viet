@@ -1,7 +1,7 @@
 /**
  * featureFlags.ts — Persistent feature flag utility
  *
- * Flags are stored in localStorage so admin toggles survive page reloads.
+ * Flags are stored in localStorage so local feature toggles survive page reloads.
  * Engines and components can call `isFeatureEnabled()` to gate behaviour.
  */
 
@@ -14,21 +14,15 @@ export interface FeatureFlag {
   premium: boolean;
 }
 
-const STORAGE_KEY = 'admin_feature_flags';
+const STORAGE_KEY = 'feature_flags';
+const LEGACY_STORAGE_KEY = 'admin_feature_flags';
 
 /** Default flag definitions — source of truth for first-run */
 export const DEFAULT_FEATURE_FLAGS: FeatureFlag[] = [
   { id: 'am-lich',    name: 'Âm Lịch',              description: 'Tra cứu ngày âm lịch, can chi, tiết khí',             module: 'Core',           enabled: true,  premium: false },
   { id: 'dung-su',   name: 'Lịch Dụng Sự',          description: 'Tìm ngày tốt cho các việc quan trọng',               module: 'Core',           enabled: true,  premium: false },
-  { id: 'gieo-que',  name: 'Gieo Quẻ Mai Hoa',       description: 'Bói Dịch Mai Hoa Dịch Số',                           module: 'Divination',     enabled: true,  premium: false },
-  { id: 'tu-vi',     name: 'Tử Vi',                  description: 'Lập và luận giải lá số Tử Vi',                       module: 'Astrology',      enabled: true,  premium: false },
-  { id: 'chiem-tinh',name: 'Chiêm Tinh',             description: 'Bản đồ sao phương Tây',                              module: 'Astrology',      enabled: true,  premium: false },
-  { id: 'dai-han',   name: 'Đại Hạn 10 năm',         description: 'Phân tích vận hạn theo chu kỳ 10 năm',               module: 'Astrology',      enabled: true,  premium: false },
-  { id: 'luu-nien',  name: 'Lưu Niên',               description: 'Phân tích vận hạn hàng năm',                         module: 'Astrology',      enabled: true,  premium: false },
-  { id: 'pdf-export',name: 'Xuất PDF',               description: 'Xuất báo cáo chi tiết dạng PDF',                     module: 'Export',         enabled: true,  premium: false },
-  { id: 'narrative', name: 'Luận giải tường thuật',  description: 'Narrative-first interpretation (ETC format)',        module: 'Interpretation', enabled: true,  premium: false },
-  { id: 'archetype', name: 'Nguyên mẫu tính cách',   description: 'Phát hiện archetype từ lá số',                       module: 'Interpretation', enabled: true,  premium: false },
-  { id: 'than-so',   name: 'Thần Số Học',            description: 'Numerology theo hệ Pythagoras & Chaldean',            module: 'Divination',     enabled: true,  premium: false },
+  { id: 'gieo-que',  name: 'Gieo Quẻ',               description: 'Mai Hoa Dịch Số & Tam Thức',                        module: 'Divination',     enabled: true,  premium: false },
+  { id: 'tu-vi',     name: 'Tử Vi',                  description: 'Lập lá số Tử Vi Đẩu Số theo phái Thiên Lương',       module: 'Divination',     enabled: true,  premium: false },
 ];
 
 // ─────────────────────────────────────────────────
@@ -41,7 +35,7 @@ export const DEFAULT_FEATURE_FLAGS: FeatureFlag[] = [
  */
 export function getFeatureFlags(): FeatureFlag[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY);
     if (!raw) return [...DEFAULT_FEATURE_FLAGS];
 
     const stored: FeatureFlag[] = JSON.parse(raw);
@@ -60,6 +54,7 @@ export function getFeatureFlags(): FeatureFlag[] {
 /** Persist the full flag list to localStorage */
 export function saveFeatureFlags(flags: FeatureFlag[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(flags));
+  localStorage.removeItem(LEGACY_STORAGE_KEY);
 }
 
 /**

@@ -5,7 +5,6 @@
  */
 
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { ContentGate } from '../shared/ContentGate';
 import { DayDetailsData } from '../../types/calendar';
 import type { Chi } from '../../types/calendar';
 import { scoreActivity, ActivityScoreResult } from '@lich-viet/core/dungsu';
@@ -16,18 +15,9 @@ import ActivityPicker from './ActivityPicker';
 import GroupedBreakdown from './GroupedBreakdown';
 import BestTimesPanel from './BestTimesPanel';
 import QmdjChartWidget from './QmdjChartWidget';
-import FAQIntentCards, { type FAQIntent, FAQ_CARDS } from './FAQIntentCards';
-import PersonInput, { type PersonData } from '../shared/PersonInput';
+import FAQIntentCards, { type FAQIntent } from './FAQIntentCards';
 
-import { generateBaziChart } from '../../utils/baziEngine';
-import { computeBaziSynastry, type BaziSynastryResult } from '../../services/synastry/baziSynastry';
-import { computeTuViSynastry, type TuViSynastryResult } from '../../services/synastry/tuviSynastry';
-import { computeNumerologySynastry, type NumerologySynastryResult } from '../../services/synastry/numerologySynastry';
-import { computeWesternSynastry, type WesternSynastryResult } from '../../services/synastry/westernSynastry';
-import TrungTangPanel from './TrungTangPanel';
 import SynergyRadar, { type RadarData } from '../shared/SynergyRadar';
-import WeddingCalendarView from './WeddingCalendarView';
-import GraveDirectionPanel from './GraveDirectionPanel';
 
 // New UX components
 import VerdictBanner from './VerdictBanner';
@@ -52,34 +42,14 @@ function yearToChi(year: number): Chi {
   return CHI_LIST[idx];
 }
 
-const EMPTY_PERSON: PersonData = {
-  name: '',
-  birthYear: '',
-  birthMonth: '',
-  birthDay: '',
-  birthHour: '',
-  gender: 'male',
-};
-
 const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDate }) => {
   const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
   const [selectedHour, setSelectedHour] = useState<Chi | null>(null);
   const [birthYear, setBirthYear] = useState<string>('');
   const [selectedIntent, setSelectedIntent] = useState<FAQIntent | null>(null);
 
-  // States for Tang Lễ (Trùng Tang)
-  const [deceasedGender, setDeceasedGender] = useState<'male'|'female'>('male');
-  const [deathYear, setDeathYear] = useState('');
-  const [deathLunarMonth, setDeathLunarMonth] = useState('');
-  const [deathLunarDay, setDeathLunarDay] = useState('');
-  const [deathHourChi, setDeathHourChi] = useState('');
-
   // Active tab state
   const [activeResultTab, setActiveResultTab] = useState('overview');
-
-  // Person A & B for synastry
-  const [personA, setPersonA] = useState<PersonData>({ ...EMPTY_PERSON, gender: 'male' });
-  const [personB, setPersonB] = useState<PersonData>({ ...EMPTY_PERSON, gender: 'female' });
 
   // Date/time input fields — synced with selectedDate
   const [inputDay, setInputDay] = useState(selectedDate.getDate().toString());
@@ -97,25 +67,12 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
     setInputYear(selectedDate.getFullYear().toString());
   }, [selectedDate]);
 
-  // Does the selected intent need a second person?
-  const needsSecondPerson = useMemo(() => {
-    if (!selectedIntent) return false;
-    return FAQ_CARDS.find(c => c.id === selectedIntent)?.needsSecondPerson ?? false;
-  }, [selectedIntent]);
-
   // Compute birth year Chi for Kị Tuổi scoring
   const birthYearChi = useMemo(() => {
     const y = parseInt(birthYear, 10);
     if (!y || y < 1900 || y > 2100) return undefined;
     return yearToChi(y);
   }, [birthYear]);
-
-  // Sync birthYear from personA when FAQ intent is selected
-  useEffect(() => {
-    if (selectedIntent && personA.birthYear) {
-      setBirthYear(personA.birthYear);
-    }
-  }, [selectedIntent, personA.birthYear]);
 
   // Apply date/time input — runs whenever fields change
   const applyDateInput = useCallback(() => {
@@ -153,83 +110,11 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
     [data.dungSu.suitable, data.dungSu.unsuitable],
   );
 
-  // === SYNASTRY COMPUTATIONS (unchanged) ===
-  const synastryResult: BaziSynastryResult | undefined = useMemo(() => {
-    if (!needsSecondPerson) return undefined;
-    const yA = parseInt(personA.birthYear, 10);
-    const mA = parseInt(personA.birthMonth, 10);
-    const dA = parseInt(personA.birthDay, 10);
-    const hA = parseInt(personA.birthHour, 10) || 12;
-    const yB = parseInt(personB.birthYear, 10);
-    const mB = parseInt(personB.birthMonth, 10);
-    const dB = parseInt(personB.birthDay, 10);
-    const hB = parseInt(personB.birthHour, 10) || 12;
-    if (!yA || !mA || !dA || !yB || !mB || !dB) return undefined;
-    if (yA < 1900 || yA > 2100 || yB < 1900 || yB > 2100) return undefined;
-    try {
-      const chartA = generateBaziChart(new Date(yA, mA - 1, dA), hA, personA.gender === 'male');
-      const chartB = generateBaziChart(new Date(yB, mB - 1, dB), hB, personB.gender === 'male');
-      return computeBaziSynastry(chartA, chartB, personA.gender, personB.gender);
-    } catch { return undefined; }
-  }, [needsSecondPerson, personA, personB]);
-
-  const tuviSynastryResult: TuViSynastryResult | undefined = useMemo(() => {
-    if (!needsSecondPerson) return undefined;
-    const yA = parseInt(personA.birthYear, 10);
-    const mA = parseInt(personA.birthMonth, 10);
-    const dA = parseInt(personA.birthDay, 10);
-    const hA = parseInt(personA.birthHour, 10);
-    const yB = parseInt(personB.birthYear, 10);
-    const mB = parseInt(personB.birthMonth, 10);
-    const dB = parseInt(personB.birthDay, 10);
-    const hB = parseInt(personB.birthHour, 10);
-    if (!yA || !mA || !dA || !yB || !mB || !dB) return undefined;
-    if (yA < 1900 || yA > 2100 || yB < 1900 || yB > 2100) return undefined;
-    try {
-      const hourIdxA = !isNaN(hA) ? Math.floor(((hA + 1) % 24) / 2) : 6;
-      const hourIdxB = !isNaN(hB) ? Math.floor(((hB + 1) % 24) / 2) : 6;
-      return computeTuViSynastry(
-        new Date(yA, mA - 1, dA), hourIdxA, personA.gender as 'male' | 'female',
-        new Date(yB, mB - 1, dB), hourIdxB, personB.gender as 'male' | 'female',
-      );
-    } catch { return undefined; }
-  }, [needsSecondPerson, personA, personB]);
-
-  const numerologySynastryResult: NumerologySynastryResult | undefined = useMemo(() => {
-    if (!needsSecondPerson) return undefined;
-    const yA = parseInt(personA.birthYear, 10);
-    const mA = parseInt(personA.birthMonth, 10);
-    const dA = parseInt(personA.birthDay, 10);
-    const yB = parseInt(personB.birthYear, 10);
-    const mB = parseInt(personB.birthMonth, 10);
-    const dB = parseInt(personB.birthDay, 10);
-    if (!yA || !mA || !dA || !yB || !mB || !dB) return undefined;
-    if (yA < 1900 || yA > 2100 || yB < 1900 || yB > 2100) return undefined;
-    try {
-      return computeNumerologySynastry(new Date(yA, mA - 1, dA), new Date(yB, mB - 1, dB));
-    } catch { return undefined; }
-  }, [needsSecondPerson, personA, personB]);
-
-  const westernSynastryResult: WesternSynastryResult | undefined = useMemo(() => {
-    if (!needsSecondPerson) return undefined;
-    const yA = parseInt(personA.birthYear, 10);
-    const mA = parseInt(personA.birthMonth, 10);
-    const dA = parseInt(personA.birthDay, 10);
-    const yB = parseInt(personB.birthYear, 10);
-    const mB = parseInt(personB.birthMonth, 10);
-    const dB = parseInt(personB.birthDay, 10);
-    if (!yA || !mA || !dA || !yB || !mB || !dB) return undefined;
-    if (yA < 1900 || yA > 2100 || yB < 1900 || yB > 2100) return undefined;
-    try {
-      return computeWesternSynastry(new Date(yA, mA - 1, dA), new Date(yB, mB - 1, dB));
-    } catch { return undefined; }
-  }, [needsSecondPerson, personA, personB]);
-
   // === SCORING ===
   const result: ActivityScoreResult | null = useMemo(() => {
     if (!selectedActivity) return null;
-    return scoreActivity(selectedActivity, data, selectedHour || undefined, birthYearChi, synastryResult, tuviSynastryResult, numerologySynastryResult, westernSynastryResult);
-  }, [selectedActivity, data, selectedHour, birthYearChi, synastryResult, tuviSynastryResult, numerologySynastryResult, westernSynastryResult]);
+    return scoreActivity(selectedActivity, data, selectedHour || undefined, birthYearChi);
+  }, [selectedActivity, data, selectedHour, birthYearChi]);
 
   // Compute radar data from breakdown
   const radarData: RadarData | null = useMemo(() => {
@@ -244,7 +129,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
     };
     return {
       day: sum(['truc', 'stars', 'dayGrade', 'hour']),
-      compat: sum(['kiTuoi', 'napAm', 'baziSynastry', 'tuviSynastry', 'numerologySynastry', 'westernSynastry']),
+      compat: sum(['kiTuoi', 'napAm']),
       cosmic: sum(['qmdj', 'thaiAt']),
       safety: 75,
       synergy: result.percentage,
@@ -255,10 +140,10 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
   const allHourScores = useMemo(() => {
     if (!selectedActivity) return undefined;
     return data.allHours.map(h => {
-      const hResult = scoreActivity(selectedActivity, data, h.canChi.chi as Chi, birthYearChi, synastryResult, tuviSynastryResult, numerologySynastryResult, westernSynastryResult);
+      const hResult = scoreActivity(selectedActivity, data, h.canChi.chi as Chi, birthYearChi);
       return { hourInfo: h, activityScore: hResult.percentage };
     });
-  }, [selectedActivity, data, birthYearChi, synastryResult, tuviSynastryResult, numerologySynastryResult, westernSynastryResult]);
+  }, [selectedActivity, data, birthYearChi]);
 
   // === HANDLERS ===
   const handleSelectActivity = useCallback((activityId: string) => {
@@ -320,7 +205,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
 
   // === RENDER ===
   return (
-    <div className="w-full space-y-4 animate-in fade-in duration-500" data-testid="dung-su-view">
+    <div className="w-full space-y-4 animate-fade-scale" data-testid="dung-su-view">
       {/* ══════════ Unified Input Section ══════════ */}
       <div className="space-y-4 transition-all duration-300">
         
@@ -340,7 +225,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
 
           {/* Bottom Half: Activity Picker (Contextually Hidden) */}
           {selectedIntent === 'xem-ngay' && (
-            <div className="p-4 sm:p-5 animate-in slide-in-from-top-2 fade-in duration-300">
+            <div className="p-4 sm:p-5 animate-fade-scale">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="material-icons-round text-base text-gold dark:text-gold-dark">checklist</span>
@@ -363,114 +248,6 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
           )}
         </div>
 
-        {/* Person Input — shown for synastry intents */}
-          {needsSecondPerson && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
-              <PersonInput
-                label="Người A (bạn)"
-                icon="👤"
-                person={personA}
-                onChange={setPersonA}
-                showName
-                compact
-              />
-              <PersonInput
-                label="Người B (đối phương)"
-                icon="💑"
-                person={personB}
-                onChange={setPersonB}
-                showName
-                compact
-              />
-            </div>
-          )}
-
-          {/* Synastry Quick Result */}
-          {synastryResult && (
-            <div className={`flex items-center gap-3 p-3 rounded-xl border animate-in fade-in duration-300 ${
-              synastryResult.compatibility === 'excellent' || synastryResult.compatibility === 'good'
-                ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800'
-                : synastryResult.compatibility === 'poor' || synastryResult.compatibility === 'caution'
-                  ? 'bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800'
-                  : 'bg-amber-50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800'
-            }`}>
-              <span className="text-2xl">
-                {synastryResult.compatibility === 'excellent' ? '✨' :
-                 synastryResult.compatibility === 'good' ? '✅' :
-                 synastryResult.compatibility === 'neutral' ? '➖' :
-                 synastryResult.compatibility === 'caution' ? '⚠️' : '❌'}
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">
-                  {synastryResult.detail}
-                </p>
-                <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-0.5">
-                  {synastryResult.layers.map(l => `${l.label}: ${l.score > 0 ? '+' : ''}${l.score}`).join(' · ')}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Tang Le panels: Trùng Tang + Grave Direction */}
-          {selectedIntent === 'tang-le' && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
-              {/* Deceased Form */}
-              <div className="rounded-xl border border-border-light dark:border-border-dark overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-border-light/30 dark:border-border-dark/30 flex items-center gap-2">
-                  <span className="material-icons-round text-base text-gold dark:text-gold-dark">person</span>
-                  <span className="text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Thông tin người quá cố (Âm lịch)</span>
-                </div>
-                <div className="p-3">
-                  <div className="grid grid-cols-2 sm:grid-cols-6 gap-2">
-                    <div className="col-span-1">
-                      <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Giới tính</label>
-                      <select
-                        value={deceasedGender}
-                        onChange={e => setDeceasedGender(e.target.value === 'female' ? 'female' : 'male')}
-                        className={inputFieldClass}
-                      >
-                        <option value="male">Nam</option>
-                        <option value="female">Nữ</option>
-                      </select>
-                    </div>
-                    <div className="col-span-1">
-                      <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Năm sinh</label>
-                      <input type="number" placeholder="--" value={birthYear} onChange={e => setBirthYear(e.target.value)} className={inputFieldClass} />
-                    </div>
-                    <div className="col-span-1">
-                      <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Tháng mất</label>
-                      <input type="number" min={1} max={12} placeholder="--" value={deathLunarMonth} onChange={e => setDeathLunarMonth(e.target.value)} className={inputFieldClass} />
-                    </div>
-                    <div className="col-span-1">
-                      <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Ngày mất</label>
-                      <input type="number" min={1} max={30} placeholder="--" value={deathLunarDay} onChange={e => setDeathLunarDay(e.target.value)} className={inputFieldClass} />
-                    </div>
-                    <div className="col-span-1">
-                      <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Năm mất</label>
-                      <input type="number" min={1900} max={2100} placeholder="--" value={deathYear} onChange={e => setDeathYear(e.target.value)} className={inputFieldClass} />
-                    </div>
-                    <div className="col-span-1">
-                      <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Giờ mất (Chi)</label>
-                      <select value={deathHourChi} onChange={e => setDeathHourChi(e.target.value)} className={inputFieldClass}>
-                        <option value="" disabled>--</option>
-                        {CHI_LIST.map(chi => <option key={chi} value={chi}>{chi}</option>)}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <TrungTangPanel
-                deceasedBirthYear={birthYear}
-                deceasedGender={deceasedGender}
-                deathYear={parseInt(deathYear) || 0}
-                deathLunarMonth={deathLunarMonth}
-                deathLunarDay={deathLunarDay}
-                deathHourChi={deathHourChi}
-              />
-            </div>
-          )}
-
           {/* Date & Time Input — compact inline */}
           <div className="rounded-xl border border-border-light dark:border-border-dark overflow-hidden">
             <div className="px-4 py-2.5 border-b border-border-light/30 dark:border-border-dark/30 flex items-center gap-2">
@@ -481,31 +258,29 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
               <div className="grid grid-cols-5 gap-2 items-end">
                 {/* Day */}
                 <div>
-                  <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Ngày</label>
+                  <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Ngày</label>
                   <input type="number" min={1} max={31} value={inputDay} onChange={e => setInputDay(e.target.value)} className={inputFieldClass} />
                 </div>
                 {/* Month */}
                 <div>
-                  <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Tháng</label>
+                  <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Tháng</label>
                   <input type="number" min={1} max={12} value={inputMonth} onChange={e => setInputMonth(e.target.value)} className={inputFieldClass} />
                 </div>
                 {/* Year */}
                 <div>
-                  <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Năm</label>
+                  <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Năm</label>
                   <input type="number" min={1900} max={2100} value={inputYear} onChange={e => setInputYear(e.target.value)} className={inputFieldClass} />
                 </div>
                 {/* Hour */}
                 <div>
-                  <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Giờ</label>
+                  <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Giờ</label>
                   <input type="number" min={0} max={23} placeholder="--" value={inputHour} onChange={e => setInputHour(e.target.value)} className={inputFieldClass} />
                 </div>
                 {/* Birth Year */}
-                {!needsSecondPerson && selectedIntent !== 'tang-le' && (
-                  <div>
-                    <label className="block text-[10px] font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Năm sinh</label>
-                    <input type="number" min={1900} max={2100} placeholder="--" value={birthYear} onChange={e => setBirthYear(e.target.value)} className={inputFieldClass} />
-                  </div>
-                )}
+                <div>
+                  <label className="block text-xs font-semibold text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider mb-1">Năm sinh</label>
+                  <input type="number" min={1900} max={2100} placeholder="--" value={birthYear} onChange={e => setBirthYear(e.target.value)} className={inputFieldClass} />
+                </div>
               </div>
 
               {/* Lunar date summary — compact */}
@@ -525,7 +300,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
 
       {/* ══════════ Results Dashboard ══════════ */}
       {result && activityData && (
-        <div ref={resultRef} className="space-y-4 animate-in fade-in slide-in-from-bottom-3 duration-400">
+        <div ref={resultRef} className="space-y-4 animate-fade-in-up">
           {/* Verdict Banner — Hero result */}
           <VerdictBanner
             percentage={result.percentage}
@@ -553,7 +328,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
 
             {/* === TAB: Tổng quan === */}
             {activeResultTab === 'overview' && (
-              <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="space-y-4 animate-fade-scale">
                 {/* Unified Overview Card */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-3xl bg-surface-subtle-light dark:bg-black/20 border border-border-light/60 dark:border-white/5 relative overflow-hidden shadow-sm">
                   
@@ -568,7 +343,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
                         <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                           {result.bestHours[0].hourInfo.canChi.chi}
                         </p>
-                        <p className="text-[10px] text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider font-bold mt-1">Giờ tốt nhất</p>
+                        <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider font-bold mt-1">Giờ tốt nhất</p>
                         <p className="text-xs font-medium text-emerald-600/70 dark:text-emerald-400/70 mt-0.5">{result.bestHours[0].activityScore}%</p>
                       </div>
                     )}
@@ -576,7 +351,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
                     {/* Day type mini-card */}
                     <div className="flex flex-col items-center justify-center p-3 sm:py-4 rounded-2xl bg-white/80 dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-sm w-full transition-transform hover:scale-[1.02]">
                       <p className="text-2xl font-bold">{dayType === 'Hoàng Đạo' ? '🌟' : '🌑'}</p>
-                      <p className="text-[10px] uppercase tracking-wider font-bold mt-1 text-text-secondary-light dark:text-text-secondary-dark">{dayType}</p>
+                      <p className="text-xs uppercase tracking-wider font-bold mt-1 text-text-secondary-light dark:text-text-secondary-dark">{dayType}</p>
                     </div>
                   </div>
 
@@ -595,16 +370,14 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
 
             {/* === TAB: Chi tiết === */}
             {activeResultTab === 'details' && (
-              <div className="animate-in fade-in duration-200">
-                <ContentGate requiredTier="premium" sectionTitle="Phân Tích Chi Tiết Từng Yếu Tố" showBlurPreview>
-                  <GroupedBreakdown breakdown={result.breakdown} />
-                </ContentGate>
+              <div className="animate-fade-scale">
+                <GroupedBreakdown breakdown={result.breakdown} />
               </div>
             )}
 
             {/* === TAB: Giờ tốt === */}
             {activeResultTab === 'hours' && (
-              <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="space-y-4 animate-fade-scale">
                 <HourPickerGrid
                   allHours={data.allHours}
                   selectedHour={selectedHour}
@@ -618,45 +391,17 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
 
             {/* === TAB: Phân tích === */}
             {activeResultTab === 'analysis' && (
-              <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="space-y-4 animate-fade-scale">
                 {radarData && (
                   <div className="flex justify-center p-4 rounded-xl border border-border-light dark:border-border-dark">
                     <SynergyRadar data={radarData} size={240} />
                   </div>
                 )}
-                <ContentGate requiredTier="premium" sectionTitle="Kỳ Môn Độn Giáp" showBlurPreview>
-                  <CollapsibleCard title="Kỳ Môn Độn Giáp" defaultOpen={false}>
-                    <div className="p-4">
-                      <QmdjChartWidget date={selectedDate} hourChi={selectedHour || 'Tý'} />
-                    </div>
-                  </CollapsibleCard>
-                </ContentGate>
-              </div>
-            )}
-
-            {/* === TAB: Lịch cưới (wedding intent) === */}
-            {activeResultTab === 'wedding' && (
-              <div className="animate-in fade-in duration-200">
-                <WeddingCalendarView
-                  initialYear={selectedDate.getFullYear()}
-                  initialMonth={selectedDate.getMonth()}
-                  activityId={selectedActivity || 'cuoi-hoi'}
-                  birthYearChi={birthYearChi as string | undefined}
-                  synastryResult={synastryResult}
-                  tuviSynastryResult={tuviSynastryResult}
-                  numerologySynastryResult={numerologySynastryResult}
-                  onSelectDate={onSelectDate}
-                />
-              </div>
-            )}
-
-            {/* === TAB: Hướng mộ (funeral intent) === */}
-            {activeResultTab === 'funeral' && (
-              <div className="animate-in fade-in duration-200">
-                <GraveDirectionPanel
-                  deceasedBirthYear={birthYear}
-                  currentYear={selectedDate.getFullYear()}
-                />
+                <CollapsibleCard title="Kỳ Môn Độn Giáp" defaultOpen={false}>
+                  <div className="p-4">
+                    <QmdjChartWidget date={selectedDate} hourChi={selectedHour || 'Tý'} />
+                  </div>
+                </CollapsibleCard>
               </div>
             )}
           </div>
@@ -665,7 +410,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
 
       {/* Empty state */}
       {!result && (
-        <div className="flex flex-col items-center justify-center py-8 text-center animate-in fade-in duration-500">
+        <div className="flex flex-col items-center justify-center py-8 text-center animate-fade-scale">
           <span className="material-icons-round text-4xl text-gray-300 dark:text-gray-600 mb-2">auto_awesome</span>
           <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark max-w-xs">
             Chọn mục đích hoặc một việc cần làm cụ thể để xem đánh giá tốt/xấu

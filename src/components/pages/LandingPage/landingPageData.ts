@@ -1,11 +1,11 @@
+import { useEffect, useRef, useState } from 'react';
+
 /**
  * Landing Page Data & Utilities
  *
- * Feature data, tier comparison, hooks, and helper functions
+ * Feature data and helper functions
  * extracted from LandingPage.tsx to reduce file size.
  */
-
-import { useEffect, useState, useRef } from 'react';
 
 // ══════════════════════════════════════════════════════════
 // Feature Data
@@ -49,89 +49,14 @@ export const FEATURES = [
     id: 'tu-vi',
     icon: 'auto_awesome',
     title: 'Tử Vi',
-    desc: 'Lá số 12 cung với 115 sao, phân tích Đại Hạn, Lưu Niên và cách cục chi tiết.',
-    highlight: '115 sao',
-    glowColor: 'from-amber-400/20 to-amber-600/10',
+    desc: 'Lập lá số Tử Vi Đẩu Số theo trường phái Thiên Lương với bố cục dễ đọc.',
+    highlight: '12 cung',
+    glowColor: 'from-amber-400/20 to-orange-600/10',
     iconBg: 'bg-amber-500/12 dark:bg-amber-400/10',
     iconColor: 'text-amber-600 dark:text-amber-400',
-    tier: 'Premium',
-  },
-  {
-    id: 'chiem-tinh',
-    icon: 'public',
-    title: 'Chiêm Tinh',
-    desc: 'Bản đồ sao phương Tây — nhà, cung, aspect và luận giải tính cách chuyên sâu.',
-    highlight: '10 hành tinh',
-    glowColor: 'from-rose-400/20 to-rose-600/10',
-    iconBg: 'bg-rose-500/12 dark:bg-rose-400/10',
-    iconColor: 'text-rose-600 dark:text-rose-400',
-    tier: 'Premium',
-  },
-  {
-    id: 'than-so-hoc',
-    icon: 'tag',
-    title: 'Thần Số Học',
-    desc: 'Phân tích số chủ đạo, biểu đồ ngày sinh và con đường cuộc đời theo Pythagorean & Chaldean.',
-    highlight: '20+ chỉ số',
-    glowColor: 'from-teal-400/20 to-teal-600/10',
-    iconBg: 'bg-teal-500/12 dark:bg-teal-400/10',
-    iconColor: 'text-teal-600 dark:text-teal-400',
-    tier: 'Premium',
+    tier: 'Cơ bản',
   },
 ];
-
-
-/** Tier comparison data for the landing page */
-export const TIER_COMPARISON = [
-  { feature: 'Âm Lịch & Giờ tốt/xấu', free: true, trial: true, premium: true },
-  { feature: 'Lịch Dụng Sự (64+ việc)', free: true, trial: true, premium: true },
-  { feature: 'Gieo Quẻ Mai Hoa', free: true, trial: true, premium: true },
-  { feature: 'Lập lá số Tử Vi', free: true, trial: true, premium: true },
-  { feature: 'Lập bản đồ Chiêm Tinh', free: true, trial: true, premium: true },
-  { feature: 'Phân tích Thần Số Học', free: true, trial: true, premium: true },
-  { feature: 'Luận giải tính cách (1 tab)', free: true, trial: true, premium: true },
-  { feature: 'Luận giải chuyên sâu (tất cả)', free: false, trial: true, premium: true },
-  { feature: 'Đại Hạn & Lưu Niên', free: false, trial: true, premium: true },
-  { feature: 'Tải PDF báo cáo', free: false, trial: '~30 trang', premium: '60-70 trang' },
-];
-
-// ══════════════════════════════════════════════════════════
-// Hooks
-// ══════════════════════════════════════════════════════════
-
-export function useCountUp(target: number, duration = 1500, start = false) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!start) return;
-    let frame: number;
-    const startTime = performance.now();
-    const animate = (now: number) => {
-      const progress = Math.min((now - startTime) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.round(eased * target));
-      if (progress < 1) frame = requestAnimationFrame(animate);
-    };
-    frame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frame);
-  }, [target, duration, start]);
-  return count;
-}
-
-export function useInView(threshold = 0.2) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setInView(true); obs.disconnect(); } },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, inView };
-}
 
 // ══════════════════════════════════════════════════════════
 // Moon phase name helper
@@ -146,4 +71,59 @@ export function getMoonPhaseName(lunarDay: number): string {
   if (lunarDay <= 21) return 'Trăng khuyết sau';
   if (lunarDay <= 23) return 'Bán nguyệt cuối';
   return 'Trăng lưỡi liềm cuối';
+}
+
+// ══════════════════════════════════════════════════════════
+// Landing Motion Helpers
+// ══════════════════════════════════════════════════════════
+
+export function useCountUp(target: number, duration = 1800, start = false): number {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!start) return;
+
+    let frameId = 0;
+    const startTime = performance.now();
+
+    const animate = (timestamp: number) => {
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(eased * target));
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(animate);
+      }
+    };
+
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
+  }, [duration, start, target]);
+
+  return count;
+}
+
+export function useInView(threshold = 0.25) {
+  const ref = useRef<HTMLElement | null>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [threshold]);
+
+  return { ref, inView };
 }

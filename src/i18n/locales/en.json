@@ -8,7 +8,6 @@
     "nav": {
         "amLich": "Lunar Calendar",
         "gieoQue": "Divination",
-        "tuVi": "Astrology",
         "soon": "Soon",
         "skipToContent": "Skip to main content",
         "mainNav": "Main navigation",
@@ -58,10 +57,6 @@
         "inputLabel": "Enter number",
         "calculate": "Cast Hexagram",
         "result": "Result"
-    },
-    "tuVi": {
-        "title": "Astrology",
-        "underDevelopment": "Feature under development"
     },
     "dayView": {
         "catThan": "Auspicious Stars",

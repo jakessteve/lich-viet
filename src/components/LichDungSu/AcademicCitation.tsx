@@ -34,9 +34,9 @@ const AcademicCitation: React.FC<AcademicCitationProps> = ({ groupLabel, sources
       </button>
 
       {expanded && (
-        <div className="mt-1 pl-4 space-y-0.5 animate-in fade-in slide-in-from-top-1 duration-200">
+        <div className="mt-1 pl-4 space-y-0.5 animate-fade-scale">
           {sources.map((src, i) => (
-            <p key={i} className="text-[10px] text-text-secondary-light/50 dark:text-text-secondary-dark/50 leading-relaxed">
+            <p key={i} className="text-[10px] text-text-secondary-light/60 dark:text-text-secondary-dark/60 leading-relaxed">
               • {src}
             </p>
           ))}

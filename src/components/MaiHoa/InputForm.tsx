@@ -73,11 +73,11 @@ export default function InputForm({
     }
 
     const tabBaseClass = 'flex-1 py-2 px-3 text-sm font-medium rounded-lg transition-all duration-200';
-    const tabActiveClass = 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm';
+    const tabActiveClass = 'bg-white dark:bg-gray-700 text-primary dark:text-primary-dark shadow-sm';
     const tabInactiveClass = 'text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-white';
 
     const pillBaseClass = 'px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200';
-    const pillActiveClass = 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300';
+    const pillActiveClass = 'bg-primary/10 text-primary dark:bg-primary-dark/20 dark:text-primary-dark';
     const pillInactiveClass = 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10';
 
     return (

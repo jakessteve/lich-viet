@@ -8,13 +8,12 @@
     "nav": {
         "amLich": "Âm lịch",
         "gieoQue": "Gieo quẻ",
-        "tuVi": "Tử vi",
         "soon": "Soon",
         "skipToContent": "Chuyển đến nội dung chính",
         "mainNav": "Điều hướng chính",
         "features": "Chức năng",
         "toggleDarkMode": "Chuyển chế độ sáng/tối",
-        "userMenu": "Menu người dùng"
+        "userMenu": "Menu ngườii dùng"
     },
     "calendar": {
         "sidebarLabel": "Lịch tháng và thông tin nhanh",
@@ -58,10 +57,6 @@
         "inputLabel": "Nhập số",
         "calculate": "Gieo Quẻ",
         "result": "Kết quả"
-    },
-    "tuVi": {
-        "title": "Tử Vi",
-        "underDevelopment": "Tính năng đang phát triển"
     },
     "dayView": {
         "catThan": "Cát Thần",

@@ -11,9 +11,9 @@ import type { DayDetailsData } from '@/types/calendar';
 export type FontSizeLevel = 'small' | 'normal' | 'large';
 
 const FONT_SIZE_MAP: Record<FontSizeLevel, number> = {
-  small: 16,
-  normal: 18,
-  large: 20,
+  small: 14,
+  normal: 16,
+  large: 18,
 };
 
 const FONT_SIZE_CYCLE: Record<FontSizeLevel, FontSizeLevel> = {
@@ -21,8 +21,6 @@ const FONT_SIZE_CYCLE: Record<FontSizeLevel, FontSizeLevel> = {
   normal: 'large',
   large: 'small',
 };
-
-export type UserGoal = 'calendar' | 'self_discovery' | 'feng_shui' | null;
 
 // ══════════════════════════════════════════════════════════
 // Store Interface
@@ -39,10 +37,6 @@ interface AppState {
   fontSize: FontSizeLevel;
   /** Current locale */
   locale: LocaleCode;
-  /** Primary goal selected during onboarding */
-  userGoal: UserGoal;
-  /** Premium user status */
-  isPremium: boolean;
 }
 
 interface AppActions {
@@ -56,10 +50,6 @@ interface AppActions {
   setFontSizeLevel: (level: FontSizeLevel) => void;
   /** Set locale and persist preference */
   setLocale: (locale: LocaleCode) => void;
-  /** Set user goal and persist */
-  setUserGoal: (goal: UserGoal) => void;
-  /** Toggle premium status for demo purposes */
-  toggleIsPremium: () => void;
 }
 
 type AppStore = AppState & AppActions;
@@ -119,17 +109,6 @@ function getInitialFontSize(): FontSizeLevel {
   return level;
 }
 
-function getInitialUserGoal(): UserGoal {
-  if (typeof window === 'undefined') return null;
-  const saved = localStorage.getItem('userGoal') as UserGoal;
-  return saved || null;
-}
-
-function getInitialPremiumStatus(): boolean {
-  if (typeof window === 'undefined') return false;
-  return localStorage.getItem('isPremium') === 'true';
-}
-
 // ══════════════════════════════════════════════════════════
 // Zustand Store
 // ══════════════════════════════════════════════════════════
@@ -143,8 +122,6 @@ export const useAppStore = create<AppStore>()((set) => ({
   isDark: getInitialDarkMode(),
   fontSize: getInitialFontSize(),
   locale: detectLocale(),
-  userGoal: getInitialUserGoal(),
-  isPremium: getInitialPremiumStatus(),
 
   // Actions
   setSelectedDate: (date: Date) => {
@@ -199,26 +176,5 @@ export const useAppStore = create<AppStore>()((set) => ({
       properties: { locale },
     });
     set({ locale });
-  },
-
-  setUserGoal: (goal: UserGoal) => {
-    if (goal) {
-      localStorage.setItem('userGoal', goal);
-    } else {
-      localStorage.removeItem('userGoal');
-    }
-    analytics.trackEvent({
-      name: 'onboarding_quiz_completed',
-      properties: { goal },
-    });
-    set({ userGoal: goal });
-  },
-
-  toggleIsPremium: () => {
-    set((state) => {
-      const newStatus = !state.isPremium;
-      localStorage.setItem('isPremium', String(newStatus));
-      return { isPremium: newStatus };
-    });
   },
 }));

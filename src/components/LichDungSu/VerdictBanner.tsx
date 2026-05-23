@@ -108,7 +108,7 @@ const VerdictBanner: React.FC<VerdictBannerProps> = ({
   const offset = c - (animatedPct / 100) * c;
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl border border-border-light/50 dark:border-border-dark/50 bg-gradient-to-br ${verdict.bgGrad} animate-in fade-in slide-in-from-bottom-2 duration-500`}>
+    <div className={`relative overflow-hidden rounded-2xl border border-border-light/50 dark:border-border-dark/50 bg-gradient-to-br ${verdict.bgGrad} animate-fade-in-up`}>
       {/* Decorative glow */}
       <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full opacity-20 blur-3xl" 
         style={{ background: `radial-gradient(circle, ${strokeColor}40, transparent)` }} />

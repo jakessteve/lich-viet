@@ -47,10 +47,10 @@ const CosmicWeatherCard: React.FC<CosmicWeatherCardProps> = ({ navigate, today }
     >
       {/* Header */}
       <div className="flex items-center justify-between w-full mb-5">
-        <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-text-secondary-light/60 dark:text-text-secondary-dark/50">
+        <span className="text-xs font-bold uppercase tracking-[0.15em] text-text-secondary-light/60 dark:text-text-secondary-dark/60">
           Vận Khí Vũ Trụ
         </span>
-        <span className="material-icons-round text-sm text-text-secondary-light/15 dark:text-text-secondary-dark/10 group-hover:text-gold dark:group-hover:text-gold-dark transition-colors">
+        <span className="material-icons-round text-sm text-text-secondary-light/60 dark:text-text-secondary-dark/60 group-hover:text-gold dark:group-hover:text-gold-dark transition-colors">
           arrow_forward
         </span>
       </div>
@@ -80,7 +80,7 @@ const CosmicWeatherCard: React.FC<CosmicWeatherCardProps> = ({ navigate, today }
         </div>
         <div className="flex items-center justify-center gap-1.5 text-xs">
           <span className={`material-icons-round text-xs`}>{toneIcon}</span>
-          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${toneColor}`}>
+          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${toneColor}`}>
             {toneLabel}
           </span>
         </div>

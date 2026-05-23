@@ -1,13 +1,10 @@
 import React, { useCallback, startTransition } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/stores/appStore';
 import { useHolidays } from '@/hooks/useHolidays';
 import MonthCalendar from '../MonthCalendar';
 import HolidaysCard from '../Calendar/HolidaysCard';
 import CollapsibleCard from '../CollapsibleCard';
 import type { ActiveTab } from '../../router/constants';
-
-
 
 interface AppSidebarProps {
   activeTab: ActiveTab;
@@ -17,7 +14,6 @@ function AppSidebar({ activeTab }: AppSidebarProps) {
   const selectedDate = useAppStore((s) => s.selectedDate);
   const data = useAppStore((s) => s.dayData);
   const _setSelectedDate = useAppStore((s) => s.setSelectedDate);
-  const navigate = useNavigate();
 
   // P2-11: Wrap date changes in startTransition to keep UI responsive
   const onSelectDate = useCallback((date: Date) => {
@@ -29,24 +25,9 @@ function AppSidebar({ activeTab }: AppSidebarProps) {
   // Autonomous holiday fetching
   const { holidays, isLoading: holidaysLoading, countryName, isVietnam } = useHolidays(selectedDate);
 
-  const isPremiumTool = ['tu-vi', 'chiem-tinh', 'bazi', 'numerology', 'mai-hoa'].includes(activeTab);
-
   return (
     <aside id="tour-sidebar" className="w-full lg:w-[400px] shrink-0 lg:sticky lg:top-20 flex flex-col gap-6" aria-label="Lịch tháng và thông tin nhanh">
-      
-      {/* Mobile Conversion Banner (Only on explicit premium tools) */}
-      {isPremiumTool && (
-        <div className="lg:hidden w-full bg-gradient-to-br from-gold/10 via-amber-500/10 to-gold/5 dark:from-gold-dark/20 dark:via-amber-600/10 dark:to-gold-dark/10 border border-gold/30 dark:border-gold-dark/30 rounded-2xl p-4 sm:p-5 text-center flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
-           <div className="absolute top-0 right-0 w-32 h-32 bg-gold/20 dark:bg-gold-dark/20 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
-           <span className="material-icons-round text-gold dark:text-gold-dark text-3xl mb-1.5 relative z-10" aria-hidden="true">workspace_premium</span>
-           <h3 className="text-gold dark:text-gold-dark font-bold text-base sm:text-base mb-1 relative z-10">Lịch Việt Premium</h3>
-           <p className="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark mb-3.5 relative z-10 leading-relaxed max-w-[280px]">Mở khóa luận giải AI chuyên sâu và lưu trữ lá số không giới hạn.</p>
-           <button onClick={() => navigate('/app/upgrade')} className="bg-gradient-to-r from-gold to-amber-500 text-white px-6 py-2 rounded-xl text-sm font-bold shadow-md hover:shadow-lg hover:brightness-110 transition-all active:scale-95 relative z-10">Khám Phá</button>
-        </div>
-      )}
-
-      {/* Main Sidebar Content (Hidden on mobile for premium tools) */}
-      <div className={`space-y-6 ${isPremiumTool ? 'hidden lg:block' : 'block'}`}>
+      <div className="space-y-6">
         <div id="tour-calendar">
           <MonthCalendar selectedDate={selectedDate} onSelectDate={onSelectDate} collapseOnMobile={true} />
         </div>

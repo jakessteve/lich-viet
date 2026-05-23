@@ -1,3 +1,8 @@
+/**
+ * activityPreferences.ts — User activity pin/hide preferences
+ * Stored in localStorage per user ID.
+ */
+
 export interface ActivityPrefs {
   pinned: string[];
   hidden: string[];

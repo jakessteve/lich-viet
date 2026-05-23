@@ -239,7 +239,7 @@ const ActivityPicker: React.FC<ActivityPickerProps> = ({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Tìm kiếm việc cần làm..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/70 dark:bg-white/8 border border-black/5 dark:border-white/10 text-sm text-text-primary-light dark:text-text-primary-dark placeholder:text-text-secondary-light/50 dark:placeholder:text-text-secondary-dark/50 focus:outline-none focus:ring-2 focus:ring-gold/30 dark:focus:ring-gold-dark/30 transition-all"
+          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/70 dark:bg-white/8 border border-black/5 dark:border-white/10 text-sm text-text-primary-light dark:text-text-primary-dark placeholder:text-text-secondary-light/60 dark:placeholder:text-text-secondary-dark/60 focus:outline-none focus:ring-2 focus:ring-gold/30 dark:focus:ring-gold-dark/30 transition-all"
         />
         {searchQuery && (
           <button
@@ -253,7 +253,7 @@ const ActivityPicker: React.FC<ActivityPickerProps> = ({
 
       {/* Search results */}
       {searchQuery.trim() && (
-        <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/20 border border-black/5 dark:border-white/10 animate-in fade-in duration-200">
+        <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/20 border border-black/5 dark:border-white/10 animate-fade-scale">
           {searchResults.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {searchResults.map((activity) => {
@@ -333,7 +333,7 @@ const ActivityPicker: React.FC<ActivityPickerProps> = ({
               return (
                 <div
                   key={expandedCategory}
-                  className={`p-3 rounded-xl border ${colors.bg} border-opacity-50 border-transparent animate-in fade-in slide-in-from-top-1 duration-200`}
+                  className={`p-3 rounded-xl border ${colors.bg} border-opacity-50 border-transparent animate-fade-scale`}
                   style={{ borderColor: 'var(--border-light, rgba(0,0,0,0.06))' }}
                 >
                   <div className="flex flex-wrap gap-2">

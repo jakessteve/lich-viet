@@ -15,7 +15,6 @@ import type { CalendarMode } from '../../types/maiHoa';
 import InputForm from '../MaiHoa/InputForm';
 import CrossRefSynthesis from './CrossRefSynthesis';
 import CollapsibleCard from '../CollapsibleCard';
-import { ContentGate } from '../shared/ContentGate';
 
 // ── Constants ──────────────────────────────────────────────────
 
@@ -63,7 +62,7 @@ function MethodDetailCard({ method }: { method: MethodSummary }) {
                 key={i}
                 className="flex items-start gap-2 text-sm text-text-secondary-light dark:text-text-secondary-dark"
               >
-                <span className="text-text-secondary-light/30 dark:text-text-secondary-dark/30 mt-0.5">•</span>
+                <span className="text-text-secondary-light/60 dark:text-text-secondary-dark/60 mt-0.5">•</span>
                 <span>{detail}</span>
               </div>
             ))}
@@ -231,15 +230,13 @@ export default function TamThucView({ selectedDate }: TamThucViewProps) {
           {/* Cross-Reference Synthesis — the consensus panel */}
           <CrossRefSynthesis synthesis={synthesis} />
 
-          {/* Individual Method Detail Cards — GATED: Partial Premium+ */}
-          <ContentGate requiredTier="premium" sectionTitle="Luận Giải Chi Tiết Tam Thức" showBlurPreview>
-            <MethodDetailCard method={synthesis.methods.qmdj} />
-            <MethodDetailCard method={synthesis.methods.lucNham} />
-            <MethodDetailCard method={synthesis.methods.thaiAt} />
-          </ContentGate>
+          {/* Individual Method Detail Cards */}
+          <MethodDetailCard method={synthesis.methods.qmdj} />
+          <MethodDetailCard method={synthesis.methods.lucNham} />
+          <MethodDetailCard method={synthesis.methods.thaiAt} />
 
           {/* Technical footer */}
-          <div className="text-center text-[10px] text-text-secondary-light/50 dark:text-text-secondary-dark/30 space-y-0.5">
+          <div className="text-center text-[10px] text-text-secondary-light/60 dark:text-text-secondary-dark/60 space-y-0.5">
             <p>
               Thời điểm: Giờ {synthesis.hourBranchName} · {synthesis.date.toLocaleDateString('vi-VN')}
             </p>

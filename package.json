@@ -1,8 +1,7 @@
 {
   "name": "lich-viet",
-  "version": "2.3.0",
-  "description": "Lịch Việt — Tra cứu ngày âm lịch, giờ tốt xấu, hướng xuất hành, Mai Hoa Dịch Số, và phong thủy hàng ngày.",
-  "main": "index.js",
+  "version": "3.0.0",
+  "description": "Vietnamese Lunar Calendar & Divination — Âm Lịch, Dụng Sự, Gieo Quẻ, Tử Vi",
   "sideEffects": false,
   "directories": {
     "doc": "docs"
@@ -24,7 +23,8 @@
     "docs:api": "typedoc",
     "test:e2e": "playwright test",
     "test:e2e:ci": "npx playwright install --with-deps chromium && playwright test",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "node scripts/patchSwisseph.cjs"
   },
   "keywords": [
     "lunar-calendar",
@@ -38,9 +38,9 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "circular-natal-horoscope-js": "^1.1.0",
-    "html-to-image": "^1.11.13",
-    "leaflet": "^1.9.4",
+    "@dqcai/vn-lunar": "^1.0.1",
+    "@swisseph/browser": "^1.1.1",
+    "@swisseph/core": "^1.1.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.1",
@@ -54,7 +54,6 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
-    "@types/leaflet": "^1.9.21",
     "@types/node": "^25.3.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -67,7 +66,6 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-unused-imports": "^4.4.1",
     "husky": "^9.1.7",
-    "iztro": "^2.5.8",
     "jsdom": "^28.1.0",
     "lint-staged": "^16.3.2",
     "lunar-javascript": "^1.7.7",
@@ -82,6 +80,7 @@
     "vite": "^7.3.1",
     "vite-plugin-compression2": "^2.5.0",
     "vite-plugin-pwa": "^1.2.0",
+    "vite-plugin-static-copy": "^4.1.0",
     "vitest": "^4.0.18"
   },
   "lint-staged": {

@@ -21,8 +21,7 @@ export type AnalyticsEventName =
   | 'engine_calculation'
   | 'theme_toggle'
   | 'font_size_change'
-  | 'locale_change'
-  | 'onboarding_quiz_completed';
+  | 'locale_change';
 
 export interface AnalyticsEvent {
   name: AnalyticsEventName;

@@ -16,19 +16,19 @@ const TESTIMONIALS: Testimonial[] = [
   {
     name: 'Minh Tú',
     role: 'Nghiên cứu phong thủy',
-    quote: 'Lá số Tử Vi chi tiết nhất mà tôi từng thấy trên web. 115 sao và luận giải rất chuẩn, không thua sách chuyên ngành.',
+    quote: 'Gieo Quẻ Mai Hoa trên Lịch Việt giải quẻ rất chi tiết — Thể Dụng, Hỗ Quái đầy đủ. Tiện lợi hơn nhiều so với tra sách.',
     avatar: '🧑‍🎓',
   },
   {
     name: 'Hải Yến',
     role: 'Người dùng thường xuyên',
-    quote: 'Mỗi sáng tôi đều mở Lịch Việt để xem giờ hoàng đạo. Giao diện đẹp, không quảng cáo — rất thích!',
+    quote: 'Mỗi sáng tôi đều mở Lịch Việt để xem giờ hoàng đạo và ngày âm. Giao diện đẹp, không quảng cáo — rất thích!',
     avatar: '👩‍💼',
   },
   {
     name: 'Quang Huy',
     role: 'Thầy phong thủy · 15 năm kinh nghiệm',
-    quote: 'Thuật toán tính Tử Vi và Bát Tự rất chuẩn xác. Tôi đã đối chiếu với sách cổ — kết quả hoàn toàn khớp.',
+    quote: 'Âm Lịch tính toán rất chuẩn xác. Tôi đã đối chiếu với lịch vạn niên — kết quả hoàn toàn khớp, kể cả tiết khí.',
     avatar: '🧙‍♂️',
   },
 ];
@@ -56,7 +56,7 @@ const TestimonialSection: React.FC = () => {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold dark:text-gold-dark mb-2">
             Cộng đồng
           </p>
-          <h3 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3 mystery-text-glow">
+          <h3 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">
             Người dùng nói gì
           </h3>
         </div>
@@ -66,7 +66,7 @@ const TestimonialSection: React.FC = () => {
           {TESTIMONIALS.map((t, i) => (
             <div
               key={i}
-              className={`glass-card-strong glass-noise p-6 sm:p-8 text-center transition-all duration-500 absolute inset-0 ${
+              className={`glass-card-strong p-6 sm:p-8 text-center transition-all duration-500 absolute inset-0 ${
                 i === active
                   ? 'opacity-100 translate-y-0 pointer-events-auto'
                   : 'opacity-0 translate-y-4 pointer-events-none'

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
-import TwoFactorVerify from '../auth/TwoFactorVerify';
 import SuccessToast from '../shared/SuccessToast';
 
 // ══════════════════════════════════════════════════════════
@@ -10,13 +9,12 @@ import SuccessToast from '../shared/SuccessToast';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { login, verify2FA, clearPending2FA, isLoading, pending2FA, isAuthenticated } = useAuthStore();
+  const { login, isLoading, isAuthenticated } = useAuthStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [twoFAError, setTwoFAError] = useState('');
   const [showToast, setShowToast] = useState(false);
 
   // Redirect if already authenticated
@@ -42,45 +40,17 @@ export default function LoginPage() {
 
     if (!result.success && result.error) {
       setError(result.error);
-    } else if (result.success && !result.needs2FA) {
+    } else if (result.success) {
       setShowToast(true);
       setTimeout(() => navigate('/app/am-lich', { replace: true }), 1200);
     }
-    // If needs2FA, the component will re-render showing the 2FA view
-  };
-
-  const handleVerify2FA = (code: string) => {
-    setTwoFAError('');
-    const result = verify2FA(code);
-    if (result.success) {
-      navigate('/app/am-lich', { replace: true });
-    } else if (result.error) {
-      setTwoFAError(result.error);
-    }
-  };
-
-  const handleCancel2FA = () => {
-    clearPending2FA();
-    setPassword('');
-    setTwoFAError('');
   };
 
   return (
     <div className="max-w-md mx-auto mt-12 sm:mt-20 px-4 animate-fade-in-up">
       <SuccessToast message="Đăng nhập thành công. Chào mừng trở lại!" visible={showToast} onHide={() => setShowToast(false)} />
       <div className="glass-card p-7 sm:p-8">
-        {pending2FA ? (
-          /* ── 2FA Verification Step ──────────────────────── */
-          <TwoFactorVerify
-            onVerify={handleVerify2FA}
-            onCancel={handleCancel2FA}
-            error={twoFAError}
-            isLoading={isLoading}
-          />
-        ) : (
-          /* ── Login Form ────────────────────────────────── */
-          <>
-            {/* Header */}
+        {/* Header */}
             <div className="text-center mb-7">
               <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-gold/15 to-amber-500/10 dark:from-gold-dark/12 dark:to-amber-400/8 flex items-center justify-center">
                 <span className="material-icons-round text-3xl text-gold dark:text-gold-dark">
@@ -108,7 +78,7 @@ export default function LoginPage() {
                   Tên đăng nhập / Email
                 </label>
                 <div className="relative">
-                  <span className="material-icons-round text-lg text-text-secondary-light/40 dark:text-text-secondary-dark/30 absolute left-3 top-1/2 -translate-y-1/2">
+                  <span className="material-icons-round text-lg text-text-secondary-light/60 dark:text-text-secondary-dark/60 absolute left-3 top-1/2 -translate-y-1/2">
                     person
                   </span>
                   <input
@@ -118,7 +88,7 @@ export default function LoginPage() {
                     onChange={(e) => { setEmail(e.target.value); setError(''); }}
                     placeholder="username hoặc email@example.com"
                     autoComplete="username"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-subtle-light dark:bg-surface-subtle-dark border border-border-light/30 dark:border-border-dark/30 text-sm focus:ring-2 focus:ring-gold/30 dark:focus:ring-gold-dark/30 outline-none transition-all placeholder:text-text-secondary-light/35 dark:placeholder:text-text-secondary-dark/25"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-subtle-light dark:bg-surface-subtle-dark border border-border-light/30 dark:border-border-dark/30 text-sm focus:ring-2 focus:ring-gold/30 dark:focus:ring-gold-dark/30 outline-none transition-all placeholder:text-text-secondary-light/60 dark:placeholder:text-text-secondary-dark/60"
                   />
                 </div>
               </div>
@@ -129,7 +99,7 @@ export default function LoginPage() {
                   Mật khẩu
                 </label>
                 <div className="relative">
-                  <span className="material-icons-round text-lg text-text-secondary-light/40 dark:text-text-secondary-dark/30 absolute left-3 top-1/2 -translate-y-1/2">
+                  <span className="material-icons-round text-lg text-text-secondary-light/60 dark:text-text-secondary-dark/60 absolute left-3 top-1/2 -translate-y-1/2">
                     lock
                   </span>
                   <input
@@ -139,12 +109,12 @@ export default function LoginPage() {
                     onChange={(e) => { setPassword(e.target.value); setError(''); }}
                     placeholder="••••••••"
                     autoComplete="current-password"
-                    className="w-full pl-10 pr-12 py-2.5 rounded-xl bg-surface-subtle-light dark:bg-surface-subtle-dark border border-border-light/30 dark:border-border-dark/30 text-sm focus:ring-2 focus:ring-gold/30 dark:focus:ring-gold-dark/30 outline-none transition-all placeholder:text-text-secondary-light/35 dark:placeholder:text-text-secondary-dark/25"
+                    className="w-full pl-10 pr-12 py-2.5 rounded-xl bg-surface-subtle-light dark:bg-surface-subtle-dark border border-border-light/30 dark:border-border-dark/30 text-sm focus:ring-2 focus:ring-gold/30 dark:focus:ring-gold-dark/30 outline-none transition-all placeholder:text-text-secondary-light/60 dark:placeholder:text-text-secondary-dark/60"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary-light/40 dark:text-text-secondary-dark/30 hover:text-text-primary-light dark:hover:text-white transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary-light/60 dark:text-text-secondary-dark/60 hover:text-text-primary-light dark:hover:text-white transition-colors"
                     aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                   >
                     <span className="material-icons-round text-lg">
@@ -159,7 +129,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   className="text-sm text-gold dark:text-gold-dark hover:underline font-medium"
-                  onClick={() => {/* placeholder */ }}
+                  onClick={() => setError('Đặt lại mật khẩu chưa khả dụng trong bản lưu cục bộ. Hãy tạo tài khoản mới nếu bạn đang dùng bản demo.')}
                 >
                   Quên mật khẩu?
                 </button>
@@ -193,7 +163,7 @@ export default function LoginPage() {
             {/* Divider */}
             <div className="flex items-center gap-3 my-6">
               <div className="flex-1 h-px bg-border-light/40 dark:bg-border-dark/30" />
-              <span className="text-xs uppercase tracking-widest font-bold text-text-secondary-light/50 dark:text-text-secondary-dark/40">hoặc</span>
+              <span className="text-xs uppercase tracking-widest font-bold text-text-secondary-light/60 dark:text-text-secondary-dark/60">hoặc</span>
               <div className="flex-1 h-px bg-border-light/40 dark:bg-border-dark/30" />
             </div>
 
@@ -221,15 +191,13 @@ export default function LoginPage() {
                 Đăng ký ngay
               </button>
             </p>
-          </>
-        )}
       </div>
 
       {/* Back to app */}
       <div className="text-center mt-4">
         <button
           onClick={() => navigate('/app/am-lich')}
-          className="text-sm text-text-secondary-light/60 dark:text-text-secondary-dark/40 hover:text-text-primary-light dark:hover:text-white transition-colors inline-flex items-center gap-1"
+          className="text-sm text-text-secondary-light/60 dark:text-text-secondary-dark/60 hover:text-text-primary-light dark:hover:text-white transition-colors inline-flex items-center gap-1"
         >
           <span className="material-icons-round text-sm">arrow_back</span>
           Quay lại ứng dụng

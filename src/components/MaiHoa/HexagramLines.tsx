@@ -69,7 +69,7 @@ function HexagramLine({
         >
             {lineGraphic}
             {isMoving && (
-                <span className="text-amber-500 dark:text-amber-400 text-[8px] leading-none ml-1 shrink-0">●</span>
+                <span className="text-amber-500 dark:text-amber-400 text-[10px] leading-none ml-1 shrink-0">●</span>
             )}
         </div>
     );
