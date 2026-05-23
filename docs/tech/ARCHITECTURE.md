@@ -1,42 +1,53 @@
-# Technical Architecture — Lịch Việt v3
+# Technical Architecture - Lich Viet v3
 
 > **Version:** 3.0.0 | **Updated:** May 2026
-> **Source of Truth** for all agents and LLMs working on this project.
+> Source of truth for the current local codebase.
 
 ---
 
 ## 1. Overview
 
-Lịch Việt v3 is a **client-side Single Page Application (SPA)** — there is no backend server. All computation runs entirely in the browser. The application is structured in three layers: **UI → State → Engine**.
+Lich Viet v3 is a browser-only React SPA. There is no backend server in this repository. The app is structured as `UI -> State -> Engine`, with all calculation work running in TypeScript inside the browser.
 
-The app provides solar–lunar date conversion, auspicious day analysis (Dụng Sự), and the active divination engines used by Mai Hoa, Tam Thuc, QMDJ, Thai At, Luc Nham, and Flying Star workflows — all running entirely client-side as a React SPA with Web Worker offloading for heavy computations.
+The active product surfaces are:
 
-The app surface is **4 pages**: Landing, Âm Lịch (Lunar Calendar + Dụng Sự), Gieo Quẻ (Mai Hoa + Tam Thuc), and Tử Vi (Purple Star Astrology).
+- Landing
+- Am Lich + Dung Su
+- Gieo Que
+- Tu Vi
+- Support routes for settings, auth, and upgrade
+
+The current codebase adds two important location-aware flows:
+
+- Am Lich uses browser geolocation to make live lunar/calendar calculations follow the viewer's location.
+- Tu Vi uses birthplace geolocation and Swiss ephemeris true-solar correction when the Swiss engine is ready.
+
+There is no active Web Worker layer in the shipped codebase.
 
 ---
 
 ## 2. Technology Stack
 
-| Layer                | Technology                          | Version    |
-| -------------------- | ----------------------------------- | ---------- |
-| **Framework**        | React + TypeScript                  | 19.x + 5.9 |
-| **Build Tool**       | Vite                                | 7.3.x      |
-| **Styling**          | Tailwind CSS v4 + Vanilla CSS       | 4.2.x      |
-| **State Management** | Zustand                             | 5.0.x      |
-| **Routing**          | React Router DOM                    | 7.13.x     |
-| **Validation**       | Zod                                 | 4.3.x      |
-| **Testing**          | Vitest + JSDOM + Playwright         | 4.0.x      |
-| **Linting**          | ESLint 9 (flat config) + Prettier 3 | 9.x        |
-| **PWA**              | vite-plugin-pwa + Service Worker    | 1.2.x      |
-| **CI**               | GitHub Actions                      | —          |
+| Layer | Technology | Version |
+| --- | --- | --- |
+| Framework | React + TypeScript | 19.2.4 + 5.9.3 |
+| Build | Vite | 7.3.1 |
+| Styling | Tailwind CSS v4 + vanilla CSS | 4.2.x |
+| State | Zustand | 5.0.11 |
+| Routing | React Router DOM | 7.13.1 |
+| Validation | Zod | 4.3.6 |
+| Testing | Vitest + Testing Library + JSDOM + Playwright | 4.0.18 + current |
+| Linting | ESLint 9 flat config + Prettier 3 | 9.39.x + 3.8.x |
+| PWA | vite-plugin-pwa | 1.2.x |
 
 ### Key External Libraries
 
-| Library            | Purpose                                |
-| ------------------ | -------------------------------------- |
-| `@dqcai/vn-lunar`  | Vietnamese Lunar Calendar calculations |
-| `lunar-javascript` | Additional lunar calendar utilities    |
-| `@swisseph/browser`| High-precision astronomical ephemeris   |
+| Library | Purpose |
+| --- | --- |
+| `@dqcai/vn-lunar` | Vietnamese lunar calendar fallback and comparison checks |
+| `lunar-javascript` | Additional lunar calendar utilities |
+| `@swisseph/browser` | High-precision astronomical ephemeris |
+| `@swisseph/core` | Swiss ephemeris calculations and flags |
 
 ---
 
@@ -44,120 +55,95 @@ The app surface is **4 pages**: Landing, Âm Lịch (Lunar Calendar + Dụng S�
 
 ```mermaid
 graph TB
-    subgraph Browser["Browser (SPA — No Backend)"]
-        direction TB
-        UI["🖥️ React 19 Components"]
-        Router["🔀 React Router v7"]
-        Store["📦 Zustand Stores"]
-        Workers["⚙️ Web Workers"]
+    subgraph Browser["Browser SPA - no backend"]
+        UI["React 19 UI"]
+        Router["React Router v7"]
+        Stores["Zustand stores"]
     end
 
-    subgraph Pages["📱 Route Pages"]
-        P1["📅 Âm Lịch<br/>(Lunar Calendar + Dụng Sự)"]
-        P2["🔮 Gieo Quẻ<br/>(Mai Hoa + Tam Thức)"]
-        P3["⭐ Tử Vi<br/>(Tử Vi Đẩu Số)"]
+    subgraph Surfaces["Active surfaces"]
+        Landing["Landing"]
+        AmLich["Am Lich + Dung Su"]
+        GieoQue["Gieo Que"]
+        TuVi["Tu Vi"]
+        Support["Settings / Auth / Upgrade"]
     end
 
-    subgraph Engines["🧮 Calculation Engines (Pure TS, Zero React)"]
-        E1["calendarEngine"]
-        E2["activityScorer + dungSuEngine"]
-        E3["maiHoaEngine + tamThucSynthesis"]
-        E4["qmdjEngine + thaiAtEngine + lucNhamEngine"]
-        E5["flyingStarEngine"]
+    subgraph Engines["Pure TypeScript engines"]
+        Calendar["calendarEngine"]
+        DungSu["activityScorer + dungSuEngine"]
+        MaiHoa["maiHoaEngine"]
+        TamThuc["tamThucSynthesis"]
+        QMDJ["qmdjEngine"]
+        ThaiAt["thaiAtEngine"]
+        LucNham["lucNhamEngine"]
+        TuViEng["services/tuvi + Swiss ephemeris"]
+        Personal["personalization services"]
     end
 
-    subgraph Layers["📐 Foundation Layers"]
-        L1["foundationalLayer<br/>(JDN, Solar Terms, HKBPT)"]
-        L2["modifyingLayer<br/>(Ngọc Hạp Thông Thư)"]
-        L3["hourEngine<br/>(Auspicious Hours)"]
-        L4["canchiHelper<br/>(Can Chi Conversions)"]
-        L5["constants.ts<br/>(Static Lookup Tables)"]
+    subgraph Location["Location inputs"]
+        BrowserGeo["Browser geolocation"]
+        GeoIp["Geo-IP holiday lookup"]
+        Birthplace["Birthplace geolocation"]
     end
 
-    subgraph Data["📚 Static Data"]
-        D1["Star Catalogs (JSON)"]
-        D2["Interpretation Data (JSON)"]
+    subgraph Data["Static data"]
+        Phase1["phase_1 JSON"]
+        Phase2["phase_2 JSON"]
+        TuViData["Tu Vi catalogs and rule tables"]
     end
 
-    subgraph External["External Libraries"]
-        X1["@dqcai/vn-lunar"]
-    end
-
-    UI --> Router --> Pages
-    UI --> Store
-    Pages --> Engines
-    Engines --> Layers
-    Layers --> Data
-    Pages -.-> Workers
-
-    E1 --> L1 & L2 & L3 & X1
-    E2 --> E1 & L5
-    E3 --> E1 & L5
-    E4 --> L1 & L3 & L5
-    E5 --> L5
-
-    style Browser fill:#1a1a2e,stroke:#16213e,color:#e94560
-    style Engines fill:#0f3460,stroke:#16213e,color:#e9e9e9
-    style Layers fill:#533483,stroke:#16213e,color:#e9e9e9
-    style Data fill:#2d2d44,stroke:#16213e,color:#e9e9e9
+    UI --> Router --> Surfaces
+    UI --> Stores
+    Surfaces --> Engines --> Data
+    BrowserGeo --> AmLich
+    GeoIp --> AmLich
+    Birthplace --> TuViEng
+    Personal --> Stores
 ```
+
+### Data Flow Notes
+
+1. Am Lich uses browser geolocation for viewer-local lunar calculations and the current-day shortcut.
+2. `useHolidays` still performs Geo-IP holiday lookup for country-specific holiday cards.
+3. Tu Vi birth normalization keeps birthplace coordinates as the source of truth and adds Swiss true-solar correction when the Swiss engine is available.
+4. Swiss ephemeris is the precision path; local lunar logic remains the fallback when WASM is not ready.
 
 ---
 
-## 4. Source Directory Layout
+## 4. Source Layout
 
-```
-Lịch Việt v3/
-├── src/                        # Application source
-│   ├── App.tsx                 # Root component (routing + layout)
-│   ├── main.tsx                # React DOM entry point
-│   ├── index.css               # Design system tokens (800 lines)
-│   ├── components/             # React UI components (by feature)
-│   │   ├── layout/             # AppNav, AppSidebar, MobileDrawer, AppFooter
-│   │   ├── shared/             # Reusable components
-│   │   ├── pages/              # Landing, Âm Lich, auth, settings, upgrade
-│   │   ├── Calendar/           # Month/Day calendar views
-│   │   ├── MaiHoa/             # Plum Blossom hexagram
-│   │   ├── TamThuc/            # QMDJ + Thái Ất + Lục Nhâm
-│   │   ├── GieoQue/            # Divination container
-│   │   ├── TuVi/               # Tử Vi Đẩu Số chart
-│   │   └── LichDungSu/         # Activity calendar
-│   ├── config/                 # App-wide configuration
-│   │   ├── api.ts              # API endpoint config
-│   │   ├── formConstants.ts    # Form field constants
-│   │   ├── scoring.ts          # Activity scoring config
-│   │   └── theme.ts            # Score label/color mapping
-│   ├── data/                   # Static JSON datasets
-│   ├── hooks/                  # Custom React hooks
-│   ├── i18n/                   # Vietnamese translations
-│   ├── router/                 # Route definitions + lazy imports
-│   ├── services/               # Business logic services
-│   │   ├── tuvi/               # Tử Vi engine (star placement, chart)
-│   ├── stores/                 # Zustand state (app, auth)
-│   ├── styles/                 # Feature-specific CSS
-│   ├── types/                  # Shared TypeScript definitions
-│   ├── utils/                  # Core calculation engines
-│   ├── workers/                # Web Workers (engineWorker)
-├── packages/                   # Monorepo packages
-│   ├── core/                   # @lich-viet/core (engine re-exports)
-│   └── types/                  # @lich-viet/types (shared types)
-├── test/                       # Centralized test suite
-│   ├── phase_1/ → phase_4/    # Tests by development phase
-│   ├── integration/            # Cross-module integration tests
-│   ├── performance/            # Performance benchmarks
-│   ├── snapshot/               # Snapshot regression tests
-│   ├── hooks/                  # Hook tests
-│   ├── services/               # Service tests
-│   ├── stores/                 # Store tests
-│   ├── utils/                  # Utility tests
-│   └── *-battle-test.test.ts   # Edge-case battle tests
-├── scripts/                    # Build/validation scripts
-├── docs/                       # Documentation
-│   ├── tech/                   # Technical architecture docs
-│   ├── biz/                    # Business docs
-│   ├── log/                    # Sprint/incident logs
-│   └── archive/                # Historical phase documents
-└── public/                     # Static assets (icons, fonts, SW)
+```text
+src/
+├── App.tsx                 # Root routing and app shell
+├── components/             # Feature UI, pages, layout, shared components
+│   ├── layout/             # AppNav, AppSidebar, MobileDrawer, AppFooter
+│   ├── pages/              # Landing, auth, settings, upgrade
+│   ├── Calendar/           # Calendar panels and holiday cards
+│   ├── GieoQue/            # Divination surface
+│   ├── MaiHoa/             # Mai Hoa UI
+│   ├── TamThuc/            # Tam Thuc UI
+│   ├── TuVi/               # Tu Vi UI and export flow
+│   └── LichDungSu/         # Dung Su UI
+├── config/                 # API, scoring, and theme config
+├── data/                   # Static JSON datasets
+├── hooks/                  # React hooks used across the app
+├── i18n/                   # Locale helpers and translations
+├── router/                 # Route definitions and redirects
+├── services/               # Analytics, astronomy, Tu Vi, personalization
+├── stores/                 # Zustand app/auth/Tu Vi state
+├── types/                  # Shared TypeScript declarations
+└── utils/                  # Core calculation engines and helpers
+
+packages/
+├── core/                   # `@lich-viet/core` engine exports
+└── types/                  # `@lich-viet/types` shared type exports
+
+test/
+├── engines/                # Engine regression tests
+├── services/               # Service tests
+├── stores/                 # Store tests
+└── utils/                  # Utility tests
 ```
 
 ---
@@ -166,199 +152,124 @@ Lịch Việt v3/
 
 Vite is configured with path aliases for clean imports:
 
-| Alias               | Target                                 |
-| ------------------- | -------------------------------------- |
-| `@/`                | `src/`                                 |
-| `@lich-viet/core`   | `packages/core/src/index.ts`           |
-| `@lich-viet/core/*` | `packages/core/src/*` (barrel exports) |
-| `@lich-viet/types`  | `packages/types/src/index.ts`          |
+| Alias | Target |
+| --- | --- |
+| `@/` | `src/` |
+| `@lich-viet/core` | `packages/core/src/index.ts` |
+| `@lich-viet/core/calendar` | `packages/core/src/calendar/index.ts` |
+| `@lich-viet/core/dungsu` | `packages/core/src/dungsu/index.ts` |
+| `@lich-viet/core/maihoa` | `packages/core/src/maihoa/index.ts` |
+| `@lich-viet/core/fengshui` | `packages/core/src/fengshui/index.ts` |
+| `@lich-viet/core/qmdj` | `packages/core/src/qmdj/index.ts` |
+| `@lich-viet/core/thaiAt` | `packages/core/src/thaiAt/index.ts` |
+| `@lich-viet/core/lucNham` | `packages/core/src/lucNham/index.ts` |
+| `@lich-viet/core/tamThuc` | `packages/core/src/tamThuc/index.ts` |
+| `@lich-viet/types` | `packages/types/src/index.ts` |
+
+There is no `@lich-viet/core/tuvi` barrel in the current codebase. Tu Vi code lives under `src/services/tuvi/` and `src/components/TuVi/`.
 
 ---
 
 ## 6. Engine Catalog
 
-The engine layer contains pure TypeScript functions with **zero React dependencies**, making them testable and portable. Each engine follows: `input data → pure computation → structured output`.
-
-| #   | Engine              | File                                      | Input              | Output                                       |
-| --- | ------------------- | ----------------------------------------- | ------------------ | -------------------------------------------- |
-| 1   | **Calendar**        | `calendarEngine.ts`                       | Solar date         | Lunar date, Can Chi, stars, auspicious hours |
-| 2   | **Activity Scorer** | `activityScorer.ts`                       | Date + activity    | Weighted score from 8 evaluation layers      |
-| 3   | **Dụng Sự**         | `dungSuEngine.ts`, `dungSuSuggester.ts`   | Date + activity    | Activity grouping and recommendations        |
-| 4   | **Mai Hoa**         | `maiHoaEngine.ts`, `maiHoaInterpreter.ts` | Time or numbers    | Hexagram triplet + Thể/Dụng analysis         |
-| 5   | **QMDJ**            | `qmdjEngine.ts`, `qmdjScorer.ts`          | Date + activity    | Nine-palace chart and scoring helpers        |
-| 6   | **Thai At**         | `thaiAtEngine.ts`                         | Year or date       | Thai At year and month overlays              |
-| 7   | **Luc Nham**        | `lucNhamEngine.ts`                        | Date/time          | Heaven/Earth board and verdicts              |
-| 8   | **Tam Thức**        | `tamThucSynthesis.ts`                     | Date/time          | Thái Ất + QMDJ + Lục Nhâm boards             |
-| 9   | **Phi Tinh**        | `flyingStarEngine.ts`                     | Period + direction | Flying Star 9-palace Luo Shu grid            |
-| 10  | **Tử Vi**           | `services/tuvi/` (starPlacement, etc.)    | Birth data         | Complete Tử Vi chart with Thiên Lương school |
+| # | Engine | File(s) | Input | Output |
+| --- | --- | --- | --- | --- |
+| 1 | Calendar | `src/utils/calendarEngine.ts` | Solar date + optional viewer location | Lunar date, Can Chi, day detail, hours |
+| 2 | Activity Scoring | `src/utils/activityScorer.ts` | Date + activity | Weighted score from evaluation layers |
+| 3 | Dung Su | `src/utils/dungSuEngine.ts`, `src/utils/dungSuSuggester.ts` | Date + activity | Activity grouping and recommendations |
+| 4 | Mai Hoa | `src/utils/maiHoaEngine.ts`, `src/utils/maiHoaInterpreter.ts` | Time or numbers | Hexagram triplet + interpretation |
+| 5 | QMDJ | `src/utils/qmdjEngine.ts`, `src/utils/qmdjScorer.ts` | Date + activity | Nine-palace chart and scoring helpers |
+| 6 | Thai At | `src/utils/thaiAtEngine.ts` | Year or date | Thai At year and month overlays |
+| 7 | Luc Nham | `src/utils/lucNhamEngine.ts` | Date/time | Heaven/Earth board and verdicts |
+| 8 | Tam Thuc | `src/utils/tamThucSynthesis.ts` | Date/time | QMDJ + Thai At + Luc Nham synthesis |
+| 9 | Flying Star | `src/utils/flyingStarEngine.ts` | Period + direction | Flying Star Luo Shu grid |
+| 10 | Swiss astronomy | `src/services/astronomy/swissEphemeris.ts` | Date + longitude + timezone | True-solar correction, lunar date, boundary warnings |
+| 11 | Tu Vi | `src/services/tuvi/` | Birth data + birthplace location | Tu Vi chart, star placement, hạn context, export data |
 
 ---
 
-## 7. Engine Dependency Graph
+## 7. Dependency Graph
 
 ```mermaid
 graph TD
-    subgraph Packages["@lich-viet/core"]
-        Core["@lich-viet/core<br/>(re-exports)"]
-    end
+    Core["@lich-viet/core"]
 
-    subgraph Utils["src/utils — Engine Implementations"]
-        CalEngine["calendarEngine"]
-        MaiHoaEng["maiHoaEngine"]
-        LucNhamEng["lucNhamEngine"]
-        QMDJEng["qmdjEngine"]
-        ThaiAtEng["thaiAtEngine"]
-        DungSuEng["dungSuEngine"]
-        FlyingStarEng["flyingStarEngine"]
-        TuViEng["tuViEngine"]
-
-        FoundLayer["foundationalLayer"]
-        ModLayer["modifyingLayer"]
-        HourEng["hourEngine"]
+    subgraph Utils["src/utils"]
+        Cal["calendarEngine"]
+        MaiHoa["maiHoaEngine"]
+        TamThuc["tamThucSynthesis"]
+        LucNham["lucNhamEngine"]
+        QMDJ["qmdjEngine"]
+        ThaiAt["thaiAtEngine"]
+        DungSu["dungSuEngine"]
+        FlyingStar["flyingStarEngine"]
+        Found["foundationalLayer"]
+        Mod["modifyingLayer"]
+        Hour["hourEngine"]
         CanChi["canchiHelper"]
-        Constants["constants"]
+        Const["constants"]
     end
 
-    subgraph External["External Libraries"]
+    subgraph Services["src/services"]
+        Swiss["astronomy/swissEphemeris"]
+        TuVi["tuvi/*"]
+    end
+
+    subgraph External["External libs"]
         VnLunar["@dqcai/vn-lunar"]
     end
 
-    Core --> CalEngine & DungSuEng & MaiHoaEng & QMDJEng & ThaiAtEng & LucNhamEng & FlyingStarEng & TuViEng
+    Core --> Cal & MaiHoa & TamThuc & LucNham & QMDJ & ThaiAt & DungSu & FlyingStar
 
-    CalEngine --> FoundLayer & ModLayer & HourEng & CanChi & VnLunar & Constants
-    MaiHoaEng --> CalEngine & Constants
-    LucNhamEng --> CalEngine & FoundLayer
-    QMDJEng --> FoundLayer & HourEng
-    ThaiAtEng --> CalEngine
-    DungSuEng --> Constants
-    FlyingStarEng --> Constants
-    TuViEng --> CalEngine & FoundLayer & Constants
+    Cal --> Found & Mod & Hour & CanChi & Swiss & Const & VnLunar
+    MaiHoa --> Cal & Const
+    TamThuc --> Cal & Const
+    LucNham --> Cal & Found
+    QMDJ --> Found & Hour
+    ThaiAt --> Cal
+    DungSu --> Const
+    FlyingStar --> Const
+    TuVi --> Swiss & Cal & Found & Const
+    Swiss --> Found
 
-    ModLayer --> FoundLayer & Constants
-    FoundLayer --> Constants
-
-    style Packages fill:#1a365d,stroke:#2b6cb0,color:#e2e8f0
-    style Utils fill:#2d3748,stroke:#4a5568,color:#e2e8f0
-    style External fill:#234e52,stroke:#2c7a7b,color:#e2e8f0
+    Found --> Const
+    Mod --> Found & Const
 ```
 
 ### Data Flow Principles
 
-1. **Unidirectional Flow** — Low-level utilities (`constants`, `foundationalLayer`) never depend on high-level engines.
-2. **Calendar as Truth** — All Eastern engines MUST use `calendarEngine.ts` or `foundationalLayer.ts` for date/time conversion to ensure academic consistency. The lunar calendar core uses Swiss Ephemeris when available and falls back to the local algorithm when the WASM bundle is not ready.
-3. **Pure Logic** — Engines in `src/utils` are designed to be "pure" business logic with zero React or DOM dependencies.
+1. Low-level utilities such as `constants` and `foundationalLayer` do not depend on higher-level engines.
+2. `calendarEngine.ts` is the canonical source for solar-lunar conversion in the active app.
+3. Swiss ephemeris is the precision path when available; the local algorithm remains the fallback.
+4. Tu Vi birthplace normalization is separate from viewer geolocation and should remain so.
 
 ---
 
 ## 8. State Management
 
-Zustand stores manage application state with minimal boilerplate:
+| Store | Key state | Purpose |
+| --- | --- | --- |
+| `useAppStore` | `selectedDate`, `dayData`, `viewerLocation`, theme, font size, locale | Shared app state for the main shell and calendar |
+| `useAuthStore` | Local auth/session/profile data | Demo-only auth and profile persistence |
+| `useTuViStore` | Input, chart, selected palace, view year/month, errors | Tu Vi chart state and hạn navigation |
 
-```mermaid
-graph LR
-    subgraph Stores["Zustand Stores"]
-        AS["appStore<br/>──────────<br/>selectedDate<br/>dayData<br/>isDark<br/>fontSize<br/>locale"]
-        AUTH["authStore<br/>──────────<br/>user<br/>session<br/>isAuthenticated"]
-    end
+### Current App Store Contract
 
-    AS -->|"setSelectedDate()"| ENG["Engine Layer"]
-    AS -->|"toggleDarkMode()"| DOM["DOM Side-Effects"]
-
-    style Stores fill:#2d3748,stroke:#4a5568,color:#e2e8f0
-```
-
-| Store       | Responsibility                              | Persistence    |
-| ----------- | ------------------------------------------- | -------------- |
-| `appStore`  | Calendar date, dark mode, font size, locale | `localStorage` |
-| `authStore` | User session, authentication state          | `localStorage` |
+- `selectedDate` drives the active calendar/day-detail view.
+- `dayData` is recomputed from `selectedDate` and the current viewer location.
+- `viewerLocation` stores browser geolocation for calendar calculations.
 
 ---
 
-## 9. Performance Strategies
+## 9. Current Validation Baseline
 
-| Strategy           | Implementation                                                              |
-| ------------------ | --------------------------------------------------------------------------- |
-| **Code Splitting** | `React.lazy()` calls for route-level and feature-level splitting            |
-| **Web Workers**    | Heavy calculations offloaded from main thread via `engineWorker.worker.ts`  |
-| **Memoization**    | `useMemo` and `useCallback` for expensive computations                      |
-| **Tree Shaking**   | `sideEffects: false` in `package.json`                                      |
-| **Compression**    | `vite-plugin-compression2` for Brotli/Gzip pre-compression                  |
-| **PWA**            | Service Worker with precache + stale-while-revalidate via `vite-plugin-pwa` |
+Latest local validation in this workspace:
 
----
-
-## 10. Build & Deployment
-
-```bash
-npm run dev          # Vite dev server (HMR)
-npm run build        # TypeScript check + Vite production build
-npm run preview      # Preview production build locally
-```
-
-Output is a static bundle in `dist/` — deployable to any static hosting.
-
-| Platform    | Status     | Config File                    |
-| ----------- | ---------- | ------------------------------ |
-| **Vercel**  | Configured | `vercel.json` (SPA rewrites)   |
-| **Netlify** | Configured | `netlify.toml` (SPA redirects) |
-
-### CI Pipeline (GitHub Actions)
-
-```
-lint → typecheck → test → build
-```
+| Check | Status |
+| --- | --- |
+| TypeScript | `npm run typecheck` passes |
+| Unit tests | `npm test` passes |
+| Lint | `npm run lint` passes with one pre-existing warning in `src/components/DetailedDayView.tsx` |
 
 ---
 
-## 11. Testing Infrastructure
-
-| Framework                  | Purpose                        | Config                 |
-| -------------------------- | ------------------------------ | ---------------------- |
-| **Vitest**                 | Unit + Integration tests       | `vitest.config.ts`     |
-| **@testing-library/react** | Component rendering tests      | —                      |
-| **JSDOM**                  | DOM environment for unit tests | —                      |
-| **Playwright**             | E2E browser tests              | `playwright.config.ts` |
-| **@vitest/coverage-v8**    | Code coverage                  | —                      |
-
-### Test Organization
-
-| Directory                    | Content                              |
-| ---------------------------- | ------------------------------------ |
-| `test/phase_1/` → `phase_4/` | Tests organized by development phase |
-| `test/integration/`          | Cross-module integration tests       |
-| `test/performance/`          | Performance benchmarks               |
-| `test/snapshot/`             | Snapshot regression tests            |
-| `test/*-battle-test.test.ts` | Edge-case stress tests               |
-
-### Commands
-
-```bash
-npm run test           # Run all tests
-npm run test:watch     # Watch mode
-npm run test:coverage  # With coverage report
-npm run test:e2e       # Playwright E2E tests
-```
-
----
-
-## 12. Security Model
-
-| Layer                | Current Implementation                                    |
-| -------------------- | --------------------------------------------------------- |
-| **CSP**              | Content Security Policy via `<meta>` tags in `index.html` |
-| **Input Validation** | Zod schemas on all engine inputs                          |
-| **XSS**              | React's built-in JSX escaping + CSP                       |
-| **Env Management**   | `.env.example` template, no secrets in client bundle      |
-| **HTTPS**            | Enforced by hosting providers (Vercel/Netlify)            |
-
----
-
-## 13. Monetization Architecture (v3.0.0)
-
-All active features in v3.0.0 are free. There is no live tier gating, no credit system, and no premium paywall.
-
-Any future premium work should be treated as a new product decision and documented separately from the current v3 release.
-
----
-
-> **Note:** Update this document whenever the architecture changes. All agents reference this as the Source of Truth for project structure and technical decisions.
