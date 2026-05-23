@@ -193,6 +193,8 @@ export default function SettingsPage() {
             lat: user.extendedProfile.birthLocation.lat,
             lng: user.extendedProfile.birthLocation.lng,
             timezone: Math.max(-12, Math.min(14, Math.round(user.extendedProfile.birthLocation.lng / 15))),
+            countryCode: user.extendedProfile.birthLocation.countryCode,
+            countryName: user.extendedProfile.birthLocation.countryName,
           }
         : undefined,
     );
@@ -227,6 +229,8 @@ export default function SettingsPage() {
             city: editBirthLocation.locationName,
             lat: editBirthLocation.lat,
             lng: editBirthLocation.lng,
+            countryCode: editBirthLocation.countryCode,
+            countryName: editBirthLocation.countryName,
           }
         : undefined,
     });

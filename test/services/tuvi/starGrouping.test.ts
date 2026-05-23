@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatPalaceStars, getStarBrightnessMarker } from '@/services/tuvi/starGrouping';
+import { formatPalaceStars, getNguHanhElement, getStarBrightnessMarker, getStarColor } from '@/services/tuvi/starGrouping';
 import type { TuViPalace } from '@/types/tuvi';
 
 function makePalace(overrides: Partial<TuViPalace> = {}): TuViPalace {
@@ -25,6 +25,12 @@ function makePalace(overrides: Partial<TuViPalace> = {}): TuViPalace {
 }
 
 describe('starGrouping brightness markers', () => {
+  it('normalizes Ngũ Hành strings to the core element', () => {
+    expect(getNguHanhElement('Âm Thổ')).toBe('Thổ');
+    expect(getNguHanhElement('Dương Kim')).toBe('Kim');
+    expect(getNguHanhElement('Hỏa')).toBe('Hỏa');
+  });
+
   it('omits Bình markers', () => {
     expect(getStarBrightnessMarker({ brightness: 'Bình' } as never)).toBe('');
     expect(getStarBrightnessMarker({ brightness: 'Bất' } as never)).toBe('');
@@ -48,5 +54,11 @@ describe('starGrouping brightness markers', () => {
     });
 
     expect(formatPalaceStars(palace).chinhTinhLines).toEqual(['Tử Vi']);
+  });
+
+  it('renders star colors from the core Ngũ Hành element', () => {
+    expect(getStarColor({ name: 'Vũ Khúc', nguHanh: 'Âm Kim' } as never)).toBe('#8a8a8a');
+    expect(getStarColor({ name: 'Thiên Cơ', nguHanh: 'Âm Mộc' } as never)).toBe('#2e9730');
+    expect(getStarColor({ name: 'Thiên Đồng', nguHanh: 'Dương Thủy' } as never)).toBe('#161617');
   });
 });

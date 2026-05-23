@@ -109,7 +109,7 @@ interface AuthActions {
     birthday?: string;
     birthHour?: number | null;
     birthMinute?: number | null;
-    birthLocation?: { lat: number; lng: number; city: string } | null;
+    birthLocation?: { lat: number; lng: number; city: string; countryCode?: string; countryName?: string } | null;
   }) => Promise<{ success: boolean; error?: string }>;
   /** Change password (requires current password verification) */
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;

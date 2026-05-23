@@ -62,6 +62,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
   const [inputMonth, setInputMonth] = useState((selectedDate.getMonth() + 1).toString());
   const [inputYear, setInputYear] = useState(selectedDate.getFullYear().toString());
   const [inputHour, setInputHour] = useState('');
+  const [now, setNow] = useState(() => new Date());
 
   // Ref for auto-scroll to results
   const resultRef = useRef<HTMLDivElement>(null);
@@ -78,6 +79,14 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
       setBirthYear(String(userBirthProfile.birthYear));
     }
   }, [birthYear, userBirthProfile]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 60_000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   // Compute birth year Chi for Kị Tuổi scoring
   const birthYearChi = useMemo(() => {
@@ -156,6 +165,12 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
       return { hourInfo: h, activityScore: hResult.percentage };
     });
   }, [selectedActivity, data, birthYearChi]);
+
+  const currentHourChi = useMemo(() => hourToChi(now.getHours()), [now]);
+  const highlightedCurrentHourChi = useMemo(
+    () => (selectedDate.toDateString() === now.toDateString() ? currentHourChi : null),
+    [currentHourChi, now, selectedDate],
+  );
 
   // === HANDLERS ===
   const handleSelectActivity = useCallback((activityId: string) => {
@@ -463,6 +478,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
                   onSelectHour={handleHourSelect}
                   hourScores={allHourScores}
                   activityName={activityData.nameVi}
+                  currentHourChi={highlightedCurrentHourChi}
                 />
                 <BestTimesPanel bestHours={result.bestHours} activityName={activityData.nameVi} />
               </div>

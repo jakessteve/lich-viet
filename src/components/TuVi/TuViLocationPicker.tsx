@@ -16,19 +16,57 @@ interface NominatimResult {
     village?: string;
     state?: string;
     country?: string;
+    country_code?: string;
   };
 }
 
 const QUICK_LOCATIONS: TuViBirthLocation[] = [
-  { locationName: 'Hà Nội, Việt Nam', lat: 21.028511, lng: 105.804817, timezone: 7 },
-  { locationName: 'TP. Hồ Chí Minh, Việt Nam', lat: 10.776889, lng: 106.700806, timezone: 7 },
-  { locationName: 'Đà Nẵng, Việt Nam', lat: 16.047079, lng: 108.20623, timezone: 7 },
-  { locationName: 'Huế, Việt Nam', lat: 16.463713, lng: 107.590866, timezone: 7 },
-  { locationName: 'Hải Phòng, Việt Nam', lat: 20.844912, lng: 106.688084, timezone: 7 },
-  { locationName: 'Cần Thơ, Việt Nam', lat: 10.045162, lng: 105.746857, timezone: 7 },
+  { locationName: 'Hà Nội, Việt Nam', lat: 21.028511, lng: 105.804817, timezone: 7, countryCode: 'VN', countryName: 'Việt Nam' },
+  {
+    locationName: 'TP. Hồ Chí Minh, Việt Nam',
+    lat: 10.776889,
+    lng: 106.700806,
+    timezone: 7,
+    countryCode: 'VN',
+    countryName: 'Việt Nam',
+  },
+  { locationName: 'Đà Nẵng, Việt Nam', lat: 16.047079, lng: 108.20623, timezone: 7, countryCode: 'VN', countryName: 'Việt Nam' },
+  { locationName: 'Huế, Việt Nam', lat: 16.463713, lng: 107.590866, timezone: 7, countryCode: 'VN', countryName: 'Việt Nam' },
+  { locationName: 'Hải Phòng, Việt Nam', lat: 20.844912, lng: 106.688084, timezone: 7, countryCode: 'VN', countryName: 'Việt Nam' },
+  { locationName: 'Cần Thơ, Việt Nam', lat: 10.045162, lng: 105.746857, timezone: 7, countryCode: 'VN', countryName: 'Việt Nam' },
 ];
 
 const estimateTimezone = (longitude: number) => Math.max(-12, Math.min(14, Math.round(longitude / 15)));
+
+const createBirthLocation = (result: NominatimResult, lat: number, lng: number): TuViBirthLocation => ({
+  locationName: formatDisplayName(result),
+  lat,
+  lng,
+  timezone: estimateTimezone(lng),
+  countryCode: result.address?.country_code?.toUpperCase(),
+  countryName: result.address?.country,
+});
+
+async function reverseGeocodeLocation(lat: number, lng: number): Promise<TuViBirthLocation> {
+  const params = new URLSearchParams({
+    lat: String(lat),
+    lon: String(lng),
+    format: 'jsonv2',
+    addressdetails: '1',
+    'accept-language': 'vi',
+  });
+
+  const response = await fetch(`https://nominatim.openstreetmap.org/reverse?${params}`, {
+    headers: { Accept: 'application/json' },
+  });
+
+  if (!response.ok) {
+    throw new Error('Không tìm được địa điểm.');
+  }
+
+  const data = (await response.json()) as NominatimResult;
+  return createBirthLocation(data, lat, lng);
+}
 
 const formatDisplayName = (result: NominatimResult): string => {
   const address = result.address;
@@ -83,12 +121,7 @@ export const TuViLocationPicker: React.FC<TuViLocationPickerProps> = ({ value, o
         const nextResults = data.map((item) => {
           const lat = Number(item.lat);
           const lng = Number(item.lon);
-          return {
-            locationName: formatDisplayName(item),
-            lat,
-            lng,
-            timezone: estimateTimezone(lng),
-          };
+          return createBirthLocation(item, lat, lng);
         });
         setResults(nextResults);
       } catch (err) {
@@ -105,7 +138,7 @@ export const TuViLocationPicker: React.FC<TuViLocationPickerProps> = ({ value, o
     };
   }, [query]);
 
-  const useCurrentLocation = () => {
+  const useCurrentLocation = async () => {
     if (!navigator.geolocation) {
       setError('Trình duyệt không hỗ trợ định vị.');
       return;
@@ -114,14 +147,22 @@ export const TuViLocationPicker: React.FC<TuViLocationPickerProps> = ({ value, o
     setIsSearching(true);
     setError('');
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const { latitude, longitude } = position.coords;
-        onChange({
-          locationName: `Vị trí hiện tại (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`,
-          lat: latitude,
-          lng: longitude,
-          timezone: estimateTimezone(longitude),
-        });
+        try {
+          const location = await reverseGeocodeLocation(latitude, longitude);
+          onChange({
+            ...location,
+            locationName: location.locationName || `Vị trí hiện tại (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`,
+          });
+        } catch {
+          onChange({
+            locationName: `Vị trí hiện tại (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`,
+            lat: latitude,
+            lng: longitude,
+            timezone: estimateTimezone(longitude),
+          });
+        }
         setIsSearching(false);
       },
       () => {

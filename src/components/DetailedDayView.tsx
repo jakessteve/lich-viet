@@ -8,6 +8,7 @@ import {
   getStatusLabel,
   renderStatusParts,
 } from '../utils/formatHelpers';
+import { normalizeDungSuBuckets } from '../utils/dungSuDisplay';
 import { useAuthStore } from '../stores/authStore';
 import {
   calculatePersonalDayScore,
@@ -110,8 +111,13 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
     return { focus: hasFocus, rest };
   };
 
-  const formattedNghi = useMemo(() => formatDungSu(data.dungSu.suitable, 'Tốt mọi việc'), [data.dungSu.suitable]);
-  const formattedKy = useMemo(() => formatDungSu(data.dungSu.unsuitable, 'Xấu mọi việc'), [data.dungSu.unsuitable]);
+  const normalizedDungSu = useMemo(
+    () => normalizeDungSuBuckets(data.dungSu.suitable, data.dungSu.unsuitable),
+    [data.dungSu.suitable, data.dungSu.unsuitable],
+  );
+
+  const formattedNghi = useMemo(() => formatDungSu(normalizedDungSu.nghi, 'Tốt mọi việc'), [normalizedDungSu.nghi]);
+  const formattedKy = useMemo(() => formatDungSu(normalizedDungSu.ky, 'Xấu mọi việc'), [normalizedDungSu.ky]);
 
   const getSignedModifierTotal = (breakdowns: string[]): number | null => {
     if (breakdowns.length === 0) return null;
@@ -145,6 +151,65 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
       return 'text-bad dark:text-bad-dark';
     }
     return 'text-text-secondary-light dark:text-text-secondary-dark';
+  };
+
+  const renderTextWithPercents = (text: string) => {
+    const percentPattern = /\((\d+)%\)/g;
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = percentPattern.exec(text)) !== null) {
+      const [matchedText, percentValue] = match;
+      const start = match.index;
+
+      if (start > lastIndex) {
+        parts.push(text.slice(lastIndex, start));
+      }
+
+      parts.push(
+        <span
+          key={`${start}-${matchedText}`}
+          className={Number(percentValue) >= 50 ? 'text-good dark:text-good-dark' : 'text-bad dark:text-bad-dark'}
+        >
+          {matchedText}
+        </span>,
+      );
+
+      lastIndex = start + matchedText.length;
+    }
+
+    if (parts.length === 0) return text;
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
+    }
+
+    return <>{parts}</>;
+  };
+
+  const renderTextListWithPercents = (items: string[] | undefined, emptyText: string) => {
+    if (!items || items.length === 0) {
+      return <span>{emptyText}</span>;
+    }
+
+    return (
+      <>
+        {items.map((item, index) => (
+          <React.Fragment key={`${item}-${index}`}>
+            {index > 0 && ', '}
+            {renderTextWithPercents(item)}
+          </React.Fragment>
+        ))}
+      </>
+    );
+  };
+
+  const renderNormalizedDungSu = (nghi: string[] = [], ky: string[] = []) => {
+    const normalized = normalizeDungSuBuckets(nghi, ky);
+    return {
+      nghi: renderTextListWithPercents(normalized.nghi, 'không có việc gì tốt'),
+      ky: renderTextListWithPercents(normalized.ky, 'không có việc gì kỵ đặc biệt'),
+    };
   };
 
   const handlePersonalizeClick = () => {
@@ -553,20 +618,20 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
                 const signedModifierTotal = getSignedModifierTotal(personalBreakdowns);
                 const positiveModifierTotal = getSignedModifierTotalBySign(personalBreakdowns, '+');
                 const negativeModifierTotal = getSignedModifierTotalBySign(personalBreakdowns, '-');
-                const scoreToneClass =
-                  showPersonalized
-                    ? currentScore >= 50
+                const scoreToneClass = showPersonalized
+                  ? currentScore >= 50
+                    ? 'text-good dark:text-good-dark'
+                    : 'text-bad dark:text-bad-dark'
+                  : signedModifierTotal !== null
+                    ? signedModifierTotal > 0
                       ? 'text-good dark:text-good-dark'
-                      : 'text-bad dark:text-bad-dark'
-                    : signedModifierTotal !== null
-                      ? signedModifierTotal > 0
-                        ? 'text-good dark:text-good-dark'
-                        : signedModifierTotal < 0
-                          ? 'text-bad dark:text-bad-dark'
-                          : 'text-text-primary-light dark:text-text-primary-dark'
-                      : isAuspiciousCurrent
-                        ? 'text-good dark:text-good-dark'
-                        : 'text-text-primary-light dark:text-text-primary-dark';
+                      : signedModifierTotal < 0
+                        ? 'text-bad dark:text-bad-dark'
+                        : 'text-text-primary-light dark:text-text-primary-dark'
+                    : isAuspiciousCurrent
+                      ? 'text-good dark:text-good-dark'
+                      : 'text-text-primary-light dark:text-text-primary-dark';
+                const normalizedHourDungSu = renderNormalizedDungSu(h.nghi, h.ky);
 
                 return (
                   <tr
@@ -612,11 +677,11 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
                     <td className="px-3 sm:px-6 py-3 sm:py-4 text-sm text-text-primary-light dark:text-text-primary-dark space-y-1.5 align-top">
                       <div className="leading-relaxed">
                         <span className="font-bold text-emerald-600 dark:text-emerald-400 mr-1">Nghi:</span>
-                        <span>{h.nghi && h.nghi.length > 0 ? h.nghi.join(', ') : 'không có việc gì tốt'}</span>
+                        <span>{normalizedHourDungSu.nghi}</span>
                       </div>
                       <div className="leading-relaxed">
                         <span className="font-bold text-crimson-600 dark:text-crimson-400 mr-1">Kỵ:</span>
-                        <span>{h.ky && h.ky.length > 0 ? h.ky.join(', ') : 'không có việc gì kỵ đặc biệt'}</span>
+                        <span>{normalizedHourDungSu.ky}</span>
                       </div>
                       {showPersonalized && personalBreakdowns.length > 0 && (
                         <div className="space-y-0.5 mt-1">
@@ -628,9 +693,7 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
                         </div>
                       )}
                     </td>
-                    <td
-                      className="px-2 sm:px-6 py-3 sm:py-4 text-right font-bold text-sm align-top flex flex-col items-end space-y-0.5 text-text-primary-light dark:text-text-primary-dark"
-                    >
+                    <td className="px-2 sm:px-6 py-3 sm:py-4 text-right font-bold text-sm align-top flex flex-col items-end space-y-0.5 text-text-primary-light dark:text-text-primary-dark">
                       <div className={scoreToneClass}>{currentScore}%</div>
                       {showPersonalized && (positiveBreakdowns.length > 0 || negativeBreakdowns.length > 0) && (
                         <div className="space-y-0.5 mt-1">

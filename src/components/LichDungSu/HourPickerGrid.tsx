@@ -15,6 +15,7 @@ interface HourPickerGridProps {
   onSelectHour: (chi: Chi | null) => void;
   hourScores?: HourScoreEntry[]; // Activity-specific scores per hour
   activityName?: string;
+  currentHourChi?: Chi | null;
 }
 
 function getHourColor(
@@ -69,6 +70,7 @@ const HourPickerGrid: React.FC<HourPickerGridProps> = ({
   onSelectHour,
   hourScores,
   activityName,
+  currentHourChi,
 }) => {
   // Map hour chi to score
   const scoreMap = useMemo(() => {
@@ -111,6 +113,7 @@ const HourPickerGrid: React.FC<HourPickerGridProps> = ({
         {displayHours.map((h) => {
           const chi = h.canChi.chi;
           const isSelected = selectedHour === chi;
+          const isCurrentHour = currentHourChi === chi;
           const score = scoreMap.get(chi);
           const colors = getHourColor(score, h.isAuspicious);
           const timeLabel = h.timeRange.replace(/:00/g, '');
@@ -119,12 +122,23 @@ const HourPickerGrid: React.FC<HourPickerGridProps> = ({
             <button
               key={h.name}
               onClick={() => onSelectHour(isSelected ? null : (chi as Chi))}
-              className={`flex flex-col items-center py-2.5 px-2 rounded-xl transition-all duration-200 border ${
+              aria-current={isCurrentHour ? 'time' : undefined}
+              aria-label={isCurrentHour ? `Giờ hiện tại: ${timeLabel}` : `${chi} ${timeLabel}`}
+              className={`relative flex flex-col items-center py-2.5 px-2 rounded-xl transition-all duration-200 border ${
                 isSelected
                   ? 'bg-gold/15 dark:bg-gold-dark/15 border-gold/40 dark:border-gold-dark/40 ring-1 ring-gold/30 dark:ring-gold-dark/30 shadow-sm scale-[0.97]'
+                  : isCurrentHour
+                    ? 'bg-gradient-to-br from-amber-50 via-white to-gold/10 dark:from-gold-dark/15 dark:via-white/5 dark:to-transparent border-gold/70 dark:border-gold-dark/50 ring-1 ring-gold/10 dark:ring-gold-dark/10 shadow-sm'
                   : `${colors.bg} border-transparent hover:border-gray-200 dark:hover:border-gray-700 hover:shadow-sm`
               }`}
+              title={isCurrentHour ? 'Giờ hiện tại' : undefined}
             >
+              {isCurrentHour && !isSelected && (
+                <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-full border border-gold/20 bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-gold-dark shadow-sm dark:border-gold-dark/20 dark:bg-black/20 dark:text-gold-dark">
+                  <span className="h-1.5 w-1.5 rounded-full bg-gold animate-pulse" />
+                  Hiện tại
+                </span>
+              )}
               {/* Chi name */}
               <span className={`text-sm font-bold ${isSelected ? 'text-gold dark:text-gold-dark' : colors.text}`}>
                 {chi}

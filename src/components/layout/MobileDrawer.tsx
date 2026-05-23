@@ -40,7 +40,7 @@ export default function MobileDrawer() {
 
   return (
     <div
-      className={`fixed inset-0 z-30 sm:hidden ${isClosing ? 'pointer-events-none' : ''}`}
+      className={`fixed inset-0 z-[60] sm:hidden ${isClosing ? 'pointer-events-none' : ''}`}
       role="dialog"
       aria-modal="true"
       aria-label="Menu điều hướng"

@@ -8,8 +8,29 @@ import type { TuViStar, TuViPalace } from '../../types/tuvi';
 import { STAR_COLORS, BRIGHTNESS_MARKERS, CHINH_TINH_LIST, PHU_TINH_LIST } from './constants';
 
 const SAT_TINH_NAMES = ['Kình Dương', 'Đà La', 'Hỏa Tinh', 'Linh Tinh', 'Địa Không', 'Địa Kiếp'];
+const NGU_HANH_ELEMENTS = new Set(['Kim', 'Mộc', 'Thủy', 'Hỏa', 'Thổ']);
 const CHINH_TINH_BY_NAME = new Map(CHINH_TINH_LIST.map((star) => [star.name, star] as const));
 const PHU_TINH_BY_NAME = new Map(PHU_TINH_LIST.map((star) => [star.name, star] as const));
+
+/**
+ * Normalizes a star Ngũ Hành string to its elemental core.
+ *
+ * The catalog stores values like "Âm Thổ" and "Dương Kim". For color rendering we
+ * only want the core element, because the academic color convention follows the five
+ * elements rather than the âm/dương prefix.
+ */
+export function getNguHanhElement(nguHanh: string): string {
+  const trimmed = nguHanh.trim();
+  if (!trimmed) return 'Thổ';
+
+  if (NGU_HANH_ELEMENTS.has(trimmed)) {
+    return trimmed;
+  }
+
+  const parts = trimmed.split(/\s+/);
+  const lastPart = parts[parts.length - 1] ?? 'Thổ';
+  return NGU_HANH_ELEMENTS.has(lastPart) ? lastPart : 'Thổ';
+}
 
 /**
  * Groups an array of stars by their type.
@@ -57,7 +78,7 @@ export function groupStarsByType(stars: TuViStar[]): {
 export function groupStarsByNguHanh(stars: TuViStar[]): Record<string, TuViStar[]> {
   const result: Record<string, TuViStar[]> = {};
   for (const star of stars) {
-    const element = star.nguHanh.split(' ').pop() ?? 'Thổ';
+    const element = getNguHanhElement(star.nguHanh);
     if (!result[element]) {
       result[element] = [];
     }
@@ -70,7 +91,7 @@ export function groupStarsByNguHanh(stars: TuViStar[]): Record<string, TuViStar[
  * Returns the hex color for a star based on its Ngũ Hành element.
  */
 export function getStarColor(star: TuViStar): string {
-  const element = star.nguHanh.split(' ').pop() ?? 'Thổ';
+  const element = getNguHanhElement(star.nguHanh);
   return STAR_COLORS[element] ?? '#888888';
 }
 
@@ -116,7 +137,7 @@ export function formatPalaceStars(palace: TuViPalace): {
 
   const tuHoaLabels = palace.tuHoa.map((tuHoa) => {
     const nguHanh = findStarNguHanh(tuHoa.starName);
-    const element = nguHanh.split(' ').pop() ?? 'Thổ';
+    const element = getNguHanhElement(nguHanh);
     const color = STAR_COLORS[element] ?? '#888888';
     return `${tuHoa.type} [${color}]`;
   });

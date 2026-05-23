@@ -4,6 +4,7 @@ import { useHolidays } from '@/hooks/useHolidays';
 import MonthCalendar from '../MonthCalendar';
 import HolidaysCard from '../Calendar/HolidaysCard';
 import CollapsibleCard from '../CollapsibleCard';
+import { NAP_AM_HANH, STAR_COLORS } from '@/services/tuvi/constants';
 import type { ActiveTab } from '../../router/constants';
 
 interface AppSidebarProps {
@@ -27,6 +28,14 @@ function AppSidebar({ activeTab }: AppSidebarProps) {
 
   // Autonomous holiday fetching
   const { holidays, isLoading: holidaysLoading, countryName, isVietnam } = useHolidays(selectedDate);
+
+  const getNapAmColor = (napAm: string): string | undefined => {
+    const element = NAP_AM_HANH[napAm];
+    return element ? STAR_COLORS[element] : undefined;
+  };
+  const dayNapAmColor = getNapAmColor(data.fiveElements.napAm);
+  const monthNapAmColor = getNapAmColor(data.fiveElements.napAmMonth);
+  const yearNapAmColor = getNapAmColor(data.fiveElements.napAmYear);
 
   return (
     <aside
@@ -129,28 +138,46 @@ function AppSidebar({ activeTab }: AppSidebarProps) {
             <div className="grid grid-cols-2 text-center gap-y-6 gap-x-4">
               <div className="flex flex-col items-center">
                 <span className="label-standard block mb-1">Ngày</span>
-                <p className="font-bold text-base sm:text-base text-text-primary-light dark:text-text-primary-dark">
+                <p
+                  className="font-bold text-base sm:text-base text-text-primary-light dark:text-text-primary-dark"
+                  style={dayNapAmColor ? { color: dayNapAmColor } : undefined}
+                >
                   {data.canChi.day.can} {data.canChi.day.chi}
                 </p>
-                <p className="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark mt-0.5 truncate max-w-full">
+                <p
+                  className="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark mt-0.5 truncate max-w-full"
+                  style={dayNapAmColor ? { color: dayNapAmColor } : undefined}
+                >
                   {data.fiveElements.napAm}
                 </p>
               </div>
               <div className="flex flex-col items-center">
                 <span className="label-standard block mb-1">Tháng</span>
-                <p className="font-bold text-base sm:text-base text-text-primary-light dark:text-text-primary-dark">
+                <p
+                  className="font-bold text-base sm:text-base text-text-primary-light dark:text-text-primary-dark"
+                  style={monthNapAmColor ? { color: monthNapAmColor } : undefined}
+                >
                   {data.canChi.month.can} {data.canChi.month.chi}
                 </p>
-                <p className="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark mt-0.5 truncate max-w-full">
+                <p
+                  className="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark mt-0.5 truncate max-w-full"
+                  style={monthNapAmColor ? { color: monthNapAmColor } : undefined}
+                >
                   {data.fiveElements.napAmMonth}
                 </p>
               </div>
               <div className="flex flex-col items-center">
                 <span className="label-standard block mb-1">Năm</span>
-                <p className="font-bold text-base sm:text-base text-text-primary-light dark:text-text-primary-dark">
+                <p
+                  className="font-bold text-base sm:text-base text-text-primary-light dark:text-text-primary-dark"
+                  style={yearNapAmColor ? { color: yearNapAmColor } : undefined}
+                >
                   {data.canChi.year.can} {data.canChi.year.chi}
                 </p>
-                <p className="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark mt-0.5 truncate max-w-full">
+                <p
+                  className="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark mt-0.5 truncate max-w-full"
+                  style={yearNapAmColor ? { color: yearNapAmColor } : undefined}
+                >
                   {data.fiveElements.napAmYear}
                 </p>
               </div>

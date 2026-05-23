@@ -141,6 +141,10 @@ export interface TuViBirthLocation {
   lng: number;
   /** Estimated UTC offset for the birth location */
   timezone: number;
+  /** ISO 3166-1 alpha-2 country code, when available */
+  countryCode?: string;
+  /** Human-readable country name, when available */
+  countryName?: string;
   /** Optional historical region hint for Vietnam pre-1975 charts */
   historicalRegion?: HistoricalVietnamRegion;
 }

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   normalizeBirthTime,
+  normalizeBirthTimeWithPolicy,
   getVietnamUtcOffset,
   getHourBranch,
   getHourCan,
@@ -89,6 +90,22 @@ describe('timeNormalization', () => {
       const date = new Date('1930-01-01T08:00:00');
       const normalized = normalizeBirthTime(date);
       expect(normalized.getTime()).toBe(date.getTime());
+    });
+
+    it('skips Vietnam historical correction for clearly non-Vietnam births', () => {
+      const date = new Date('1968-06-01T12:00:00');
+      const normalized = normalizeBirthTimeWithPolicy(date, {
+        locationName: 'Bangkok, Thailand',
+        lat: 13.7563,
+        lng: 100.5018,
+        timezone: 7,
+        countryCode: 'TH',
+        countryName: 'Thailand',
+      });
+
+      expect(normalized.correctedDate.getTime()).toBe(date.getTime());
+      expect(normalized.offsetHours).toBe(7);
+      expect(normalized.historicalRegion).toBeUndefined();
     });
   });
 

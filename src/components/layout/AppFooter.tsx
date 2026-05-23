@@ -25,26 +25,6 @@ function AppFooter() {
             >
               Nâng cấp
             </button>
-            <button
-              onClick={() => navigate('/')}
-              className="relative cursor-pointer text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-white transition-colors after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-gold dark:after:bg-gold-dark after:transition-all after:duration-200 hover:after:w-full"
-            >
-              Giới thiệu
-            </button>
-            <button
-              onClick={() => navigate('/app/cai-dat')}
-              className="relative cursor-pointer text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-white transition-colors after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-gold dark:after:bg-gold-dark after:transition-all after:duration-200 hover:after:w-full"
-            >
-              Cài đặt
-            </button>
-            <a
-              href="https://github.com/minhcopilot/Lich-Viet"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="relative cursor-pointer text-text-secondary-light dark:text-text-secondary-dark/80 hover:text-text-primary-light dark:hover:text-white transition-colors after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-gold dark:after:bg-gold-dark after:transition-all after:duration-200 hover:after:w-full"
-            >
-              GitHub
-            </a>
             <span className="text-text-secondary-light/70 dark:text-text-secondary-dark/70 text-xs font-medium">
               v3.0
             </span>

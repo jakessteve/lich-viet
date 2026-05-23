@@ -273,7 +273,7 @@ export default function LandingPage() {
             <div className="flex items-center justify-start gap-4 animate-fade-in-up animate-delay-3">
               <ActionButton
                 onClick={() => navigate('/app/am-lich')}
-                className="px-8 py-3.5"
+                className="hidden sm:inline-flex px-8 py-3.5"
                 icon="arrow_forward"
               >
                 Trải nghiệm ngay

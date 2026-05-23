@@ -89,6 +89,38 @@ function inferHistoricalRegion(date: Date, birthLocation?: TuViBirthLocation): H
   return undefined;
 }
 
+function isVietnamBirthLocation(birthLocation?: TuViBirthLocation): boolean {
+  if (!birthLocation) {
+    return true;
+  }
+
+  const countryCode = birthLocation.countryCode?.trim().toUpperCase();
+  if (countryCode) {
+    return countryCode === 'VN';
+  }
+
+  const countryName = birthLocation.countryName?.trim().toLowerCase();
+  if (countryName) {
+    return countryName.includes('vietnam') || countryName.includes('việt nam');
+  }
+
+  const locationName = birthLocation.locationName.trim().toLowerCase();
+  if (locationName.includes('vietnam') || locationName.includes('việt nam')) {
+    return true;
+  }
+
+  if (typeof birthLocation.lat === 'number' && typeof birthLocation.lng === 'number') {
+    const inVietnamBounds =
+      birthLocation.lat >= 8.0 &&
+      birthLocation.lat <= 24.0 &&
+      birthLocation.lng >= 102.0 &&
+      birthLocation.lng <= 110.8;
+    return inVietnamBounds;
+  }
+
+  return true;
+}
+
 // ── Public API ──────────────────────────────────────────────────
 
 /**
@@ -164,12 +196,22 @@ export function normalizeBirthTimeWithPolicy(
   const period = findPeriod(date);
   const warnings: string[] = [];
   const historicalRegion = inferHistoricalRegion(date, birthLocation);
+  const isVietnam = isVietnamBirthLocation(birthLocation);
 
   if (!period || period.to === 'present') {
     return {
       correctedDate: new Date(date.getTime()),
       offsetHours: 7,
       historicalRegion,
+      warnings,
+    };
+  }
+
+  if (!isVietnam) {
+    return {
+      correctedDate: new Date(date.getTime()),
+      offsetHours: birthLocation?.timezone ?? 7,
+      historicalRegion: undefined,
       warnings,
     };
   }

@@ -18,13 +18,17 @@ function parseBirthday(birthday?: string) {
   return { year, month, day };
 }
 
-function toBirthLocation(location?: { lat: number; lng: number; city: string } | null): TuViBirthLocation | undefined {
+function toBirthLocation(
+  location?: { lat: number; lng: number; city: string; countryCode?: string; countryName?: string } | null,
+): TuViBirthLocation | undefined {
   if (!location) return undefined;
   return {
     locationName: location.city,
     lat: location.lat,
     lng: location.lng,
     timezone: Math.max(-12, Math.min(14, Math.round(location.lng / 15))),
+    countryCode: 'countryCode' in location ? location.countryCode : undefined,
+    countryName: 'countryName' in location ? location.countryName : undefined,
   };
 }
 

@@ -25,7 +25,13 @@ export interface BasicProfile {
 /** Extended profile for advanced astrology requiring birth time/location */
 export interface ExtendedProfile {
   birthTime?: string; // HH:MM
-  birthLocation?: { lat: number; lng: number; city: string };
+  birthLocation?: {
+    lat: number;
+    lng: number;
+    city: string;
+    countryCode?: string;
+    countryName?: string;
+  };
   baziDayMaster?: { stem: string; element: string };
   truongSinhPhase?: string;
   thanSat?: string[];

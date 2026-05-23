@@ -327,13 +327,20 @@ export const NGU_HANH_KHAC: Record<string, string> = {
 };
 
 // ── UI / Display Helpers ──────────────────────────────────────
-/** Ngũ Hành-first star color mapping for UI rendering. */
+/**
+ * Ngũ Hành-first star color mapping for UI rendering.
+ *
+ * Traditional chart references generally align the five elements with:
+ * Thủy = black/dark, Hỏa = red, Mộc = green, Kim = white/silver, Thổ = yellow.
+ * We keep the palette legible on a white chart while staying close to the academic
+ * Hà Đồ convention.
+ */
 export const STAR_COLORS: Record<string, string> = {
-  Kim: '#848481',
+  Kim: '#8a8a8a',
   Mộc: '#2e9730',
   Thủy: '#161617',
   Hỏa: '#da2828',
-  Thổ: '#b8860b',
+  Thổ: '#c28b08',
 };
 
 /** Short markers for non-neutral star brightness. */
