@@ -5,6 +5,8 @@ import {
   findSwissSolarTermBoundary,
   getSwissSolarTerm,
   getSwissSunLongitude,
+  getSwissTrueSolarCivilTime,
+  getSwissTrueSolarCivilTimeForLocation,
   type SwissEphemerisInstance,
 } from '@/services/astronomy/swissEphemeris';
 
@@ -41,6 +43,25 @@ const fakeSwe: SwissEphemerisInstance = {
   close() {},
 };
 
+const zeroEquationSwe: SwissEphemerisInstance = {
+  calculatePosition() {
+    return {
+      longitude: 280.46607,
+      latitude: 0,
+      distance: 0,
+      longitudeSpeed: 1,
+      latitudeSpeed: 0,
+      distanceSpeed: 0,
+    };
+  },
+  dateToJulianDay() {
+    return 2451545.0;
+  },
+  julianDay: fakeSwe.julianDay,
+  version: fakeSwe.version,
+  close: fakeSwe.close,
+};
+
 describe('swissEphemeris sidecar', () => {
   it('normalizes Swiss sun longitude results', () => {
     expect(getSwissSunLongitude(fakeSwe, 361)).toBe(1);
@@ -60,5 +81,28 @@ describe('swissEphemeris sidecar', () => {
   it('solves new moon conjunctions from sun/moon longitude delta', () => {
     const newMoon = findSwissNewMoon(fakeSwe, 1);
     expect(newMoon).toBeCloseTo(0, 6);
+  });
+
+  it('keeps true-solar correction as civil clock time for Tu Vi inputs', () => {
+    const corrected = getSwissTrueSolarCivilTime(zeroEquationSwe, new Date(1983, 10, 13, 18, 30), 106.5, 7);
+
+    expect(corrected.getFullYear()).toBe(1983);
+    expect(corrected.getMonth()).toBe(10);
+    expect(corrected.getDate()).toBe(13);
+    expect(corrected.getHours()).toBe(18);
+    expect(corrected.getMinutes()).toBe(36);
+  });
+
+  it('supports location-aware true-solar correction for geolocation inputs', () => {
+    const corrected = getSwissTrueSolarCivilTimeForLocation(zeroEquationSwe, new Date(1983, 10, 13, 18, 30), {
+      longitude: 106.5,
+      timezoneOffsetHours: 7,
+    });
+
+    expect(corrected.getFullYear()).toBe(1983);
+    expect(corrected.getMonth()).toBe(10);
+    expect(corrected.getDate()).toBe(13);
+    expect(corrected.getHours()).toBe(18);
+    expect(corrected.getMinutes()).toBe(36);
   });
 });

@@ -99,4 +99,58 @@ describe('Tu Vi birth context', () => {
     expect(southDefault.correctedDate.getHours()).toBe(11);
     expect(southDefault.warnings.join(' ')).toContain('Không xác định được Bắc/Nam Việt Nam');
   });
+
+  it('preserves the intended civil date when a birth timestamp arrives as a UTC instant', () => {
+    const input = {
+      name: 'UTC instant sample',
+      solarDate: new Date('1983-11-13T18:30:00.000Z'),
+      birthHour: 9,
+      birthClockHour: 18,
+      birthMinute: 30,
+      gender: 'nam' as const,
+      timezone: 'Asia/Ho_Chi_Minh',
+      birthLocation: {
+        locationName: 'Ho Chi Minh City, Vietnam',
+        lat: 10.8231,
+        lng: 106.6297,
+        timezone: 7,
+        countryCode: 'VN',
+      },
+      school: 'thien-luong' as const,
+    };
+
+    const context = buildTuViBirthContext(input, resolveTuViSchoolProfile('thien-luong'));
+
+    expect(context.correctedDate.getFullYear()).toBe(1983);
+    expect(context.correctedDate.getMonth()).toBe(10);
+    expect(context.correctedDate.getDate()).toBe(13);
+    expect(context.correctedDate.getHours()).toBe(18);
+    expect(context.correctedDate.getMinutes()).toBe(36);
+    expect(context.canChi.day).toEqual({ can: 'Ất', chi: 'Tỵ' });
+  });
+
+  it('preserves a UTC instant civil date when only the branch hour is available', () => {
+    const input = {
+      name: 'UTC branch-only sample',
+      solarDate: new Date('1983-11-13T18:30:00.000Z'),
+      birthHour: 9,
+      gender: 'nam' as const,
+      timezone: 'Asia/Ho_Chi_Minh',
+      birthLocation: {
+        locationName: 'Ho Chi Minh City, Vietnam',
+        lat: 10.8231,
+        lng: 106.6297,
+        timezone: 7,
+        countryCode: 'VN',
+      },
+      school: 'thien-luong' as const,
+    };
+
+    const context = buildTuViBirthContext(input, resolveTuViSchoolProfile('thien-luong'));
+
+    expect(context.correctedDate.getFullYear()).toBe(1983);
+    expect(context.correctedDate.getMonth()).toBe(10);
+    expect(context.correctedDate.getDate()).toBe(13);
+    expect(context.canChi.day).toEqual({ can: 'Ất', chi: 'Tỵ' });
+  });
 });

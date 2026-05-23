@@ -131,4 +131,20 @@ describe('TuVi Engine - Golden Fixtures', () => {
       // because Vietnam was at GMT+8 (South) during 1955-1975
     });
   });
+
+  describe('Local civil date formatting', () => {
+    it('keeps the corrected solar date in civil local format instead of UTC', () => {
+      const chart = generateChart({
+        name: 'Local date sample',
+        solarDate: new Date(1983, 10, 14, 0, 30),
+        birthHour: 0,
+        birthClockHour: 0,
+        birthMinute: 30,
+        gender: 'nam',
+        timezone: 'Asia/Ho_Chi_Minh',
+      });
+
+      expect(chart.centerInfo.duongLich).toBe('1983-11-14');
+    });
+  });
 });

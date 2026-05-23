@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect, useRef } from 'react';
 import { Routes, Route, useNavigate, useLocation, Outlet } from 'react-router-dom';
 import LoadingState from './components/shared/LoadingState';
 import AppNav from './components/layout/AppNav';
@@ -8,6 +8,9 @@ import AppSidebar from './components/layout/AppSidebar';
 import { ROUTE_TO_TAB, type ActiveTab } from './router/constants';
 import { LandingRoute, renderModuleRoutes, renderLegacyRedirects } from './router/routes';
 import { analytics } from './services/analyticsService';
+import { useAppStore } from '@/stores/appStore';
+import { useViewerLocation } from './hooks/useViewerLocation';
+import { getCivilDateForOffset } from '@/utils/geo';
 
 // ══════════════════════════════════════════════════════════
 // App Layout — wraps the main app modules with nav/sidebar
@@ -16,11 +19,32 @@ import { analytics } from './services/analyticsService';
 function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const selectedDate = useAppStore((s) => s.selectedDate);
+  const setSelectedDate = useAppStore((s) => s.setSelectedDate);
+  const setViewerLocation = useAppStore((s) => s.setViewerLocation);
+  const viewerLocation = useViewerLocation();
+  const initialSelectedDateRef = useRef<Date>(selectedDate);
 
   // Track page view on route change
   useEffect(() => {
     analytics.trackPageView(location.pathname + location.search);
   }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    setViewerLocation(viewerLocation);
+  }, [setViewerLocation, viewerLocation]);
+
+  useEffect(() => {
+    if (
+      viewerLocation &&
+      initialSelectedDateRef.current &&
+      selectedDate.getFullYear() === initialSelectedDateRef.current.getFullYear() &&
+      selectedDate.getMonth() === initialSelectedDateRef.current.getMonth() &&
+      selectedDate.getDate() === initialSelectedDateRef.current.getDate()
+    ) {
+      setSelectedDate(getCivilDateForOffset(new Date(), viewerLocation.timezoneOffsetHours));
+    }
+  }, [selectedDate, setSelectedDate, viewerLocation]);
 
   const activeTab: ActiveTab = ROUTE_TO_TAB[location.pathname] || 'am-lich';
   const isFullPage =

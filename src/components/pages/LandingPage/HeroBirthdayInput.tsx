@@ -125,7 +125,7 @@ const HeroBirthdayInput: React.FC<{ onNavigate: (path: string) => void }> = ({ o
   const openTuViChart = useCallback(() => {
     if (!result) return;
     setInput(result.input);
-    calculateChart();
+    calculateChart(result.input);
     onNavigate('/app/tu-vi');
   }, [calculateChart, onNavigate, result, setInput]);
 

@@ -3,6 +3,7 @@ import { getLunarDate } from '../utils/calendarEngine';
 import vietnameseHolidaysData from '../data/phase_1/vietnameseHolidays.json';
 import { z } from 'zod';
 import { HOLIDAYS_CONFIG } from '../config/api';
+import type { SwissGeoLocation } from '../services/astronomy/swissEphemeris';
 
 // --- Type Definitions ---
 
@@ -87,6 +88,7 @@ function getVietnameseHolidaysForDate(
   date: Date,
   solarRules: SolarHolidayRule[],
   lunarRules: LunarHolidayRule[],
+  viewerLocation?: SwissGeoLocation | null,
 ): HolidayEntry[] {
   const results: HolidayEntry[] = [];
   const solarMonth = date.getMonth() + 1;
@@ -102,7 +104,7 @@ function getVietnameseHolidaysForDate(
     }
   }
 
-  const lunar = getLunarDate(date);
+  const lunar = getLunarDate(date, viewerLocation ?? undefined);
   for (const rule of lunarRules) {
     if (rule.month === lunar.month && rule.day === lunar.day && !lunar.isLeap) {
       results.push({
@@ -155,7 +157,7 @@ function setCachedGeo(geo: GeoInfo): void {
 
 // --- The Hook ---
 
-export function useHolidays(selectedDate: Date) {
+export function useHolidays(selectedDate: Date, viewerLocation?: SwissGeoLocation | null) {
   const [geoInfo, setGeoInfo] = useState<GeoInfo | null>(null);
   const [geoLoading, setGeoLoading] = useState(true);
   const [localHolidays, setLocalHolidays] = useState<NagerHoliday[]>([]);
@@ -260,6 +262,7 @@ export function useHolidays(selectedDate: Date) {
       selectedDate,
       vietnameseHolidaysData.solar as SolarHolidayRule[],
       vietnameseHolidaysData.lunar as LunarHolidayRule[],
+      viewerLocation,
     );
 
     // If user is in Vietnam, only return Vietnamese holidays
@@ -278,7 +281,7 @@ export function useHolidays(selectedDate: Date) {
       }));
 
     return [...vnHolidays, ...matchingLocal];
-  }, [selectedDate, countryCode, localHolidays]);
+  }, [selectedDate, countryCode, localHolidays, viewerLocation]);
 
   return {
     holidays,

@@ -5,21 +5,33 @@ import { useIsMobile } from '../hooks/useIsMobile';
 import { useAuthStore } from '../stores/authStore';
 import { calculatePersonalDayScore } from '../services/personalization';
 import { IconButton } from './shared';
+import type { SwissGeoLocation } from '../services/astronomy/swissEphemeris';
+import { getCivilDateForOffset } from '@/utils/geo';
 
 interface MonthCalendarProps {
   selectedDate: Date;
   onSelectDate: (date: Date) => void;
+  viewerLocation?: SwissGeoLocation | null;
   /** Start collapsed on mobile (shows only selected week row) */
   collapseOnMobile?: boolean;
 }
 
-const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDate, collapseOnMobile = false }) => {
+const MonthCalendar: React.FC<MonthCalendarProps> = ({
+  selectedDate,
+  onSelectDate,
+  viewerLocation,
+  collapseOnMobile = false,
+}) => {
   const [currentDate, setCurrentDate] = useState(new Date(selectedDate));
   const { user } = useAuthStore();
 
   const days = useMemo(() => {
-    return getMonthDays(currentDate.getFullYear(), currentDate.getMonth());
-  }, [currentDate]);
+    return getMonthDays(currentDate.getFullYear(), currentDate.getMonth(), viewerLocation ?? undefined);
+  }, [currentDate, viewerLocation]);
+
+  useEffect(() => {
+    setCurrentDate(new Date(selectedDate));
+  }, [selectedDate]);
 
   // Derive birth year from user profile
   const birthYear = useMemo(() => {
@@ -145,7 +157,9 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
           />
           <IconButton
             onClick={() => {
-              const today = new Date();
+              const today = viewerLocation
+                ? getCivilDateForOffset(new Date(), viewerLocation.timezoneOffsetHours)
+                : new Date();
               setCurrentDate(today);
               onSelectDate(today);
             }}

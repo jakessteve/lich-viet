@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { TuViChart, TuViInput, TuViPalace, TuViMarkdownOptions, TuViSchool } from '@/types/tuvi';
 import { calculateHanContext, generateChart } from '@/services/tuvi';
 import { formatTuViChartAsMarkdown } from '@/services/tuvi/markdownFormatter';
+import { getDatePartsInTimeZone, VIETNAM_TIME_ZONE } from '@/services/tuvi/timeNormalization';
 
 // ══════════════════════════════════════════════════════════
 // Type Definitions
@@ -32,7 +33,7 @@ interface TuViActions {
   /** Reset input to defaults */
   resetInput: () => void;
   /** Generate chart from current input */
-  calculateChart: () => void;
+  calculateChart: (inputOverride?: Partial<TuViInput>) => void;
   /** Change calculation school and refresh the chart when present */
   setSchool: (school: TuViSchool) => void;
   /** Select a palace for detail view */
@@ -74,10 +75,10 @@ const defaultInput: TuViInput = {
 };
 
 function getCurrentHanView(): { viewYear: number; viewMonth: number } {
-  const now = new Date();
+  const now = getDatePartsInTimeZone(new Date(), VIETNAM_TIME_ZONE);
   return {
-    viewYear: now.getFullYear(),
-    viewMonth: now.getMonth() + 1,
+    viewYear: now.year,
+    viewMonth: now.month,
   };
 }
 
@@ -112,12 +113,14 @@ export const useTuViStore = create<TuViStore>()((set, get) => ({
       markdownPreview: null,
     }),
 
-  calculateChart: () => {
+  calculateChart: (inputOverride) => {
     set({ isCalculating: true, error: null });
     try {
       const { input, viewYear, viewMonth } = get();
-      const chart = generateChart(input);
+      const nextInput = inputOverride ? { ...input, ...inputOverride } : input;
+      const chart = generateChart(nextInput);
       set({
+        input: nextInput,
         chart: {
           ...chart,
           hanContext: calculateHanContext(chart, viewYear, viewMonth),

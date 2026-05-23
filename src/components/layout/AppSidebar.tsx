@@ -14,6 +14,8 @@ interface AppSidebarProps {
 function AppSidebar({ activeTab }: AppSidebarProps) {
   const selectedDate = useAppStore((s) => s.selectedDate);
   const data = useAppStore((s) => s.dayData);
+  const viewerLocation = useAppStore((s) => s.viewerLocation);
+  const isDark = useAppStore((s) => s.isDark);
   const _setSelectedDate = useAppStore((s) => s.setSelectedDate);
 
   // P2-11: Wrap date changes in startTransition to keep UI responsive
@@ -27,11 +29,18 @@ function AppSidebar({ activeTab }: AppSidebarProps) {
   );
 
   // Autonomous holiday fetching
-  const { holidays, isLoading: holidaysLoading, countryName, isVietnam } = useHolidays(selectedDate);
+  const { holidays, isLoading: holidaysLoading, countryName, isVietnam } = useHolidays(selectedDate, viewerLocation);
 
   const getNapAmColor = (napAm: string): string | undefined => {
     const element = NAP_AM_HANH[napAm];
-    return element ? STAR_COLORS[element] : undefined;
+    if (!element) return undefined;
+
+    // Thủy is intentionally near-black in light mode, but that disappears on dark surfaces.
+    if (isDark && element === 'Thủy') {
+      return '#7dd3fc';
+    }
+
+    return STAR_COLORS[element];
   };
   const dayNapAmColor = getNapAmColor(data.fiveElements.napAm);
   const monthNapAmColor = getNapAmColor(data.fiveElements.napAmMonth);
@@ -45,7 +54,12 @@ function AppSidebar({ activeTab }: AppSidebarProps) {
     >
       <div className="space-y-6">
         <div id="tour-calendar">
-          <MonthCalendar selectedDate={selectedDate} onSelectDate={onSelectDate} collapseOnMobile={true} />
+          <MonthCalendar
+            selectedDate={selectedDate}
+            onSelectDate={onSelectDate}
+            viewerLocation={viewerLocation}
+            collapseOnMobile={true}
+          />
         </div>
 
         {/* Holidays Card — only on Âm Lịch tab */}

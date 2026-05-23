@@ -319,7 +319,7 @@ describe('Star Placement Engine', () => {
         timezone: 'Asia/Ho_Chi_Minh',
       });
 
-      expect(chart.huyenKhi.totalScore).toBe(20.2);
+      expect(chart.huyenKhi.totalScore).toBe(18.7);
 
       const byChi = new Map(chart.palaces.map((palace) => [palace.chi, palace]));
       expect(byChi.get('Tý')?.brightness['Thiên Đồng']).toBe('Vượng');

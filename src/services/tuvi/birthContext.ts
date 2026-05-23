@@ -8,9 +8,13 @@ import type {
 } from '../../types/tuvi';
 import { CAN, CHI } from '../../utils/constants';
 import { getCanChiDay, getLunarDate } from '../../utils/calendarEngine';
-import { normalizeBirthTimeWithPolicy } from './timeNormalization';
+import { getDatePartsInTimeZone, normalizeBirthTimeWithPolicy } from './timeNormalization';
 import type { TuViSchoolProfile } from './schoolProfiles';
-import { getSwissEphemerisInstance, getSwissTrueSolarTime } from '../astronomy/swissEphemeris';
+import {
+  getSwissEphemerisInstance,
+  getSwissTrueSolarCivilTimeForLocation,
+  type SwissGeoLocation,
+} from '../astronomy/swissEphemeris';
 
 function mod10(n: number): number {
   return ((n % 10) + 10) % 10;
@@ -21,17 +25,52 @@ function mod12(n: number): number {
 }
 
 function normalizeToIanaTimezone(date: Date, timezone: string): Date {
-  const str = date.toLocaleString('en-US', {
-    timeZone: timezone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  });
-  return new Date(str);
+  const parts = getDatePartsInTimeZone(date, timezone);
+  return new Date(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second, parts.millisecond);
+}
+
+function resolveCivilBirthDate(input: TuViInput): Date | null {
+  const expectedHourBranch = mod12(input.birthHour);
+
+  if (input.birthClockHour === undefined && input.birthMinute === undefined) {
+    const localHourBranch = Math.floor(((input.solarDate.getHours() + 1) % 24) / 2);
+    const utcHourBranch = Math.floor(((input.solarDate.getUTCHours() + 1) % 24) / 2);
+    if (utcHourBranch !== expectedHourBranch || localHourBranch === expectedHourBranch) {
+      return null;
+    }
+
+    return new Date(
+      input.solarDate.getUTCFullYear(),
+      input.solarDate.getUTCMonth(),
+      input.solarDate.getUTCDate(),
+      input.solarDate.getUTCHours(),
+      input.solarDate.getUTCMinutes(),
+      0,
+      0,
+    );
+  }
+
+  const localHourBranch = Math.floor(((input.solarDate.getHours() + 1) % 24) / 2);
+  const utcHourBranch = Math.floor(((input.solarDate.getUTCHours() + 1) % 24) / 2);
+  const shouldReadUtcByBranch =
+    input.birthClockHour === undefined &&
+    utcHourBranch === expectedHourBranch &&
+    localHourBranch !== expectedHourBranch;
+
+  const clockHour = input.birthClockHour ?? (shouldReadUtcByBranch ? input.solarDate.getUTCHours() : input.solarDate.getHours());
+  const clockMinute =
+    input.birthMinute ?? (shouldReadUtcByBranch ? input.solarDate.getUTCMinutes() : input.solarDate.getMinutes());
+  const localMatchesClock =
+    input.solarDate.getHours() === clockHour && input.solarDate.getMinutes() === clockMinute;
+  const utcMatchesClock =
+    input.solarDate.getUTCHours() === clockHour && input.solarDate.getUTCMinutes() === clockMinute;
+
+  const readUtcFields = shouldReadUtcByBranch || (utcMatchesClock && !localMatchesClock);
+  const year = readUtcFields ? input.solarDate.getUTCFullYear() : input.solarDate.getFullYear();
+  const month = readUtcFields ? input.solarDate.getUTCMonth() : input.solarDate.getMonth();
+  const day = readUtcFields ? input.solarDate.getUTCDate() : input.solarDate.getDate();
+
+  return new Date(year, month, day, clockHour, clockMinute, 0, 0);
 }
 
 function applyTrueSolarTime(date: Date, birthLocation?: TuViBirthLocation): Date {
@@ -51,7 +90,11 @@ function applyTrueSolarTimeLayer(date: Date, birthLocation?: TuViBirthLocation):
 
   const swe = getSwissEphemerisInstance();
   if (swe) {
-    return getSwissTrueSolarTime(swe, date, birthLocation.lng);
+    const location: SwissGeoLocation = {
+      longitude: birthLocation.lng,
+      timezoneOffsetHours: birthLocation.timezone,
+    };
+    return getSwissTrueSolarCivilTimeForLocation(swe, date, location);
   }
 
   return applyTrueSolarTime(date, birthLocation);
@@ -100,7 +143,7 @@ export function buildTuViBirthContext(
   input: TuViInput,
   schoolProfile: TuViSchoolProfile,
 ): TuViBirthContext {
-  const zonedDate = normalizeToIanaTimezone(input.solarDate, input.timezone);
+  const zonedDate = resolveCivilBirthDate(input) ?? normalizeToIanaTimezone(input.solarDate, input.timezone);
   const timePolicy = schoolProfile.timePolicy;
   const trueSolarDate = applyTrueSolarTimeLayer(zonedDate, input.birthLocation);
   const normalized = normalizeBirthTimeWithPolicy(trueSolarDate, input.birthLocation);

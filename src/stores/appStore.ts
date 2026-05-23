@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { type LocaleCode, detectLocale, setLocalePreference } from '@/i18n';
 import { analytics } from '@/services/analyticsService';
 import { getDetailedDayData } from '@/utils/calendarEngine';
+import type { SwissGeoLocation } from '@/services/astronomy/swissEphemeris';
 import type { DayDetailsData } from '@/types/calendar';
 
 // ══════════════════════════════════════════════════════════
@@ -31,6 +32,8 @@ interface AppState {
   selectedDate: Date;
   /** Detailed astrological data for the selected date */
   dayData: DayDetailsData;
+  /** Viewer location used by the Swiss calendar engine, if available */
+  viewerLocation: SwissGeoLocation | null;
   /** Whether dark mode is active */
   isDark: boolean;
   /** Current font size level */
@@ -42,6 +45,8 @@ interface AppState {
 interface AppActions {
   /** Update the selected date (with 1900-2200 clamping) */
   setSelectedDate: (date: Date) => void;
+  /** Update the browser geolocation used by the live calendar surface */
+  setViewerLocation: (location: SwissGeoLocation | null) => void;
   /** Toggle dark mode */
   toggleDarkMode: () => void;
   /** Cycle font size: small → normal → large → small */
@@ -119,6 +124,7 @@ export const useAppStore = create<AppStore>()((set) => ({
   // State
   selectedDate: initialDate,
   dayData: getDetailedDayData(initialDate),
+  viewerLocation: null,
   isDark: getInitialDarkMode(),
   fontSize: getInitialFontSize(),
   locale: detectLocale(),
@@ -130,10 +136,17 @@ export const useAppStore = create<AppStore>()((set) => ({
       name: 'lunar_date_change',
       properties: { date: clamped.toISOString() },
     });
-    set({
+    set((state) => ({
       selectedDate: clamped,
-      dayData: getDetailedDayData(clamped),
-    });
+      dayData: getDetailedDayData(clamped, state.viewerLocation ?? undefined),
+    }));
+  },
+
+  setViewerLocation: (location: SwissGeoLocation | null) => {
+    set((state) => ({
+      viewerLocation: location,
+      dayData: getDetailedDayData(state.selectedDate, location ?? undefined),
+    }));
   },
 
   toggleDarkMode: () =>

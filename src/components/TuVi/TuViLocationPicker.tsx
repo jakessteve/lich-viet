@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import type { TuViBirthLocation } from '../../types/tuvi';
+import { estimateTimezoneOffsetHours } from '@/utils/geo';
 
 interface TuViLocationPickerProps {
   value?: TuViBirthLocation;
@@ -36,13 +37,11 @@ const QUICK_LOCATIONS: TuViBirthLocation[] = [
   { locationName: 'Cần Thơ, Việt Nam', lat: 10.045162, lng: 105.746857, timezone: 7, countryCode: 'VN', countryName: 'Việt Nam' },
 ];
 
-const estimateTimezone = (longitude: number) => Math.max(-12, Math.min(14, Math.round(longitude / 15)));
-
 const createBirthLocation = (result: NominatimResult, lat: number, lng: number): TuViBirthLocation => ({
   locationName: formatDisplayName(result),
   lat,
   lng,
-  timezone: estimateTimezone(lng),
+  timezone: estimateTimezoneOffsetHours(lng),
   countryCode: result.address?.country_code?.toUpperCase(),
   countryName: result.address?.country,
 });
@@ -160,7 +159,7 @@ export const TuViLocationPicker: React.FC<TuViLocationPickerProps> = ({ value, o
             locationName: `Vị trí hiện tại (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`,
             lat: latitude,
             lng: longitude,
-            timezone: estimateTimezone(longitude),
+            timezone: estimateTimezoneOffsetHours(longitude),
           });
         }
         setIsSearching(false);

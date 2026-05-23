@@ -8,6 +8,7 @@ import { TuViMarkdownExport } from './TuViMarkdownExport';
 import { IconButton, SegmentedControl, type SegmentedOption } from '../shared';
 import type { TuViSchool } from '../../types/tuvi';
 import './tuviChart.css';
+import { getDatePartsInTimeZone, VIETNAM_TIME_ZONE } from '@/services/tuvi/timeNormalization';
 
 const MONTH_LABELS = Array.from({ length: 12 }, (_, index) => index + 1);
 const SCHOOL_OPTIONS: readonly SegmentedOption<TuViSchool>[] = [
@@ -43,9 +44,9 @@ export const TuViPage: React.FC = () => {
       setSchool: state.setSchool,
     })),
   );
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1;
+  const now = getDatePartsInTimeZone(new Date(), VIETNAM_TIME_ZONE);
+  const currentYear = now.year;
+  const currentMonth = now.month;
 
   return (
     <div className="space-y-6">

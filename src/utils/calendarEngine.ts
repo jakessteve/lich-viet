@@ -25,6 +25,8 @@ import { getNapAmIndex, checkNapAmCompatibility, getNapAmExceptionComment } from
 import { getYearlyStars } from './yearlyEngine';
 import { getExtraStars } from './extraStars';
 import { getSwissEphemerisInstance, getSwissLunarDateIfReady } from '../services/astronomy/swissEphemeris';
+import type { SwissGeoLocation } from '../services/astronomy/swissEphemeris';
+import { getCivilDateForOffset } from './geo';
 import {
   CAN,
   CHI,
@@ -81,9 +83,14 @@ function dateCacheKey(value: Date) {
   return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, '0')}-${String(value.getDate()).padStart(2, '0')}`;
 }
 
-function calendarCacheKey(value: Date) {
+function locationCacheKey(location?: SwissGeoLocation): string {
+  if (!location) return 'default';
+  return `geo:${location.longitude.toFixed(4)}:${location.timezoneOffsetHours}`;
+}
+
+function calendarCacheKey(value: Date, location?: SwissGeoLocation) {
   const source = getSwissEphemerisInstance() ? 'swiss' : 'fallback';
-  return `${dateCacheKey(value)}:${source}`;
+  return `${dateCacheKey(value)}:${source}:${locationCacheKey(location)}`;
 }
 
 function rememberLunarDate(key: string, value: { day: number; month: number; year: number; isLeap: boolean }) {
@@ -220,15 +227,18 @@ function getKiTuoi(dayCan: Can, dayChi: Chi): string[] {
 
 // ── Core Calendar Functions ───────────────────────────────────
 
-export function getLunarDate(date: Date): { day: number; month: number; year: number; isLeap: boolean } {
+export function getLunarDate(
+  date: Date,
+  location?: SwissGeoLocation,
+): { day: number; month: number; year: number; isLeap: boolean } {
   const normalized = normalizeDate(date);
-  const cacheKey = calendarCacheKey(normalized);
+  const cacheKey = calendarCacheKey(normalized, location);
   const cached = lunarDateCache.get(cacheKey);
   if (cached) {
     return { ...cached };
   }
 
-  const swissLunarDate = getSwissLunarDateIfReady(normalized);
+  const swissLunarDate = getSwissLunarDateIfReady(normalized, 'south', undefined, location);
   if (swissLunarDate) {
     const precise = {
       day: swissLunarDate.day,
@@ -245,21 +255,22 @@ export function getLunarDate(date: Date): { day: number; month: number; year: nu
   const yy = normalized.getFullYear();
   const dayNumber = jdFromDate(dd, mm, yy);
   const k = int((dayNumber - NEW_MOON_EPOCH) / SYNODIC_MONTH);
-  let monthStart = getNewMoonDay(k + 1, VIETNAM_TIMEZONE);
+  const timeZone = location?.timezoneOffsetHours ?? VIETNAM_TIMEZONE;
+  let monthStart = getNewMoonDay(k + 1, timeZone);
   if (monthStart > dayNumber) {
-    monthStart = getNewMoonDay(k, VIETNAM_TIMEZONE);
+    monthStart = getNewMoonDay(k, timeZone);
   }
 
-  let a11 = getLunarMonth11(yy, VIETNAM_TIMEZONE);
+  let a11 = getLunarMonth11(yy, timeZone);
   let b11 = a11;
   let lunarYear: number;
 
   if (a11 >= monthStart) {
     lunarYear = yy;
-    a11 = getLunarMonth11(yy - 1, VIETNAM_TIMEZONE);
+    a11 = getLunarMonth11(yy - 1, timeZone);
   } else {
     lunarYear = yy + 1;
-    b11 = getLunarMonth11(yy + 1, VIETNAM_TIMEZONE);
+    b11 = getLunarMonth11(yy + 1, timeZone);
   }
 
   const lunarDay = dayNumber - monthStart + 1;
@@ -268,7 +279,7 @@ export function getLunarDate(date: Date): { day: number; month: number; year: nu
   let lunarMonth = diff + 11;
 
   if (b11 - a11 > 365) {
-    const leapMonthDiff = getLeapMonthOffset(a11, VIETNAM_TIMEZONE);
+    const leapMonthDiff = getLeapMonthOffset(a11, timeZone);
     if (diff >= leapMonthDiff) {
       lunarMonth = diff + 10;
       if (diff === leapMonthDiff) {
@@ -293,8 +304,8 @@ export function getLunarDate(date: Date): { day: number; month: number; year: nu
   });
 }
 
-export function getDayQuality(date: Date): DayQuality {
-  const detailed = getDetailedDayData(date);
+export function getDayQuality(date: Date, location?: SwissGeoLocation): DayQuality {
+  const detailed = getDetailedDayData(date, location);
 
   if (
     detailed.nguHanhGrade === 'Chuyên nhật' ||
@@ -313,9 +324,10 @@ function isSameDay(d1: Date, d2: Date): boolean {
   return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
 }
 
-export function getMonthDays(year: number, month: number): DayCellData[] {
+export function getMonthDays(year: number, month: number, location?: SwissGeoLocation): DayCellData[] {
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
+  const today = location ? getCivilDateForOffset(new Date(), location.timezoneOffsetHours) : new Date();
 
   const days: DayCellData[] = [];
 
@@ -325,28 +337,28 @@ export function getMonthDays(year: number, month: number): DayCellData[] {
 
   for (let i = firstDayOfWeek - 1; i >= 0; i--) {
     const d = new Date(year, month - 1, prevMonthLastDay - i);
-    const lunar = getLunarDate(d);
+    const lunar = getLunarDate(d, location);
     days.push({
       solarDate: d.getDate(),
       lunarDate: lunar.day === 1 ? `${lunar.day}/${lunar.month}` : lunar.day,
-      dayQuality: getDayQuality(d),
+      dayQuality: getDayQuality(d, location),
       fullDate: d,
       isCurrentMonth: false,
-      isToday: isSameDay(d, new Date()),
+      isToday: isSameDay(d, today),
       dayChi: getCanChiDay(d).split(' ')[1] as Chi,
     });
   }
 
   for (let i = 1; i <= lastDayOfMonth.getDate(); i++) {
     const d = new Date(year, month, i);
-    const lunar = getLunarDate(d);
+    const lunar = getLunarDate(d, location);
     days.push({
       solarDate: i,
       lunarDate: lunar.day === 1 ? `${lunar.day}/${lunar.month}` : lunar.day,
-      dayQuality: getDayQuality(d),
+      dayQuality: getDayQuality(d, location),
       fullDate: d,
       isCurrentMonth: true,
-      isToday: isSameDay(d, new Date()),
+      isToday: isSameDay(d, today),
       dayChi: getCanChiDay(d).split(' ')[1] as Chi,
     });
   }
@@ -354,14 +366,14 @@ export function getMonthDays(year: number, month: number): DayCellData[] {
   const remaining = CALENDAR_GRID_CELLS - days.length;
   for (let i = 1; i <= remaining; i++) {
     const d = new Date(year, month + 1, i);
-    const lunar = getLunarDate(d);
+    const lunar = getLunarDate(d, location);
     days.push({
       solarDate: i,
       lunarDate: lunar.day === 1 ? `${lunar.day}/${lunar.month}` : lunar.day,
-      dayQuality: getDayQuality(d),
+      dayQuality: getDayQuality(d, location),
       fullDate: d,
       isCurrentMonth: false,
-      isToday: isSameDay(d, new Date()),
+      isToday: isSameDay(d, today),
       dayChi: getCanChiDay(d).split(' ')[1] as Chi,
     });
   }
@@ -626,14 +638,14 @@ export function collectStarLists(
 
 // ── Main Orchestrator ─────────────────────────────────────────
 
-export function getDetailedDayData(date: Date): DayDetailsData {
+export function getDetailedDayData(date: Date, location?: SwissGeoLocation): DayDetailsData {
   const normalized = normalizeDate(date);
-  const detailKey = calendarCacheKey(normalized);
+  const detailKey = calendarCacheKey(normalized, location);
   const cached = detailedDayDataCache.get(detailKey);
   if (cached) return cached;
 
   // 1. Parse core identifiers
-  const lunar = getLunarDate(normalized);
+  const lunar = getLunarDate(normalized, location);
   const yearCanChi = parseCanChi(getCanChiYear(normalized.getFullYear()));
   const monthCanChi = parseCanChi(getCanChiMonth(lunar.month, lunar.year));
   const dayCanChi = parseCanChi(getCanChiDay(normalized));
@@ -644,7 +656,7 @@ export function getDetailedDayData(date: Date): DayDetailsData {
   // 3. Moon Phase (Tháng đủ/thiếu)
   const tempDate = new Date(normalized);
   tempDate.setDate(tempDate.getDate() + (30 - lunar.day));
-  const tempLunar = getLunarDate(tempDate);
+  const tempLunar = getLunarDate(tempDate, location);
   const isDu = tempLunar.day === 30;
   const thangAmThieuDu = `Tháng ${lunar.month} ${isDu ? 'đủ' : 'thiếu'} kiên ${monthCanChi.can} ${monthCanChi.chi}`;
 

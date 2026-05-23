@@ -20,6 +20,13 @@ export interface SwissLunarDate {
   boundaryWarnings: string[];
 }
 
+export interface SwissGeoLocation {
+  /** Geographic longitude in decimal degrees */
+  longitude: number;
+  /** Local UTC offset in hours for the location */
+  timezoneOffsetHours: number;
+}
+
 const SYNODIC_MONTH = 29.530588853;
 const NEW_MOON_EPOCH = 2415021.076998695;
 const DEFAULT_WASM_PATH = '/swisseph.wasm';
@@ -216,31 +223,77 @@ export function getSwissTrueSolarTime(swe: SwissEphemerisInstance, utcDate: Date
   return result;
 }
 
+export function getSwissTrueSolarCivilTime(
+  swe: SwissEphemerisInstance,
+  civilDate: Date,
+  longitude: number,
+  timezoneOffsetHours: number,
+): Date {
+  // Tu Vi charting consumes Date fields as civil clock time; keep the Swiss UTC math
+  // isolated so true-solar correction does not roll the chart into another local day.
+  const civilUtcMillis =
+    Date.UTC(
+      civilDate.getFullYear(),
+      civilDate.getMonth(),
+      civilDate.getDate(),
+      civilDate.getHours(),
+      civilDate.getMinutes(),
+      civilDate.getSeconds(),
+      civilDate.getMilliseconds(),
+    ) -
+    Math.round(timezoneOffsetHours * 60) * 60_000;
+  const trueSolarUtcEncoded = getSwissTrueSolarTime(swe, new Date(civilUtcMillis), longitude);
+
+  return new Date(
+    trueSolarUtcEncoded.getUTCFullYear(),
+    trueSolarUtcEncoded.getUTCMonth(),
+    trueSolarUtcEncoded.getUTCDate(),
+    trueSolarUtcEncoded.getUTCHours(),
+    trueSolarUtcEncoded.getUTCMinutes(),
+    trueSolarUtcEncoded.getUTCSeconds(),
+    trueSolarUtcEncoded.getUTCMilliseconds(),
+  );
+}
+
+/**
+ * Convenience wrapper for location-aware true solar conversion.
+ */
+export function getSwissTrueSolarCivilTimeForLocation(
+  swe: SwissEphemerisInstance,
+  civilDate: Date,
+  location: SwissGeoLocation,
+): Date {
+  return getSwissTrueSolarCivilTime(swe, civilDate, location.longitude, location.timezoneOffsetHours);
+}
+
 export async function getSwissLunarDate(
   date: Date,
   region: 'north' | 'south' = 'south',
   swe?: SwissEphemerisInstance,
+  location?: SwissGeoLocation,
 ): Promise<SwissLunarDate> {
   const engine = swe ?? (await initSwissEphemeris());
-  return buildSwissLunarDate(engine, date, region);
+  return buildSwissLunarDate(engine, date, region, location);
 }
 
 export function getSwissLunarDateIfReady(
   date: Date,
   region: 'north' | 'south' = 'south',
   swe?: SwissEphemerisInstance,
+  location?: SwissGeoLocation,
 ): SwissLunarDate | null {
   const engine = swe ?? swissEphemerisInstance;
   if (!engine) return null;
-  return buildSwissLunarDate(engine, date, region);
+  return buildSwissLunarDate(engine, date, region, location);
 }
 
 function buildSwissLunarDate(
   engine: SwissEphemerisInstance,
   date: Date,
   region: 'north' | 'south',
+  location?: SwissGeoLocation,
 ): SwissLunarDate {
-  const timeZone = getVietnamUtcOffset(date, region);
+  const timeZone = location?.timezoneOffsetHours ?? getVietnamUtcOffset(date, region);
   const dayNumber = jdFromDate(date.getDate(), date.getMonth() + 1, date.getFullYear());
   const k = Math.floor((dayNumber - NEW_MOON_EPOCH) / SYNODIC_MONTH);
   let monthStart = getNewMoonDay(engine, k + 1, timeZone);

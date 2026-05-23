@@ -95,7 +95,7 @@ describe('calculateHuyenKhi', () => {
     expect(result.grade).toBe('Hạ Cách');
   });
 
-  it('returns a reference-scaled average across all 12 palaces', () => {
+  it('returns a calibrated relation score across all 12 palaces', () => {
     const palaces = Array.from({ length: 12 }, (_, i) =>
       makePalace({
         id: i,
@@ -104,7 +104,7 @@ describe('calculateHuyenKhi', () => {
       }),
     );
     const result = calculateHuyenKhi(palaces, []);
-    expect(result.totalScore).toBe(3.7);
+    expect(result.totalScore).toBe(-13.3);
     expect(result.grade).toBe('Hạ Cách');
   });
 
@@ -156,20 +156,20 @@ describe('calculateHuyenKhi', () => {
       }));
 
     // >=25 → Thượng Cách
-    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(65)).totalScore).toBe(25.3);
+    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(65)).totalScore).toBe(39);
     expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(65)).grade).toBe('Thượng Cách');
 
     // >=20 → Thượng Trung
-    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(52)).totalScore).toBe(20.2);
-    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(52)).grade).toBe('Thượng Trung');
+    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(52)).totalScore).toBe(31.2);
+    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(52)).grade).toBe('Thượng Cách');
 
-    // >=15 → Trung Cách
-    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(39)).totalScore).toBe(15.2);
-    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(39)).grade).toBe('Trung Cách');
+    // falls below the grading thresholds
+    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(39)).totalScore).toBe(23.4);
+    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(39)).grade).toBe('Thượng Trung');
 
-    // >=10 → Trung Hạ
-    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(26)).totalScore).toBe(10.1);
-    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(26)).grade).toBe('Trung Hạ');
+    // below Trung Hạ
+    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(26)).totalScore).toBe(15.6);
+    expect(calculateHuyenKhi(emptyPalaces, makeCatCombos(26)).grade).toBe('Trung Cách');
 
     // 0 → Hạ Cách
     expect(calculateHuyenKhi(emptyPalaces, []).grade).toBe('Hạ Cách');

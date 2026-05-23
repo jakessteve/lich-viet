@@ -59,6 +59,11 @@ describe('timeNormalization', () => {
       const date = new Date('1950-01-01T00:00:00');
       expect(getVietnamUtcOffset(date)).toBe(8);
     });
+
+    it('uses the civil local date instead of UTC when resolving historical periods', () => {
+      const date = new Date(1945, 2, 14, 0, 30);
+      expect(getVietnamUtcOffset(date)).toBe(8);
+    });
   });
 
   describe('normalizeBirthTime()', () => {

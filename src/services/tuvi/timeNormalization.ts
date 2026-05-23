@@ -24,6 +24,7 @@ interface TimezoneData {
 }
 
 const { periods } = timezoneData as TimezoneData;
+export const VIETNAM_TIME_ZONE = 'Asia/Ho_Chi_Minh';
 
 // ── Helpers ─────────────────────────────────────────────────────
 
@@ -49,11 +50,68 @@ function compareIsoDates(a: string, b: string): number {
 }
 
 /**
+ * Format a Date using its civil/local calendar fields.
+ *
+ * This intentionally avoids UTC serialization, because Tu Vi inputs and
+ * historical offsets are evaluated as local civil dates.
+ */
+export function formatCivilDateYmd(date: Date): string {
+  const year = String(date.getFullYear());
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Read date parts in a specific IANA timezone and project them into a civil Date.
+ *
+ * This is used when we need the wall-clock values for a given timezone without
+ * depending on locale-specific string parsing.
+ */
+export function getDatePartsInTimeZone(date: Date, timeZone: string): {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+  second: number;
+  millisecond: number;
+} {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  });
+
+  const parts: Record<string, string> = {};
+  for (const part of formatter.formatToParts(date)) {
+    if (part.type !== 'literal') {
+      parts[part.type] = part.value;
+    }
+  }
+
+  return {
+    year: Number(parts.year ?? date.getFullYear()),
+    month: Number(parts.month ?? date.getMonth() + 1),
+    day: Number(parts.day ?? date.getDate()),
+    hour: Number(parts.hour ?? date.getHours()),
+    minute: Number(parts.minute ?? date.getMinutes()),
+    second: Number(parts.second ?? date.getSeconds()),
+    millisecond: date.getMilliseconds(),
+  };
+}
+
+/**
  * Find the timezone period that contains the given date.
  * Returns `null` if no period matches (e.g. gap 1912–1944 is covered).
  */
 function findPeriod(date: Date): TimezonePeriod | null {
-  const iso = date.toISOString().split('T')[0]; // YYYY-MM-DD
+  const iso = formatCivilDateYmd(date);
   for (const period of periods) {
     if (compareIsoDates(iso, period.from) >= 0 && (period.to === 'present' || compareIsoDates(iso, period.to) <= 0)) {
       return period;
@@ -71,7 +129,7 @@ export interface BirthTimeNormalizationResult {
 }
 
 function inferHistoricalRegion(date: Date, birthLocation?: TuViBirthLocation): HistoricalVietnamRegion | undefined {
-  const iso = date.toISOString().split('T')[0];
+  const iso = formatCivilDateYmd(date);
   if (iso < '1955-07-01' || iso > '1975-04-30') {
     return undefined;
   }

@@ -45,6 +45,7 @@ import menhChuTableData from '../../data/tuvi/menhChuTable.json';
 import thanChuTableData from '../../data/tuvi/thanChuTable.json';
 import { calculateHuyenKhi } from './huyenKhi';
 import { DEFAULT_TU_VI_SCHOOL, resolveTuViSchoolProfile } from './schoolProfiles';
+import { formatCivilDateYmd } from './timeNormalization';
 
 // ────────────────────────────────────────────────────────────────
 // Lookup Tables
@@ -910,7 +911,7 @@ export function generateChart(input: TuViInput): TuViChart {
     hoTen: input.name ?? '',
     gioiTinh: input.gender === 'nam' ? 'Nam' : 'Nữ',
     amDuongLabel: `${amDuong} ${input.gender === 'nam' ? 'Nam' : 'Nữ'}`,
-    duongLich: correctedDate.toISOString().split('T')[0],
+    duongLich: formatCivilDateYmd(correctedDate),
     noiSinh: input.birthLocation?.locationName,
     schoolLabel: schoolProfile.label,
     amLich: `${lunar.day}/${lunar.month}/${lunar.year}${lunar.isLeap ? ' (nhuận)' : ''}`,

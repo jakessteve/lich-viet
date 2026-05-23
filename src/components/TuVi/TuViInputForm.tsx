@@ -106,15 +106,16 @@ export const TuViInputForm: React.FC = () => {
     const normalizedHour = clampTimePart(hourStr, 23);
     const normalizedMinute = clampTimePart(minuteStr, 59);
     const date = new Date(y, m - 1, d, normalizedHour, normalizedMinute);
-    setHourStr(String(normalizedHour));
-    setMinuteStr(String(normalizedMinute));
-    setInput({
+    const nextInput = {
       solarDate: date,
       birthClockHour: normalizedHour,
       birthMinute: normalizedMinute,
       birthHour: getChiHourFromClockHour(normalizedHour),
-    });
-    calculateChart();
+    };
+    setHourStr(String(normalizedHour));
+    setMinuteStr(String(normalizedMinute));
+    setInput(nextInput);
+    calculateChart(nextInput);
   };
 
   useEffect(() => {

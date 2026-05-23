@@ -7,6 +7,7 @@
 import type { TuViChart, TuViCenterInfo, TuViPalace, TuViCombination, TuViMarkdownOptions } from '../../types/tuvi';
 import { PALACE_NAMES } from './constants';
 import { getStarBrightnessMarker } from './starGrouping';
+import { formatCivilDateYmd } from './timeNormalization';
 
 function escapeMarkdown(text: string): string {
   return text.replace(/\|/g, '\\|');
@@ -91,7 +92,7 @@ export function formatCombinationsAsMarkdown(combinations: TuViCombination[]): s
  */
 export function generatePromptHeader(chart: TuViChart): string {
   const name = chart.input.name ?? 'Chưa rõ';
-  const date = chart.correctedDate.toISOString().split('T')[0];
+  const date = formatCivilDateYmd(chart.correctedDate);
   const gender = chart.input.gender === 'nam' ? 'Nam' : 'Nữ';
   const menhHanh = chart.menhCucRelation.menhHanh;
   const cungName = chart.centerInfo.menhCung.replace('Mệnh cư ', '');
