@@ -24,6 +24,7 @@ import banhToData from '../data/phase_1/banh_to_bach_ky.json';
 import { getNapAmIndex, checkNapAmCompatibility, getNapAmExceptionComment } from './canchiHelper';
 import { getYearlyStars } from './yearlyEngine';
 import { getExtraStars } from './extraStars';
+import { getSwissEphemerisInstance, getSwissLunarDateIfReady } from '../services/astronomy/swissEphemeris';
 import {
   CAN,
   CHI,
@@ -65,6 +66,8 @@ const SYNODIC_MONTH = 29.530588853;
 const NEW_MOON_EPOCH = 2415021.076998695;
 const LUNAR_DATE_CACHE_LIMIT = 512;
 const lunarDateCache = new Map<string, { day: number; month: number; year: number; isLeap: boolean }>();
+const DETAIL_DATE_CACHE_LIMIT = 128;
+const detailedDayDataCache = new Map<string, DayDetailsData>();
 
 function int(value: number) {
   return Math.floor(value);
@@ -75,7 +78,12 @@ function normalizeDate(value: Date) {
 }
 
 function dateCacheKey(value: Date) {
-  return `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`;
+  return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, '0')}-${String(value.getDate()).padStart(2, '0')}`;
+}
+
+function calendarCacheKey(value: Date) {
+  const source = getSwissEphemerisInstance() ? 'swiss' : 'fallback';
+  return `${dateCacheKey(value)}:${source}`;
 }
 
 function rememberLunarDate(key: string, value: { day: number; month: number; year: number; isLeap: boolean }) {
@@ -214,10 +222,22 @@ function getKiTuoi(dayCan: Can, dayChi: Chi): string[] {
 
 export function getLunarDate(date: Date): { day: number; month: number; year: number; isLeap: boolean } {
   const normalized = normalizeDate(date);
-  const cacheKey = dateCacheKey(normalized);
+  const cacheKey = calendarCacheKey(normalized);
   const cached = lunarDateCache.get(cacheKey);
   if (cached) {
     return { ...cached };
+  }
+
+  const swissLunarDate = getSwissLunarDateIfReady(normalized);
+  if (swissLunarDate) {
+    const precise = {
+      day: swissLunarDate.day,
+      month: swissLunarDate.month,
+      year: swissLunarDate.year,
+      isLeap: swissLunarDate.isLeap,
+    };
+    rememberLunarDate(cacheKey, precise);
+    return precise;
   }
 
   const dd = normalized.getDate();
@@ -607,24 +627,29 @@ export function collectStarLists(
 // ── Main Orchestrator ─────────────────────────────────────────
 
 export function getDetailedDayData(date: Date): DayDetailsData {
+  const normalized = normalizeDate(date);
+  const detailKey = calendarCacheKey(normalized);
+  const cached = detailedDayDataCache.get(detailKey);
+  if (cached) return cached;
+
   // 1. Parse core identifiers
-  const lunar = getLunarDate(date);
-  const yearCanChi = parseCanChi(getCanChiYear(date.getFullYear()));
+  const lunar = getLunarDate(normalized);
+  const yearCanChi = parseCanChi(getCanChiYear(normalized.getFullYear()));
   const monthCanChi = parseCanChi(getCanChiMonth(lunar.month, lunar.year));
-  const dayCanChi = parseCanChi(getCanChiDay(date));
+  const dayCanChi = parseCanChi(getCanChiDay(normalized));
 
   // 2. Foundational Layer
-  const foundational = calculateFoundationalLayer(date, lunar, dayCanChi, getCanChiMonth, getCanChiYear);
+  const foundational = calculateFoundationalLayer(normalized, lunar, dayCanChi, getCanChiMonth, getCanChiYear);
 
   // 3. Moon Phase (Tháng đủ/thiếu)
-  const tempDate = new Date(date);
+  const tempDate = new Date(normalized);
   tempDate.setDate(tempDate.getDate() + (30 - lunar.day));
   const tempLunar = getLunarDate(tempDate);
   const isDu = tempLunar.day === 30;
   const thangAmThieuDu = `Tháng ${lunar.month} ${isDu ? 'đủ' : 'thiếu'} kiên ${monthCanChi.can} ${monthCanChi.chi}`;
 
   // 4. Modifying Layer + Extra Stars integration
-  const modifying = calculateModifyingLayer(date, lunar, dayCanChi, foundational.solarMonth);
+  const modifying = calculateModifyingLayer(normalized, lunar, dayCanChi, foundational.solarMonth);
   const extra = getExtraStars(
     lunar.month,
     lunar.day,
@@ -661,21 +686,21 @@ export function getDetailedDayData(date: Date): DayDetailsData {
   );
 
   // 8. Formatting helpers
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
+  const yyyy = normalized.getFullYear();
+  const mm = String(normalized.getMonth() + 1).padStart(2, '0');
+  const dd = String(normalized.getDate()).padStart(2, '0');
   const solarDateStr = `${yyyy}-${mm}-${dd}`;
 
-  const jd = getJDN(date.getDate(), date.getMonth() + 1, date.getFullYear());
+  const jd = getJDN(normalized.getDate(), normalized.getMonth() + 1, normalized.getFullYear());
 
   // 9. Buddhist year
-  let buddhistYear = date.getFullYear() + BUDDHIST_YEAR_OFFSET;
+  let buddhistYear = normalized.getFullYear() + BUDDHIST_YEAR_OFFSET;
   if (lunar.month < VESAK_MONTH || (lunar.month === VESAK_MONTH && lunar.day < VESAK_DAY)) {
     buddhistYear -= 1;
   }
 
   // 10. Tiết Khí detail
-  const currentStart = findSolarTermStart(date);
+  const currentStart = findSolarTermStart(normalized);
   const prevTempDate = new Date(currentStart.date);
   prevTempDate.setDate(prevTempDate.getDate() - 1);
   const prevStart = findSolarTermStart(prevTempDate);
@@ -689,9 +714,9 @@ export function getDetailedDayData(date: Date): DayDetailsData {
   const starLists = collectStarLists(foundational.thanSat, modifying.stars, modifying.trucDetail, modifying.tuDetail);
 
   // 13. Assemble result
-  return {
+  const result: DayDetailsData = {
     solarDate: solarDateStr,
-    dayOfWeek: getDayOfWeekName(date),
+    dayOfWeek: getDayOfWeekName(normalized),
     lunarDate: {
       day: lunar.day,
       month: lunar.month,
@@ -715,9 +740,9 @@ export function getDetailedDayData(date: Date): DayDetailsData {
     truc: `${modifying.trucDetail.name} (${modifying.trucDetail.description})`,
     tu: `${modifying.tuDetail.name} (${modifying.tuDetail.description})`,
     year: `${yearCanChi.can} ${yearCanChi.chi} (${NAP_AM_MAPPING[`${yearCanChi.can} ${yearCanChi.chi}`] || ''})`,
-    allHours: getAllHours(date),
-    auspiciousHours: getAuspiciousHours(date),
-    inauspiciousHours: getInauspiciousHours(date),
+    allHours: getAllHours(normalized),
+    auspiciousHours: getAuspiciousHours(normalized),
+    inauspiciousHours: getInauspiciousHours(normalized),
     goodStars: starLists.goodStars,
     badStars: starLists.badStars,
     dayGrade,
@@ -753,4 +778,11 @@ export function getDetailedDayData(date: Date): DayDetailsData {
       return 'Bình hòa với ngũ hành của năm';
     })(),
   };
+
+  if (detailedDayDataCache.size >= DETAIL_DATE_CACHE_LIMIT) {
+    const oldestKey = detailedDayDataCache.keys().next().value;
+    if (oldestKey) detailedDayDataCache.delete(oldestKey);
+  }
+  detailedDayDataCache.set(detailKey, result);
+  return result;
 }

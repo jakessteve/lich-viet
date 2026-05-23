@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useTuViStore } from '../../stores/tuviStore';
 import { formatTuViChartAsMarkdown } from '../../services/tuvi/markdownFormatter';
-import { buildTuViImageFilename, downloadTuViChartAsImage } from '../../services/tuvi/chartImageExport';
 
 export const TuViMarkdownExport: React.FC = () => {
   const { chart } = useTuViStore();
@@ -34,6 +33,7 @@ export const TuViMarkdownExport: React.FC = () => {
   const handleDownloadImage = async () => {
     try {
       setIsDownloadingImage(true);
+      const { buildTuViImageFilename, downloadTuViChartAsImage } = await import('../../services/tuvi/chartImageExport');
       await downloadTuViChartAsImage('[data-tuvi-chart-export]', buildTuViImageFilename(chart.input.name));
     } catch (error) {
       console.error('Failed to export Tử Vi chart as image:', error);
@@ -44,7 +44,7 @@ export const TuViMarkdownExport: React.FC = () => {
   };
 
   const btnBase =
-    'flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 btn-interact';
+    'surface-control flex min-h-11 items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 btn-interact';
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -52,7 +52,7 @@ export const TuViMarkdownExport: React.FC = () => {
         type="button"
         onClick={handleDownloadImage}
         disabled={isDownloadingImage}
-        className={`${btnBase} bg-white/10 dark:bg-white/5 text-text-primary-light dark:text-text-primary-dark hover:bg-white/20 dark:hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60`}
+        className={`${btnBase} hover:bg-surface-container-lowest dark:hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60`}
         aria-busy={isDownloadingImage}
       >
         <span className="material-icons-round text-sm">{isDownloadingImage ? 'hourglass_top' : 'image'}</span>
@@ -65,7 +65,7 @@ export const TuViMarkdownExport: React.FC = () => {
         className={`${btnBase} ${
           copied
             ? 'bg-green-500/20 text-green-600 dark:text-green-400'
-            : 'bg-white/10 dark:bg-white/5 text-text-primary-light dark:text-text-primary-dark hover:bg-white/20 dark:hover:bg-white/10'
+            : 'hover:bg-surface-container-lowest dark:hover:bg-white/10'
         }`}
       >
         <span className="material-icons-round text-sm">{copied ? 'check' : 'content_copy'}</span>
@@ -75,7 +75,7 @@ export const TuViMarkdownExport: React.FC = () => {
       <button
         type="button"
         onClick={handleDownload}
-        className={`${btnBase} bg-white/10 dark:bg-white/5 text-text-primary-light dark:text-text-primary-dark hover:bg-white/20 dark:hover:bg-white/10`}
+        className={`${btnBase} hover:bg-surface-container-lowest dark:hover:bg-white/10`}
       >
         <span className="material-icons-round text-sm">download</span>
         Tải .md

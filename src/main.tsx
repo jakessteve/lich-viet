@@ -7,10 +7,12 @@ import './index.css';
 
 import { analytics } from '@/services/analyticsService';
 import { initWebVitals } from '@/utils/webVitals';
+import { scheduleSwissEphemerisInit } from '@/services/astronomy/swissEphemeris';
 
 // Initialize services
 analytics.init();
 initWebVitals();
+scheduleSwissEphemerisInit();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

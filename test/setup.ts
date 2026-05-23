@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-// Mock localStorage for featureFlags and appStore tests
+// Mock localStorage for appStore and local persistence tests
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
   return {

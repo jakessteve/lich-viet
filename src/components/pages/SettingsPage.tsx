@@ -1,8 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../stores/appStore';
 import { useAuthStore } from '../../stores/authStore';
+import { TuViLocationPicker } from '../TuVi/TuViLocationPicker';
+import { IconButton } from '../shared';
+import type { TuViBirthLocation } from '../../types/tuvi';
 
 // ══════════════════════════════════════════════════════════
 // Toggle Switch — Modern pill toggle
@@ -130,15 +133,18 @@ export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState('appearance');
 
   // Sections definition — removed: astrology, security, promo, subscription
-  const SECTIONS = [
-    { id: 'appearance', icon: 'palette', label: 'Giao diện' },
-    { id: 'language', icon: 'translate', label: 'Ngôn ngữ' },
-    { id: 'calendar', icon: 'calendar_month', label: 'Âm Lịch' },
-    { id: 'notifications', icon: 'notifications', label: 'Thông báo' },
-    { id: 'data', icon: 'security', label: 'Dữ liệu' },
-    ...(isAuthenticated ? [{ id: 'profile', icon: 'manage_accounts', label: 'Hồ Sơ' }] : []),
-    { id: 'account', icon: 'person', label: 'Tài khoản' },
-  ];
+  const SECTIONS = useMemo(
+    () => [
+      { id: 'appearance', icon: 'palette', label: 'Giao diện' },
+      { id: 'language', icon: 'translate', label: 'Ngôn ngữ' },
+      { id: 'calendar', icon: 'calendar_month', label: 'Âm Lịch' },
+      { id: 'notifications', icon: 'notifications', label: 'Thông báo' },
+      { id: 'data', icon: 'security', label: 'Dữ liệu' },
+      ...(isAuthenticated ? [{ id: 'profile', icon: 'manage_accounts', label: 'Hồ Sơ' }] : []),
+      { id: 'account', icon: 'person', label: 'Tài khoản' },
+    ],
+    [isAuthenticated],
+  );
 
   // Profile editing state
   const [profileMode, setProfileMode] = useState<'view' | 'edit' | 'password'>('view');
@@ -148,6 +154,7 @@ export default function SettingsPage() {
   const [editYear, setEditYear] = useState('');
   const [editBirthHour, setEditBirthHour] = useState('');
   const [editBirthMinute, setEditBirthMinute] = useState('');
+  const [editBirthLocation, setEditBirthLocation] = useState<TuViBirthLocation | undefined>(undefined);
   const [editAvatar, setEditAvatar] = useState('');
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileMsg, setProfileMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
@@ -179,6 +186,16 @@ export default function SettingsPage() {
 
     setEditBirthHour(user?.profile?.birthHour !== undefined ? String(user.profile.birthHour) : '');
     setEditBirthMinute(user?.profile?.birthMinute !== undefined ? String(user.profile.birthMinute) : '');
+    setEditBirthLocation(
+      user?.extendedProfile?.birthLocation
+        ? {
+            locationName: user.extendedProfile.birthLocation.city,
+            lat: user.extendedProfile.birthLocation.lat,
+            lng: user.extendedProfile.birthLocation.lng,
+            timezone: Math.max(-12, Math.min(14, Math.round(user.extendedProfile.birthLocation.lng / 15))),
+          }
+        : undefined,
+    );
 
     setEditAvatar(user?.avatarUrl ?? '');
     setProfileMsg(null);
@@ -205,6 +222,13 @@ export default function SettingsPage() {
       avatarUrl: editAvatar || undefined,
       birthHour: editBirthHour === '' ? null : Number(editBirthHour),
       birthMinute: editBirthMinute === '' ? null : Number(editBirthMinute),
+      birthLocation: editBirthLocation
+        ? {
+            city: editBirthLocation.locationName,
+            lat: editBirthLocation.lat,
+            lng: editBirthLocation.lng,
+          }
+        : undefined,
     });
     setProfileSaving(false);
     if (result.success) {
@@ -277,13 +301,12 @@ export default function SettingsPage() {
     <div className="mx-auto max-w-5xl animate-fade-in-up">
       {/* Page Header */}
       <div className="flex items-center gap-3 mb-5">
-        <button
+        <IconButton
           onClick={() => navigate(-1)}
-          className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/60 transition-colors"
-          aria-label="Quay lại"
-        >
-          <span className="material-icons-round text-xl">arrow_back</span>
-        </button>
+          className="rounded-xl"
+          icon="arrow_back"
+          label="Quay lại"
+        />
         <div>
           <h1 className="text-xl font-bold tracking-tight">Cài đặt</h1>
           <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark">Tùy chỉnh trải nghiệm</p>
@@ -291,12 +314,13 @@ export default function SettingsPage() {
       </div>
       {/* Mobile: horizontal tab strip */}
       <div className="md:hidden mb-4">
-        <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-hide">
+        <div className="relative">
+          <div className="flex items-center gap-1 overflow-x-auto pb-1 pr-10 scrollbar-hide snap-x snap-mandatory">
           {SECTIONS.map((s) => (
             <button
               key={s.id}
               onClick={() => setActiveSection(s.id)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+              className={`flex shrink-0 snap-start items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 ${
                 activeSection === s.id
                   ? 'bg-gradient-to-r from-gold/15 to-amber-500/10 dark:from-gold-dark/12 dark:to-amber-400/8 text-gold dark:text-gold-dark shadow-sm'
                   : 'text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-white/5'
@@ -306,6 +330,15 @@ export default function SettingsPage() {
               <span>{s.label}</span>
             </button>
           ))}
+          </div>
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 flex items-center justify-end pr-1 pl-6 bg-gradient-to-l from-surface-light via-surface-light/90 to-transparent dark:from-surface-dark dark:via-surface-dark/90"
+            aria-hidden="true"
+          >
+            <span className="material-icons-round text-base text-text-secondary-light/70 dark:text-text-secondary-dark/70">
+              chevron_right
+            </span>
+          </div>
         </div>
       </div>
       {/* Desktop: 2-column layout */}
@@ -652,6 +685,11 @@ export default function SettingsPage() {
                               ` · ${String(user.profile.birthHour).padStart(2, '0')}:${user.profile?.birthMinute !== undefined ? String(user.profile.birthMinute).padStart(2, '0') : '00'}`}
                           </p>
                         )}
+                        {user.extendedProfile?.birthLocation && (
+                          <p className="text-xs text-text-secondary-light/60 dark:text-text-secondary-dark/60 mt-0.5">
+                            📍 Nơi sinh: {user.extendedProfile.birthLocation.city}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <div className="flex flex-col gap-1.5 shrink-0">
@@ -795,6 +833,13 @@ export default function SettingsPage() {
                           ))}
                         </select>
                       </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1">
+                        Nơi sinh
+                      </label>
+                      <TuViLocationPicker value={editBirthLocation} onChange={setEditBirthLocation} />
                     </div>
 
                     {profileMsg && (

@@ -935,6 +935,7 @@ export function generateChart(input: TuViInput): TuViChart {
     input: {
       ...input,
       school: schoolProfile.id,
+      timePolicy: schoolProfile.timePolicy,
     },
     engineMeta: {
       version: input.engineVersion ?? 'legacy-v3',

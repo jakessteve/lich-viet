@@ -20,6 +20,37 @@ import { FEATURES, getMoonPhaseName, useCountUp, useInView } from './LandingPage
 import MoonPhaseSVG from './LandingPage/MoonPhaseSVG';
 import HeroAuspiciousArt from './LandingPage/HeroAuspiciousArt';
 import MysticBackgroundPattern from './LandingPage/MysticBackgroundPattern';
+import { ActionButton, IconButton } from '../shared';
+
+const HERO_BENEFITS = [
+  { icon: 'devices', text: 'Không cần cài đặt' },
+  { icon: 'wifi_off', text: 'Hoạt động offline' },
+  { icon: 'shield', text: 'Bảo mật ưu tiên' },
+] as const;
+
+const TRUST_VALUES = [
+  {
+    icon: 'verified',
+    title: 'Chuẩn học thuật',
+    desc: 'Thuật toán được đối chiếu với các tài liệu cổ học uy tín — đảm bảo chính xác từng con số.',
+    accent: 'from-blue-400/25 to-blue-600/10',
+    iconColor: 'text-blue-500 dark:text-blue-400',
+  },
+  {
+    icon: 'block',
+    title: 'Tôn trọng trải nghiệm',
+    desc: 'Không popup, không banner, không theo dõi. Trải nghiệm sạch sẽ như ứng dụng bạn xứng đáng.',
+    accent: 'from-emerald-400/25 to-emerald-600/10',
+    iconColor: 'text-emerald-500 dark:text-emerald-400',
+  },
+  {
+    icon: 'lock',
+    title: 'Dữ liệu không rời thiết bị',
+    desc: 'Ngày sinh, lá số, kết quả — tất cả chỉ nằm trên trình duyệt. Không gửi đến máy chủ nào.',
+    accent: 'from-purple-400/25 to-purple-600/10',
+    iconColor: 'text-purple-500 dark:text-purple-400',
+  },
+] as const;
 
 // ══════════════════════════════════════════════════════════
 // Landing Page — Revamped with interactive hero, social proof,
@@ -78,6 +109,35 @@ export default function LandingPage() {
   const lookupCount = useCountUp(12480, 1800, statsSection.inView);
   const dataCount = useCountUp(85000, 2000, statsSection.inView);
   const toolsCount = useCountUp(4, 1200, statsSection.inView);
+  const stats = useMemo(
+    () => [
+      {
+        value: lookupCount.toLocaleString('vi-VN'),
+        suffix: '+',
+        label: 'Lượt tra cứu',
+        icon: 'search',
+        iconTint: 'text-blue-500/60 dark:text-blue-400/50',
+        accentColor: 'text-blue-500 dark:text-blue-400',
+      },
+      {
+        value: dataCount.toLocaleString('vi-VN'),
+        suffix: '+',
+        label: 'Dữ liệu thiên văn',
+        icon: 'database',
+        iconTint: 'text-teal-500/60 dark:text-teal-400/50',
+        accentColor: 'text-teal-500 dark:text-teal-400',
+      },
+      {
+        value: toolsCount.toLocaleString('vi-VN'),
+        suffix: ' công cụ',
+        label: 'Đang hoạt động',
+        icon: 'auto_awesome',
+        iconTint: 'text-purple-500/60 dark:text-purple-400/50',
+        accentColor: 'text-purple-500 dark:text-purple-400',
+      },
+    ],
+    [dataCount, lookupCount, toolsCount],
+  );
   const qualityLabel = isGoodDay ? 'Ngày Hoàng Đạo' : today.quality === 'Bad' ? 'Ngày Hắc Đạo' : 'Ngày Bình Thường';
   const qualityIcon = isGoodDay ? 'verified' : today.quality === 'Bad' ? 'dangerous' : 'info';
   const qualityColor = isGoodDay
@@ -133,20 +193,19 @@ export default function LandingPage() {
             LỊCH VIỆT
           </h1>
           <div className="flex items-center gap-2">
-            <button
+            <IconButton
               onClick={toggleDark}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/8 text-gray-400 dark:text-gray-500 transition-colors"
-              aria-label="Chuyển chế độ sáng/tối"
-            >
-              <span className="material-icons-round text-lg">{isDark ? 'light_mode' : 'dark_mode'}</span>
-            </button>
-            <button
+              className="rounded-full text-gray-400 dark:text-gray-500"
+              icon={isDark ? 'light_mode' : 'dark_mode'}
+              label="Chuyển chế độ sáng/tối"
+            />
+            <ActionButton
               onClick={() => navigate('/app/am-lich')}
-              className="hidden sm:flex items-center gap-1.5 px-5 py-2 rounded-full bg-gradient-to-r from-mystery-deep to-indigo-950 text-gold-light dark:from-gold dark:to-amber-500 dark:text-indigo-950 font-semibold text-sm hover:shadow-xl hover:shadow-mystery-deep/20 dark:hover:shadow-gold-dark/20 transition-all duration-300 hover:-translate-y-0.5 ring-1 ring-gold/20 dark:ring-0"
+              className="hidden rounded-full px-5 py-2 sm:flex"
+              icon="arrow_forward"
             >
-              Mở ứng dụng
-              <span className="material-icons-round text-sm">arrow_forward</span>
-            </button>
+              Trải nghiệm ngay
+            </ActionButton>
           </div>
         </div>
       </nav>
@@ -162,7 +221,7 @@ export default function LandingPage() {
         </div>
 
         {/* Auspicious Art Background (Scaled to 90% of original massive size) */}
-        <div className="absolute top-0 right-[-20%] md:right-[-10%] lg:right-[0%] w-[720px] lg:w-[900px] h-[720px] lg:h-[900px] opacity-[0.6] lg:opacity-[0.8] dark:opacity-[0.7] pointer-events-none z-[1]">
+        <div className="absolute top-6 right-[-55%] h-[520px] w-[520px] opacity-[0.22] dark:opacity-[0.24] pointer-events-none z-[1] sm:top-0 sm:right-[-20%] sm:h-[720px] sm:w-[720px] sm:opacity-[0.6] md:right-[-10%] lg:right-[0%] lg:h-[900px] lg:w-[900px] lg:opacity-[0.8] lg:dark:opacity-[0.7]">
           <HeroAuspiciousArt />
         </div>
 
@@ -199,14 +258,10 @@ export default function LandingPage() {
 
             {/* Benefit pills */}
             <div className="flex items-center justify-start gap-2.5 mb-8 flex-wrap animate-fade-in-up animate-delay-2">
-              {[
-                { icon: 'devices', text: 'Không cần cài đặt' },
-                { icon: 'wifi_off', text: 'Hoạt động offline' },
-                { icon: 'shield', text: 'Bảo mật ưu tiên' },
-              ].map((t) => (
+              {HERO_BENEFITS.map((t) => (
                 <span
                   key={t.text}
-                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-low dark:bg-white/5 text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark backdrop-blur-sm"
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-low dark:bg-surface-elevated-dark/60 text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark backdrop-blur-sm"
                 >
                   <span className="material-icons-round text-xs text-gold dark:text-gold-dark">{t.icon}</span>
                   {t.text}
@@ -216,22 +271,21 @@ export default function LandingPage() {
 
             {/* CTA buttons */}
             <div className="flex items-center justify-start gap-4 animate-fade-in-up animate-delay-3">
-              <button
+              <ActionButton
                 onClick={() => navigate('/app/am-lich')}
-                className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-mystery-deep to-indigo-950 text-gold-light dark:from-gold dark:to-amber-500 dark:text-indigo-950 font-bold transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-mystery-deep/20 dark:hover:shadow-gold-dark/30 ring-1 ring-gold/20 dark:ring-0"
+                className="px-8 py-3.5"
+                icon="arrow_forward"
               >
                 Trải nghiệm ngay
-                <span className="material-icons-round text-lg group-hover:translate-x-0.5 transition-transform">
-                  arrow_forward
-                </span>
-              </button>
-              <button
+              </ActionButton>
+              <ActionButton
                 onClick={() => navigate('/app/nang-cap')}
-                className="inline-flex items-center gap-1.5 px-5 py-3 rounded-2xl text-text-secondary-light/60 dark:text-text-secondary-dark/60 text-sm font-medium hover:text-text-primary-light dark:hover:text-white transition-all duration-300 hover:scale-105 active:scale-95"
+                variant="secondary"
+                className="px-5 py-3 font-medium"
               >
                 <span className="material-icons-round text-sm">workspace_premium</span>
                 Xem các gói
-              </button>
+              </ActionButton>
             </div>
           </div>
 
@@ -336,32 +390,7 @@ export default function LandingPage() {
       <section id="stats-section" ref={statsSection.ref} className="py-10 px-5 relative z-10">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              {
-                value: lookupCount.toLocaleString('vi-VN'),
-                suffix: '+',
-                label: 'Lượt tra cứu',
-                icon: 'search',
-                iconTint: 'text-blue-500/60 dark:text-blue-400/50',
-                accentColor: 'text-blue-500 dark:text-blue-400',
-              },
-              {
-                value: dataCount.toLocaleString('vi-VN'),
-                suffix: '+',
-                label: 'Dữ liệu thiên văn',
-                icon: 'database',
-                iconTint: 'text-teal-500/60 dark:text-teal-400/50',
-                accentColor: 'text-teal-500 dark:text-teal-400',
-              },
-              {
-                value: toolsCount.toLocaleString('vi-VN'),
-                suffix: ' công cụ',
-                label: 'Đang hoạt động',
-                icon: 'auto_awesome',
-                iconTint: 'text-purple-500/60 dark:text-purple-400/50',
-                accentColor: 'text-purple-500 dark:text-purple-400',
-              },
-            ].map((s) => (
+            {stats.map((s) => (
               <div key={s.label} className="text-center py-6 px-4 glass-card glass-noise">
                 <span className={`material-icons-round text-lg ${s.iconTint} mb-1.5 block`}>{s.icon}</span>
                 <p className="text-2xl sm:text-3xl font-bold tabular-nums">
@@ -411,7 +440,7 @@ export default function LandingPage() {
                 <button
                   key={f.id}
                   onClick={() => navigate(`/app/${f.id}`)}
-                  className="group relative w-full h-full flex flex-col justify-start items-start text-left p-6 rounded-2xl bg-surface-container-lowest dark:bg-surface-dark hover:bg-surface-bright transition-colors duration-500"
+                  className="surface-interactive group relative w-full h-full flex flex-col justify-start items-start text-left p-6 bg-surface-container-lowest dark:bg-surface-dark hover:bg-surface-bright transition-colors duration-500"
                 >
                   <div
                     className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${f.glowColor} dark:opacity-100 opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none`}
@@ -452,7 +481,7 @@ export default function LandingPage() {
       {/* ════════════════════════════════════════════════════════
            §6 WHY LỊCH VIỆT — Emotional trust section
          ════════════════════════════════════════════════════════ */}
-      <section className="py-14 sm:py-16 px-5 relative z-10 bg-surface-subtle-light dark:bg-[#0c0b20] overflow-hidden">
+      <section className="py-14 sm:py-16 px-5 relative z-10 bg-surface-subtle-light dark:bg-background-dark overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-40 dark:opacity-60 pointer-events-none z-0">
           <MysticBackgroundPattern variant="dipper" />
@@ -466,32 +495,10 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              {
-                icon: 'verified',
-                title: 'Chuẩn học thuật',
-                desc: 'Thuật toán được đối chiếu với các tài liệu cổ học uy tín — đảm bảo chính xác từng con số.',
-                accent: 'from-blue-400/25 to-blue-600/10',
-                iconColor: 'text-blue-500 dark:text-blue-400',
-              },
-              {
-                icon: 'block',
-                title: 'Tôn trọng trải nghiệm',
-                desc: 'Không popup, không banner, không theo dõi. Trải nghiệm sạch sẽ như ứng dụng bạn xứng đáng.',
-                accent: 'from-emerald-400/25 to-emerald-600/10',
-                iconColor: 'text-emerald-500 dark:text-emerald-400',
-              },
-              {
-                icon: 'lock',
-                title: 'Dữ liệu không rời thiết bị',
-                desc: 'Ngày sinh, lá số, kết quả — tất cả chỉ nằm trên trình duyệt. Không gửi đến máy chủ nào.',
-                accent: 'from-purple-400/25 to-purple-600/10',
-                iconColor: 'text-purple-500 dark:text-purple-400',
-              },
-            ].map((v) => (
+            {TRUST_VALUES.map((v) => (
               <div
                 key={v.title}
-                className="group p-6 rounded-2xl bg-surface-container-lowest dark:bg-surface-dark hover:bg-surface-bright transition-colors duration-500"
+                className="surface-interactive group p-6 bg-surface-container-lowest dark:bg-surface-dark hover:bg-surface-bright transition-colors duration-500"
               >
                 <div
                   className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${v.accent} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500`}
@@ -521,15 +528,13 @@ export default function LandingPage() {
             <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark max-w-md mx-auto mb-8">
               Các tiện ích nâng cao đang được phát triển. Hãy dùng thử các công cụ cơ bản ngay hôm nay.
             </p>
-            <button
+            <ActionButton
               onClick={() => navigate('/app/am-lich')}
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-mystery-deep to-indigo-950 text-gold-light dark:from-gold dark:to-amber-500 dark:text-indigo-950 font-bold transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-mystery-deep/20 dark:hover:shadow-gold-dark/30 ring-1 ring-gold/20 dark:ring-0"
+              className="px-8 py-3.5"
+              icon="arrow_forward"
             >
               Khám phá ngay
-              <span className="material-icons-round text-lg group-hover:translate-x-0.5 transition-transform">
-                arrow_forward
-              </span>
-            </button>
+            </ActionButton>
           </div>
         </div>
       </section>
@@ -539,7 +544,7 @@ export default function LandingPage() {
          ════════════════════════════════════════════════════════ */}
       <section className="py-14 sm:py-20 px-5 relative z-10">
         <div className="max-w-xl mx-auto text-center">
-          <div className="bg-surface-container-lowest dark:bg-surface-dark rounded-3xl p-10 sm:p-12 relative overflow-hidden">
+          <div className="surface-card rounded-3xl p-10 sm:p-12 relative overflow-hidden">
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-radial from-mystery-purple/8 dark:from-mystery-purple/12 to-transparent rounded-full blur-2xl pointer-events-none" />
             <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-radial from-gold/6 dark:from-gold/10 to-transparent rounded-full blur-2xl pointer-events-none" />
             <div className="relative">
@@ -561,22 +566,20 @@ export default function LandingPage() {
                   Hoạt động trên mọi thiết bị — desktop, tablet và điện thoại.
                 </p>
               )}
-              <button
+              <ActionButton
                 onClick={() => navigate('/app/am-lich')}
-                className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-mystery-deep to-indigo-950 text-gold-light dark:from-gold dark:to-amber-500 dark:text-indigo-950 font-bold transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-mystery-deep/20 dark:hover:shadow-gold-dark/30 ring-1 ring-gold/20 dark:ring-0"
+                className="px-8 py-3.5"
+                icon="arrow_forward"
               >
                 Mở Lịch Việt
-                <span className="material-icons-round text-lg group-hover:translate-x-0.5 transition-transform">
-                  arrow_forward
-                </span>
-              </button>
+              </ActionButton>
             </div>
           </div>
         </div>
       </section>
 
       {/* ──── §9 FOOTER — Multi-column SEO-rich ──── */}
-      <footer className="border-t border-border-light/40 dark:border-mystery-purple/10 relative z-10 bg-surface-subtle-light dark:bg-[#080818]">
+      <footer className="border-t border-border-light/40 dark:border-mystery-purple/10 relative z-10 bg-surface-subtle-light dark:bg-mystery-deep">
         <div className="max-w-5xl mx-auto px-5 py-10">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-8">
             {/* Brand */}

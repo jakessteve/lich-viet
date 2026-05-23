@@ -7,10 +7,12 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { DayDetailsData } from '../../types/calendar';
 import type { Chi } from '../../types/calendar';
+import { useAuthStore } from '../../stores/authStore';
 import { scoreActivity, ActivityScoreResult } from '@lich-viet/core/dungsu';
 import { getActivityById, mapDungSuToActivityIds } from '@lich-viet/core/dungsu';
 import CollapsibleCard from '../CollapsibleCard';
 import ActivityPicker from './ActivityPicker';
+import { getUserBirthProfile } from '@/utils/userBirthProfile';
 
 import GroupedBreakdown from './GroupedBreakdown';
 import BestTimesPanel from './BestTimesPanel';
@@ -43,9 +45,13 @@ function yearToChi(year: number): Chi {
 }
 
 const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDate }) => {
+  const { user } = useAuthStore();
+  const userBirthProfile = useMemo(() => getUserBirthProfile(user), [user]);
   const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
   const [selectedHour, setSelectedHour] = useState<Chi | null>(null);
-  const [birthYear, setBirthYear] = useState<string>('');
+  const [birthYear, setBirthYear] = useState<string>(() =>
+    userBirthProfile?.birthYear ? String(userBirthProfile.birthYear) : '',
+  );
   const [selectedIntent, setSelectedIntent] = useState<FAQIntent | null>(null);
 
   // Active tab state
@@ -66,6 +72,12 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
     setInputMonth((selectedDate.getMonth() + 1).toString());
     setInputYear(selectedDate.getFullYear().toString());
   }, [selectedDate]);
+
+  useEffect(() => {
+    if (!birthYear && userBirthProfile?.birthYear) {
+      setBirthYear(String(userBirthProfile.birthYear));
+    }
+  }, [birthYear, userBirthProfile]);
 
   // Compute birth year Chi for Kị Tuổi scoring
   const birthYearChi = useMemo(() => {

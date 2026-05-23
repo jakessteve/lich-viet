@@ -27,6 +27,8 @@ const DEFAULT_FLAGS = CalculationFlag.MoshierEphemeris | CalculationFlag.Speed;
 const BOUNDARY_WARNING_SECONDS = 300;
 
 let swissEphemerisPromise: Promise<BrowserSwissEphemeris> | null = null;
+let swissEphemerisInstance: BrowserSwissEphemeris | null = null;
+let scheduledInit = false;
 
 function normalizeDegrees(value: number): number {
   return ((value % 360) + 360) % 360;
@@ -113,16 +115,40 @@ export async function initSwissEphemeris(wasmPath = DEFAULT_WASM_PATH): Promise<
     swissEphemerisPromise = import('@swisseph/browser').then(async ({ SwissEphemeris }) => {
       const swe = new SwissEphemeris();
       await swe.init(wasmPath);
+      swissEphemerisInstance = swe;
       return swe;
     });
   }
   return swissEphemerisPromise;
 }
 
+export function scheduleSwissEphemerisInit(): void {
+  if (scheduledInit || swissEphemerisPromise) return;
+  scheduledInit = true;
+
+  const start = () => {
+    void initSwissEphemeris().catch(() => {
+      scheduledInit = false;
+    });
+  };
+
+  if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+    window.requestIdleCallback(start, { timeout: 4000 });
+    return;
+  }
+
+  globalThis.setTimeout(start, 1200);
+}
+
 export async function closeSwissEphemeris(): Promise<void> {
   const swe = await swissEphemerisPromise;
   swe?.close();
   swissEphemerisPromise = null;
+  swissEphemerisInstance = null;
+}
+
+export function getSwissEphemerisInstance(): BrowserSwissEphemeris | null {
+  return swissEphemerisInstance;
 }
 
 export function getSwissSunLongitude(swe: SwissEphemerisInstance, julianDay: number): number {
@@ -196,6 +222,24 @@ export async function getSwissLunarDate(
   swe?: SwissEphemerisInstance,
 ): Promise<SwissLunarDate> {
   const engine = swe ?? (await initSwissEphemeris());
+  return buildSwissLunarDate(engine, date, region);
+}
+
+export function getSwissLunarDateIfReady(
+  date: Date,
+  region: 'north' | 'south' = 'south',
+  swe?: SwissEphemerisInstance,
+): SwissLunarDate | null {
+  const engine = swe ?? swissEphemerisInstance;
+  if (!engine) return null;
+  return buildSwissLunarDate(engine, date, region);
+}
+
+function buildSwissLunarDate(
+  engine: SwissEphemerisInstance,
+  date: Date,
+  region: 'north' | 'south',
+): SwissLunarDate {
   const timeZone = getVietnamUtcOffset(date, region);
   const dayNumber = jdFromDate(date.getDate(), date.getMonth() + 1, date.getFullYear());
   const k = Math.floor((dayNumber - NEW_MOON_EPOCH) / SYNODIC_MONTH);

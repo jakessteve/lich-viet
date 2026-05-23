@@ -7,9 +7,3 @@ export {
 } from './personalDayScore';
 export { getPersonalDungSu, type PersonalDungSuResult, type ScoredActivity } from './personalDungSu';
 export { calculatePersonalHourModifier, type PersonalHourModifier } from './personalHourScore';
-export {
-  getUserActivityPrefs,
-  setUserActivityPrefs,
-  toggleActivityPin,
-  type ActivityPrefs,
-} from './activityPreferences';

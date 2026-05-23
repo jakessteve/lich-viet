@@ -4,6 +4,7 @@ import { getMonthDays } from '@lich-viet/core/calendar';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useAuthStore } from '../stores/authStore';
 import { calculatePersonalDayScore } from '../services/personalization';
+import { IconButton } from './shared';
 
 interface MonthCalendarProps {
   selectedDate: Date;
@@ -42,7 +43,9 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
   }, [days, birthYear]);
 
   // Labels matching the design order (Starting from Monday/T2)
-  const visualWeekDays = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+  const visualWeekDays = useMemo(() => ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'], []);
+  const monthOptions = useMemo(() => Array.from({ length: 12 }, (_, i) => i), []);
+  const yearOptions = useMemo(() => Array.from({ length: 201 }, (_, i) => 1900 + i), []);
 
   const isMobile = useIsMobile();
   const [isExpanded, setIsExpanded] = useState(!(collapseOnMobile && isMobile));
@@ -96,14 +99,13 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
   return (
     <div className="space-y-4">
       {/* Month/Year Picker */}
-      <div className="bg-surface-light dark:bg-surface-dark rounded-xl p-2 shadow-apple border border-border-light dark:border-border-dark flex items-center justify-between w-full relative">
-        <button
+      <div className="surface-card rounded-xl p-2 flex items-center justify-between w-full relative">
+        <IconButton
           onClick={prevMonth}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light transition-colors z-10"
-          aria-label="Tháng trước"
-        >
-          <span className="material-icons-round text-xl">chevron_left</span>
-        </button>
+          className="z-10"
+          icon="chevron_left"
+          label="Tháng trước"
+        />
 
         <div className="flex-1 flex justify-center py-1.5">
           <div className="flex items-center gap-1 sm:gap-2 font-semibold text-sm sm:text-sm">
@@ -113,7 +115,7 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
               className={selectClass}
               aria-label="Chọn tháng"
             >
-              {Array.from({ length: 12 }, (_, i) => (
+              {monthOptions.map((i) => (
                 <option key={i} value={i}>
                   Tháng {i + 1}
                 </option>
@@ -126,56 +128,47 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
               className={selectClass}
               aria-label="Chọn năm"
             >
-              {Array.from({ length: 201 }, (_, i) => {
-                const year = 1900 + i;
-                return (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                );
-              })}
+              {yearOptions.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
             </select>
           </div>
         </div>
 
         <div className="flex items-center gap-1 z-10">
-          <button
+          <IconButton
             onClick={nextMonth}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light transition-colors"
-            aria-label="Tháng sau"
-          >
-            <span className="material-icons-round text-xl">chevron_right</span>
-          </button>
-          <button
+            icon="chevron_right"
+            label="Tháng sau"
+          />
+          <IconButton
             onClick={() => {
               const today = new Date();
               setCurrentDate(today);
               onSelectDate(today);
             }}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light transition-colors flex items-center justify-center"
             title="Hôm nay"
-            aria-label="Về hôm nay"
-          >
-            <span className="material-icons-round text-xl">today</span>
-          </button>
+            icon="today"
+            label="Về hôm nay"
+          />
           <div className="w-px h-4 bg-border-light dark:bg-border-dark mx-1" />
-          <button
+          <IconButton
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-text-secondary-light transition-colors"
-            aria-label={isExpanded ? 'Thu gọn lịch' : 'Mở rộng lịch'}
-          >
-            <span
-              className={`material-icons-round text-lg transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
-            >
-              expand_more
-            </span>
-          </button>
+            icon="expand_more"
+            iconClassName={isExpanded ? 'rotate-180' : undefined}
+            label={isExpanded ? 'Thu gọn lịch' : 'Mở rộng lịch'}
+          />
+          <span className="sr-only" aria-live="polite">
+            {isExpanded ? 'Lịch đang mở rộng' : 'Lịch đang thu gọn'}
+          </span>
         </div>
       </div>
 
       {/* Grid - Collapsible */}
       <div
-        className="bg-surface-light dark:bg-surface-dark rounded-2xl shadow-apple border border-border-light dark:border-border-dark p-3 transition-colors flex flex-col"
+        className="surface-card p-3 transition-colors flex flex-col"
         role="grid"
         aria-label={`Lịch tháng ${currentDate.getMonth() + 1} năm ${currentDate.getFullYear()}`}
       >
@@ -193,7 +186,7 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
 
         {isExpanded ? (
           /* Full calendar grid */
-          <div className="flex flex-col bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-800 overflow-visible">
+          <div className="flex flex-col rounded-lg border border-border-light/60 dark:border-border-dark/60 bg-surface-container-low dark:bg-surface-elevated-dark overflow-visible">
             {Array.from({ length: Math.ceil(daysWithScore.length / 7) }).map((_, rowIdx) => {
               const rowDays = daysWithScore.slice(rowIdx * 7, rowIdx * 7 + 7);
               const isFirst = rowIdx === 0;
@@ -223,7 +216,7 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
           </div>
         ) : (
           /* Collapsed: show only the row containing the selected date */
-          <div className="flex flex-col bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-800 overflow-visible">
+          <div className="flex flex-col rounded-lg border border-border-light/60 dark:border-border-dark/60 bg-surface-container-low dark:bg-surface-elevated-dark overflow-visible">
             <div className="grid grid-cols-7 gap-px w-full">
               {collapsedRowDays.map((day, colIdx) => {
                 let roundedClass = '';
@@ -261,17 +254,8 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({ selectedDate, onSelectDat
             Cát theo tuổi
           </span>
           <span className="flex items-center gap-1">
-            <span className="inline-block w-1.5 h-1.5 bg-orange-500 rotate-45 shrink-0" />
+            <span className="inline-block w-1.5 h-1.5 bg-amber-500 dark:bg-amber-400 rotate-45 ring-1 ring-amber-700/25 dark:ring-amber-200/20 shrink-0" />
             Hung theo tuổi
-          </span>
-          {/* Today & Weekend */}
-          <span className="flex items-center gap-1">
-            <span className="inline-block w-3 h-2 rounded-sm bg-amber-100 dark:bg-amber-900/40 border border-amber-300/60 dark:border-amber-700/40 shrink-0" />
-            Hôm nay
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="text-calendar-weekend font-bold text-xs shrink-0">T7</span>
-            Cuối tuần
           </span>
         </div>
       </div>

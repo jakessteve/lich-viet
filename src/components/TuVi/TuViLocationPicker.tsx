@@ -143,7 +143,7 @@ export const TuViLocationPicker: React.FC<TuViLocationPickerProps> = ({ value, o
             className={`rounded-xl border px-3 py-2 text-xs font-semibold transition-all ${
               selectedQuickIndex === index
                 ? 'border-gold-light bg-gold/10 text-gold dark:border-gold dark:bg-gold/20 dark:text-gold-light'
-                : 'border-border-light bg-gray-100 text-text-secondary-light hover:bg-gray-200 dark:border-border-dark dark:bg-white/5 dark:text-text-secondary-dark dark:hover:bg-white/10'
+                : 'surface-control text-text-secondary-light hover:bg-surface-container-lowest dark:text-text-secondary-dark dark:hover:bg-white/10'
             }`}
           >
             {location.locationName.replace(', Việt Nam', '')}
@@ -161,13 +161,13 @@ export const TuViLocationPicker: React.FC<TuViLocationPickerProps> = ({ value, o
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Tìm tỉnh/thành, quốc gia sinh..."
-            className="w-full rounded-xl border border-border-light bg-gray-100 py-2.5 pl-9 pr-3 text-sm text-text-primary-light transition-all placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gold/40 dark:border-border-dark dark:bg-white/10 dark:text-text-primary-dark"
+            className="surface-control w-full rounded-xl py-2.5 pl-9 pr-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gold/40"
           />
         </div>
         <button
           type="button"
           onClick={useCurrentLocation}
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border-light bg-gray-100 text-text-secondary-light transition-all hover:bg-gray-200 dark:border-border-dark dark:bg-white/5 dark:text-text-secondary-dark dark:hover:bg-white/10"
+          className="surface-control inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-text-secondary-light hover:bg-surface-container-lowest dark:text-text-secondary-dark dark:hover:bg-white/10"
           title="Dùng vị trí hiện tại"
           aria-label="Dùng vị trí hiện tại"
         >
@@ -189,7 +189,7 @@ export const TuViLocationPicker: React.FC<TuViLocationPickerProps> = ({ value, o
       )}
 
       {(isSearching || error || results.length > 0) && (
-        <div className="rounded-xl border border-border-light bg-gray-50 p-2 dark:border-border-dark dark:bg-white/5">
+        <div className="surface-panel p-2">
           {isSearching && (
             <div className="flex items-center gap-2 px-2 py-1.5 text-xs text-text-secondary-light dark:text-text-secondary-dark">
               <span className="material-icons-round text-sm animate-spin">progress_activity</span>

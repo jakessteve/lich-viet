@@ -57,13 +57,17 @@ const DayCellInner: React.FC<DayCellProps> = ({ data, isSelected, onClick, round
       className={`
         aspect-square min-h-[2.75rem] sm:min-h-[3rem] flex flex-col items-center justify-center transition-colors duration-150 cursor-pointer relative group
         active:scale-95
-        ${isToday ? 'bg-amber-50/60 dark:bg-amber-900/20 day-cell-today' : 'bg-surface-light dark:bg-surface-dark'}
+        ${
+          isToday
+            ? `bg-amber-50/70 dark:bg-amber-900/20 day-cell-today ${isSelected ? 'day-cell-today-selected' : ''}`
+            : 'bg-surface-light dark:bg-surface-dark'
+        }
         ${roundedClass}
         ${
           isSelected && !isToday
-            ? 'day-cell-selected bg-gray-50 dark:bg-gray-800/60'
+            ? 'day-cell-selected bg-surface-bright dark:bg-surface-elevated-dark/60'
             : !isToday
-              ? 'hover:bg-gray-50 dark:hover:bg-white/5'
+              ? 'hover:bg-surface-container-lowest dark:hover:bg-white/5'
               : ''
         }
         ${
@@ -113,7 +117,7 @@ const DayCellInner: React.FC<DayCellProps> = ({ data, isSelected, onClick, round
             /> // Square for personal good
           ) : personalScore.actionScore < 0 ? (
             <div
-              className="w-1.5 h-1.5 bg-orange-500 rotate-45"
+              className="w-1.5 h-1.5 bg-amber-500 dark:bg-amber-400 rotate-45 ring-1 ring-amber-700/25 dark:ring-amber-200/20"
               title={`Hung theo tuổi: ${personalScore.label}`}
               aria-hidden="true"
             /> // Diamond for personal bad

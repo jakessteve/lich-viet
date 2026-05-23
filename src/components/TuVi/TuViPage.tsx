@@ -1,14 +1,16 @@
 import React from 'react';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useShallow } from 'zustand/react/shallow';
 import { useTuViStore } from '../../stores/tuviStore';
 import { TuViInputForm } from './TuViInputForm';
 import { TuViChart } from './TuViChart';
 import { TuViMarkdownExport } from './TuViMarkdownExport';
+import { IconButton, SegmentedControl, type SegmentedOption } from '../shared';
 import type { TuViSchool } from '../../types/tuvi';
 import './tuviChart.css';
 
 const MONTH_LABELS = Array.from({ length: 12 }, (_, index) => index + 1);
-const SCHOOL_OPTIONS: Array<{ id: TuViSchool; label: string; icon: string }> = [
+const SCHOOL_OPTIONS: readonly SegmentedOption<TuViSchool>[] = [
   { id: 'nam-phai', label: 'Nam phái', icon: 'south' },
   { id: 'thien-luong', label: 'Thiên Lương', icon: 'auto_awesome' },
   { id: 'bac-phai', label: 'Bắc phái', icon: 'north' },
@@ -27,7 +29,20 @@ export const TuViPage: React.FC = () => {
     clearError,
     input,
     setSchool,
-  } = useTuViStore();
+  } = useTuViStore(
+    useShallow((state) => ({
+      chart: state.chart,
+      selectedPalaceIndex: state.selectedPalaceIndex,
+      selectPalace: state.selectPalace,
+      viewYear: state.viewYear,
+      viewMonth: state.viewMonth,
+      setHanView: state.setHanView,
+      error: state.error,
+      clearError: state.clearError,
+      input: state.input,
+      setSchool: state.setSchool,
+    })),
+  );
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth() + 1;
@@ -78,7 +93,7 @@ export const TuViPage: React.FC = () => {
 
       {/* Chart */}
       {chart && (
-        <div className="flex flex-wrap items-end justify-between gap-3 rounded-xl border border-border-light/40 dark:border-border-dark/40 bg-surface-subtle-light/70 dark:bg-surface-subtle-dark/70 px-4 py-3">
+        <div className="surface-panel flex flex-wrap items-end justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-2">
             <span className="material-icons-round text-base text-gold-light dark:text-gold-dark">history</span>
             <div>
@@ -90,15 +105,12 @@ export const TuViPage: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
+            <IconButton
               onClick={() => setHanView(viewYear - 1, viewMonth)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border-light/40 dark:border-border-dark/40 bg-white/80 dark:bg-surface-elevated-dark/60 text-text-secondary-light dark:text-text-secondary-dark transition-colors hover:bg-gold/10 hover:text-gold-light dark:hover:text-gold-dark"
-              aria-label="Lùi một năm"
-            >
-              <span className="material-icons-round text-base">chevron_left</span>
-            </button>
-            <label className="flex items-center gap-2 rounded-lg border border-border-light/40 dark:border-border-dark/40 bg-white/80 dark:bg-surface-elevated-dark/60 px-3 py-2 text-sm font-medium text-text-primary-light dark:text-text-primary-dark">
+              icon="chevron_left"
+              label="Lùi một năm"
+            />
+            <label className="surface-control flex min-h-11 items-center gap-2 px-3 py-2 text-sm font-medium">
               <span className="material-icons-round text-base text-gold-light dark:text-gold-dark">calendar_month</span>
               <input
                 type="number"
@@ -114,19 +126,16 @@ export const TuViPage: React.FC = () => {
                 aria-label="Năm xem hạn"
               />
             </label>
-            <button
-              type="button"
+            <IconButton
               onClick={() => setHanView(viewYear + 1, viewMonth)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border-light/40 dark:border-border-dark/40 bg-white/80 dark:bg-surface-elevated-dark/60 text-text-secondary-light dark:text-text-secondary-dark transition-colors hover:bg-gold/10 hover:text-gold-light dark:hover:text-gold-dark"
-              aria-label="Tăng một năm"
-            >
-              <span className="material-icons-round text-base">chevron_right</span>
-            </button>
+              icon="chevron_right"
+              label="Tăng một năm"
+            />
 
             <select
               value={viewMonth}
               onChange={(event) => setHanView(viewYear, Number(event.target.value))}
-              className="h-9 rounded-lg border border-border-light/40 dark:border-border-dark/40 bg-white/80 dark:bg-surface-elevated-dark/60 px-3 text-sm font-medium text-text-primary-light dark:text-text-primary-dark outline-none"
+              className="surface-control h-11 px-3 text-sm font-medium outline-none"
               aria-label="Tháng xem hạn"
             >
               {MONTH_LABELS.map((month) => (
@@ -139,7 +148,7 @@ export const TuViPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setHanView(currentYear, currentMonth)}
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border-light/40 dark:border-border-dark/40 bg-white/80 dark:bg-surface-elevated-dark/60 px-3 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark transition-colors hover:bg-gold/10 hover:text-gold-light dark:hover:text-gold-dark"
+              className="surface-control inline-flex h-11 items-center gap-1.5 px-3 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:bg-gold/10 hover:text-gold-light dark:hover:text-gold-dark"
             >
               <span className="material-icons-round text-base">today</span>
               Hôm nay
@@ -149,7 +158,7 @@ export const TuViPage: React.FC = () => {
       )}
 
       {chart && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border-light/40 dark:border-border-dark/40 bg-white/70 px-4 py-3 dark:bg-surface-elevated-dark/40">
+        <div className="surface-panel flex flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-2">
             <span className="material-icons-round text-base text-gold-light dark:text-gold-dark">account_tree</span>
             <div>
@@ -162,27 +171,13 @@ export const TuViPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid w-full grid-cols-1 gap-1 rounded-lg bg-surface-subtle-light p-1 dark:bg-white/5 sm:w-auto sm:grid-cols-3">
-            {SCHOOL_OPTIONS.map((school) => {
-              const active = (input.school ?? 'thien-luong') === school.id;
-              return (
-                <button
-                  key={school.id}
-                  type="button"
-                  onClick={() => setSchool(school.id)}
-                  className={`inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-md px-3 text-xs font-semibold transition-colors sm:w-auto ${
-                    active
-                      ? 'bg-white text-gold-light shadow-sm dark:bg-white/15 dark:text-gold-dark'
-                      : 'text-text-secondary-light hover:bg-white/70 dark:text-text-secondary-dark dark:hover:bg-white/10'
-                  }`}
-                  aria-pressed={active}
-                >
-                  <span className="material-icons-round text-sm">{school.icon}</span>
-                  {school.label}
-                </button>
-              );
-            })}
-          </div>
+          <SegmentedControl
+            options={SCHOOL_OPTIONS}
+            value={input.school ?? 'thien-luong'}
+            onChange={setSchool}
+            ariaLabel="Trường phái Tử Vi"
+            className="w-full sm:w-auto"
+          />
         </div>
       )}
 

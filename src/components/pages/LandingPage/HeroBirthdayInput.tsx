@@ -4,19 +4,30 @@
  * the Tử Vi engine, then continue into the full chart.
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { generateChart } from '@/services/tuvi';
 import { useTuViStore } from '@/stores/tuviStore';
+import { useAuthStore } from '@/stores/authStore';
 import type { TuViChart, TuViGender, TuViInput } from '@/types/tuvi';
+import { getUserBirthProfile } from '@/utils/userBirthProfile';
 
 const getChiHourFromClockHour = (hour: number) => (hour === 23 ? 0 : Math.floor((hour + 1) / 2) % 12);
 const clampTimePart = (value: string, max: number) => {
   if (value.trim() === '') return 0;
   return Math.min(max, Math.max(0, Number(value)));
 };
+const DEFAULT_BIRTH_LOCATION = {
+  locationName: 'Hà Nội, Việt Nam',
+  lat: 21.028511,
+  lng: 105.804817,
+  timezone: 7,
+};
 
 const HeroBirthdayInput: React.FC<{ onNavigate: (path: string) => void }> = ({ onNavigate }) => {
   const { setInput, calculateChart } = useTuViStore();
+  const { user } = useAuthStore();
+  const userBirthProfile = useMemo(() => getUserBirthProfile(user), [user]);
+  const didPrefill = useRef(false);
   const [birthDate, setBirthDate] = useState('');
   const [birthHour, setBirthHour] = useState('0');
   const [birthMinute, setBirthMinute] = useState('0');
@@ -32,6 +43,31 @@ const HeroBirthdayInput: React.FC<{ onNavigate: (path: string) => void }> = ({ o
     else if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
     setBirthDate(v);
   }, []);
+
+  useEffect(() => {
+    if (didPrefill.current || !userBirthProfile) return;
+
+    if (userBirthProfile.birthYear && userBirthProfile.birthMonth && userBirthProfile.birthDay) {
+      const dd = String(userBirthProfile.birthDay).padStart(2, '0');
+      const mm = String(userBirthProfile.birthMonth).padStart(2, '0');
+      const yyyy = String(userBirthProfile.birthYear);
+      setBirthDate(`${dd}/${mm}/${yyyy}`);
+    }
+
+    if (typeof userBirthProfile.birthHour === 'number') {
+      setBirthHour(String(userBirthProfile.birthHour));
+    }
+
+    if (typeof userBirthProfile.birthMinute === 'number') {
+      setBirthMinute(String(userBirthProfile.birthMinute));
+    }
+
+    if (userBirthProfile.gender) {
+      setGender(userBirthProfile.gender === 'male' ? 'nam' : 'nữ');
+    }
+
+    didPrefill.current = true;
+  }, [userBirthProfile]);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -70,12 +106,7 @@ const HeroBirthdayInput: React.FC<{ onNavigate: (path: string) => void }> = ({ o
         birthMinute: normalizedMinute,
         gender,
         timezone: 'Asia/Ho_Chi_Minh',
-        birthLocation: {
-          locationName: 'Hà Nội, Việt Nam',
-          lat: 21.028511,
-          lng: 105.804817,
-          timezone: 7,
-        },
+        birthLocation: userBirthProfile?.birthLocation ?? DEFAULT_BIRTH_LOCATION,
       };
 
       setTimeout(() => {
@@ -88,7 +119,7 @@ const HeroBirthdayInput: React.FC<{ onNavigate: (path: string) => void }> = ({ o
         }
       }, 600);
     },
-    [birthDate, birthHour, birthMinute, gender],
+    [birthDate, birthHour, birthMinute, gender, userBirthProfile],
   );
 
   const openTuViChart = useCallback(() => {

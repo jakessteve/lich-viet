@@ -36,6 +36,7 @@ The app surface is **4 pages**: Landing, Âm Lịch (Lunar Calendar + Dụng S�
 | ------------------ | -------------------------------------- |
 | `@dqcai/vn-lunar`  | Vietnamese Lunar Calendar calculations |
 | `lunar-javascript` | Additional lunar calendar utilities    |
+| `@swisseph/browser`| High-precision astronomical ephemeris   |
 
 ---
 
@@ -244,7 +245,7 @@ graph TD
 ### Data Flow Principles
 
 1. **Unidirectional Flow** — Low-level utilities (`constants`, `foundationalLayer`) never depend on high-level engines.
-2. **Calendar as Truth** — All Eastern engines MUST use `calendarEngine.ts` or `foundationalLayer.ts` for date/time conversion to ensure academic consistency.
+2. **Calendar as Truth** — All Eastern engines MUST use `calendarEngine.ts` or `foundationalLayer.ts` for date/time conversion to ensure academic consistency. The lunar calendar core uses Swiss Ephemeris when available and falls back to the local algorithm when the WASM bundle is not ready.
 3. **Pure Logic** — Engines in `src/utils` are designed to be "pure" business logic with zero React or DOM dependencies.
 
 ---

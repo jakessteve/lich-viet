@@ -1,8 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useTuViStore } from '../../stores/tuviStore';
 import { useAuthStore } from '../../stores/authStore';
-import type { TuViGender, TuViTimePolicy } from '../../types/tuvi';
+import type { TuViGender } from '../../types/tuvi';
 import { TuViLocationPicker } from './TuViLocationPicker';
+import { getUserBirthProfile } from '@/utils/userBirthProfile';
 
 const getTimezoneForLocation = (utcOffset: number) => {
   if (utcOffset === 7) return 'Asia/Ho_Chi_Minh';
@@ -15,17 +17,19 @@ const clampTimePart = (value: string, max: number) => {
   return Math.min(max, Math.max(0, Number(value)));
 };
 
-const TIME_POLICY_OPTIONS: Array<{ id: TuViTimePolicy; label: string; icon: string }> = [
-  { id: 'historical-vietnam', label: 'Việt Nam lịch sử', icon: 'schedule' },
-  { id: 'civil', label: 'Giờ đồng hồ', icon: 'access_time' },
-  { id: 'true-solar', label: 'Mặt trời thực', icon: 'wb_sunny' },
-];
-
 export const TuViInputForm: React.FC = () => {
-  const { input, setInput, calculateChart, isCalculating } = useTuViStore();
+  const { input, setInput, calculateChart, isCalculating } = useTuViStore(
+    useShallow((state) => ({
+      input: state.input,
+      setInput: state.setInput,
+      calculateChart: state.calculateChart,
+      isCalculating: state.isCalculating,
+    })),
+  );
   const { user } = useAuthStore();
   const [error, setError] = useState('');
   const didPrefill = useRef(false);
+  const userBirthProfile = useMemo(() => getUserBirthProfile(user), [user]);
 
   // Local string state for date inputs — allows free typing without
   // intermediate invalid Date construction
@@ -117,43 +121,40 @@ export const TuViInputForm: React.FC = () => {
     if (didPrefill.current || !user) return;
 
     const updates: Parameters<typeof setInput>[0] = {};
+    const birthProfile = userBirthProfile;
 
     if (user.displayName && !input.name) {
       updates.name = user.displayName;
     }
 
-    if (user.birthday) {
-      const [yearValue, monthValue, dayValue] = user.birthday.split('-').map(Number);
-      if (yearValue && monthValue && dayValue) {
-        const hourValue = typeof user.profile?.birthHour === 'number' ? user.profile.birthHour : 0;
-        const minuteValue = typeof user.profile?.birthMinute === 'number' ? user.profile.birthMinute : 0;
-        updates.solarDate = new Date(yearValue, monthValue - 1, dayValue, hourValue, minuteValue);
-      }
+    if (birthProfile?.birthYear && birthProfile.birthMonth && birthProfile.birthDay) {
+      const hourValue = typeof birthProfile.birthHour === 'number' ? birthProfile.birthHour : 0;
+      const minuteValue = typeof birthProfile.birthMinute === 'number' ? birthProfile.birthMinute : 0;
+      updates.solarDate = new Date(
+        birthProfile.birthYear,
+        birthProfile.birthMonth - 1,
+        birthProfile.birthDay,
+        hourValue,
+        minuteValue,
+      );
     }
 
-    if (typeof user.profile?.birthHour === 'number') {
-      updates.birthClockHour = user.profile.birthHour;
-      updates.birthHour = getChiHourFromClockHour(user.profile.birthHour);
+    if (typeof birthProfile?.birthHour === 'number') {
+      updates.birthClockHour = birthProfile.birthHour;
+      updates.birthHour = getChiHourFromClockHour(birthProfile.birthHour);
     }
 
-    if (typeof user.profile?.birthMinute === 'number') {
-      updates.birthMinute = user.profile.birthMinute;
+    if (typeof birthProfile?.birthMinute === 'number') {
+      updates.birthMinute = birthProfile.birthMinute;
     }
 
-    if (user.profile?.gender) {
-      updates.gender = user.profile.gender === 'male' ? 'nam' : 'nữ';
+    if (birthProfile?.gender) {
+      updates.gender = birthProfile.gender === 'male' ? 'nam' : 'nữ';
     }
 
-    const savedLocation = user.extendedProfile?.birthLocation;
-    if (savedLocation) {
-      const utcOffset = Math.max(-12, Math.min(14, Math.round(savedLocation.lng / 15)));
-      updates.birthLocation = {
-        locationName: savedLocation.city,
-        lat: savedLocation.lat,
-        lng: savedLocation.lng,
-        timezone: utcOffset,
-      };
-      updates.timezone = getTimezoneForLocation(utcOffset);
+    if (birthProfile?.birthLocation) {
+      updates.birthLocation = birthProfile.birthLocation;
+      updates.timezone = getTimezoneForLocation(birthProfile.birthLocation.timezone);
     }
 
     if (Object.keys(updates).length > 0) {
@@ -161,12 +162,13 @@ export const TuViInputForm: React.FC = () => {
     }
 
     didPrefill.current = true;
-  }, [input.name, setInput, user]);
+  }, [input.name, setInput, user, userBirthProfile]);
 
   const labelBase =
     'block text-sm font-semibold text-text-secondary-light dark:text-text-secondary-dark mb-2 tracking-wide';
+  const infoLabelBase = 'block text-sm font-semibold text-text-secondary-light dark:text-text-secondary-dark mb-1 tracking-wide';
   const profileDateControl =
-    'px-3 py-2.5 rounded-lg border border-border-light dark:border-border-dark bg-surface-subtle-light dark:bg-surface-subtle-dark text-sm text-center text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-gold/30 focus:border-gold outline-none transition-all';
+    'surface-control px-3 py-2.5 text-sm text-center focus:ring-2 focus:ring-gold/30 focus:border-gold outline-none';
 
   return (
     <form onSubmit={handleSubmit} className="w-full space-y-5">
@@ -180,7 +182,7 @@ export const TuViInputForm: React.FC = () => {
           value={input.name ?? ''}
           onChange={(e) => setInput({ name: e.target.value })}
           placeholder="VD: Nguyễn Văn A"
-          className="w-full px-3 py-2.5 rounded-xl bg-gray-100 dark:bg-white/10 border border-border-light dark:border-border-dark text-text-primary-light dark:text-text-primary-dark text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-400"
+          className="surface-control w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 placeholder:text-gray-400 dark:placeholder:text-gray-400"
         />
       </div>
 
@@ -254,14 +256,14 @@ export const TuViInputForm: React.FC = () => {
 
       <div>
         <label className={labelBase}>Giới tính</label>
-        <div className="grid grid-cols-2 gap-2 rounded-2xl bg-gray-100 p-1 dark:bg-white/5">
+        <div className="surface-panel grid grid-cols-2 gap-2 rounded-2xl p-1">
           {(['nam', 'nữ'] as TuViGender[]).map((g) => (
             <label
               key={g}
               className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5 transition-all duration-200 ${
                 input.gender === g
                   ? 'bg-white text-gold shadow-sm dark:bg-white/15 dark:text-gold-light'
-                  : 'text-text-secondary-light hover:bg-white/60 dark:text-text-secondary-dark dark:hover:bg-white/10'
+                  : 'text-text-secondary-light hover:bg-surface-container-lowest dark:text-text-secondary-dark dark:hover:bg-white/10'
               }`}
             >
               <input
@@ -291,28 +293,15 @@ export const TuViInputForm: React.FC = () => {
         />
       </div>
 
-      <div>
-        <label className={labelBase}>Cách tính giờ</label>
-        <div className="grid grid-cols-3 gap-2 rounded-2xl bg-gray-100 p-1 dark:bg-white/5">
-          {TIME_POLICY_OPTIONS.map((policy) => {
-            const active = (input.timePolicy ?? 'historical-vietnam') === policy.id;
-            return (
-              <button
-                key={policy.id}
-                type="button"
-                onClick={() => setInput({ timePolicy: policy.id })}
-                className={`flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-200 ${
-                  active
-                    ? 'bg-white text-gold shadow-sm dark:bg-white/15 dark:text-gold-light'
-                    : 'text-text-secondary-light hover:bg-white/60 dark:text-text-secondary-dark dark:hover:bg-white/10'
-                }`}
-                aria-pressed={active}
-              >
-                <span className="material-icons-round text-sm">{policy.icon}</span>
-                {policy.label}
-              </button>
-            );
-          })}
+      <div className="surface-panel rounded-2xl p-3">
+        <div className="flex items-start gap-2">
+          <span className="material-icons-round mt-0.5 text-base text-gold">schedule</span>
+          <div className="min-w-0">
+            <p className={infoLabelBase}>Cách tính giờ</p>
+            <p className="text-xs leading-5 text-text-secondary-light/75 dark:text-text-secondary-dark/75">
+              Giờ Tử Vi được quy đổi tự động theo lịch sử Việt Nam, với lớp Swiss engine hỗ trợ hiệu chỉnh true solar khi khả dụng.
+            </p>
+          </div>
         </div>
       </div>
 

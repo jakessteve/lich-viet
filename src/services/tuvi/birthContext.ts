@@ -10,6 +10,7 @@ import { CAN, CHI } from '../../utils/constants';
 import { getCanChiDay, getLunarDate } from '../../utils/calendarEngine';
 import { normalizeBirthTimeWithPolicy } from './timeNormalization';
 import type { TuViSchoolProfile } from './schoolProfiles';
+import { getSwissEphemerisInstance, getSwissTrueSolarTime } from '../astronomy/swissEphemeris';
 
 function mod10(n: number): number {
   return ((n % 10) + 10) % 10;
@@ -41,6 +42,19 @@ function applyTrueSolarTime(date: Date, birthLocation?: TuViBirthLocation): Date
   const timezoneOffset = birthLocation.timezone * 15;
   const diffMinutes = 4 * (birthLocation.lng - timezoneOffset);
   return new Date(date.getTime() + diffMinutes * 60 * 1000);
+}
+
+function applyTrueSolarTimeLayer(date: Date, birthLocation?: TuViBirthLocation): Date {
+  if (!birthLocation) {
+    return new Date(date.getTime());
+  }
+
+  const swe = getSwissEphemerisInstance();
+  if (swe) {
+    return getSwissTrueSolarTime(swe, date, birthLocation.lng);
+  }
+
+  return applyTrueSolarTime(date, birthLocation);
 }
 
 function resolveLeapMonthPolicyMonth(
@@ -87,8 +101,8 @@ export function buildTuViBirthContext(
   schoolProfile: TuViSchoolProfile,
 ): TuViBirthContext {
   const zonedDate = normalizeToIanaTimezone(input.solarDate, input.timezone);
-  const timePolicy = input.timePolicy ?? schoolProfile.timePolicy;
-  const trueSolarDate = timePolicy === 'true-solar' ? applyTrueSolarTime(zonedDate, input.birthLocation) : zonedDate;
+  const timePolicy = schoolProfile.timePolicy;
+  const trueSolarDate = applyTrueSolarTimeLayer(zonedDate, input.birthLocation);
   const normalized = normalizeBirthTimeWithPolicy(trueSolarDate, input.birthLocation);
   const correctedDate = normalized.correctedDate;
   const lunar = getLunarDate(correctedDate);
@@ -121,12 +135,6 @@ export function buildTuViBirthContext(
   const warnings = [...normalized.warnings];
   if (input.leapMonthPolicy && input.leapMonthPolicy !== schoolProfile.leapMonthPolicy) {
     warnings.push(`Leap-month override applied: ${input.leapMonthPolicy}.`);
-  }
-  if (input.timePolicy && input.timePolicy !== schoolProfile.timePolicy) {
-    warnings.push(`Time-policy override applied: ${input.timePolicy}.`);
-  }
-  if (timePolicy === 'true-solar' && !input.birthLocation) {
-    warnings.push('True-solar-time policy requested but no birth location was provided.');
   }
 
   return {
