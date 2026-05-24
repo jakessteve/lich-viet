@@ -59,7 +59,7 @@ const DayCellInner: React.FC<DayCellProps> = ({ data, isSelected, onClick, round
         active:scale-95
         ${
           isToday
-            ? `bg-amber-50/70 dark:bg-amber-900/20 day-cell-today ${isSelected ? 'day-cell-today-selected' : ''}`
+            ? 'bg-amber-50/70 dark:bg-amber-900/20 day-cell-today'
             : 'bg-surface-light dark:bg-surface-dark'
         }
         ${roundedClass}

@@ -361,7 +361,7 @@
     border-color: var(--color-gold-dark, #d4a843);
   }
 
-  /* Selected day uses same ::after approach as today for consistent sizing */
+  /* Selected day uses the same outer border approach as today for consistent sizing */
   .day-cell-selected {
     position: relative;
   }
@@ -378,20 +378,6 @@
 
   .dark .day-cell-selected::after {
     border-color: #4b5563;
-  }
-
-  .day-cell-today-selected::before {
-    content: '';
-    position: absolute;
-    inset: 7px;
-    border: 1px solid rgba(79, 70, 229, 0.42);
-    border-radius: 3px;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .dark .day-cell-today-selected::before {
-    border-color: rgba(255, 222, 161, 0.45);
   }
 
   /* ── Animations ──────────────────────────────────────────── */
