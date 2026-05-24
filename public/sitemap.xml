@@ -6,43 +6,23 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://lichviet.app/am-lich</loc>
+    <loc>https://lichviet.app/app/am-lich</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://lichviet.app/am-lich/dung-su</loc>
+    <loc>https://lichviet.app/app/gieo-que</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://lichviet.app/am-lich/phong-thuy</loc>
+    <loc>https://lichviet.app/app/tu-vi</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://lichviet.app/tu-vi</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://lichviet.app/tu-vi/bat-tu</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lichviet.app/gieo-que</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lichviet.app/chiem-tinh</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://lichviet.app/than-so-hoc</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://lichviet.app/app</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
   </url>
 </urlset>

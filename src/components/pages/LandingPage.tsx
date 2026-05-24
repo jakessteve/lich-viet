@@ -58,7 +58,7 @@ const TRUST_VALUES = [
 // ══════════════════════════════════════════════════════════
 
 export default function LandingPage() {
-  usePageTitle('Tra cứu Âm Lịch & Phong Thủy');
+  usePageTitle('Tra cứu Âm Lịch, Gieo Quẻ & Tử Vi');
   const navigate = useNavigate();
   const [isDark, setIsDark] = useState(false);
 
@@ -108,7 +108,7 @@ export default function LandingPage() {
   const statsSection = useInView(0.3);
   const lookupCount = useCountUp(12480, 1800, statsSection.inView);
   const dataCount = useCountUp(85000, 2000, statsSection.inView);
-  const toolsCount = useCountUp(4, 1200, statsSection.inView);
+  const toolsCount = useCountUp(3, 1200, statsSection.inView);
   const stats = useMemo(
     () => [
       {
@@ -248,9 +248,9 @@ export default function LandingPage() {
             </h2>
 
             <p className="text-base sm:text-lg text-text-secondary-light dark:text-text-secondary-dark leading-relaxed mb-8 max-w-xl animate-fade-in-up animate-delay-2">
-              4 công cụ âm lịch & phong thủy trong một ứng dụng.
+              3 công cụ cốt lõi trong một ứng dụng.
               <br className="hidden sm:block" />
-              Lịch âm, Dụng Sự, Gieo Quẻ, Tử Vi —{' '}
+              Âm Lịch có tab Dụng Sự, cùng Gieo Quẻ và Tử Vi —{' '}
               <span className="font-semibold text-text-primary-light dark:text-text-primary-dark">
                 chính xác theo chuẩn học thuật.
               </span>
@@ -420,10 +420,10 @@ export default function LandingPage() {
               Tính năng
             </p>
             <h3 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3 mystery-text-glow">
-              4 công cụ trong một ứng dụng
+              3 công cụ trong một ứng dụng
             </h3>
             <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark max-w-lg mx-auto">
-              Kết hợp lịch âm, dụng sự, gieo quẻ và Tử Vi trong một không gian gọn gàng.
+              Kết hợp lịch âm, Dụng Sự, gieo quẻ và Tử Vi trong một không gian gọn gàng.
             </p>
           </div>
 
@@ -435,7 +435,7 @@ export default function LandingPage() {
               </span>
               <div className="flex-1 h-px bg-border-light/20 dark:bg-border-dark/20" />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {FEATURES.filter((f) => f.tier === 'Cơ bản').map((f) => (
                 <button
                   key={f.id}
@@ -588,7 +588,7 @@ export default function LandingPage() {
                 LỊCH VIỆT
               </span>
               <p className="text-xs text-text-secondary-light/60 dark:text-text-secondary-dark/60 mt-1.5 leading-relaxed">
-                Ứng dụng tra cứu âm lịch, phong thủy và âm lịch toàn diện nhất.
+                Ứng dụng tra cứu âm lịch, Dụng Sự, gieo quẻ và Tử Vi toàn diện nhất.
               </p>
             </div>
 
@@ -600,7 +600,7 @@ export default function LandingPage() {
               <ul className="space-y-1.5">
                 {[
                   { label: 'Âm Lịch', path: '/app/am-lich' },
-                  { label: 'Lịch Dụng Sự', path: '/app/lich-dung-su' },
+                  { label: 'Dụng Sự', path: '/app/am-lich' },
                   { label: 'Gieo Quẻ', path: '/app/gieo-que' },
                 ].map((f) => (
                   <li key={f.label}>

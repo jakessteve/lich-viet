@@ -19,7 +19,12 @@ export function useViewerLocation(): SwissGeoLocation | null {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         if (cancelled) return;
-        setLocation(buildSwissGeoLocation(position.coords.longitude));
+        const { longitude } = position.coords;
+        if (!Number.isFinite(longitude)) {
+          setLocation(null);
+          return;
+        }
+        setLocation(buildSwissGeoLocation(longitude));
       },
       () => {
         if (cancelled) return;

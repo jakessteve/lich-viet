@@ -4,17 +4,33 @@ const MIN_TIMEZONE_OFFSET = -12;
 const MAX_TIMEZONE_OFFSET = 14;
 
 export function estimateTimezoneOffsetHours(longitude: number): number {
+  if (!Number.isFinite(longitude)) {
+    return 7;
+  }
   return Math.max(MIN_TIMEZONE_OFFSET, Math.min(MAX_TIMEZONE_OFFSET, Math.round(longitude / 15)));
 }
 
 export function buildSwissGeoLocation(longitude: number): SwissGeoLocation {
+  const safeLongitude = Number.isFinite(longitude) ? longitude : 0;
   return {
-    longitude,
-    timezoneOffsetHours: estimateTimezoneOffsetHours(longitude),
+    longitude: safeLongitude,
+    timezoneOffsetHours: estimateTimezoneOffsetHours(safeLongitude),
   };
 }
 
 export function getDatePartsInOffset(date: Date, offsetHours: number) {
+  if (!Number.isFinite(offsetHours)) {
+    return {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate(),
+      hour: date.getHours(),
+      minute: date.getMinutes(),
+      second: date.getSeconds(),
+      millisecond: date.getMilliseconds(),
+    };
+  }
+
   const shifted = new Date(date.getTime() + offsetHours * 60 * 60 * 1000);
   return {
     year: shifted.getUTCFullYear(),
@@ -28,6 +44,9 @@ export function getDatePartsInOffset(date: Date, offsetHours: number) {
 }
 
 export function getCivilDateForOffset(date: Date, offsetHours: number): Date {
+  if (!Number.isFinite(offsetHours)) {
+    return new Date(date.getTime());
+  }
   const parts = getDatePartsInOffset(date, offsetHours);
   return new Date(
     parts.year,

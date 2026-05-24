@@ -24,7 +24,7 @@ export default defineConfig({
     }),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'icons/*.png', 'fonts/**/*', 'swisseph.wasm'],
+      includeAssets: ['icons/*.png', 'fonts/**/*', 'swisseph.wasm'],
       manifest: {
         name: 'Lịch Việt — Âm Lịch & Phong Thủy',
         short_name: 'Lịch Việt',

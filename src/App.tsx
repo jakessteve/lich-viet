@@ -24,6 +24,7 @@ function AppLayout() {
   const setViewerLocation = useAppStore((s) => s.setViewerLocation);
   const viewerLocation = useViewerLocation();
   const initialSelectedDateRef = useRef<Date>(selectedDate);
+  const hasAppliedViewerLocationRef = useRef(false);
 
   // Track page view on route change
   useEffect(() => {
@@ -37,11 +38,14 @@ function AppLayout() {
   useEffect(() => {
     if (
       viewerLocation &&
+      Number.isFinite(viewerLocation.timezoneOffsetHours) &&
+      !hasAppliedViewerLocationRef.current &&
       initialSelectedDateRef.current &&
       selectedDate.getFullYear() === initialSelectedDateRef.current.getFullYear() &&
       selectedDate.getMonth() === initialSelectedDateRef.current.getMonth() &&
       selectedDate.getDate() === initialSelectedDateRef.current.getDate()
     ) {
+      hasAppliedViewerLocationRef.current = true;
       setSelectedDate(getCivilDateForOffset(new Date(), viewerLocation.timezoneOffsetHours));
     }
   }, [selectedDate, setSelectedDate, viewerLocation]);

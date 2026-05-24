@@ -39,8 +39,8 @@ const QUICK_LOCATIONS: TuViBirthLocation[] = [
 
 const createBirthLocation = (result: NominatimResult, lat: number, lng: number): TuViBirthLocation => ({
   locationName: formatDisplayName(result),
-  lat,
-  lng,
+  lat: Number.isFinite(lat) ? lat : 0,
+  lng: Number.isFinite(lng) ? lng : 0,
   timezone: estimateTimezoneOffsetHours(lng),
   countryCode: result.address?.country_code?.toUpperCase(),
   countryName: result.address?.country,
@@ -120,9 +120,12 @@ export const TuViLocationPicker: React.FC<TuViLocationPickerProps> = ({ value, o
         const nextResults = data.map((item) => {
           const lat = Number(item.lat);
           const lng = Number(item.lon);
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            return null;
+          }
           return createBirthLocation(item, lat, lng);
         });
-        setResults(nextResults);
+        setResults(nextResults.filter((location): location is TuViBirthLocation => location !== null));
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') return;
         setError(err instanceof Error ? err.message : 'Không tìm được địa điểm.');
@@ -148,6 +151,11 @@ export const TuViLocationPicker: React.FC<TuViLocationPickerProps> = ({ value, o
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+          setError('Không lấy được vị trí hiện tại.');
+          setIsSearching(false);
+          return;
+        }
         try {
           const location = await reverseGeocodeLocation(latitude, longitude);
           onChange({
