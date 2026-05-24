@@ -150,6 +150,13 @@ describe('Star Placement Engine', () => {
   });
 
   describe('placePhuTinh Thiên Lương Kình Đà', () => {
+    it('places Hỏa Tinh and Linh Tinh from the classical year-branch and hour tables', () => {
+      const positions = placePhuTinh(9, 11, 11, 13, 9, 0, 0, 'Thuận');
+
+      expect(positions['Hỏa Tinh']).toBe(6); // Ngọ
+      expect(positions['Linh Tinh']).toBe(7); // Mùi
+    });
+
     it('places Kình Đà by the Lộc Tồn direction for Thuận charts', () => {
       const positions = placePhuTinh(6, 8, 6, 25, 4, 2, 10, 'Thuận');
 

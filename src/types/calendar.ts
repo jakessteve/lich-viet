@@ -93,6 +93,9 @@ export interface DayDetailsData {
   dungSu: {
     suitable: string[];
     unsuitable: string[];
+    oracleSuitable?: string[];
+    oracleUnsuitable?: string[];
+    oracleGlobalVeto?: boolean;
   };
   banhTo: {
     can: string;

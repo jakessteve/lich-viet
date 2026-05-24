@@ -8,6 +8,7 @@
 
 import { getCanChiYear } from '../../utils/calendarEngine';
 import type { Chi, Can } from '../../types/calendar';
+import { resolvePersonalBirthMoment, type PersonalBirthDetails } from './birthMath';
 
 export const CHI_LIST: Chi[] = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
 export const CAN_LIST: Can[] = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
@@ -120,11 +121,32 @@ export function getYearThaiTueType(birthYear: number, targetYear: number): strin
   return null;
 }
 
-/** Calculate the Personal Day Score based on birth year and day's Chi */
-export function calculatePersonalDayScore(birthYear: number | undefined | null, dayChi: Chi): PersonalDayScore | null {
+/** Calculate the Personal Day Score based on birth year and the day's Chi.
+ * When birthday and birthplace details are available, the natal day pillar is
+ * re-derived from the corrected birth moment and folded into the score.
+ */
+export function calculatePersonalDayScore(
+  birthYear: number | undefined | null,
+  dayChi: Chi,
+  birthDetails?: PersonalBirthDetails | null,
+): PersonalDayScore | null {
   if (!birthYear) return null;
 
   const userChi = getYearChi(birthYear);
+  const resolvedBirth = birthDetails ? resolvePersonalBirthMoment(birthYear, birthDetails) : null;
+  const hasBirthDetailAdjustment = Boolean(resolvedBirth?.dayCanChi);
+
+  const scoreFromRelation = (sourceChi: Chi, targetChi: Chi): number => {
+    let score = 0;
+    if (isTamHop(sourceChi, targetChi)) score += 3;
+    if (isLucHop(sourceChi, targetChi)) score += 2;
+    if (sourceChi === targetChi) score -= 1;
+    if (isTuongXung(sourceChi, targetChi)) score -= 3;
+    if (isTuongHai(sourceChi, targetChi)) score -= 2;
+    if (isTuongHinh(sourceChi, targetChi)) score -= 2;
+    if (isTuongPha(sourceChi, targetChi)) score -= 1;
+    return score;
+  };
 
   const scoreData: PersonalDayScore = {
     actionScore: 0,
@@ -139,14 +161,12 @@ export function calculatePersonalDayScore(birthYear: number | undefined | null, 
     isTuongPha: isTuongPha(userChi, dayChi),
   };
 
-  let score = 0;
-  if (scoreData.isTamHop) score += 3;
-  if (scoreData.isLucHop) score += 2;
-  if (scoreData.isThaiTue) score -= 1;
-  if (scoreData.isTuongXung) score -= 3;
-  if (scoreData.isTuongHai) score -= 2;
-  if (scoreData.isTuongHinh) score -= 2;
-  if (scoreData.isTuongPha) score -= 1;
+  let score = scoreFromRelation(userChi, dayChi);
+
+  if (resolvedBirth?.dayCanChi) {
+    const natalDayWeight = scoreFromRelation(resolvedBirth.dayCanChi.chi, dayChi);
+    score += natalDayWeight;
+  }
 
   scoreData.actionScore = score;
 
@@ -165,6 +185,10 @@ export function calculatePersonalDayScore(birthYear: number | undefined | null, 
   } else {
     scoreData.label = 'Đại Hung';
     scoreData.description = 'Xung khắc mạnh với bản mệnh. Tuyệt đối tránh mưu sự, đi xa, cưới hỏi.';
+  }
+
+  if (hasBirthDetailAdjustment) {
+    scoreData.description = `${scoreData.description} Đã hiệu chỉnh theo ngày sinh và nơi sinh.`;
   }
 
   return scoreData;

@@ -13,6 +13,11 @@ import { getActivityById, mapDungSuToActivityIds } from '@lich-viet/core/dungsu'
 import CollapsibleCard from '../CollapsibleCard';
 import ActivityPicker from './ActivityPicker';
 import { getUserBirthProfile } from '@/utils/userBirthProfile';
+import {
+  calculatePersonalDayScore,
+  calculatePersonalHourModifier,
+  type PersonalBirthDetails,
+} from '@/services/personalization';
 
 import GroupedBreakdown from './GroupedBreakdown';
 import BestTimesPanel from './BestTimesPanel';
@@ -42,6 +47,10 @@ function hourToChi(hour: number): Chi {
 function yearToChi(year: number): Chi {
   const idx = (((year - 4) % 12) + 12) % 12;
   return CHI_LIST[idx];
+}
+
+function clampPercentage(value: number): number {
+  return Math.max(0, Math.min(100, value));
 }
 
 const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDate }) => {
@@ -88,12 +97,25 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
     return () => clearInterval(timer);
   }, []);
 
-  // Compute birth year Chi for Kị Tuổi scoring
-  const birthYearChi = useMemo(() => {
+  const parsedBirthYear = useMemo(() => {
     const y = parseInt(birthYear, 10);
     if (!y || y < 1900 || y > 2100) return undefined;
-    return yearToChi(y);
+    return y;
   }, [birthYear]);
+
+  const effectiveBirthProfile: PersonalBirthDetails & { birthYear?: number } | null = useMemo(() => {
+    if (!parsedBirthYear) return null;
+    if (userBirthProfile?.birthYear === parsedBirthYear) {
+      return userBirthProfile;
+    }
+    return { birthYear: parsedBirthYear };
+  }, [parsedBirthYear, userBirthProfile]);
+
+  // Compute birth year Chi for Kị Tuổi scoring
+  const birthYearChi = useMemo(() => {
+    if (!effectiveBirthProfile?.birthYear) return undefined;
+    return yearToChi(effectiveBirthProfile.birthYear);
+  }, [effectiveBirthProfile]);
 
   // Apply date/time input — runs whenever fields change
   const applyDateInput = useCallback(() => {
@@ -137,6 +159,55 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
     return scoreActivity(selectedActivity, data, selectedHour || undefined, birthYearChi);
   }, [selectedActivity, data, selectedHour, birthYearChi]);
 
+  const applyPersonalOverlay = useCallback(
+    (basePercentage: number, hourChi?: Chi): number => {
+      let adjusted = basePercentage;
+      if (effectiveBirthProfile?.birthYear && data.canChi?.day?.chi) {
+        const personalDayScore = calculatePersonalDayScore(
+          effectiveBirthProfile.birthYear,
+          data.canChi.day.chi,
+          effectiveBirthProfile,
+        );
+        if (personalDayScore) {
+          const dayBonus = Math.max(-8, Math.min(8, personalDayScore.actionScore * 2));
+          adjusted += dayBonus;
+        }
+      }
+
+      if (
+        effectiveBirthProfile?.birthYear &&
+        hourChi &&
+        effectiveBirthProfile.birthMonth != null &&
+        effectiveBirthProfile.birthDay != null
+      ) {
+        const hourInfo = data.allHours.find((h) => h.canChi.chi === hourChi);
+        if (hourInfo) {
+          const personalHourModifier = calculatePersonalHourModifier(
+            effectiveBirthProfile.birthYear,
+            effectiveBirthProfile.birthMonth,
+            effectiveBirthProfile.birthDay,
+            hourInfo.canChi,
+            data.canChi.day,
+            selectedDate,
+            effectiveBirthProfile,
+          );
+          if (personalHourModifier) {
+            const hourBonus = Math.max(-10, Math.min(10, Math.round(personalHourModifier.totalModifier / 5)));
+            adjusted += hourBonus;
+          }
+        }
+      }
+
+      return clampPercentage(adjusted);
+    },
+    [data.allHours, data.canChi.day, effectiveBirthProfile, selectedDate],
+  );
+
+  const personalizedPercentage = useMemo(() => {
+    if (!result) return null;
+    return applyPersonalOverlay(result.percentage, selectedHour || undefined);
+  }, [applyPersonalOverlay, result, selectedHour]);
+
   // Compute radar data from breakdown
   const radarData: RadarData | null = useMemo(() => {
     if (!result) return null;
@@ -153,18 +224,18 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
       compat: sum(['kiTuoi', 'napAm']),
       cosmic: sum(['qmdj', 'thaiAt']),
       safety: 75,
-      synergy: result.percentage,
+      synergy: personalizedPercentage ?? result.percentage,
     };
-  }, [result]);
+  }, [personalizedPercentage, result]);
 
   // Compute all-hours scores for HourPickerGrid
   const allHourScores = useMemo(() => {
     if (!selectedActivity) return undefined;
     return data.allHours.map((h) => {
       const hResult = scoreActivity(selectedActivity, data, h.canChi.chi as Chi, birthYearChi);
-      return { hourInfo: h, activityScore: hResult.percentage };
+      return { hourInfo: h, activityScore: applyPersonalOverlay(hResult.percentage, h.canChi.chi as Chi) };
     });
-  }, [selectedActivity, data, birthYearChi]);
+  }, [applyPersonalOverlay, selectedActivity, data, birthYearChi]);
 
   const currentHourChi = useMemo(() => hourToChi(now.getHours()), [now]);
   const highlightedCurrentHourChi = useMemo(
@@ -213,12 +284,21 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
 
   // Best hour info for verdict
   const bestHourInfo = useMemo(() => {
+    if (allHourScores?.length) {
+      const best = [...allHourScores].sort((a, b) => b.activityScore - a.activityScore)[0];
+      if (best) {
+        return {
+          chi: best.hourInfo.canChi.chi,
+          score: best.activityScore,
+        };
+      }
+    }
     if (!result?.bestHours?.length) return undefined;
     return {
       chi: result.bestHours[0].hourInfo.canChi.chi,
       score: result.bestHours[0].activityScore,
     };
-  }, [result]);
+  }, [allHourScores, result]);
 
   const solarDateStr = selectedDate.toLocaleDateString('vi-VN', {
     weekday: 'long',
@@ -393,7 +473,7 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
         <div ref={resultRef} className="space-y-4 animate-fade-in-up">
           {/* Verdict Banner — Hero result */}
           <VerdictBanner
-            percentage={result.percentage}
+            percentage={personalizedPercentage ?? result.percentage}
             label={result.label}
             activityName={activityData.nameVi}
             date={selectedDate}
@@ -426,16 +506,16 @@ const DungSuView: React.FC<DungSuViewProps> = ({ selectedDate, data, onSelectDat
                   {/* Left Column: Quick Stats */}
                   <div className="flex flex-row sm:flex-col justify-around sm:justify-center w-full sm:w-1/3 gap-3 z-10">
                     {/* Best hour mini-card */}
-                    {result.bestHours[0] && (
+                    {bestHourInfo && (
                       <div className="flex flex-col items-center justify-center p-3 sm:py-4 rounded-2xl bg-white/80 dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-sm w-full transition-transform hover:scale-[1.02]">
                         <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                          {result.bestHours[0].hourInfo.canChi.chi}
+                          {bestHourInfo.chi}
                         </p>
                         <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark uppercase tracking-wider font-bold mt-1">
                           Giờ tốt nhất
                         </p>
                         <p className="text-xs font-medium text-emerald-600/70 dark:text-emerald-400/70 mt-0.5">
-                          {result.bestHours[0].activityScore}%
+                          {bestHourInfo.score}%
                         </p>
                       </div>
                     )}

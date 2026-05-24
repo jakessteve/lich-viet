@@ -146,6 +146,25 @@ export const OVERRIDES = {
   bachSuHungCap: 15,
 } as const;
 
+// ── Classical Trạch Nhật Floors / Caps ───────────────────────
+
+/**
+ * Guardrails that keep explicit classical `宜/忌` signals from being
+ * washed out by softer numeric bonuses.
+ */
+export const CLASSICAL_AUSPICIOUSNESS = {
+  /** Lower floor when an activity is explicitly recommended by the day. */
+  preferredFloor: 55,
+  /** Upper cap when an activity is explicitly forbidden by the day. */
+  forbiddenCap: 45,
+  /** Upper cap when the day is structurally severe but not an absolute veto. */
+  severeCap: 35,
+  /** Hard ceiling for Bách Sự Hung / strongest veto conditions. */
+  hardVetoCap: 15,
+  /** Floor for mixed cases where the activity is both supported and blocked. */
+  mixedFloor: 45,
+} as const;
+
 // ── Best Hours Hourly Bonus/Penalty ───────────────────────────
 
 export const BEST_HOURS_SCORING = {

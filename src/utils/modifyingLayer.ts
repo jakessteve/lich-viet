@@ -16,7 +16,7 @@ export function calculateModifyingLayer(
   date: Date,
   lunar: { day: number; month: number; year: number; isLeap: boolean },
   dayCanChi: CanChi,
-  _solarMonth: number,
+  solarMonth: number,
 ): ModifyingLayerResult {
   const stars: StarData[] = [];
 
@@ -32,28 +32,29 @@ export function calculateModifyingLayer(
     const c = s.criteria;
     if (!c) return;
 
-    const mStr = lunar.month.toString();
+    const monthKey = solarMonth.toString();
+    const lunarMonthKey = lunar.month.toString();
 
     if (c.lunar_days && c.lunar_days.includes(lunar.day)) matches = true;
-    if (c.month_can_chi && c.month_can_chi[lunar.month - 1] === dayCanChi.can) matches = true;
+    if (c.month_can_chi && c.month_can_chi[solarMonth - 1] === dayCanChi.can) matches = true;
 
-    const valMonthDayChi = c.month_day_chi?.[mStr];
+    const valMonthDayChi = c.month_day_chi?.[monthKey];
     if (
       valMonthDayChi &&
       (Array.isArray(valMonthDayChi) ? valMonthDayChi.includes(dayCanChi.chi) : valMonthDayChi === dayCanChi.chi)
     )
       matches = true;
 
-    if (c.month_day_can?.[mStr] === dayCanChi.can) matches = true;
+    if (c.month_day_can?.[monthKey] === dayCanChi.can) matches = true;
     if (c.day_can_chi?.includes(`${dayCanChi.can} ${dayCanChi.chi}`)) matches = true;
 
-    // Season mapping using shared getSeasonIndex helper (0=Xuân,1=Hạ,2=Thu,3=Đông)
-    const seasonIdx = getSeasonIndex(lunar.month);
+    // Season mapping follows the solar-term month ladder (Dần->Sửu).
+    const seasonIdx = getSeasonIndex(solarMonth);
     const season = SEASONS[seasonIdx];
 
     if (c.season_day_can_chi?.[season] === `${dayCanChi.can} ${dayCanChi.chi}`) matches = true;
 
-    const valMonthCan = c.month_can?.[mStr];
+    const valMonthCan = c.month_can?.[monthKey];
     if (
       valMonthCan &&
       (Array.isArray(valMonthCan) ? valMonthCan.includes(dayCanChi.can) : valMonthCan === dayCanChi.can)
@@ -91,11 +92,11 @@ export function calculateModifyingLayer(
     }
 
     // Trực check
-    const trucIndex = (CHI.indexOf(dayCanChi.chi as Chi) - ((lunar.month + 1) % 12) + 12) % 12;
+    const trucIndex = (CHI.indexOf(dayCanChi.chi as Chi) - ((solarMonth + 1) % 12) + 12) % 12;
     if (c.day_truc?.includes(thapNhiTruc[trucIndex].name)) matches = true;
 
     if (c.month_group_day_chi) {
-      const monthChiName = CHI[(lunar.month + 1) % 12];
+      const monthChiName = CHI[(solarMonth + 1) % 12];
       for (const group of Object.keys(c.month_group_day_chi)) {
         if (group.includes(monthChiName) && c.month_group_day_chi[group] === dayCanChi.chi) {
           matches = true;
@@ -103,7 +104,7 @@ export function calculateModifyingLayer(
       }
     }
 
-    const valLunarMonthDay = c.lunar_month_day?.[mStr];
+    const valLunarMonthDay = c.lunar_month_day?.[lunarMonthKey];
     if (valLunarMonthDay) {
       if (Array.isArray(valLunarMonthDay)) {
         if (valLunarMonthDay.includes(lunar.day)) matches = true;
@@ -134,7 +135,7 @@ export function calculateModifyingLayer(
 
   // Calculate Trực & Tú for the return object
   const chiIndex = CHI.indexOf(dayCanChi.chi as Chi);
-  const monthChiIndex = (lunar.month + 1) % 12;
+  const monthChiIndex = (solarMonth + 1) % 12;
   const trucIndex = (chiIndex - monthChiIndex + 12) % 12;
   const trucDetail = thapNhiTruc[trucIndex] || { name: 'N/A', quality: 'Neutral', description: '' };
 

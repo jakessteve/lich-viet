@@ -90,11 +90,33 @@ const deityList = deitiesData.deities as Array<{
   description: string;
 }>;
 
+function normalizeSolarTermName(term: string): string {
+  return term.trim().toLowerCase();
+}
+
+const NORMALIZED_YANG_DUN_TERMS = new Set(
+  (gameTableData.yangDunTerms as string[]).map((term) => normalizeSolarTermName(term)),
+);
+
+const NORMALIZED_YANG_DUN_TABLE = new Map(
+  Object.entries(gameTableData.yangDun as Record<string, Record<string, number>>).map(([term, table]) => [
+    normalizeSolarTermName(term),
+    table,
+  ]),
+);
+
+const NORMALIZED_YIN_DUN_TABLE = new Map(
+  Object.entries(gameTableData.yinDun as Record<string, Record<string, number>>).map(([term, table]) => [
+    normalizeSolarTermName(term),
+    table,
+  ]),
+);
+
 // ── Helper Functions ───────────────────────────────────────────
 
 /** Determine if the given solar term falls in the Yang Dun (Dương Độn) period. */
 export function isDuongDon(solarTerm: string): boolean {
-  return (gameTableData.yangDunTerms as string[]).includes(solarTerm);
+  return NORMALIZED_YANG_DUN_TERMS.has(normalizeSolarTermName(solarTerm));
 }
 
 /** Determine the Yuan (Upper/Middle/Lower) for a given date within its solar term. */
@@ -109,11 +131,8 @@ export function getYuanForDate(date: Date): 'upper' | 'middle' | 'lower' {
 
 /** Get the Game Number (Cục Số) for a given solar term and yuan. */
 function getGameNumber(solarTerm: string, yuan: 'upper' | 'middle' | 'lower', duongDon: boolean): number {
-  const table = duongDon
-    ? (gameTableData.yangDun as Record<string, Record<string, number>>)
-    : (gameTableData.yinDun as Record<string, Record<string, number>>);
-
-  const termEntry = table[solarTerm];
+  const table = duongDon ? NORMALIZED_YANG_DUN_TABLE : NORMALIZED_YIN_DUN_TABLE;
+  const termEntry = table.get(normalizeSolarTermName(solarTerm));
   if (!termEntry) return 1; // fallback
 
   return termEntry[yuan] || 1;
@@ -153,20 +172,6 @@ function findStemPalace(earthPlate: Map<number, Can>, stem: Can): number {
     if (s === stem) return palace;
   }
   return 1; // fallback
-}
-
-/** Navigate through palaces in order (CW for Yang, CCW for Yin). */
-function _navigatePalaces(startPalace: number, steps: number, isDuongDon: boolean): number {
-  const startIdx = PALACE_ORDER.indexOf(startPalace);
-  if (startIdx === -1) return 1; // fallback for palace 5 → treat as palace 2
-
-  let idx: number;
-  if (isDuongDon) {
-    idx = (startIdx + steps) % 8;
-  } else {
-    idx = (((startIdx - steps) % 8) + 8) % 8;
-  }
-  return PALACE_ORDER[idx];
 }
 
 // ── Main Chart Generation ──────────────────────────────────────
@@ -482,10 +487,10 @@ function detectFormations(palaces: QmdjPalace[], _duongDon: boolean): QmdjFormat
   return matches;
 }
 
-// ── P2.5: Tuần Không (Empty Stems) ─────────────────────────────
+// ── Tuần Không (Empty Stems) ──────────────────────────────────
 
 /**
- * P2.5: Calculate Tuần Không (旬空) empty branches for the QMDJ chart.
+ * Calculate Tuần Không (旬空) empty branches for the QMDJ chart.
  * In each sexagenary decade (旬), 10 Stems pair with 10 of 12 Branches,
  * leaving 2 Branches "empty". These empty branches weaken their palaces.
  *
@@ -512,7 +517,7 @@ export function calculateTuanKhong(
   const emptyBranch1 = CHI_LIST[emptyIdx1];
   const emptyBranch2 = CHI_LIST[emptyIdx2];
 
-  // Map branches to affected palace numbers (approximate)
+  // Heuristic mapping from empty branches to affected palaces.
   const branchToPalace: Record<string, number> = {
     Tý: 1,
     Sửu: 8,

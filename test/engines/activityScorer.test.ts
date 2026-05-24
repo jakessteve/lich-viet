@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { scoreActivity, scoreAllActivities } from '@/utils/activityScorer';
+import { CLASSICAL_AUSPICIOUSNESS } from '@/config/scoring';
 import type { DayDetailsData } from '@/types/calendar';
 
 function createMockDayData(): DayDetailsData {
@@ -104,6 +105,32 @@ describe('activityScorer', () => {
       expect(result.breakdown.length).toBeGreaterThan(0);
       const factors = result.breakdown.map((b) => b.factor);
       expect(factors).toContain('truc');
+    });
+
+    it('keeps advanced overlays off by default', () => {
+      const dayData = createMockDayData();
+      const result = scoreActivity('khai-truong', dayData);
+      const qmdj = result.breakdown.find((b) => b.factor === 'qmdj');
+      const thaiAt = result.breakdown.find((b) => b.factor === 'thaiAt');
+      expect(qmdj?.value).toBe(0);
+      expect(thaiAt?.value).toBe(0);
+    });
+
+    it('floors explicit day support even when other factors are modest', () => {
+      const dayData = createMockDayData();
+      const result = scoreActivity('khai-truong', dayData);
+      expect(result.percentage).toBeGreaterThanOrEqual(CLASSICAL_AUSPICIOUSNESS.preferredFloor);
+    });
+
+    it('caps severe explicit prohibitions', () => {
+      const dayData = createMockDayData();
+      dayData.dungSu.suitable = [];
+      dayData.dungSu.unsuitable = ['Khai trương, mở hàng'];
+      dayData.dayGrade = 'Đại Kỵ';
+      dayData.deityStatus = 'Ngày Hắc Đạo';
+
+      const result = scoreActivity('khai-truong', dayData);
+      expect(result.percentage).toBeLessThanOrEqual(CLASSICAL_AUSPICIOUSNESS.severeCap);
     });
 
     it('respects Bách Sự Hung override', () => {

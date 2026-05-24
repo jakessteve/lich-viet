@@ -683,7 +683,7 @@ export function getDetailedDayData(date: Date, location?: SwissGeoLocation): Day
 
   // 5. Dụng Sự
   const dayCanNguHanh = NGU_HANH_MAPPING[dayCanChi.can as Can];
-  const dungSu = generateDungSu(modifying, dayCanNguHanh);
+  const dungSu = generateDungSu(modifying, dayCanNguHanh, normalized);
 
   // 6. Ngũ Hành Interaction
   const nguHanh = calculateNguHanhInteraction(dayCanChi);

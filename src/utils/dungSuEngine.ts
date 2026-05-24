@@ -16,17 +16,73 @@ import {
   GLOBAL_GOOD_LABELS,
   GLOBAL_BAD_LABELS,
 } from './constants';
+import lunarJs from 'lunar-javascript';
 
 const vtMapping: Record<string, string> = vtMappingData;
+const { Solar } = lunarJs as unknown as { Solar: { fromDate: (date: Date) => { getLunar: () => unknown } } };
 
-export function generateDungSu(modifying: ModifyingLayerResult, _dayCanNguHanh: string) {
+const ORACLE_ACTIVITY_MAP: Record<string, string> = {
+  '嫁娶': 'Cưới hỏi',
+  '结婚': 'Cưới hỏi',
+  '开市': 'Khai trương',
+  '开业': 'Khai trương',
+  '开张': 'Khai trương',
+  '交易': 'Giao dịch',
+  '立券': 'Ký hợp đồng',
+  '出行': 'Xuất hành',
+  '入宅': 'Chuyển nhà',
+  '移徙': 'Chuyển nhà',
+  '安葬': 'Chôn cất',
+  '启钻': 'Chôn cất',
+  '动土': 'Động thổ',
+  '破土': 'Động thổ',
+  '祭祀': 'Cúng lễ',
+  '求医': 'Chữa bệnh',
+  '治病': 'Chữa bệnh',
+  '解除': 'Giải hạn',
+  '开光': 'Khai quang',
+  '安床': 'Kê giường',
+  '修造': 'Sửa chữa',
+  '拆卸': 'Phá dỡ nhà',
+  '坏垣': 'Xây tường/Lấp vá',
+  '纳财': 'Cầu tài',
+  '纳采': 'Dạm ngõ',
+  '订盟': 'Lễ ăn hỏi',
+};
+
+function mapOracleActivities(raw: string): string[] {
+  const mapped: string[] = [];
+  raw
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .forEach((token) => {
+      for (const [needle, activity] of Object.entries(ORACLE_ACTIVITY_MAP)) {
+        if (token.includes(needle)) mapped.push(activity);
+      }
+    });
+  return Array.from(new Set(mapped));
+}
+
+export function generateDungSu(modifying: ModifyingLayerResult, _dayCanNguHanh: string, date?: Date) {
   const suitable: string[] = [];
   const unsuitable: string[] = [];
+  const oracleSuitable: string[] = [];
+  const oracleUnsuitable: string[] = [];
+  let oracleGlobalVeto = false;
 
   const starNames = modifying.stars.map((s) => s.name);
   const trucName = modifying.trucDetail.name;
   const trucRules = (dungSuData as unknown as DungSuData).truc_rules || {};
   const dayTrucRule = trucRules[trucName] || { nghi: [], ky: [] };
+
+  const solar = Solar.fromDate(date || new Date());
+  const lunar = solar.getLunar() as { getDayYi: (sect?: number) => { toString: () => string }; getDayJi: (sect?: number) => { toString: () => string } };
+  const oracleYiRaw = lunar.getDayYi(1).toString();
+  const oracleJiRaw = lunar.getDayJi(1).toString();
+  const oracleYi = mapOracleActivities(oracleYiRaw);
+  const oracleJi = mapOracleActivities(oracleJiRaw);
+  oracleGlobalVeto = oracleJiRaw.includes('诸事不宜');
 
   // 1. Activities from Trực
   suitable.push(...(dayTrucRule.nghi || []));
@@ -38,6 +94,9 @@ export function generateDungSu(modifying: ModifyingLayerResult, _dayCanNguHanh: 
     if (s.suitable) suitable.push(...s.suitable);
     if (s.unsuitable) unsuitable.push(...s.unsuitable);
   });
+
+  oracleSuitable.push(...oracleYi);
+  oracleUnsuitable.push(...oracleJi);
 
   // 3. Special Global Override & Bách Sự Hung
   const bachKyList = (dungSuData as unknown as DungSuData).bach_ky_list || [];
@@ -195,5 +254,5 @@ export function generateDungSu(modifying: ModifyingLayerResult, _dayCanNguHanh: 
     }
   });
 
-  return { suitable: finalSuitable, unsuitable: finalUnsuitable };
+  return { suitable: finalSuitable, unsuitable: finalUnsuitable, oracleSuitable, oracleUnsuitable, oracleGlobalVeto };
 }

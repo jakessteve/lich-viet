@@ -39,6 +39,7 @@ const BRANCHES: BranchId[] = ['ti', 'suu', 'dan', 'mao', 'thin', 'ty', 'ngo', 'm
 const BRANCH_NAMES = generalsData.branchNames as Record<BranchId, { vi: string; cn: string }>;
 const GENERALS = generalsData.generals as ThienTuong[];
 const COURSES = coursesData.courses as KhoaThuc[];
+const COURSE_BY_ID = new Map(COURSES.map((course) => [course.id, course] as const));
 const BRANCH_MEANINGS = interpData.tamTruyenNarratives.branchMeanings as Record<BranchId, string>;
 const CATEGORY_INTERP = interpData.categoryInterpretations as Record<
   string,
@@ -48,6 +49,10 @@ const VERDICT_TEMPLATES = interpData.verdictTemplates as Record<
   VerdictLevel,
   { label: string; description: string; score: number }
 >;
+
+function getCourseById(id: string): KhoaThuc {
+  return COURSE_BY_ID.get(id) ?? COURSES[0];
+}
 
 // ── L1: Ngũ Hành Element Mapping for Branches ─────────────────
 
@@ -367,9 +372,8 @@ function parseDayStemBranch(date: Date): { stem: string; branch: string; stemInd
 // ── Tứ Khóa Derivation ────────────────────────────────────────
 
 /**
- * P1.6 FIX: Day Stem lodging table (寄宮) from Đại Lục Nhâm theory.
+ * Day Stem lodging table (寄宮) from Đại Lục Nhâm theory.
  * Each Heavenly Stem has a fixed Earthly Branch "residence".
- * The previous code used `dayStemIndex % 12` which is WRONG.
  */
 const STEM_LODGE: Record<string, BranchId> = {
   Giáp: 'dan', // Giáp → Dần
@@ -418,7 +422,6 @@ function deriveTuKhoa(board: BoardPosition[], dayStemIndex: number, dayBranchInd
     };
   }
 
-  // P1.6 FIX: Use fixed STEM_LODGE table instead of dayStemIndex % 12
   const stemBranch = STEM_LODGE[dayStem] || BRANCHES[0];
   const stemPos = board.find((b) => b.diaBan === stemBranch);
   const l1TianBranch = stemPos?.tianBan || BRANCHES[0];
@@ -443,7 +446,7 @@ function deriveTuKhoa(board: BoardPosition[], dayStemIndex: number, dayBranchInd
   return { lessons };
 }
 
-// ── P3.4: Tam Truyền Derivation (Khóa Thức-specific) ──────────
+// ── Tam Truyền Derivation (Khóa Thức-specific) ────────────────
 
 function deriveTamTruyen(board: BoardPosition[], tuKhoa: TuKhoa, khoaThuc?: KhoaThuc): TamTruyen {
   const labels = ['Sơ Truyền', 'Trung Truyền', 'Mạt Truyền'];
@@ -477,7 +480,7 @@ function deriveTamTruyen(board: BoardPosition[], tuKhoa: TuKhoa, khoaThuc?: Khoa
 }
 
 /**
- * P3.4: Select the Sơ Truyền starting branch based on Khóa Thức type.
+ * Select the Sơ Truyền starting branch based on Khóa Thức type.
  *
  * Standard rules:
  * - Nguyên Thủ: Use the lesson where upper Khắc lower (first found)
@@ -485,7 +488,7 @@ function deriveTamTruyen(board: BoardPosition[], tuKhoa: TuKhoa, khoaThuc?: Khoa
  * - Tri Nhất: Use the sole Khắc lesson
  * - Thiệp Hại: No Khắc — use the lesson with greatest branch depth
  * - Phục Ngâm / Phản Ngâm: Use day stem's lodging branch
- * - Others (Diêu Khắc, Muội Giản, Biệt Trách): Use first lesson upper
+ * - Others: Use first lesson upper
  */
 function selectSoTruyenBranch(board: BoardPosition[], tuKhoa: TuKhoa, khoaThuc?: KhoaThuc): BranchId {
   const khoaId = khoaThuc?.id || '';
@@ -555,12 +558,12 @@ function selectSoTruyenBranch(board: BoardPosition[], tuKhoa: TuKhoa, khoaThuc?:
 // ── Khóa Thức Identification ───────────────────────────────────
 
 function identifyKhoaThuc(board: BoardPosition[], tuKhoa: TuKhoa, dayStemIndex: number): KhoaThuc {
-  // P1.7: Full 9-type Khóa Thức classification cascade
-  // Order: Phục Ngâm → Phản Ngâm → Nguyên Thủ → Trùng Thẩu → Tri Nhất → Thiệp Hại → Diêu Khắc → Muội Giản → Biệt Trách
+  // Classification cascade:
+  // Phục Ngâm → Phản Ngâm → Nguyên Thủ → Trùng Thẩu → Tri Nhất → Thiệp Hại → Diêu Khắc → Muội Giản → Biệt Trách
 
   // 1. Check for Phục Ngâm (Thiên Bàn = Địa Bàn everywhere)
   const isPhucNgam = board.every((b) => b.tianBan === b.diaBan);
-  if (isPhucNgam) return COURSES.find((c) => c.id === 'phucNgam') || COURSES[0];
+  if (isPhucNgam) return getCourseById('phucNgam');
 
   // 2. Check for Phản Ngâm (Thiên Bàn xung Địa Bàn)
   const isPhanNgam = board.every((b) => {
@@ -568,7 +571,7 @@ function identifyKhoaThuc(board: BoardPosition[], tuKhoa: TuKhoa, dayStemIndex: 
     const tiIdx = BRANCHES.indexOf(b.tianBan);
     return Math.abs(diIdx - tiIdx) === 6;
   });
-  if (isPhanNgam) return COURSES.find((c) => c.id === 'fanNgam') || COURSES[0];
+  if (isPhanNgam) return getCourseById('fanNgam');
 
   // Analyze Khắc (overcomes) relationships in all 4 lessons using L1 element data
   // A lesson has Khắc when upper overcomes lower OR lower overcomes upper
@@ -581,17 +584,17 @@ function identifyKhoaThuc(board: BoardPosition[], tuKhoa: TuKhoa, dayStemIndex: 
     khacCount > 0 &&
     (tuKhoa.lessons[0].elementRelation === 'khac' || tuKhoa.lessons[0].elementRelation === 'bi_khac')
   ) {
-    return COURSES.find((c) => c.id === 'nguyenThu') || COURSES[0];
+    return getCourseById('nguyenThu');
   }
 
   // 4. Trùng Thẩu: Multiple lessons have Khắc (2+), indicating complexity
   if (khacCount >= 2) {
-    return COURSES.find((c) => c.id === 'trungThau') || COURSES[0];
+    return getCourseById('trungThau');
   }
 
   // 5. Tri Nhất: Exactly one lesson has Khắc (only one controlling pair)
   if (khacCount === 1) {
-    return COURSES.find((c) => c.id === 'triNhat') || COURSES[0];
+    return getCourseById('triNhat');
   }
 
   // No Khắc at all — classify among the remaining types
@@ -601,7 +604,7 @@ function identifyKhoaThuc(board: BoardPosition[], tuKhoa: TuKhoa, dayStemIndex: 
   const upperBranches = tuKhoa.lessons.map((l) => l.upperStem);
   const hasDuplicateUppers = new Set(upperBranches).size < upperBranches.length;
   if (hasDuplicateUppers) {
-    return COURSES.find((c) => c.id === 'thiepHai') || COURSES[0];
+    return getCourseById('thiepHai');
   }
 
   // 7. Diêu Khắc: Lessons form a distant/remote overcomes pattern
@@ -609,24 +612,24 @@ function identifyKhoaThuc(board: BoardPosition[], tuKhoa: TuKhoa, dayStemIndex: 
   const lowerBranches = tuKhoa.lessons.map((l) => l.lowerBranch);
   const hasDistantRelation = upperBranches.some((u, i) => u !== lowerBranches[i] && u !== '—');
   if (hasDistantRelation && !hasDuplicateUppers) {
-    return COURSES.find((c) => c.id === 'dieuKhac') || COURSES[0];
+    return getCourseById('dieuKhac');
   }
 
   // 8. Mội Giản: All lessons are harmonious (Sinh), quiet pattern
   const allSinh = tuKhoa.lessons.every((l) => l.relationship === 'Sinh');
   if (allSinh) {
-    return COURSES.find((c) => c.id === 'muoiGian') || COURSES[0];
+    return getCourseById('muoiGian');
   }
 
   // 9. Biệt Trách: Special/exceptional case (fallback)
   //    Day's stem is Yang and Lesson 1 upper = Day Branch area
   if (dayStemIndex % 2 === 0) {
     // Yang stem
-    return COURSES.find((c) => c.id === 'bietTrach') || COURSES[0];
+    return getCourseById('bietTrach');
   }
 
-  // Default fallback: Thị Mạch (old fallback)
-  return COURSES.find((c) => c.id === 'thiMach') || COURSES[0];
+  // Default fallback: Thiệp Mạch
+  return getCourseById('thiMach');
 }
 
 // ── Verdict Calculation ────────────────────────────────────────
@@ -682,10 +685,10 @@ export function generateLucNhamChart(date: Date, hourBranchId: number): LucNhamC
   // Step 3: Tứ Khóa
   const tuKhoa = deriveTuKhoa(board, stemIndex, branchIndex);
 
-  // Step 4: Khóa Thức (P3.4: computed before Tam Truyền to inform selection)
+  // Step 4: Khóa Thức (computed before Tam Truyền to inform selection)
   const khoaThuc = identifyKhoaThuc(board, tuKhoa, stemIndex);
 
-  // Step 5: Tam Truyền (P3.4: now Khóa Thức-aware)
+  // Step 5: Tam Truyền (now Khóa Thức-aware)
   const tamTruyen = deriveTamTruyen(board, tuKhoa, khoaThuc);
 
   // Step 6: Verdict

@@ -30,7 +30,7 @@ const PALACE_FORECASTS = hexagramsData.palaceForecasts as Record<
 const DOMINANCE_INTERP = hexagramsData.dominanceInterpretations;
 const MONTHLY_MODS = hexagramsData.monthlyModifiers as Record<string, { shift: number; note: string }>;
 
-// ── T2: Ngũ Hành Palace Element Interactions ───────────────────
+// ── Ngũ Hành Palace Element Interactions ─────────────────────
 
 type NguHanh = 'Kim' | 'Mộc' | 'Thủy' | 'Hỏa' | 'Thổ';
 type ElementRelation = 'sinh' | 'khac' | 'bi_sinh' | 'bi_khac' | 'ty_hoa';
@@ -157,47 +157,36 @@ function getEpochPosition(lunarYear: number) {
 }
 
 /**
- * Calculate which of the 16 palaces Thái Ất occupies for the given year.
- * Uses the cycle year mapped to 16 palaces in a rotating pattern.
+ * Heuristic palace mapping for the current Thái Ất board.
+ * The current data set exposes forecasts and deity placement, but not a
+ * canonical classical palace table.
  */
-function getThaiAtPalaceNumber(epochPosition: ReturnType<typeof getEpochPosition>): number {
-  // Map cycle year (1-72) to palace (1-16) using modular rotation
-  // Each palace governs approximately 4.5 years within a 72-year cycle
+function getThaiAtPalaceNumberHeuristic(epochPosition: ReturnType<typeof getEpochPosition>): number {
   const palaceIndex = (epochPosition.cycleYear - 1) % 16;
   return palaceIndex + 1;
 }
 
-// ── T3: Three Calculation Formulas (Host/Guest/Fixed) ──────────
+// ── Host / Guest / Fixed ─────────────────────────────────────
 
 /**
  * Derive Host Count (Chủ Toán), Guest Count (Khách Toán), and Fixed Count (Định Toán).
- *
- * T3 Enhancement: Implements three separate formulas:
- * 1. Host (Chủ Toán) — represents internal/domestic force, based on branch cycle
- * 2. Guest (Khách Toán) — represents external/foreign force, based on stem cycle
- * 3. Fixed (Định Toán) — represents cosmic constant, derived from both
- *
- * ⚠️ DISCLAIMER: These are improved approximations using more authentic modular
- * arithmetic patterns, but still awaiting full 積年 (Tích Niên) verification
- * from classical texts 《太乙金鏡式經》.
+ * This remains a modular heuristic model, separate from the table-driven
+ * palace/forecast data used elsewhere in the engine.
  */
-function calculateHostGuest(lunarYear: number, palaceNumber: number): HostGuestResult {
+function calculateHostGuestHeuristic(lunarYear: number, palaceNumber: number): HostGuestResult {
   const branchIndex = (((lunarYear - 4) % 12) + 12) % 12;
   const stemIndex = (((lunarYear - 4) % 10) + 10) % 10;
   const sexagenaryIndex = (((lunarYear - 4) % 60) + 60) % 60;
 
-  // T3 Formula 1: Host Count (Chủ Toán)
-  // Internal force: Branch-based with palace modulation
+  // Host Count (Chủ Toán): branch-based with palace modulation
   const hostBase = (branchIndex + 1) * 4 + palaceNumber;
   const hostCount = hostBase + (lunarYear % 7);
 
-  // T3 Formula 2: Guest Count (Khách Toán)
-  // External force: Stem-based with inverse palace factor
+  // Guest Count (Khách Toán): stem-based with inverse palace factor
   const guestBase = (stemIndex + 1) * 3 + (16 - palaceNumber);
   const guestCount = guestBase + (lunarYear % 5);
 
-  // T3 Formula 3: Fixed Count (Định Toán)
-  // Cosmic constant: Sexagenary cycle midpoint with palace modulus
+  // Fixed Count (Định Toán): sexagenary cycle midpoint with palace modulus
   const fixedCount = Math.floor(sexagenaryIndex / 4) + palaceNumber + (lunarYear % 3);
 
   // Dominance from Host vs Guest differential
@@ -224,8 +213,7 @@ function calculateHostGuest(lunarYear: number, palaceNumber: number): HostGuestR
     detailedAnalysis: interp.detailedAnalysis,
     careerAdvice: interp.careerAdvice,
     personalAdvice: interp.personalAdvice,
-    disclaimer:
-      '⚠️ Chủ/Khách/Định Toán sử dụng công thức cải tiến (3 công thức riêng biệt), chưa phải thuật toán chính thống từ 《太乙金鏡式經》. Kết quả mang tính tham khảo.',
+    disclaimer: 'Chủ/Khách/Định Toán là mô hình heuristic, chưa phải bản đối chiếu cổ điển hoàn chỉnh.',
   };
 }
 
@@ -275,15 +263,15 @@ function placeDeities(thaiAtPalace: number): ThaiAtDeityPosition[] {
  */
 export function getThaiAtYearChart(lunarYear: number): ThaiAtChart {
   const epochPosition = getEpochPosition(lunarYear);
-  const thaiAtPalace = getThaiAtPalaceNumber(epochPosition);
+  const thaiAtPalace = getThaiAtPalaceNumberHeuristic(epochPosition);
   const thaiAtPalaceInfo = PALACES.find((p) => p.number === thaiAtPalace) || PALACES[0];
   const deityPositions = placeDeities(thaiAtPalace);
-  const hostGuest = calculateHostGuest(lunarYear, thaiAtPalace);
+  const hostGuest = calculateHostGuestHeuristic(lunarYear, thaiAtPalace);
 
   const palaceForecast = PALACE_FORECASTS[thaiAtPalace.toString()];
   const canChiYear = getCanChiYear(lunarYear);
 
-  // T2: Palace element interaction analysis
+  // Palace element interaction analysis
   const activeElement = palaceForecast?.element || thaiAtPalaceInfo.element;
   const palaceElementAnalysis = analyzePalaceElement(activeElement, lunarYear);
 

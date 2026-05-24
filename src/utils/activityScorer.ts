@@ -5,7 +5,7 @@
  */
 
 import { DayDetailsData, HourInfo } from '../types/calendar';
-import { ACTIVITY_CATALOG, ActivityEntry, getActivityById } from './activityCatalog';
+import { ACTIVITY_CATALOG, ActivityEntry, getActivityById, mapDungSuToActivityIds } from './activityCatalog';
 import { CHI_XUNG, LUC_HOP, TAM_HOP, CHI_HINH, CHI_HAI, CHI_PHA } from './constants';
 import type { Chi } from '../types/calendar';
 import {
@@ -18,6 +18,7 @@ import {
   QMDJ_SCORING,
   NORMALIZATION,
   OVERRIDES,
+  CLASSICAL_AUSPICIOUSNESS,
   BEST_HOURS_SCORING,
   FALLBACK_SCORE,
 } from '../config/scoring';
@@ -44,6 +45,15 @@ export interface ActivityScoreResult {
   breakdown: ScoreBreakdownItem[];
   bestHours: HourScoreEntry[]; // Top 3 best hours
   isBachSuHung: boolean; // Special override flag
+}
+
+export interface ActivityScoringOptions {
+  /**
+   * When enabled, QMDJ and Thái Ất contribute to the activity score.
+   * Defaults to `false` so the base trạch nhật percentage stays closer
+   * to the classical day-selection layers.
+   */
+  includeAdvanced?: boolean;
 }
 
 export interface HourScoreEntry {
@@ -116,6 +126,7 @@ export function scoreActivity(
   dayData: DayDetailsData,
   selectedHourChi?: Chi,
   birthYearChi?: Chi,
+  options: ActivityScoringOptions = {},
 ): ActivityScoreResult {
   const activity = getActivityById(activityId);
   if (!activity) {
@@ -131,19 +142,37 @@ export function scoreActivity(
 
   const breakdown: ScoreBreakdownItem[] = [];
   let totalScore = 0;
+  const includeAdvanced = options.includeAdvanced ?? false;
 
   // Pre-compute lowercase Sets for dụng sự lists (used by Factors 1 & 2)
   const nghiSet = buildLowerSet(dayData.dungSu.suitable);
   const kySet = buildLowerSet(dayData.dungSu.unsuitable);
+  const { suitableIds, unsuitableIds } = mapDungSuToActivityIds(dayData.dungSu.suitable, dayData.dungSu.unsuitable);
+  const {
+    suitableIds: oracleSuitableIds,
+    unsuitableIds: oracleUnsuitableIds,
+  } = mapDungSuToActivityIds(dayData.dungSu.oracleSuitable || [], dayData.dungSu.oracleUnsuitable || []);
+  const hasOracleSupport = oracleSuitableIds.has(activityId);
+  const hasOracleBlock = oracleUnsuitableIds.has(activityId);
+  const hasOracleSignal = hasOracleSupport || hasOracleBlock;
+  const directSuitableOnly = suitableIds.has(activityId) && !unsuitableIds.has(activityId);
+  const directUnsuitableOnly = unsuitableIds.has(activityId) && !suitableIds.has(activityId);
+  const directMixed = suitableIds.has(activityId) && unsuitableIds.has(activityId);
 
   // ── Check Bách Sự Hung override ──
   const isBachSuHung = dayData.dungSu.unsuitable.some(
     (s) => s.toLowerCase().includes('bách sự hung') || s.toLowerCase().includes('cực kỳ xấu cho mọi việc'),
   );
+  const isOracleGlobalVeto = dayData.dungSu.oracleGlobalVeto ?? false;
+  const isSevereDay = dayData.dayGrade === 'Đại Kỵ';
+  const isDirectSupport = hasOracleSupport || (!hasOracleSignal && directSuitableOnly);
+  const isDirectBlock = hasOracleBlock || (!hasOracleSignal && (directUnsuitableOnly || directMixed));
+  const isMixedSignal = hasOracleSignal ? false : directMixed;
+  const isBachSuHungVeto = isBachSuHung && !isDirectSupport;
 
   // ── Factor 1: Trực Match ──
-  const inNghi = activityInSet(activity, nghiSet);
-  const inKy = activityInSet(activity, kySet);
+  const inNghi = isDirectSupport || (!isDirectBlock && activityInSet(activity, nghiSet));
+  const inKy = isDirectBlock || (!isDirectSupport && activityInSet(activity, kySet));
   let trucScore: number;
   let trucDetail: string;
   if (inNghi && !inKy) {
@@ -308,18 +337,22 @@ export function scoreActivity(
   // ── Factor 7: QMDJ (Kỳ Môn Độn Giáp) ──
   let qmdjScore = 0;
   let qmdjDetail: string;
-  try {
-    const qmdjHourChi = selectedHourChi || 'Tý';
-    const dateObj = new Date(dayData.solarDate);
-    const chart = generateQmdjChart(dateObj, qmdjHourChi);
-    const qmdjResult = scoreActivityByQmdj(activityId, chart);
-    qmdjScore = Math.max(
-      -QMDJ_SCORING.max,
-      Math.min(QMDJ_SCORING.max, Math.round(qmdjResult.score * QMDJ_SCORING.weight)),
-    );
-    qmdjDetail = qmdjResult.detail;
-  } catch {
-    qmdjDetail = 'Chưa tính Kỳ Môn';
+  if (includeAdvanced) {
+    try {
+      const qmdjHourChi = selectedHourChi || 'Tý';
+      const dateObj = new Date(dayData.solarDate);
+      const chart = generateQmdjChart(dateObj, qmdjHourChi);
+      const qmdjResult = scoreActivityByQmdj(activityId, chart);
+      qmdjScore = Math.max(
+        -QMDJ_SCORING.max,
+        Math.min(QMDJ_SCORING.max, Math.round(qmdjResult.score * QMDJ_SCORING.weight)),
+      );
+      qmdjDetail = qmdjResult.detail;
+    } catch {
+      qmdjDetail = 'Chưa tính Kỳ Môn';
+    }
+  } else {
+    qmdjDetail = 'Tắt chế độ nâng cao';
   }
   breakdown.push({
     factor: 'qmdj',
@@ -334,26 +367,30 @@ export function scoreActivity(
   // ── Factor 8: Thái Ất Macro Backdrop (informational, ±3) ──
   let thaiAtScore = 0;
   let thaiAtDetail: string;
-  try {
-    const dateObj = new Date(dayData.solarDate);
-    const lunarYear = dayData.lunarDate?.year || dateObj.getFullYear();
-    const chart = getThaiAtYearChart(lunarYear);
-    // Base: dominance alignment
-    if (chart.hostGuest.dominance === 'hostDominant') {
-      thaiAtScore = 1; // Stable years favor most activities
-      thaiAtDetail = `${chart.hostGuest.dominanceLabel}: Năm ổn định, thuận cho hoạt động thường nhật`;
-    } else if (chart.hostGuest.dominance === 'guestDominant') {
-      thaiAtScore = -1; // Dynamic years have more uncertainty
-      thaiAtDetail = `${chart.hostGuest.dominanceLabel}: Năm biến động, cần linh hoạt`;
-    } else {
-      thaiAtDetail = `${chart.hostGuest.dominanceLabel}: Cân bằng âm dương`;
+  if (includeAdvanced) {
+    try {
+      const dateObj = new Date(dayData.solarDate);
+      const lunarYear = dayData.lunarDate?.year || dateObj.getFullYear();
+      const chart = getThaiAtYearChart(lunarYear);
+      // Base: dominance alignment
+      if (chart.hostGuest.dominance === 'hostDominant') {
+        thaiAtScore = 1; // Stable years favor most activities
+        thaiAtDetail = `${chart.hostGuest.dominanceLabel}: Năm ổn định, thuận cho hoạt động thường nhật`;
+      } else if (chart.hostGuest.dominance === 'guestDominant') {
+        thaiAtScore = -1; // Dynamic years have more uncertainty
+        thaiAtDetail = `${chart.hostGuest.dominanceLabel}: Năm biến động, cần linh hoạt`;
+      } else {
+        thaiAtDetail = `${chart.hostGuest.dominanceLabel}: Cân bằng âm dương`;
+      }
+      // Tone boost
+      if (chart.forecastTone === 'optimistic') thaiAtScore += 2;
+      else if (chart.forecastTone === 'cautious') thaiAtScore -= 2;
+      thaiAtScore = Math.max(-3, Math.min(3, thaiAtScore));
+    } catch {
+      thaiAtDetail = 'Chưa tính Thái Ất';
     }
-    // Tone boost
-    if (chart.forecastTone === 'optimistic') thaiAtScore += 2;
-    else if (chart.forecastTone === 'cautious') thaiAtScore -= 2;
-    thaiAtScore = Math.max(-3, Math.min(3, thaiAtScore));
-  } catch {
-    thaiAtDetail = 'Vận khí vũ trụ trung bình';
+  } else {
+    thaiAtDetail = 'Tắt chế độ nâng cao';
   }
   breakdown.push({
     factor: 'thaiAt',
@@ -371,8 +408,26 @@ export function scoreActivity(
   );
   percentage = Math.max(NORMALIZATION.percentMin, Math.min(NORMALIZATION.percentMax, percentage));
 
+  if (isBachSuHungVeto) {
+    percentage = Math.min(percentage, CLASSICAL_AUSPICIOUSNESS.hardVetoCap);
+  } else if (isOracleGlobalVeto && !isDirectSupport) {
+    percentage = Math.min(percentage, CLASSICAL_AUSPICIOUSNESS.severeCap);
+  } else if (isMixedSignal) {
+    percentage = Math.min(
+      Math.max(percentage, CLASSICAL_AUSPICIOUSNESS.mixedFloor),
+      CLASSICAL_AUSPICIOUSNESS.preferredFloor,
+    );
+  } else if (isDirectSupport) {
+    percentage = Math.max(percentage, CLASSICAL_AUSPICIOUSNESS.preferredFloor);
+  } else if (isDirectBlock) {
+    percentage = Math.min(
+      percentage,
+      isSevereDay ? CLASSICAL_AUSPICIOUSNESS.severeCap : CLASSICAL_AUSPICIOUSNESS.forbiddenCap,
+    );
+  }
+
   // Bách Sự Hung override
-  if (isBachSuHung) {
+  if (isBachSuHungVeto) {
     percentage = Math.min(percentage, OVERRIDES.bachSuHungCap);
   }
 

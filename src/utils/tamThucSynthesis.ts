@@ -47,7 +47,6 @@ export interface TamThucSynthesis {
 // ── Constants ──────────────────────────────────────────────────
 
 const CHI_FROM_INDEX: Chi[] = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
-const CHI_NAMES_VI = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
 
 // ── Engine Runners ─────────────────────────────────────────────
 
@@ -227,7 +226,7 @@ function runThaiAt(date: Date): MethodSummary {
       `Chủ-Khách: ${chart.hostGuest.dominanceLabel}`,
     ];
 
-    // T2: Palace element interaction with year's Nạp Âm
+    // Palace element interaction with year's Nạp Âm
     if (chart.palaceElementAnalysis) {
       details.push(
         `Cung-Năm: ${chart.palaceElementAnalysis.relationLabel} (Điểm: ${chart.palaceElementAnalysis.score > 0 ? '+' : ''}${chart.palaceElementAnalysis.score})`,
@@ -235,7 +234,7 @@ function runThaiAt(date: Date): MethodSummary {
       details.push(chart.palaceElementAnalysis.interpretation);
     }
 
-    // T3: Fixed Count
+    // Host / Guest / Fixed
     if (chart.hostGuest.fixedCount !== undefined) {
       details.push(
         `Chủ Toán: ${chart.hostGuest.hostCount} · Khách Toán: ${chart.hostGuest.guestCount} · Định Toán: ${chart.hostGuest.fixedCount}`,
@@ -316,7 +315,7 @@ export function synthesizeTamThuc(date: Date, hourIndex: number): TamThucSynthes
 
   return {
     date,
-    hourBranchName: CHI_NAMES_VI[hourIndex % 12],
+    hourBranchName: CHI_FROM_INDEX[hourIndex % 12],
     methods: { qmdj, lucNham, thaiAt },
     agreementCount,
     combinedVerdict,

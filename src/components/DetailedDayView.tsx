@@ -15,6 +15,7 @@ import {
   calculatePersonalHourModifier,
   getPersonalDungSu,
 } from '../services/personalization';
+import { getUserBirthProfile } from '@/utils/userBirthProfile';
 import CollapsibleCard from './CollapsibleCard';
 
 interface DetailedDayViewProps {
@@ -28,23 +29,8 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
   const [sortByScore, setSortByScore] = useState(false);
   const [showPersonalized, setShowPersonalized] = useState(false);
 
-  // Derive birth details from user profile or birthday string
   const computedProfile = useMemo(() => {
-    if (!user) return null;
-    if (user.profile?.birthYear) {
-      return {
-        birthYear: user.profile.birthYear,
-        birthMonth: user.profile.birthMonth,
-        birthDay: user.profile.birthDay,
-      };
-    }
-    if (user.birthday) {
-      const parts = user.birthday.split('-').map(Number);
-      if (parts.length === 3) {
-        return { birthYear: parts[0], birthMonth: parts[1], birthDay: parts[2] };
-      }
-    }
-    return null;
+    return getUserBirthProfile(user);
   }, [user]);
 
   const hasBirthday = !!computedProfile?.birthYear;
@@ -52,7 +38,7 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
   // Personal day score
   const personalScore = useMemo(() => {
     if (!computedProfile?.birthYear || !data.canChi?.day?.chi) return null;
-    return calculatePersonalDayScore(computedProfile.birthYear, data.canChi.day.chi);
+    return calculatePersonalDayScore(computedProfile.birthYear, data.canChi.day.chi, computedProfile);
   }, [computedProfile, data.canChi.day.chi]);
 
   // Personalized hours with modifier overlay
@@ -67,6 +53,7 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
         h.canChi,
         data.canChi.day,
         date,
+        computedProfile,
       );
       if (modifier) {
         hour.score = Math.min(100, Math.max(0, hour.score + modifier.totalModifier));
@@ -83,7 +70,7 @@ const DetailedDayView: React.FC<DetailedDayViewProps> = ({ date, data }) => {
   // Personalized Dụng Sự
   const personalDungSu = useMemo(() => {
     if (!computedProfile?.birthYear || !data.canChi?.day?.chi || !data.dungSu?.suitable) return null;
-    return getPersonalDungSu(computedProfile.birthYear, data.canChi.day.chi, data.dungSu.suitable);
+    return getPersonalDungSu(computedProfile.birthYear, data.canChi.day.chi, data.dungSu.suitable, computedProfile);
   }, [computedProfile, data.canChi.day.chi, data.dungSu.suitable]);
 
   const sortedHours = useMemo(() => {

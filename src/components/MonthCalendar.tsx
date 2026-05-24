@@ -7,6 +7,7 @@ import { calculatePersonalDayScore } from '../services/personalization';
 import { IconButton } from './shared';
 import type { SwissGeoLocation } from '../services/astronomy/swissEphemeris';
 import { getCivilDateForOffset } from '@/utils/geo';
+import { getUserBirthProfile } from '@/utils/userBirthProfile';
 
 interface MonthCalendarProps {
   selectedDate: Date;
@@ -24,6 +25,7 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date(selectedDate));
   const { user } = useAuthStore();
+  const userBirthProfile = useMemo(() => getUserBirthProfile(user), [user]);
 
   const days = useMemo(() => {
     return getMonthDays(currentDate.getFullYear(), currentDate.getMonth(), viewerLocation ?? undefined);
@@ -33,26 +35,17 @@ const MonthCalendar: React.FC<MonthCalendarProps> = ({
     setCurrentDate(new Date(selectedDate));
   }, [selectedDate]);
 
-  // Derive birth year from user profile
-  const birthYear = useMemo(() => {
-    if (!user) return undefined;
-    if (user.profile?.birthYear) return user.profile.birthYear;
-    if (user.birthday) {
-      const year = Number(user.birthday.split('-')[0]);
-      if (!isNaN(year)) return year;
-    }
-    return undefined;
-  }, [user]);
+  const birthYear = userBirthProfile?.birthYear;
 
   // Overlay personal scores onto days
   const daysWithScore = useMemo(() => {
     if (!birthYear) return days;
     return days.map((day) => {
       if (!day.dayChi) return day;
-      const personalScore = calculatePersonalDayScore(birthYear, day.dayChi);
+      const personalScore = calculatePersonalDayScore(birthYear, day.dayChi, userBirthProfile);
       return personalScore ? { ...day, personalScore } : day;
     });
-  }, [days, birthYear]);
+  }, [birthYear, days, userBirthProfile]);
 
   // Labels matching the design order (Starting from Monday/T2)
   const visualWeekDays = useMemo(() => ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'], []);

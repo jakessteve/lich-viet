@@ -82,20 +82,20 @@ const HONG_LOAN_TABLE = [3, 2, 1, 0, 11, 10, 9, 8, 7, 6, 5, 4];
 /** Thiên Hỉ position by year Chi index. */
 const THIEN_HI_TABLE = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 11, 10];
 
-/** Hỏa Tinh simplified start position by Tam Hợp group. */
-const HOA_TINH_START: Record<number, number> = {
-  0: 2, // Tý-Thìn-Thân → Dần
-  1: 3, // Sửu-Tỵ-Dậu → Mão
-  2: 1, // Dần-Ngọ-Tuất → Sửu
-  3: 9, // Mão-Mùi-Hợi → Dậu
+/** Hỏa Tinh classical start table by Tam Hợp group and hour branch. */
+const HOA_TINH_TABLE: Record<number, readonly number[]> = {
+  0: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1],
+  1: [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2],
+  2: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0],
+  3: [9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8],
 };
 
-/** Linh Tinh simplified start position by Tam Hợp group. */
-const LINH_TINH_START: Record<number, number> = {
-  0: 10, // Tý-Thìn-Thân → Tuất
-  1: 10, // Sửu-Tỵ-Dậu → Tuất
-  2: 3, // Dần-Ngọ-Tuất → Mão
-  3: 10, // Mão-Mùi-Hợi → Tuất
+/** Linh Tinh classical start table by Tam Hợp group and hour branch. */
+const LINH_TINH_TABLE: Record<number, readonly number[]> = {
+  0: [10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  1: [10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  2: [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2],
+  3: [10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
 };
 
 /** Triệt Không positions by year Can index. */
@@ -585,8 +585,8 @@ export function placePhuTinh(
     // Sát Tinh
     'Địa Không': diaKhong,
     'Địa Kiếp': diaKiep,
-    'Hỏa Tinh': mod12(HOA_TINH_START[group] + hourBranch),
-    'Linh Tinh': mod12(LINH_TINH_START[group] + hourBranch),
+    'Hỏa Tinh': HOA_TINH_TABLE[group][mod12(hourBranch)],
+    'Linh Tinh': LINH_TINH_TABLE[group][mod12(hourBranch)],
 
     // Other important stars
     'Thiên Mã': THIEN_MA_TABLE[mod12(yearChiIndex)],
@@ -788,7 +788,7 @@ export function generateChart(input: TuViInput): TuViChart {
     // Phụ Tinh / Sát Tinh in this palace
     for (const [starName, pos] of Object.entries(phuTinhMap)) {
       if (pos === chiIdx) {
-      const info = PHU_TINH_BY_NAME.get(starName);
+        const info = PHU_TINH_BY_NAME.get(starName);
         const b = getBrightness(starName, chiIdx);
         const star: TuViStar = {
           name: starName,

@@ -6,6 +6,7 @@
 
 import type { Chi } from '../../types/calendar';
 import { calculatePersonalDayScore } from './personalDayScore';
+import type { PersonalBirthDetails } from './birthMath';
 
 export interface ScoredActivity {
   name: string;
@@ -30,6 +31,7 @@ export function getPersonalDungSu(
   birthYear: number | undefined | null,
   dayChi: Chi,
   suitableActivities: string[],
+  birthDetails?: PersonalBirthDetails | null,
 ): PersonalDungSuResult {
   const result: PersonalDungSuResult = {
     recommended: [],
@@ -49,7 +51,7 @@ export function getPersonalDungSu(
   }));
 
   // Personal Day Score Overlay
-  const dayScore = calculatePersonalDayScore(birthYear, dayChi);
+  const dayScore = calculatePersonalDayScore(birthYear, dayChi, birthDetails);
   if (dayScore) {
     scoredActivities.forEach((act) => {
       if (dayScore.actionScore >= 3) {

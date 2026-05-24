@@ -49,6 +49,14 @@ describe('qmdjEngine', () => {
       expect(typeof chart.gameNumber).toBe('number');
     });
 
+    it('normalizes runtime solar-term names before looking up the game table', () => {
+      const chart = generateQmdjChart(new Date(2024, 1, 10), 'Tý');
+
+      expect(chart.solarTerm).toBe('Lập Xuân');
+      expect(chart.isDuongDon).toBe(true);
+      expect(chart.gameNumber).toBe(5);
+    });
+
     it('has 9 palaces with correct structure', () => {
       const date = new Date(2024, 1, 10);
       const chart = generateQmdjChart(date, 'Tý');

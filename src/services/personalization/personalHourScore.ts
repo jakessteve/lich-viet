@@ -10,6 +10,7 @@
 import type { Chi, Can, CanChi } from '../../types/calendar';
 import { getCanChiYear, getCanChiDay, parseCanChi } from '../../utils/calendarEngine';
 import { generateQmdjChart, interpretQmdjChart } from '../../utils/qmdjEngine';
+import { resolvePersonalBirthMoment, type PersonalBirthDetails } from './birthMath';
 
 export interface PersonalHourModifier {
   totalModifier: number;
@@ -123,6 +124,7 @@ export function calculatePersonalHourModifier(
   hourCanChi: CanChi,
   dayCanChi: CanChi,
   date: Date,
+  birthDetails?: PersonalBirthDetails | null,
 ): PersonalHourModifier | null {
   if (!birthYear) return null;
 
@@ -138,11 +140,20 @@ export function calculatePersonalHourModifier(
   // Derive user's day Can Chi if birth month/day available
   let userDayCan: Can | undefined;
   let userDayChi: Chi | undefined;
-  if (birthMonth && birthDay) {
-    const birthDate = new Date(birthYear, birthMonth - 1, birthDay, 12, 0);
-    const dayCC = parseCanChi(getCanChiDay(birthDate));
-    userDayCan = dayCC.can;
-    userDayChi = dayCC.chi;
+  const resolvedBirth =
+    birthMonth != null && birthDay != null
+      ? resolvePersonalBirthMoment(birthYear, birthDetails ?? { birthMonth, birthDay })
+      : null;
+  if (birthMonth != null && birthDay != null) {
+    if (resolvedBirth?.dayCanChi) {
+      userDayCan = resolvedBirth.dayCanChi.can;
+      userDayChi = resolvedBirth.dayCanChi.chi;
+    } else {
+      const birthDate = new Date(birthYear, birthMonth - 1, birthDay, 12, 0);
+      const dayCC = parseCanChi(getCanChiDay(birthDate));
+      userDayCan = dayCC.can;
+      userDayChi = dayCC.chi;
+    }
   }
 
   // 1. Bát Tự (Tử Bình) Interactions — Nhật Chủ (Day Pillar)
@@ -198,6 +209,22 @@ export function calculatePersonalHourModifier(
     totalModifier += 10;
     flags.push('dich_ma');
     breakdowns.push('Giờ Dịch Mã (+10%)');
+  }
+
+  if (birthDetails?.birthHour != null && resolvedBirth?.hourCanChi) {
+    if (resolvedBirth.hourCanChi.chi === hourCanChi.chi) {
+      totalModifier += 3;
+      flags.push('trung_gio_sinh');
+      breakdowns.push('Trùng giờ sinh (+3%)');
+    } else if (isLucXung(resolvedBirth.hourCanChi.chi, hourCanChi.chi)) {
+      totalModifier -= 6;
+      flags.push('xung_gio_sinh');
+      breakdowns.push('Lục Xung với giờ sinh (-6%)');
+    } else if (isLucHop(resolvedBirth.hourCanChi.chi, hourCanChi.chi) || isTamHop(resolvedBirth.hourCanChi.chi, hourCanChi.chi)) {
+      totalModifier += 5;
+      flags.push('hop_gio_sinh');
+      breakdowns.push('Tương hợp với giờ sinh (+5%)');
+    }
   }
 
   // 4. Kỳ Môn Độn Giáp

@@ -108,8 +108,8 @@ export function calculateFoundationalLayer(
 
   const data = (thanSatData.than_sat as StarData[]) || [];
 
-  const monthCanChiStr = getCanChiMonth(lunar.month, lunar.year);
-  const monthChi = monthCanChiStr.split(' ')[1] as Chi;
+  // Hoàng/Hắc đạo day deities follow the solar-term month, not the lunar month.
+  const monthChi = CHI[(solarMonth + 1) % 12] as Chi;
   const yearChiStr = getCanChiYear(lunar.year);
   const yearChi = yearChiStr.split(' ')[1] as Chi;
   const yearCan = yearChiStr.split(' ')[0] as Can;
@@ -147,7 +147,7 @@ export function calculateFoundationalLayer(
   });
 
   // Day Deity (One of 12 Path Deities)
-  const mChi = CHI[(lunar.month + 1) % 12];
+  const mChi = CHI[(solarMonth + 1) % 12];
   const startChi = DEITY_START_CHIS[mChi] || 'Tý';
   const startChiIdx = CHI.indexOf(startChi);
   const dayChiIdx = CHI.indexOf(dayCanChi.chi);
