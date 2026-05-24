@@ -4,6 +4,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { useTuViStore } from '../../stores/tuviStore';
 import { TuViInputForm } from './TuViInputForm';
 import { TuViChart } from './TuViChart';
+import { TuViSummaryPanel } from './TuViSummaryPanel';
 import { TuViMarkdownExport } from './TuViMarkdownExport';
 import { IconButton, SegmentedControl, type SegmentedOption } from '../shared';
 import type { TuViSchool } from '../../types/tuvi';
@@ -187,6 +188,8 @@ export const TuViPage: React.FC = () => {
           <TuViChart chart={chart} selectedPalaceIndex={selectedPalaceIndex} onSelectPalace={selectPalace} />
         </div>
       )}
+
+      {chart && <TuViSummaryPanel chart={chart} />}
 
       {/* Markdown Export */}
       {chart && <TuViMarkdownExport />}

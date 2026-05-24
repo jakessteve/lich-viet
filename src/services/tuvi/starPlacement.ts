@@ -43,6 +43,7 @@ import starBrightnessData from '../../data/tuvi/starBrightness.json';
 import cucSaoTableData from '../../data/tuvi/cucSaoTable.json';
 import menhChuTableData from '../../data/tuvi/menhChuTable.json';
 import thanChuTableData from '../../data/tuvi/thanChuTable.json';
+import { detectCombinations } from './combinationDetection';
 import { calculateHuyenKhi } from './huyenKhi';
 import { DEFAULT_TU_VI_SCHOOL, resolveTuViSchoolProfile } from './schoolProfiles';
 import { formatCivilDateYmd } from './timeNormalization';
@@ -904,8 +905,8 @@ export function generateChart(input: TuViInput): TuViChart {
     menhCucRelation = { relation: 'khắc' as const, description: 'Mệnh khắc Cục', menhHanh: menhNapAmHanh, cucHanh };
   }
 
-  const combinations: TuViChart['combinations'] = [];
-  const huyenKhi = calculateHuyenKhi(palaces, combinations);
+  const combinations = detectCombinations(palaces);
+  const huyenKhi = calculateHuyenKhi(palaces, []);
 
   const centerInfo = {
     hoTen: input.name ?? '',

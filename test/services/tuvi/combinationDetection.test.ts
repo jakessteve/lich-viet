@@ -400,6 +400,47 @@ describe('detectCombinations', () => {
     expect(tuPhu?.purity).toBe('phá');
   });
 
+  it('detects rare pattern Minh Châu Xuất Hải', () => {
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
+    palaces[1] = makePalace({ id: 1, name: 'Cung 1', chi: 'Sửu', isMenh: true });
+    palaces[5] = makePalace({ id: 5, name: 'Cung 5', chi: 'Tỵ', chinhTinh: [makeStar('Thái Dương')] });
+    palaces[9] = makePalace({ id: 9, name: 'Cung 9', chi: 'Dậu', chinhTinh: [makeStar('Thái Âm')] });
+
+    const results = detectCombinations(palaces);
+    const minhChau = results.find((r: TuViCombination) => r.name === 'Minh Châu Xuất Hải');
+    expect(minhChau).toBeDefined();
+    expect(minhChau?.involvedStars).toEqual(['Thái Dương', 'Thái Âm']);
+    expect(minhChau?.involvedCung).toContain('Cung 1');
+  });
+
+  it('detects rare pattern Tọa Quý Hướng Quý', () => {
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
+    palaces[0] = makePalace({ id: 0, name: 'Cung 0', chi: 'Tý', isMenh: true, chinhTinh: [makeStar('Tử Vi')] });
+    palaces[11] = makePalace({ id: 11, name: 'Cung 11', chi: 'Hợi', phuTinh: [makeStar('Thiên Khôi', 'phuTinh')] });
+    palaces[1] = makePalace({ id: 1, name: 'Cung 1', chi: 'Sửu', phuTinh: [makeStar('Thiên Việt', 'phuTinh')] });
+
+    const results = detectCombinations(palaces);
+    const toaQuy = results.find((r: TuViCombination) => r.name === 'Tọa Quý Hướng Quý');
+    expect(toaQuy).toBeDefined();
+    expect(toaQuy?.involvedCung).toEqual(expect.arrayContaining(['Cung 0', 'Cung 11', 'Cung 1']));
+  });
+
+  it('detects branch-specific pattern Văn Quế Văn Hoa', () => {
+    const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
+    palaces[1] = makePalace({
+      id: 1,
+      name: 'Cung 1',
+      chi: 'Sửu',
+      isMenh: true,
+      phuTinh: [makeStar('Văn Xương', 'phuTinh'), makeStar('Văn Khúc', 'phuTinh')],
+    });
+
+    const results = detectCombinations(palaces);
+    const pattern = results.find((r: TuViCombination) => r.name === 'Văn Quế Văn Hoa');
+    expect(pattern).toBeDefined();
+    expect(pattern?.involvedCung).toEqual(['Cung 1']);
+  });
+
   it('returns empty array when no combinations match', () => {
     const palaces: TuViPalace[] = Array.from({ length: 12 }, (_, i) => makePalace({ id: i, name: `Cung ${i}` }));
     const results = detectCombinations(palaces);

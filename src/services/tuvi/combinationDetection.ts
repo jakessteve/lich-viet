@@ -11,17 +11,35 @@ import { TAM_HOP_GROUPS, DOI_CUNG_MAP } from './constants';
 
 // ── Type Definitions ──────────────────────────────────────────
 
+type CombinationCategory = 'cat' | 'hung' | 'trung';
+type StandardConstraint = 'sameCung' | 'tamHop' | 'sameCungOrTamHop' | 'giap';
+type CustomMatchKind =
+  | 'menhBranchStars'
+  | 'tamPhuongCluster'
+  | 'menhBracketStars'
+  | 'menhBracketMutagen'
+  | 'minhChau'
+  | 'sunMoonBright'
+  | 'menhBranchMalefic'
+  | 'hamPair';
+
 interface CombinationDefinition {
   id: string;
   name: string;
   nameHanViet: string;
-  category: 'cat' | 'hung' | 'trung';
+  category: CombinationCategory;
+  rarity?: number;
   stars: string[];
-  palaceConstraint: 'sameCung' | 'tamHop' | 'sameCungOrTamHop' | 'giap';
+  palaceConstraint?: StandardConstraint;
+  matchKind?: CustomMatchKind;
   description: string;
   note: string;
   requiresTuHoa?: boolean;
   requiresGiap?: boolean;
+  branches?: string[];
+  sunBranches?: string[];
+  moonBranches?: string[];
+  requiredTuHoa?: Array<'Lộc' | 'Quyền' | 'Khoa' | 'Kỵ'>;
 }
 
 const COMBINATIONS: CombinationDefinition[] = combinationsData.combinations as CombinationDefinition[];
@@ -127,7 +145,6 @@ export function checkCombinationPurity(
         hasMinor = true;
       }
     }
-    // Also check tuHoa for Hóa Kỵ
     for (const tuHoa of palace.tuHoa) {
       if (tuHoa.type === 'Kỵ') {
         hasMinor = true;
@@ -151,9 +168,8 @@ export function checkCombinationPurity(
  * - Whether any involved palace is the Mệnh palace
  */
 export function calculateCombinationStrength(combination: TuViCombination, palaces: TuViPalace[]): number {
-  let score = 5; // base
+  let score = 5;
 
-  // Brightness bonus for involved stars in involved palaces
   const involvedPalaceSet = new Set(combination.involvedCung);
   for (const palace of palaces) {
     if (!involvedPalaceSet.has(palace.name)) continue;
@@ -166,7 +182,6 @@ export function calculateCombinationStrength(combination: TuViCombination, palac
     }
   }
 
-  // Purity modifier
   switch (combination.purity) {
     case 'thuần':
       score += 2;
@@ -179,13 +194,11 @@ export function calculateCombinationStrength(combination: TuViCombination, palac
       break;
   }
 
-  // Mệnh palace bonus
   const menhPalace = palaces.find((p) => p.isMenh);
   if (menhPalace && combination.involvedCung.includes(menhPalace.name)) {
     score += 1;
   }
 
-  // Clamp to 1–10
   return Math.max(1, Math.min(10, Math.round(score)));
 }
 
@@ -203,19 +216,46 @@ export function detectCombinations(palaces: TuViPalace[]): TuViCombination[] {
   const seenKeys = new Set<string>();
 
   for (const def of COMBINATIONS) {
-    switch (def.palaceConstraint) {
-      case 'sameCung':
-        detectSameCung(palaces, def, results, seenKeys);
+    switch (def.matchKind) {
+      case 'menhBranchStars':
+        detectMenhBranchStars(palaces, def, results, seenKeys);
         break;
-      case 'tamHop':
-        detectTamHop(palaces, def, results, seenKeys);
+      case 'tamPhuongCluster':
+        detectTamPhuongCluster(palaces, def, results, seenKeys);
         break;
-      case 'sameCungOrTamHop':
-        detectSameCungOrTamHop(palaces, def, results, seenKeys);
+      case 'menhBracketStars':
+        detectMenhBracketStars(palaces, def, results, seenKeys);
         break;
-      case 'giap':
-        detectGiap(palaces, def, results, seenKeys);
+      case 'menhBracketMutagen':
+        detectMenhBracketMutagen(palaces, def, results, seenKeys);
         break;
+      case 'minhChau':
+        detectMinhChau(palaces, def, results, seenKeys);
+        break;
+      case 'sunMoonBright':
+        detectSunMoonBright(palaces, def, results, seenKeys);
+        break;
+      case 'menhBranchMalefic':
+        detectMenhBranchMalefic(palaces, def, results, seenKeys);
+        break;
+      case 'hamPair':
+        detectHamPair(palaces, def, results, seenKeys);
+        break;
+      default:
+        switch (def.palaceConstraint) {
+          case 'sameCung':
+            detectSameCung(palaces, def, results, seenKeys);
+            break;
+          case 'tamHop':
+            detectTamHop(palaces, def, results, seenKeys);
+            break;
+          case 'sameCungOrTamHop':
+            detectSameCungOrTamHop(palaces, def, results, seenKeys);
+            break;
+          case 'giap':
+            detectGiap(palaces, def, results, seenKeys);
+            break;
+        }
     }
   }
 
@@ -228,6 +268,87 @@ function makeKey(name: string, cungNames: string[]): string {
   return `${name}::${cungNames.slice().sort().join(',')}`;
 }
 
+function getMenhPalace(palaces: TuViPalace[]): TuViPalace | undefined {
+  return palaces.find((palace) => palace.isMenh);
+}
+
+function getPalaceByBranch(palaces: TuViPalace[], branch: string): TuViPalace | undefined {
+  return palaces.find((palace) => palace.chi === branch);
+}
+
+function hasStar(palace: TuViPalace | undefined, starName: string): boolean {
+  if (!palace) return false;
+  return getStarsInPalace(palace).includes(starName);
+}
+
+function hasMutagen(palace: TuViPalace | undefined, type: 'Lộc' | 'Quyền' | 'Khoa' | 'Kỵ'): boolean {
+  if (!palace) return false;
+  return palace.tuHoa.some((entry) => entry.type === type);
+}
+
+function hasAnyMalefic(palace: TuViPalace | undefined): boolean {
+  if (!palace) return false;
+  return palace.satTinh.some((star) => MAJOR_SAT_TINH.has(star.name) || MINOR_SAT_TINH.has(star.name));
+}
+
+function hasAllStars(haystack: string[], needles: string[]): boolean {
+  if (needles.length === 0) return false;
+  const set = new Set(haystack);
+  return needles.every((n) => set.has(n));
+}
+
+function createCombination(
+  def: CombinationDefinition,
+  involvedCung: string[],
+  involvedStars: string[],
+  detectionReason: string,
+  purity: CombinationPurity,
+  palaces: TuViPalace[],
+): TuViCombination {
+  const combo: TuViCombination = {
+    id: def.id,
+    name: def.name,
+    nameHanViet: def.nameHanViet,
+    rarity: def.rarity,
+    involvedStars,
+    involvedCung,
+    detectionReason,
+    purity,
+    strength: 0,
+    note: def.note,
+    category: def.category,
+    sourcePatternId: def.id,
+  };
+  combo.strength = calculateCombinationStrength(combo, palaces);
+  return combo;
+}
+
+function addCombination(
+  def: CombinationDefinition,
+  involvedCung: string[],
+  involvedStars: string[],
+  detectionReason: string,
+  purity: CombinationPurity,
+  palaces: TuViPalace[],
+  results: TuViCombination[],
+  seenKeys: Set<string>,
+): void {
+  const key = makeKey(def.name, involvedCung);
+  if (seenKeys.has(key)) return;
+  seenKeys.add(key);
+  results.push(createCombination(def, involvedCung, involvedStars, detectionReason, purity, palaces));
+}
+
+function getMenhRelationPalaces(palaces: TuViPalace[]): TuViPalace[] {
+  const menhPalace = getMenhPalace(palaces);
+  if (!menhPalace) return [];
+
+  const tamHopIndices = detectTamHopPalaces(menhPalace.id);
+  const doiCung = detectDoiCung(menhPalace.id);
+  const groupIndices = Array.from(new Set([menhPalace.id, ...tamHopIndices, doiCung]));
+  return groupIndices.map((idx) => palaces[idx]).filter((palace): palace is TuViPalace => Boolean(palace));
+}
+
 function detectSameCung(
   palaces: TuViPalace[],
   def: CombinationDefinition,
@@ -235,31 +356,17 @@ function detectSameCung(
   seenKeys: Set<string>,
 ): void {
   for (const palace of palaces) {
-    const stars = getStarsInPalace(palace);
-    if (def.requiresTuHoa) {
-      // handled separately via detectTamHop for requiresTuHoa
-      continue;
-    }
-    if (hasAllStars(stars, def.stars)) {
-      const key = makeKey(def.name, [palace.name]);
-      if (seenKeys.has(key)) continue;
-      seenKeys.add(key);
-
-      const purity = checkCombinationPurity([palace]);
-      const combo: TuViCombination = {
-        name: def.name,
-        nameHanViet: def.nameHanViet,
-        involvedStars: def.stars,
-        involvedCung: [palace.name],
-        detectionReason: `${def.stars.join(', ')} cùng cung ${palace.name}`,
-        purity,
-        strength: 0, // filled later
-        note: def.note,
-        category: def.category,
-      };
-      combo.strength = calculateCombinationStrength(combo, palaces);
-      results.push(combo);
-    }
+    if (!hasAllStars(getStarsInPalace(palace), def.stars)) continue;
+    addCombination(
+      def,
+      [palace.name],
+      def.stars,
+      `${def.stars.join(', ')} cùng cung ${palace.name}`,
+      checkCombinationPurity([palace]),
+      palaces,
+      results,
+      seenKeys,
+    );
   }
 }
 
@@ -269,7 +376,6 @@ function detectTamHop(
   results: TuViCombination[],
   seenKeys: Set<string>,
 ): void {
-  // For requiresTuHoa (Tam Kỳ): check Hóa Lộc, Hóa Quyền, Hóa Khoa in Tam Phương Tứ Chính
   if (def.requiresTuHoa) {
     detectTuHoaCombinations(palaces, def, results, seenKeys);
     return;
@@ -280,36 +386,28 @@ function detectTamHop(
     const groupPalaces = [palace, ...tamHopIndices.map((idx) => palaces[idx])];
     const groupStars = groupPalaces.flatMap((p) => getStarsInPalace(p));
 
-    if (hasAllStars(groupStars, def.stars)) {
-      // Determine which specific palaces actually contain the stars
-      const involvedCung = new Set<string>();
-      for (const starName of def.stars) {
-        for (const p of groupPalaces) {
-          if (getStarsInPalace(p).includes(starName)) {
-            involvedCung.add(p.name);
-          }
+    if (!hasAllStars(groupStars, def.stars)) continue;
+
+    const involvedCung = new Set<string>();
+    for (const starName of def.stars) {
+      for (const p of groupPalaces) {
+        if (getStarsInPalace(p).includes(starName)) {
+          involvedCung.add(p.name);
         }
       }
-      const cungNames = Array.from(involvedCung);
-      const key = makeKey(def.name, cungNames);
-      if (seenKeys.has(key)) continue;
-      seenKeys.add(key);
-
-      const purity = checkCombinationPurity(groupPalaces);
-      const combo: TuViCombination = {
-        name: def.name,
-        nameHanViet: def.nameHanViet,
-        involvedStars: def.stars,
-        involvedCung: cungNames,
-        detectionReason: `${def.stars.join(', ')} tam hợp tại ${cungNames.join(', ')}`,
-        purity,
-        strength: 0,
-        note: def.note,
-        category: def.category,
-      };
-      combo.strength = calculateCombinationStrength(combo, palaces);
-      results.push(combo);
     }
+
+    const cungNames = Array.from(involvedCung);
+    addCombination(
+      def,
+      cungNames,
+      def.stars,
+      `${def.stars.join(', ')} tam hợp tại ${cungNames.join(', ')}`,
+      checkCombinationPurity(groupPalaces),
+      palaces,
+      results,
+      seenKeys,
+    );
   }
 }
 
@@ -322,63 +420,46 @@ function detectSameCungOrTamHop(
   for (const palace of palaces) {
     const stars = getStarsInPalace(palace);
 
-    // Same Cung check
     if (hasAllStars(stars, def.stars)) {
-      const key = makeKey(def.name, [palace.name]);
-      if (!seenKeys.has(key)) {
-        seenKeys.add(key);
-        const purity = checkCombinationPurity([palace]);
-        const combo: TuViCombination = {
-          name: def.name,
-          nameHanViet: def.nameHanViet,
-          involvedStars: def.stars,
-          involvedCung: [palace.name],
-          detectionReason: `${def.stars.join(', ')} cùng cung ${palace.name}`,
-          purity,
-          strength: 0,
-          note: def.note,
-          category: def.category,
-        };
-        combo.strength = calculateCombinationStrength(combo, palaces);
-        results.push(combo);
-      }
-      continue; // if sameCung satisfied, no need to check tamHop for this palace
+      addCombination(
+        def,
+        [palace.name],
+        def.stars,
+        `${def.stars.join(', ')} cùng cung ${palace.name}`,
+        checkCombinationPurity([palace]),
+        palaces,
+        results,
+        seenKeys,
+      );
+      continue;
     }
 
-    // Tam Hop check
     const tamHopIndices = detectTamHopPalaces(palace.id);
     const groupPalaces = [palace, ...tamHopIndices.map((idx) => palaces[idx])];
     const groupStars = groupPalaces.flatMap((p) => getStarsInPalace(p));
 
-    if (hasAllStars(groupStars, def.stars)) {
-      const involvedCung = new Set<string>();
-      for (const starName of def.stars) {
-        for (const p of groupPalaces) {
-          if (getStarsInPalace(p).includes(starName)) {
-            involvedCung.add(p.name);
-          }
+    if (!hasAllStars(groupStars, def.stars)) continue;
+
+    const involvedCung = new Set<string>();
+    for (const starName of def.stars) {
+      for (const p of groupPalaces) {
+        if (getStarsInPalace(p).includes(starName)) {
+          involvedCung.add(p.name);
         }
       }
-      const cungNames = Array.from(involvedCung);
-      const key = makeKey(def.name, cungNames);
-      if (seenKeys.has(key)) continue;
-      seenKeys.add(key);
-
-      const purity = checkCombinationPurity(groupPalaces);
-      const combo: TuViCombination = {
-        name: def.name,
-        nameHanViet: def.nameHanViet,
-        involvedStars: def.stars,
-        involvedCung: cungNames,
-        detectionReason: `${def.stars.join(', ')} tam hợp tại ${cungNames.join(', ')}`,
-        purity,
-        strength: 0,
-        note: def.note,
-        category: def.category,
-      };
-      combo.strength = calculateCombinationStrength(combo, palaces);
-      results.push(combo);
     }
+
+    const cungNames = Array.from(involvedCung);
+    addCombination(
+      def,
+      cungNames,
+      def.stars,
+      `${def.stars.join(', ')} tam hợp tại ${cungNames.join(', ')}`,
+      checkCombinationPurity(groupPalaces),
+      palaces,
+      results,
+      seenKeys,
+    );
   }
 }
 
@@ -397,30 +478,20 @@ function detectGiap(
     const leftHasSat = leftPalace.satTinh.length > 0;
     const rightHasSat = rightPalace.satTinh.length > 0;
 
-    if (leftHasSat && rightHasSat) {
-      const key = makeKey(def.name, [palace.name]);
-      if (seenKeys.has(key)) continue;
-      seenKeys.add(key);
+    if (!leftHasSat || !rightHasSat) continue;
 
-      const involvedPalaces = [palace, leftPalace, rightPalace];
-      const purity = checkCombinationPurity(involvedPalaces);
-
-      const satStarNames = [...leftPalace.satTinh.map((s) => s.name), ...rightPalace.satTinh.map((s) => s.name)];
-
-      const combo: TuViCombination = {
-        name: def.name,
-        nameHanViet: def.nameHanViet,
-        involvedStars: Array.from(new Set(satStarNames)),
-        involvedCung: [palace.name, leftPalace.name, rightPalace.name],
-        detectionReason: `${palace.name} bị giáp sát bởi ${leftPalace.name} và ${rightPalace.name}`,
-        purity,
-        strength: 0,
-        note: def.note,
-        category: def.category,
-      };
-      combo.strength = calculateCombinationStrength(combo, palaces);
-      results.push(combo);
-    }
+    const involvedPalaces = [palace, leftPalace, rightPalace];
+    const satStarNames = [...leftPalace.satTinh.map((s) => s.name), ...rightPalace.satTinh.map((s) => s.name)];
+    addCombination(
+      def,
+      [palace.name, leftPalace.name, rightPalace.name],
+      Array.from(new Set(satStarNames)),
+      `${palace.name} bị giáp sát bởi ${leftPalace.name} và ${rightPalace.name}`,
+      checkCombinationPurity(involvedPalaces),
+      palaces,
+      results,
+      seenKeys,
+    );
   }
 }
 
@@ -450,34 +521,271 @@ function detectTuHoaCombinations(
       }
     }
 
-    if (foundTypes.size === requiredTypes.size) {
-      const cungNames = Array.from(involvedCung);
-      const key = makeKey(def.name, cungNames);
-      if (seenKeys.has(key)) continue;
-      seenKeys.add(key);
+    if (foundTypes.size !== requiredTypes.size) continue;
 
-      const purity = checkCombinationPurity(groupPalaces);
-      const combo: TuViCombination = {
-        name: def.name,
-        nameHanViet: def.nameHanViet,
-        involvedStars: ['Hóa Lộc', 'Hóa Quyền', 'Hóa Khoa'],
-        involvedCung: cungNames,
-        detectionReason: `Hóa Lộc, Hóa Quyền, Hóa Khoa đồng cung/tam hợp tại ${cungNames.join(', ')}`,
-        purity,
-        strength: 0,
-        note: def.note,
-        category: def.category,
-      };
-      combo.strength = calculateCombinationStrength(combo, palaces);
-      results.push(combo);
-    }
+    const cungNames = Array.from(involvedCung);
+    addCombination(
+      def,
+      cungNames,
+      ['Hóa Lộc', 'Hóa Quyền', 'Hóa Khoa'],
+      `Hóa Lộc, Hóa Quyền, Hóa Khoa đồng cung/tam hợp tại ${cungNames.join(', ')}`,
+      checkCombinationPurity(groupPalaces),
+      palaces,
+      results,
+      seenKeys,
+    );
   }
 }
 
-// ── Utility ───────────────────────────────────────────────────
+function detectMenhBranchStars(
+  palaces: TuViPalace[],
+  def: CombinationDefinition,
+  results: TuViCombination[],
+  seenKeys: Set<string>,
+): void {
+  const menhPalace = getMenhPalace(palaces);
+  if (!menhPalace) return;
+  if (def.branches && !def.branches.includes(menhPalace.chi)) return;
+  if (!hasAllStars(getStarsInPalace(menhPalace), def.stars)) return;
 
-function hasAllStars(haystack: string[], needles: string[]): boolean {
-  if (needles.length === 0) return false;
-  const set = new Set(haystack);
-  return needles.every((n) => set.has(n));
+  addCombination(
+    def,
+    [menhPalace.name],
+    def.stars,
+    `${def.stars.join(', ')} tọa tại ${menhPalace.name}`,
+    checkCombinationPurity([menhPalace]),
+    palaces,
+    results,
+    seenKeys,
+  );
+}
+
+function detectTamPhuongCluster(
+  palaces: TuViPalace[],
+  def: CombinationDefinition,
+  results: TuViCombination[],
+  seenKeys: Set<string>,
+): void {
+  const menhPalace = getMenhPalace(palaces);
+  if (!menhPalace) return;
+
+  const groupPalaces = getMenhRelationPalaces(palaces);
+  const groupStars = groupPalaces.flatMap((p) => getStarsInPalace(p));
+  if (!hasAllStars(groupStars, def.stars)) return;
+
+  const involvedCung = new Set<string>();
+  for (const starName of def.stars) {
+    for (const palace of groupPalaces) {
+      if (getStarsInPalace(palace).includes(starName)) {
+        involvedCung.add(palace.name);
+      }
+    }
+  }
+
+  const cungNames = Array.from(involvedCung);
+  addCombination(
+    def,
+    cungNames,
+    def.stars,
+    `${def.stars.join(', ')} xuất hiện tại ${cungNames.join(', ')}`,
+    checkCombinationPurity(groupPalaces),
+    palaces,
+    results,
+    seenKeys,
+  );
+}
+
+function detectMenhBracketStars(
+  palaces: TuViPalace[],
+  def: CombinationDefinition,
+  results: TuViCombination[],
+  seenKeys: Set<string>,
+): void {
+  const menhPalace = getMenhPalace(palaces);
+  if (!menhPalace) return;
+
+  const leftPalace = palaces[(menhPalace.id - 1 + 12) % 12];
+  const rightPalace = palaces[(menhPalace.id + 1) % 12];
+  const [firstStar, secondStar] = def.stars;
+  if (!firstStar || !secondStar) return;
+
+  const leftHasFirst = hasStar(leftPalace, firstStar);
+  const rightHasSecond = hasStar(rightPalace, secondStar);
+  const leftHasSecond = hasStar(leftPalace, secondStar);
+  const rightHasFirst = hasStar(rightPalace, firstStar);
+
+  const matched =
+    (leftHasFirst && rightHasSecond) ||
+    (leftHasSecond && rightHasFirst);
+
+  if (!matched) return;
+
+  addCombination(
+    def,
+    [menhPalace.name, leftPalace.name, rightPalace.name],
+    def.stars,
+    `${def.stars.join(', ')} giáp ${menhPalace.name}`,
+    checkCombinationPurity([menhPalace, leftPalace, rightPalace]),
+    palaces,
+    results,
+    seenKeys,
+  );
+}
+
+function detectMenhBracketMutagen(
+  palaces: TuViPalace[],
+  def: CombinationDefinition,
+  results: TuViCombination[],
+  seenKeys: Set<string>,
+): void {
+  const menhPalace = getMenhPalace(palaces);
+  if (!menhPalace) return;
+
+  const leftPalace = palaces[(menhPalace.id - 1 + 12) % 12];
+  const rightPalace = palaces[(menhPalace.id + 1) % 12];
+  const requiredStar = def.stars[0];
+  const requiredTuHoa = def.requiredTuHoa?.[0];
+  if (!requiredStar || !requiredTuHoa) return;
+
+  const leftHasStar = hasStar(leftPalace, requiredStar);
+  const rightHasStar = hasStar(rightPalace, requiredStar);
+  const leftHasMutagen = hasMutagen(leftPalace, requiredTuHoa);
+  const rightHasMutagen = hasMutagen(rightPalace, requiredTuHoa);
+
+  const matched =
+    (leftHasStar && rightHasMutagen) ||
+    (rightHasStar && leftHasMutagen);
+
+  if (!matched) return;
+
+  addCombination(
+    def,
+    [menhPalace.name, leftPalace.name, rightPalace.name],
+    [requiredStar, `Hóa ${requiredTuHoa}`],
+    `${requiredStar} và Hóa ${requiredTuHoa} giáp ${menhPalace.name}`,
+    checkCombinationPurity([menhPalace, leftPalace, rightPalace]),
+    palaces,
+    results,
+    seenKeys,
+  );
+}
+
+function detectMinhChau(
+  palaces: TuViPalace[],
+  def: CombinationDefinition,
+  results: TuViCombination[],
+  seenKeys: Set<string>,
+): void {
+  const menhPalace = getMenhPalace(palaces);
+  if (!menhPalace) return;
+  if (menhPalace.chinhTinh.length > 0) return;
+  if (def.branches && !def.branches.includes(menhPalace.chi)) return;
+
+  const isMui = menhPalace.chi === 'Mùi';
+  const sunBranch = isMui ? 'Mão' : 'Tỵ';
+  const moonBranch = isMui ? 'Hợi' : 'Dậu';
+  const sunPalace = getPalaceByBranch(palaces, sunBranch);
+  const moonPalace = getPalaceByBranch(palaces, moonBranch);
+
+  if (!hasStar(sunPalace, 'Thái Dương') || !hasStar(moonPalace, 'Thái Âm')) return;
+
+  const involvedPalaces = [menhPalace, sunPalace, moonPalace].filter(Boolean) as TuViPalace[];
+  addCombination(
+    def,
+    involvedPalaces.map((palace) => palace.name),
+    ['Thái Dương', 'Thái Âm'],
+    `Mệnh vô chính diệu, Thái Dương ở ${sunBranch}, Thái Âm ở ${moonBranch}`,
+    checkCombinationPurity(involvedPalaces),
+    palaces,
+    results,
+    seenKeys,
+  );
+}
+
+function detectSunMoonBright(
+  palaces: TuViPalace[],
+  def: CombinationDefinition,
+  results: TuViCombination[],
+  seenKeys: Set<string>,
+): void {
+  const menhPalace = getMenhPalace(palaces);
+  if (!menhPalace) return;
+  if (def.branches && !def.branches.includes(menhPalace.chi)) return;
+
+  const sunBranches = def.sunBranches ?? [];
+  const moonBranches = def.moonBranches ?? [];
+  const sunPalace = palaces.find(
+    (palace) => sunBranches.includes(palace.chi) && palace.chinhTinh.some((star) => star.name === 'Thái Dương'),
+  );
+  const moonPalace = palaces.find(
+    (palace) => moonBranches.includes(palace.chi) && palace.chinhTinh.some((star) => star.name === 'Thái Âm'),
+  );
+
+  if (!sunPalace || !moonPalace) return;
+
+  const involvedPalaces = [menhPalace, sunPalace, moonPalace];
+  addCombination(
+    def,
+    involvedPalaces.map((palace) => palace.name),
+    ['Thái Dương', 'Thái Âm'],
+    `Mệnh ở ${menhPalace.chi}, Thái Dương ở ${sunPalace.chi}, Thái Âm ở ${moonPalace.chi}`,
+    checkCombinationPurity(involvedPalaces),
+    palaces,
+    results,
+    seenKeys,
+  );
+}
+
+function detectMenhBranchMalefic(
+  palaces: TuViPalace[],
+  def: CombinationDefinition,
+  results: TuViCombination[],
+  seenKeys: Set<string>,
+): void {
+  const menhPalace = getMenhPalace(palaces);
+  if (!menhPalace) return;
+  if (def.branches && !def.branches.includes(menhPalace.chi)) return;
+  if (!hasAnyMalefic(menhPalace)) return;
+
+  addCombination(
+    def,
+    [menhPalace.name],
+    getStarsInPalace(menhPalace).filter((star) => MINOR_SAT_TINH.has(star) || MAJOR_SAT_TINH.has(star)),
+    `Mệnh ở ${menhPalace.chi} và có sát tinh tọa thủ`,
+    checkCombinationPurity([menhPalace]),
+    palaces,
+    results,
+    seenKeys,
+  );
+}
+
+function detectHamPair(
+  palaces: TuViPalace[],
+  def: CombinationDefinition,
+  results: TuViCombination[],
+  seenKeys: Set<string>,
+): void {
+  const menhPalace = getMenhPalace(palaces);
+  if (!menhPalace) return;
+
+  const groupPalaces = getMenhRelationPalaces(palaces);
+  const [firstStar, secondStar] = def.stars;
+  if (!firstStar || !secondStar) return;
+
+  const firstPalaces = groupPalaces.filter((palace) => palace.brightness[firstStar] === 'Hãm' || palace.brightness[firstStar] === 'Bất');
+  const secondPalaces = groupPalaces.filter((palace) => palace.brightness[secondStar] === 'Hãm' || palace.brightness[secondStar] === 'Bất');
+
+  if (firstPalaces.length === 0 || secondPalaces.length === 0) return;
+
+  const involvedPalaces = Array.from(new Set([menhPalace, ...firstPalaces, ...secondPalaces]));
+  addCombination(
+    def,
+    involvedPalaces.map((palace) => palace.name),
+    def.stars,
+    `${def.stars.join(', ')} đều ở trạng thái Hãm/Bất`,
+    checkCombinationPurity(involvedPalaces),
+    palaces,
+    results,
+    seenKeys,
+  );
 }

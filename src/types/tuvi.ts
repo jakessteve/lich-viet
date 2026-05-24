@@ -283,10 +283,14 @@ export interface TuViPalace {
  * in specific palaces, creating auspicious or inauspicious effects.
  */
 export interface TuViCombination {
+  /** Stable library identifier for the detected pattern */
+  id?: string;
   /** Vietnamese name, e.g. "Sát Phá Lang", "Cơ Nguyệt Đồng Lương" */
   name: string;
   /** Hán tự name, e.g. "殺破狼", "機月同梁" */
   nameHanViet: string;
+  /** Rarity score from 1 (common) to 5 (very rare) */
+  rarity?: number;
   /** Star names involved in this combination */
   involvedStars: string[];
   /** Palace names involved in this combination */
@@ -301,6 +305,8 @@ export interface TuViCombination {
   note: string;
   /** Auspiciousness category */
   category: CombinationCategory;
+  /** Optional source key when the pattern is mirrored from a larger library */
+  sourcePatternId?: string;
 }
 
 // ── Huyền Khí ───────────────────────────────────────────────
