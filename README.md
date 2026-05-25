@@ -22,7 +22,7 @@ Lich Viet v3 is a browser-only React SPA. It centers on four active surfaces: th
 | Dung Su | Activity scoring, factor breakdowns, best-time guidance, Dung Sự calendar views | `/app/am-lich` |
 | Gieo Que | Mai Hoa hexagrams, Tam Thuc synthesis, QMDJ, Thai Ất, Lục Nhâm | `/app/gieo-que` |
 | Tu Vi | Birthplace-aware Tử Vi Đẩu Số charts, school variants, exports, true-solar correction | `/app/tu-vi` |
-| Settings | Theme, font size, locale controls | `/app/cai-dat` |
+| Settings | Theme, font size controls | `/app/cai-dat` |
 | Auth | Local demo login and register screens | `/app/dang-nhap`, `/app/dang-ky` |
 | Upgrade | Pricing / coming-soon status page | `/app/nang-cap` |
 
@@ -118,7 +118,7 @@ src/
 ├── config/                 # API, theme, scoring, and form config
 ├── data/                   # Static JSON datasets
 ├── hooks/                  # React hooks used across the app
-├── i18n/                   # Locale strings and locale helpers
+├── i18n/                   # Vietnamese locale strings and translation helpers
 ├── router/                 # Route definitions and redirects
 ├── services/               # Analytics, astronomy, Tu Vi, personalization
 ├── stores/                 # Zustand app/auth/Tu Vi state
