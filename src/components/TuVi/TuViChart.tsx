@@ -41,8 +41,9 @@ const OPPOSITE_CHI: Record<number, number> = {
   11: 5,
 };
 
-const MOBILE_BASE_WIDTH = 700;
-const MOBILE_BASE_HEIGHT = 820;
+const MOBILE_BASE_WIDTH = 780;
+// Keep the mobile canvas taller so the auxiliary-star rows have enough room.
+const MOBILE_BASE_HEIGHT = 960;
 
 function getTamHopGroup(chiIndex: number): number[] {
   return [...(TAM_HOP_GROUPS.find((group) => group.includes(chiIndex)) ?? [])];

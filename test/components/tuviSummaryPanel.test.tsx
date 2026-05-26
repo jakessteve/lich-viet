@@ -39,6 +39,7 @@ function makeChart(): TuViChart {
       purity: 'thuần',
       strength: 7,
       note: '',
+      description: 'Cách cục vô cùng mạnh mẽ, đại diện cho sự khai sáng, tiên phong và những biến động lớn trong cuộc đời.',
       category: 'hung',
       sourcePatternId: 'sat-pha-lang',
     },
@@ -130,10 +131,13 @@ describe('TuViSummaryPanel', () => {
     expect(screen.getByText('Tổng quan cấu trúc và Cách cục')).toBeTruthy();
     expect(screen.getByText('Bố cục chính tinh')).toBeTruthy();
     expect(screen.getByText('Tứ Hóa hiện diện')).toBeTruthy();
+    expect(screen.getByText(/Cách cục vô cùng mạnh mẽ/i)).toBeTruthy();
 
     fireEvent.click(screen.getByRole('tab', { name: /Cách cục/ }));
 
-    expect(screen.getByText('Sát Phá Lang')).toBeTruthy();
+    expect(screen.getByText('Sát Phá Lang').className).toContain('whitespace-nowrap');
+    expect(screen.getByText('殺破狼').className).toContain('whitespace-nowrap');
+    expect(screen.getByText(/Cách cục vô cùng mạnh mẽ/i)).toBeTruthy();
     expect(screen.getByText('Hung')).toBeTruthy();
     expect(screen.getByText('7/10')).toBeTruthy();
   });
