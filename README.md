@@ -1,12 +1,13 @@
 # Lich Viet v3
 
-Vietnamese lunar calendar, auspicious-day analysis, divination tools, and Tử Vi charting in a focused client-side web app.
+Vietnamese lunar calendar, La bàn Phong Thủy, auspicious-day analysis, divination tools, and Tử Vi charting in a focused client-side web app.
 
-Lich Viet v3 is a browser-only React SPA. It centers on four active surfaces: the landing page, Am Lich for calendar and Dung Su workflows, Gieo Que for Mai Hoa and Tam Thuc divination, and Tu Vi for birthplace-aware Tử Vi Đẩu Số charts. Viewer geolocation now feeds the live calendar surface, while Tu Vi uses birthplace geolocation and Swiss true-solar correction when available.
+Lich Viet v3 is a browser-only React SPA. It centers on five active surfaces: the landing page, Am Lich for calendar and Dung Su workflows, La bàn for 24 Sơn / Phi Tinh compass analysis, Gieo Que for Mai Hoa and Tam Thuc divination, and Tu Vi for birthplace-aware Tử Vi Đẩu Số charts. Viewer geolocation now feeds the live calendar surface, La bàn can use phone sensor input on mobile browsers, while Tu Vi uses birthplace geolocation and Swiss true-solar correction when available.
 
 ## Highlights
 
 - Browser geolocation-aware calendar calculations for the live Am Lich surface.
+- Sensor-backed La bàn for 24 Sơn and Huyền Không Phi Tinh.
 - Birthplace-aware Tu Vi charting with Swiss ephemeris support and true-solar correction.
 - Lunar solar conversion, Can Chi, auspicious hours, holiday lookup, and day detail in one place.
 - Mai Hoa, Tam Thuc, QMDJ, Thai Ất, and Lục Nhâm workflows under one divination surface.
@@ -19,6 +20,7 @@ Lich Viet v3 is a browser-only React SPA. It centers on four active surfaces: th
 | --- | --- | --- |
 | Landing | Product intro, birthday input, cosmic weather card, testimonials, CTA flow | `/` |
 | Am Lich | Solar-lunar lookup, month calendar, day detail, holidays, good/bad hours, travel directions, viewer-location-aware lunar calculations | `/app/am-lich` |
+| La bàn | 24 Sơn compass, Phi Tinh chart, heading lock, sensor input, Tử Vi overlay | `/app/la-ban` |
 | Dung Su | Activity scoring, factor breakdowns, best-time guidance, Dung Sự calendar views | `/app/am-lich` |
 | Gieo Que | Mai Hoa hexagrams, Tam Thuc synthesis, QMDJ, Thai Ất, Lục Nhâm | `/app/gieo-que` |
 | Tu Vi | Birthplace-aware Tử Vi Đẩu Số charts, school variants, exports, true-solar correction | `/app/tu-vi` |
@@ -36,6 +38,7 @@ Lich Viet v3 is a browser-only React SPA. It centers on four active surfaces: th
 | Viewer location | `useViewerLocation`, `buildSwissGeoLocation`, `estimateTimezoneOffsetHours` | Browser geolocation to Swiss location contract |
 | Tu Vi birth context | `buildTuViBirthContext`, `normalizeBirthTimeWithPolicy`, `normalizeBirthTime` | Birthplace normalization, leap-month handling, and true-solar correction |
 | Tu Vi charting | `generateChart`, `calculateHanContext`, `calculateCenterInfo`, `formatTuViChartAsMarkdown` | Chart generation, star placement, and export formatting |
+| Feng Shui compass | `generateLouPanChart`, `generateFlyingStarChart`, `calculateAnnualStar`, `calculateMonthlyStar`, `getMountainForHeading` | 24 Sơn, heading mapping, and Flying Star compass helpers |
 | Mai Hoa | `performTimeBasedDivination`, `performNumberBasedDivination`, `buildDivinationContext`, `interpretDivination` | Mai Hoa hexagram generation and interpretation |
 | Tam Thuc | `synthesizeTamThuc` | Combined QMDJ, Thai Ất, and Lục Nhâm synthesis |
 | Personalization | `calculatePersonalDayScore` | Birthday-based score overlays for the calendar |
@@ -54,6 +57,7 @@ graph TB
     subgraph Surfaces["Active surfaces"]
         Landing["Landing"]
         AmLich["Am Lich + Dung Su"]
+        LaBan["La ban"]
         GieoQue["Gieo Que"]
         TuVi["Tu Vi"]
         Support["Settings / Auth / Upgrade"]
@@ -84,6 +88,7 @@ graph TB
     UI --> Stores
     Surfaces --> Engines --> Data
     Geo --> AmLich
+    Geo --> LaBan
     Birth --> TuViEng
     Personal --> Stores
 ```
@@ -91,6 +96,7 @@ graph TB
 ### Data Flow Notes
 
 - Am Lich uses browser geolocation for live lunar calculations, holiday lookup, and the current-day shortcut.
+- La bàn uses phone sensor heading when available and falls back to manual heading entry on unsupported devices.
 - Tu Vi uses birthplace coordinates and estimated timezone to keep birth normalization consistent.
 - Swiss ephemeris is used where available; the local fallback remains in place if the Swiss WASM bundle is not ready.
 
@@ -143,6 +149,7 @@ test/
 | --- | --- |
 | `/` | Landing page |
 | `/app/am-lich` | Calendar, holidays, day detail, and Dung Su |
+| `/app/la-ban` | La bàn Phong Thủy and Phi Tinh |
 | `/app/gieo-que` | Mai Hoa and Tam Thuc |
 | `/app/tu-vi` | Tử Vi Đẩu Số |
 | `/app/cai-dat` | Settings |
@@ -159,6 +166,7 @@ Legacy v2 paths redirect into the active v3 pages instead of exposing removed mo
 | `@lich-viet/core` | Shared constants, Gieo Quẻ helpers, and common engine facades |
 | `@lich-viet/core/calendar` | Lunar conversion, Can Chi, day detail, hours |
 | `@lich-viet/core/maihoa` | Mai Hoa helpers and interpretation utilities |
+| `@lich-viet/core/fengshui` | La bàn / 24 Sơn / Flying Star compass helpers |
 | `@lich-viet/core/qmdj` | QMDJ helpers and scoring |
 | `@lich-viet/core/thaiAt` | Thai Ất helpers and forecast utilities |
 | `@lich-viet/core/lucNham` | Lục Nhâm helpers and board logic |
