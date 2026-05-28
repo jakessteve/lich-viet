@@ -2,10 +2,31 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LaBanPage } from '@/components/FengShui/LaBanPage';
 import { useAuthStore } from '@/stores/authStore';
 import { useTuViStore } from '@/stores/tuviStore';
+
+vi.mock('@/hooks/useIsPhone', () => ({
+  useIsPhone: () => true,
+}));
+
+vi.mock('@/hooks/useCompassSensor', () => ({
+  useCompassSensor: () => ({
+    headingDeg: null,
+    magneticHeadingDeg: null,
+    trueHeadingDeg: null,
+    accuracyDeg: null,
+    permissionState: 'prompt',
+    calibrationState: 'unknown',
+    source: 'manual',
+    supported: true,
+    listening: false,
+    message: undefined,
+    start: vi.fn().mockResolvedValue(true),
+    stop: vi.fn(),
+  }),
+}));
 
 const savedUser = {
   id: 'user-1',
@@ -58,7 +79,10 @@ describe('LaBanPage', () => {
     expect(screen.getByText(/La bàn Phong Thủy/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Hướng thủ công/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Năm xây công trình/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Bật la bàn/i })).toBeInTheDocument();
+    expect(screen.getByText('Cảm biến điện thoại')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Cho phép cảm biến/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Bật la bàn/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Dừng/i })).not.toBeInTheDocument();
     expect(screen.getByText(/Bát trạch cá nhân/i)).toBeInTheDocument();
     expect(screen.getByText(/Khảm · Đông Tứ Mệnh/i)).toBeInTheDocument();
 

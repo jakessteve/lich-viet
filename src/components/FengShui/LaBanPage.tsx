@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useCompassSensor } from '@/hooks/useCompassSensor';
+import { useIsPhone } from '@/hooks/useIsPhone';
 import { useAppStore } from '@/stores/appStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useTuViStore } from '@/stores/tuviStore';
@@ -331,6 +332,7 @@ function StarCell({
 export const LaBanPage: React.FC = () => {
   usePageTitle('La bàn');
   const navigate = useNavigate();
+  const isPhone = useIsPhone();
   const sensor = useCompassSensor();
   const { user } = useAuthStore();
   const { selectedDate, dayData, viewerLocation } = useAppStore(
@@ -348,6 +350,15 @@ export const LaBanPage: React.FC = () => {
   const [manualHeading, setManualHeading] = useState(0);
   const [lockedHeading, setLockedHeading] = useState<number | null>(null);
   const [isLocked, setIsLocked] = useState(false);
+  const sensorSupported = sensor.supported;
+  const sensorListening = sensor.listening;
+  const sensorPermissionState = sensor.permissionState;
+  const sensorStart = sensor.start;
+  const supportsCompassPermissionRequest =
+    typeof window !== 'undefined' &&
+    typeof (window.DeviceOrientationEvent as typeof DeviceOrientationEvent & {
+      requestPermission?: () => Promise<'granted' | 'denied'>;
+    })?.requestPermission === 'function';
 
   const liveHeading = sensor.headingDeg ?? manualHeading;
   const effectiveHeading = isLocked && lockedHeading !== null ? lockedHeading : liveHeading;
@@ -441,12 +452,6 @@ export const LaBanPage: React.FC = () => {
     await sensor.start();
   };
 
-  const handleStopSensor = () => {
-    sensor.stop();
-    setIsLocked(false);
-    setLockedHeading(null);
-  };
-
   const handleLock = () => {
     setLockedHeading(effectiveHeading);
     setIsLocked(true);
@@ -465,7 +470,15 @@ export const LaBanPage: React.FC = () => {
     navigate('/app/tu-vi');
   };
 
-  const canStartSensor = sensor.supported && !sensor.listening;
+  useEffect(() => {
+    if (!isPhone || !sensorSupported || sensorListening || sensorPermissionState !== 'prompt' || supportsCompassPermissionRequest) {
+      return;
+    }
+
+    void sensorStart();
+  }, [isPhone, sensorListening, sensorPermissionState, sensorStart, sensorSupported, supportsCompassPermissionRequest]);
+
+  const showSensorPrompt = isPhone && sensorSupported && sensorPermissionState !== 'granted';
 
   return (
     <div className="space-y-6">
@@ -475,21 +488,37 @@ export const LaBanPage: React.FC = () => {
             La bàn Phong Thủy
           </p>
           <p className="mt-1 text-sm text-text-primary-light dark:text-text-primary-dark">
-            {sensor.permissionState === 'granted' && sensor.listening ? 'Đang đọc cảm biến điện thoại' : 'Dùng cảm biến khi có thể, nhập tay khi cần'}
+            {sensorPermissionState === 'granted' && sensorListening
+              ? 'Đang đọc cảm biến điện thoại'
+              : isPhone
+                ? 'Cho phép cảm biến điện thoại để la bàn tự xoay theo hướng bạn cầm máy.'
+                : 'Nhập tay để điều hướng la bàn; cảm biến chỉ được bật trên điện thoại.'}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <ActionButton onClick={handleStartSensor} icon="explore" variant="primary" disabled={!canStartSensor}>
-            {sensor.listening ? 'Đang bật' : sensor.permissionState === 'granted' ? 'Bật lại' : 'Bật la bàn'}
-          </ActionButton>
-          <ActionButton onClick={handleStopSensor} icon="stop_circle" variant="secondary">
-            Dừng
-          </ActionButton>
           <ActionButton onClick={isLocked ? handleUnlock : handleLock} icon={isLocked ? 'lock_open' : 'lock'}>
             {isLocked ? 'Mở khóa' : 'Khóa hướng'}
           </ActionButton>
         </div>
       </div>
+
+      {showSensorPrompt && (
+        <div className="surface-panel flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-secondary-light dark:text-text-secondary-dark">
+              Cảm biến điện thoại
+            </p>
+            <p className="mt-1 text-sm text-text-primary-light dark:text-text-primary-dark">
+              {sensorPermissionState === 'denied'
+                ? 'Quyền cảm biến đã bị từ chối. Chạm để thử lại nếu bạn muốn dùng la bàn trên điện thoại.'
+                : 'Chạm để cho phép cảm biến điện thoại và tự xoay la bàn theo hướng bạn cầm máy.'}
+            </p>
+          </div>
+          <ActionButton onClick={handleStartSensor} icon="explore" variant="primary" disabled={!sensorSupported}>
+            {sensorPermissionState === 'denied' ? 'Thử lại' : 'Cho phép cảm biến'}
+          </ActionButton>
+        </div>
+      )}
 
       {sensor.message && (
         <div className="surface-panel border border-amber-200 bg-amber-50/80 px-4 py-3 text-sm text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-200">
