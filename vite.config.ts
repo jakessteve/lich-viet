@@ -28,7 +28,7 @@ export default defineConfig({
       manifest: {
         name: 'Lịch Việt — Âm Lịch & Phong Thủy',
         short_name: 'Lịch Việt',
-        description: 'Tra cứu ngày âm lịch, la bàn phong thủy, giờ tốt xấu, gieo quẻ, và lập lá số Tử Vi.',
+        description: 'Tra cứu ngày âm lịch, Dụng Sự, giờ tốt xấu, gieo quẻ, và lập lá số Tử Vi.',
         theme_color: '#1a1a2e',
         background_color: '#0f0f1a',
         display: 'standalone',
@@ -54,7 +54,6 @@ export default defineConfig({
       '@lich-viet/core/calendar': path.resolve(__dirname, './packages/core/src/calendar/index.ts'),
       '@lich-viet/core/dungsu': path.resolve(__dirname, './packages/core/src/dungsu/index.ts'),
       '@lich-viet/core/maihoa': path.resolve(__dirname, './packages/core/src/maihoa/index.ts'),
-      '@lich-viet/core/fengshui': path.resolve(__dirname, './packages/core/src/fengshui/index.ts'),
       '@lich-viet/core/qmdj': path.resolve(__dirname, './packages/core/src/qmdj/index.ts'),
       '@lich-viet/core/thaiAt': path.resolve(__dirname, './packages/core/src/thaiAt/index.ts'),
       '@lich-viet/core/lucNham': path.resolve(__dirname, './packages/core/src/lucNham/index.ts'),

@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 describe('authStore', () => {
   beforeEach(() => {
     localStorage.clear();
-    sessionStorage.clear();
     vi.resetModules();
   });
 
@@ -32,23 +31,42 @@ describe('authStore', () => {
     expect(useAuthStore.getState().user?.email).toBe('admin@lichviet.app');
   });
 
-  it('rehydrates from the session storage fallback on refresh', async () => {
-    sessionStorage.setItem(
-      'auth_user_session',
+  it('rehydrates from localStorage on refresh', async () => {
+    localStorage.setItem(
+      'auth_user',
       JSON.stringify({
         id: 'session-user',
-        email: 'session@example.com',
-        displayName: 'Session User',
+        email: 'persisted@example.com',
+        displayName: 'Persisted User',
         provider: 'email',
         createdAt: '2026-05-27T00:00:00.000Z',
       }),
     );
+    localStorage.setItem('auth_user_session_initialized', 'true');
 
     const { useAuthStore } = await import('@/stores/authStore');
     useAuthStore.getState().rehydrate();
 
     expect(useAuthStore.getState().isAuthenticated).toBe(true);
-    expect(useAuthStore.getState().user?.email).toBe('session@example.com');
+    expect(useAuthStore.getState().user?.email).toBe('persisted@example.com');
+  });
+
+  it('does not auto-login from auth_user alone on a fresh install', async () => {
+    localStorage.setItem(
+      'auth_user',
+      JSON.stringify({
+        id: 'seed-admin-lich-viet',
+        email: 'admin@lichviet.app',
+        displayName: 'Admin',
+        provider: 'email',
+        createdAt: '2026-05-16T00:00:00.000Z',
+      }),
+    );
+
+    const { useAuthStore } = await import('@/stores/authStore');
+
+    expect(useAuthStore.getState().isAuthenticated).toBe(false);
+    expect(useAuthStore.getState().user).toBeNull();
   });
 
   it('persists a Tu Vi markdown cache when updating birth data', async () => {

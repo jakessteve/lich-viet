@@ -519,7 +519,7 @@ export default function LandingPage() {
       <section className="py-14 sm:py-20 px-5 relative z-10 overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute top-[-10%] right-[-20%] md:right-[0%] w-[800px] h-[800px] opacity-40 dark:opacity-60 pointer-events-none z-0">
-          <MysticBackgroundPattern variant="compass" />
+          <MysticBackgroundPattern variant="luoshu" />
         </div>
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="text-center mb-12">

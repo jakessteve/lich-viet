@@ -8,7 +8,7 @@ import { formatTuViChartAsMarkdown, generateChart } from '@/services/tuvi';
 // ══════════════════════════════════════════════════════════
 
 const AUTH_STORAGE_KEY = 'auth_user';
-const AUTH_SESSION_STORAGE_KEY = 'auth_user_session';
+const AUTH_SESSION_MARKER_KEY = 'auth_user_session_initialized';
 const USERS_STORAGE_KEY = 'auth_users_db';
 const ADMIN_SEED_EMAIL = 'admin@lichviet.app';
 const ADMIN_SEED_PASSWORD_HASH = 'ef00af5081263d0c0e72e3f8b98119303d53edc687c02f8b54e220a6b46973d5';
@@ -94,10 +94,10 @@ function saveAuthUser(user: User | null): void {
     if (user) {
       const serialized = JSON.stringify(user);
       localStorage.setItem(AUTH_STORAGE_KEY, serialized);
-      sessionStorage.setItem(AUTH_SESSION_STORAGE_KEY, serialized);
+      localStorage.setItem(AUTH_SESSION_MARKER_KEY, 'true');
     } else {
       localStorage.removeItem(AUTH_STORAGE_KEY);
-      sessionStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
+      localStorage.removeItem(AUTH_SESSION_MARKER_KEY);
     }
   } catch {
     // Ignore storage failures in private mode / quota edge cases.
@@ -105,22 +105,21 @@ function saveAuthUser(user: User | null): void {
 }
 
 function readAuthUserFromStorage(): User | null {
-  const read = (storage: Storage | undefined, key: string): User | null => {
-    if (!storage) return null;
-    try {
-      const raw = storage.getItem(key);
-      return raw ? (JSON.parse(raw) as User) : null;
-    } catch {
-      try {
-        storage.removeItem(key);
-      } catch {
-        // ignore
-      }
+  try {
+    if (localStorage.getItem(AUTH_SESSION_MARKER_KEY) !== 'true') {
       return null;
     }
-  };
-
-  return read(localStorage, AUTH_STORAGE_KEY) ?? read(sessionStorage, AUTH_SESSION_STORAGE_KEY);
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as User) : null;
+  } catch {
+    try {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      localStorage.removeItem(AUTH_SESSION_MARKER_KEY);
+    } catch {
+      // ignore
+    }
+    return null;
+  }
 }
 
 function generateId(): string {

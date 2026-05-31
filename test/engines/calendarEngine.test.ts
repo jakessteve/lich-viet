@@ -116,5 +116,14 @@ describe('calendarEngine', () => {
       expect(data.foundationalLayer).toBeDefined();
       expect(data.modifyingLayer).toBeDefined();
     });
+
+    it('uses the tiết khí month, not the lunar month, for the day engine month Can-Chi', () => {
+      const beforeTet = getDetailedDayData(new Date(2024, 1, 5));
+
+      expect(beforeTet.lunarDate.month).toBe(12);
+      expect(beforeTet.canChi.month).toEqual({ can: 'Bính', chi: 'Dần' });
+      expect(beforeTet.fiveElements.napAmMonth).toBe('Lô Trung Hỏa');
+      expect(beforeTet.modifyingLayer.trucDetail.name).toBe('Thâu');
+    });
   });
 });

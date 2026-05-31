@@ -31,7 +31,7 @@ function AppLayout() {
     useAuthStore.getState().rehydrate();
 
     const handleStorage = (event: StorageEvent) => {
-      if (event.key === 'auth_user' || event.key === 'auth_user_session') {
+      if (event.key === 'auth_user' || event.key === 'auth_user_session_initialized') {
         useAuthStore.getState().rehydrate();
       }
     };
